@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#Copyright (C) 2012 Robin McCorkell
+#Original Copyright (C) 2010  Paul Sharrad
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+#Connect to netlogon
+[ ! -d /tmp/netlogon ] && mkdir /tmp/netlogon
+if ! mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix 1>/dev/null; then
+	info_alert "Error" "Unable to contact PDC"
+	exitfunc 1
+fi
+
+function exitfunc {
+	info_alert "Configuration" "Configuration cancelled"
+	umount /tmp/netlogon
+	exit $1
+}
+
+#Check that room list exists
+if [ ! -f /tmp/netlogon/locations.txt ]; then
+	info_alert "Error" "No locations have been created on the PDC"
+	exitfunc 1
+fi
+
+#######################
+#Choose room
+#######################
+SELECTION=` < /tmp/netlogon/locations.txt`
+understandableYad "--wrap --entry --title 'Client Location' \
+					--button='Cancel:200' --button='Ok:0' \
+					--text 'Choose the location of this computer' \
+					$SELECTION"
+LOCATION=$DATA
+
+#Completed message
+info_alert "Information" "`hostname` set to location $LOCATION"
+
+exit 0

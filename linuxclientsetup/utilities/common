@@ -1,0 +1,76 @@
+#!/bin/bash
+
+#Common functions used in multiple scripts
+
+#IPREGEX
+#	regex for use in matching IPs with bash regex
+#function exitfunc
+#	custom exiting function
+#function info_alert
+#	prints $2 in an information box with $1 as a title
+#function persistantYad
+#	uses $1 as options to yad, while also defining some defaults
+#	closing window (ret 252) causes yad box to persist
+#	cancelled config (ret 1) causes exit 1
+#function understandableYad
+#	similar to persistantYad, but defines ret 252 as cancellation
+#	no persistant features
+#	ret 252 and 1 causes exit 1
+#function updateVariables
+#	updates variables file
+
+source /opt/karoshi/linuxclientsetup/variables
+
+IPREGEX='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+
+function info_alert {
+	yad --title="$1" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 --button="gtk-ok" --text="$2"
+}
+
+function progress_info {
+	yad --title="$1" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --progress --no-buttons --text="$2" --image-on-top --geometry=400x100-40+40
+}
+
+function exitfunc {
+	info_alert "Configuration" "Configuration cancelled"
+	exit $1
+}
+
+function persistantYad {
+	YADSTATUS=252
+	while [ $YADSTATUS -eq 252 ]; do
+		DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
+		YADSTATUS=$?
+		if [ $YADSTATUS -eq 1 ]; then
+			exitfunc 1
+		fi
+		[ $YADSTATUS -eq 0 ] && break
+		info_alert "Warning" "You must complete the form"
+	done
+	return $YADSTATUS
+}
+
+function understandableYad {
+	DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
+	YADSTATUS=$?
+	if [ $YADSTATUS -eq 252 ] || [ $YADSTATUS -eq 1 ]; then
+		exitfunc 1
+	fi
+	return $YADSTATUS
+}
+
+function updateVariables {
+	echo "LINUX_VERSION=$LINUX_VERSION
+NETWORKINT=$NETWORKINT
+CLIENTMAC=$CLIENTMAC
+PDC=$PDC
+LOCATION=$LOCATION
+PRINTSERVER=$PRINTSERVER
+PROXYSERVER=$PROXYSERVER
+MAILSERVER=$MAILSERVER
+DOMAINTYPE=$DOMAINTYPE
+DOMAIN=$DOMAIN
+DNSSUFFIX=$DNSSUFFIX
+CLIENTSHUTDOWNTIME=$CLIENTSHUTDOWNTIME
+IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/linuxclientsetup/variables
+}

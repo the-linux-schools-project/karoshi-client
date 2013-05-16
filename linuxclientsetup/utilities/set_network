@@ -1,0 +1,554 @@
+#!/bin/bash
+
+#Copyright (C) 2012 Robin McCorkell
+#Original Copyright (C) 2010 Paul Sharrad
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+function isWireless {
+	[[ $1 =~ ^(wlan|wifi|ath)[[:digit:]]+ ]]
+	return $?
+}
+
+function isWired {
+	[[ $1 =~ ^(eth|lan)[[:digit:]]+ ]]
+	return $?
+}
+
+function getClientSettings {
+	echo \#Asking for network settings >&11
+	while ! $CLIENTSETTINGS; do
+		#Create NETWORKINTLIST for use in combo box in yad
+		NETWORKINTLIST=$NETWORKINT
+		for i in "${NETWORKINTS[@]}"; do
+			[ "$i" == "$NETWORKINT" ] && continue
+			NETWORKINTLIST="$NETWORKINTLIST!$i"
+		done
+		#Get and set temporary network settings
+		understandableYad "--form --title 'Network Settings' --text 'IP Address, Netmask and Gateway are not required if DHCP is selected' --wrap \
+							--field='Client Name' --field='Network Interface':CB --field='IP Address' --field='Netmask' --field='Gateway' --field='DHCP':CHK \
+							--button='gtk-cancel:1' --button='gtk-ok:0' \
+							'$CLIENT_NAME' '$NETWORKINTLIST' '$IPADDR' '$NETMASK' '$GATEWAY' '$DHCP'"
+		CLIENT_NAME=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
+		NETWORKINT=`cut -d"|" -f2 <<< "$DATA" | sed 's/ //g'`
+		IPADDR=`cut -d"|" -f3 <<< "$DATA"`
+		NETMASK=`cut -d"|" -f4 <<< "$DATA"`
+		GATEWAY=`cut -d"|" -f5 <<< "$DATA"`
+		DHCP=`cut -d"|" -f6 <<< "$DATA" | tr '[:upper:]' '[:lower:]'`
+		if [ -z "$CLIENT_NAME" ] || [ -z "$NETWORKINT" ]; then
+			info_alert "Error" "You must enter a client name and network interface"
+			continue
+		fi
+		if ! ( $DHCP || ( [[ $IPADDR =~ $IPREGEX ]] && [[ $NETMASK =~ $IPREGEX ]] && [[ $GATEWAY =~ $IPREGEX ]] ) ); then
+			info_alert "Error" "You must enter a valid IP address, netmask and gateway, or choose DHCP"
+			continue
+		fi
+
+		if isWireless $NETWORKINT; then
+			understandableYad "--form --title 'Wireless Network Settings' --text 'Wireless interface detected' --wrap \
+								--field='SSID' --field='WPA2-PSK Key' \
+								--button='gtk-go-back:2' --button='gtk-cancel:1' --button='gtk-ok:0'
+								'$WIFISSID' '$WIFIKEY'"
+			if [ $? -ne 0 ]; then
+				continue
+			fi
+			WIFISSID=`cut -d"|" -f1 <<< "$DATA"`
+			WIFIKEY=`cut -d"|" -f2 <<< "$DATA"`
+			if [ -z "$WIFISSID" ] || [ -z "$WIFIKEY" ]; then
+				info_alert "Error" "You must enter an SSID and key"
+				continue
+			fi
+		fi
+
+		CLIENTSETTINGS=true
+	done
+}
+
+function writeNetworkSettings {
+	if $DHCP; then IPTYPE=dhcp; else IPTYPE=static; fi
+	echo "auto lo
+iface lo inet loopback
+auto $NETWORKINT
+iface $NETWORKINT inet $IPTYPE" > /etc/network/interfaces
+
+	#If static
+	if ! $DHCP; then
+		echo "	address $IPADDR
+	netmask $NETMASK
+	gateway $GATEWAY" >> /etc/network/interfaces
+	fi
+	
+	#If wireless
+	if isWireless $NETWORKINT; then
+		echo "	wpa-ssid $WIFISSID
+	wpa-psk $WIFIKEY" >> /etc/network/interfaces
+	fi
+}
+
+function updateHostname {
+	[ -z "$CLIENT_NAME" ] && return
+	echo "$CLIENT_NAME" > /etc/hostname
+	hostname "$CLIENT_NAME"
+	
+	if $DHCP; then
+		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
+		if grep "^127\.0\.1\.1" /etc/hosts; then
+			sed -i "s/^127\.0\.1\.1.*/127.0.1.1	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME/" /etc/hosts
+		else
+			echo "127.0.1.1	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME" >> /etc/hosts
+		fi
+	else
+		sed -i "/^127\.0\.1\.1/d" /etc/hosts
+		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
+		echo "##STATIC##" >> /etc/hosts
+		echo "$IPADDR	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME" >> /etc/hosts
+	fi
+}
+
+####################
+#Detect network interface(s)
+####################
+NETWORKINTS=(`ifconfig -a | sed -n '/^[^[:blank:]]/s/^\(\w*\).*/\1/p' | grep -v ^lo\$`)
+
+for NETWORKINT in "${NETWORKINTS[@]}"; do
+	isWired $NETWORKINT && break
+done
+if laptop-detect; then
+	for WIFINETWORKINT in "${NETWORKINTS[@]}"; do
+		isWireless $WIFINETWORKINT && break
+	done
+fi
+
+####################
+#Get network settings
+####################
+PDCSET=false
+CLIENTSETTINGS=false
+DHCP=false
+[ ! -d /tmp/netlogon ] && mkdir -p /tmp/netlogon
+
+#Attempt to guess SERVERIP by DHCP
+echo "auto lo
+iface lo inet loopback
+auto $NETWORKINT
+iface $NETWORKINT inet dhcp" > /etc/network/interfaces
+exec 11> >(progress_info "Karoshi Setup" "Karoshi Client Setup: Network Configuration")
+echo 5 >&11
+echo \#Bringing down network interface >&11
+ifdown --force $NETWORKINT
+#Clear leases to only get one lease in file
+> /var/lib/dhcp/dhclient.$NETWORKINT.leases
+echo \#Bringing up network interface >&11
+ifup $NETWORKINT
+echo 10 >&11
+# flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
+if [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ] && ! [ -f /opt/karoshi/linuxclientsetup/flags/forcesetpdc ]; then DHCP=true; fi
+
+#Try until we have a PDC
+while ! $PDCSET; do
+	rm -f /opt/karoshi/linuxclientsetup/flags/networkset
+	SERVERIP=
+	#We define exitfunc further down, so this just resets it
+	function exitfunc {
+		info_alert "Configuration" "Configuration cancelled"
+		exit $1
+	}
+	if $DHCP && [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]; then
+	#If we have a DHCP lease
+		SERVERIP=`sed -n 's/.*option domain-name-servers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
+		NETMASK=`sed -n 's/.*option subnet-mask *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
+		GATEWAY=`sed -n 's/.*option routers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
+	elif $DHCP; then
+	#If we wanted a DHCP lease
+		info_alert "Error" "Did not get DHCP lease"
+		DHCP=false
+		continue
+	else
+	#If we didn't get a DHCP lease
+		CLIENTSETTINGS=false
+		echo 5 >&11
+		echo \#Bringing down network interface >&11
+		ifdown $NETWORKINT
+		#Clear leases to only get one lease in file
+		> /var/lib/dhcp/dhclient.$NETWORKINT.leases
+		getClientSettings
+		writeNetworkSettings
+		echo \#Bringing up network interface >&11
+		ifup $NETWORKINT
+		echo 5 >&11
+		if $DHCP; then
+			#Continue to hit DHCP logic again
+			continue
+		fi
+		if ! arping -f -c 2 $GATEWAY; then
+			info_alert "Error" "Cannot arping gateway $GATEWAY"
+			continue
+		fi
+	fi
+	
+	#Update hostname and /etc/hosts
+	updateHostname
+	
+	#At this point a network has been configured, so the flag is set
+	touch /opt/karoshi/linuxclientsetup/flags/networkset
+
+	#exitfunc if the user cancelled selecting a PDC
+	function exitfunc {
+		info_alert "Network Settings" "Not configuring for Karoshi Server"
+		touch /opt/karoshi/linuxclientsetup/flags/nokaroshi
+		exit $1
+	}
+	if [ "$SERVERIP" ]; then
+	#SERVERIP was set, so attempt to mount netlogon
+		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
+			PDCSET=true
+		else
+			PDCSET=false
+		fi
+	fi
+	if ! $PDCSET; then
+	#We still haven't connected to the PDC
+		understandableYad "--form --title 'Network Settings' \
+							--field='PDC IP Address' \
+							--button='Skip:1' --button='gtk-ok:0' \
+							'$SERVERIP'"
+		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
+		echo \#Attempting to mount netlogon >&11
+		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
+			PDCSET=true
+		else
+			info_alert "Error" "Invalid PDC"
+			PDCSET=false
+			DHCP=false
+		fi
+	fi
+	#If we got to this point still having not connected to a PDC,
+	# send us back to the top to get network settings again.
+done
+
+echo 20 >&11
+echo \#Setting network configuration >&11
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#At this point it is assumed that a PDC can be contacted
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+rm -f /opt/karoshi/linuxclientsetup/flags/nokaroshi
+
+#exitfunc to unmount the share, and exit
+function exitfunc {
+	info_alert "Error" "Configuration cancelled"
+	umount /tmp/netlogon
+	exit $1
+}
+
+echo $SERVERIP > /opt/karoshi/linuxclientsetup/serverip
+
+####################
+#Pull down server information
+####################
+function getMac {
+	ifconfig $1 | sed -n 's/.*HWaddr \(..\):\(..\):\(..\):\(..\):\(..\):\(..\).*/\U\1\2\3\4\5\6/p'
+}
+#Try the WiFi interface first, since we may be a laptop
+TEMPNETWORKINT=$NETWORKINT
+if [ "$WIFINETWORKINT" ]; then
+	NETWORKINT=$WIFINETWORKINT
+fi
+#Get mac address for the iface
+CLIENTMAC=`getMac $NETWORKINT`
+
+function pullClientInformation {
+	IFS=$'\n'
+	read -r -d $'\0' CLIENT_NAME IPADDR LOCATION _ < /tmp/netlogon/clients/$CLIENTMAC
+	unset IFS
+
+	CLIENTSETTINGS=true
+	DHCP=false
+}
+
+if [ -f /tmp/netlogon/clients/$CLIENTMAC ]; then
+	pullClientInformation
+else
+#We may be here because the WiFi interface did not have a CLIENTMAC entry,
+# so go back to the first interface and try again
+	NETWORKINT=$TEMPNETWORKINT
+	CLIENTMAC=`getMac $NETWORKINT`
+	[ -f /tmp/netlogon/clients/$CLIENTMAC ] && pullClientInformation
+fi
+
+echo 25 >&11
+
+####################
+#Final settings for network
+####################
+function exitfunc {
+	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
+	umount /tmp/netlogon
+	exit $1
+}
+if [ -f /tmp/netlogon/domain_information/netmask ]; then NETMASK=` < /tmp/netlogon/domain_information/netmask`; fi
+if [ -f /tmp/netlogon/domain_information/gateway ]; then GATEWAY=` < /tmp/netlogon/domain_information/gateway`; fi
+if [ -f /tmp/netlogon/domain_information/main_server ]; then PDC=` < /tmp/netlogon/domain_information/main_server`; fi
+! ( [[ "$PDC" ]] && [[ $NETMASK =~ $IPREGEX ]] && [[ $GATEWAY =~ $IPREGEX ]] ) && exitfunc 1
+
+function exitfunc {
+	info_alert "Error" "Configuration cancelled"
+	umount /tmp/netlogon
+	exit $1
+}
+#If NETWORKINT is a wireless interface, and don't already have wireless information,
+# get wireless information from server
+if isWireless $NETWORKINT && ( [ -z "$WIFISSID" ] || [ -z "$WIFIKEY" ] ); then
+	echo \#Checking wireless network settings >&11
+	WIFISSID=` < /tmp/netlogon/domain_information/wifi_ssid`
+	WIFIKEY=` < /tmp/netlogon/domain_information/wifi_key`
+	if [ -z "$WIFISSID" ] || [ -z "$WIFIKEY" ]; then
+	#Couldn't find wireless information on server, but that's OK
+	# because we can just prompt the user for it
+		understandableYad "--form --title 'Wireless Network Settings' \
+							--field='SSID' --field='WPA2-PSK Key' \
+							--button='gtk-cancel:1' --button='gtk-ok:0'\
+							'$WIFISSID' '$WIFIKEY'"
+	fi
+	echo \#Setting network configuration >&11
+fi
+
+echo 30 >&11
+
+#Get network settings from user if not set
+getClientSettings
+
+echo 35 >&11
+echo \#Setting network configuration >&11
+
+#Automation steps
+if [ -f /tmp/netlogon/domain_information/lockadministrator ]; then
+	touch /opt/karoshi/linuxclientsetup/flags/passwordset
+	passwd -l administrator
+	passwd -l root
+fi
+
+echo \#Finalising network configuration >&11
+
+#Do network configuration and remount netlogon
+umount /tmp/netlogon
+ifdown $NETWORKINT
+echo 40 >&11
+writeNetworkSettings
+updateHostname
+ifup $NETWORKINT
+echo 45 >&11
+mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
+echo 50 >&11
+
+echo "nameserver $SERVERIP" > /etc/resolv.conf
+
+touch /opt/karoshi/linuxclientsetup/flags/networkset
+
+#############
+#Domain setup
+#############
+DNSSUFFIX="internal"
+#Get nsswitch functions
+source /opt/karoshi/linuxclientsetup/utilities/nsswitch_funcs
+
+function exitfunc {
+	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
+	umount /tmp/netlogon
+	exit $1
+}
+
+echo \#Performing domain setup >&11
+
+if [ -f /tmp/netlogon/domain_information/samba4 ]; then
+	#Using a Samba4 domain
+	DNSDOMAIN=` < /tmp/netlogon/domain_information/dns_domain`
+	[ -z "$DNSDOMAIN" ] && exitfunc 1
+	DNSSUFFIX="$DNSDOMAIN"
+	#Copy files and change variables
+	DNSDOMAINCAPS=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSDOMAIN"`
+	DOMAIN=`sed "s/^\([^.]*\).*/\1/" <<< "$DNSDOMAINCAPS"`
+	echo 55 >&11
+	echo \#Copying files >&11
+	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba4/* /
+	sed -i "s/CHANGETHISREALM/$DNSDOMAINCAPS/g" /etc/krb5.conf
+	sed -i "1idomain $DNSDOMAIN" /etc/resolv.conf
+	
+	#Check if we are to use winbind instead of LDAP
+	if [ -f /tmp/netlogon/domain_information/samba4_winbind ]; then
+		echo 60 >&1
+		echo \#Configuring Samba >&11
+		DOMAINTYPE=samba4_winbind
+		SAMBADOMAIN=` < /tmp/netlogon/domain_information/domain_name`
+		[ -z "$SAMBADOMAIN" ] && exitfunc 1
+		SAMBADOMAINCAPS=`tr '[[:lower:]]' '[[:upper:]]' <<< "$SAMBADOMAIN"`
+		DOMAIN=$SAMBADOMAINCAPS
+		#Configure smb.conf
+		sed -i "s/CHANGETHISDOMAIN/$SAMBADOMAIN/g" /etc/samba/smb.conf
+		sed -i "s/CHANGETHISSERVER/$PDC/g" /etc/samba/smb.conf
+		sed -i "s/CHANGETHISREALM/$DNSDOMAINCAPS/g" /etc/samba/smb.conf
+		
+		#Create folder for users
+		[ ! -d /home/$SAMBADOMAINCAPS ] && mkdir /home/$SAMBADOMAINCAPS
+		function exitfunc {
+			info_alert "Error" "Not joining domain - system may be in an inconsistent state"
+			umount /tmp/netlogon
+			exit 1
+		}
+		#Join domain
+		echo 70 >&11
+		echo \#Joining domain >&11
+		JOINSTATUS=1
+		while [ $JOINSTATUS -ne 0 ]; do
+			understandableYad "--form --title='Domain Access' --wrap \
+								--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
+								--button='gtk-cancel:1' --button='gtk-ok:0' "
+			DOMAINUSERNAME=`cut -d"|" -f1 <<< "$DATA"`
+			DOMAINPASSWORD=`cut -d"|" -f2 <<< "$DATA"`
+			net ads join -S $PDC -U $DOMAINUSERNAME%$DOMAINPASSWORD
+			JOINSTATUS=$?
+		done
+		
+		echo 75 >&11
+		echo \#Finalising domain configuration >&11
+		
+		#Update nsswitch.conf
+		nss_enable passwd winbind
+		nss_enable group winbind
+		nss_enable shadow winbind
+		#Update PAM
+		pam-auth-update --remove winbind
+		pam-auth-update --package
+		#Restart winbind
+		service winbind restart
+	else
+		DOMAINTYPE=samba4
+		DOMAINSID=` < /tmp/netlogon/domain_information/domain_sid`
+		LDAPBASE=` < /tmp/netlogon/domain_information/ldap_base`
+		[ -z "$DOMAINSID" ] && exitfunc 1
+		#Configure nslcd.conf
+		sed -i "s/CHANGETHISSERVER/$PDC.$DNSSUFFIX/g" /etc/nslcd.conf
+		sed -i "s/CHANGETHISSID/$DOMAINSID/g" /etc/nslcd.conf
+		sed -i "s/CHANGETHISLDAPBASE/$LDAPBASE/g" /etc/nslcd.conf
+		
+		echo 75 >&11
+		echo \#Finalising domain configuration >&11
+		
+		#Update nsswitch.conf
+		nss_enable passwd ldap
+		nss_enable group ldap
+		nss_enable shadow ldap
+		#Update PAM - bit of a hack, removes the 'seen' entry of the pam
+		# module, causing it to be reconfigured into pam.d
+		pam-auth-update --remove krb5
+		pam-auth-update --package
+		#Restart nslcd and nscd
+		service nslcd restart
+		service nscd restart
+	fi
+else
+	#Using a Samba3 domain
+	SAMBADOMAIN=` < /tmp/netlogon/domain_information/domain_name`
+	[ -z "$SAMBADOMAIN" ] && exitfunc 1
+	#Copy files and change variables
+	SAMBADOMAINCAPS=`tr 'a-z' 'A-Z' <<< "$SAMBADOMAIN"`
+	DOMAIN=$SAMBADOMAINCAPS
+	DOMAINTYPE=samba3
+	
+	echo 55 >&11
+	echo \#Copying files >&11
+	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba3/* /
+	#Configure smb.conf
+	sed -i "s/CHANGETHISDOMAIN/$SAMBADOMAIN/g" /etc/samba/smb.conf
+	sed -i "s/CHANGETHISPDC/$PDC/g" /etc/samba/smb.conf
+	
+	#Create folder for users
+	[ ! -d /home/$SAMBADOMAINCAPS ] && mkdir /home/$SAMBADOMAINCAPS
+	function exitfunc {
+		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
+		umount /tmp/netlogon
+		exit 1
+	}
+	#Join domain
+	echo 70 >&11
+	echo \#Joining domain >&11
+	JOINSTATUS=1
+	while [ $JOINSTATUS -ne 0 ]; do
+		understandableYad "--form --title='Domain Access' --wrap \
+							--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
+							--button='gtk-cancel:1' --button='gtk-ok:0' "
+		DOMAINUSERNAME=`cut -d"|" -f1 <<< "$DATA"`
+		DOMAINPASSWORD=`cut -d"|" -f2 <<< "$DATA"`
+		net rpc join -S $PDC -U $DOMAINUSERNAME%$DOMAINPASSWORD
+		JOINSTATUS=$?
+	done
+	
+	echo 75 >&11
+	echo \#Finalising domain configuration >&11
+	
+	#Update nsswitch.conf
+	nss_enable passwd winbind
+	nss_enable group winbind
+	nss_enable shadow winbind
+	#Update PAM - see above for rationale
+	pam-auth-update --remove winbind
+	pam-auth-update --package
+	#Restart winbind
+	service winbind restart
+fi
+####################
+#End of domain setup
+####################
+
+echo 80 >&11
+echo \#Finalising network configuration >&11
+
+#Set NTP settings
+echo "server $PDC.$DNSSUFFIX" > /etc/ntp.conf
+
+#Give local groups to domain users
+echo "*;*;*;Al0000-2400;audio,cdrom,floppy,wireshark" > /etc/security/group.conf
+
+#Last few variables
+updateHostname
+
+#Restart networking and finish
+echo 90 >&11
+umount /tmp/netlogon
+function exitfunc {
+	info_alert "Configuration" "Configuration cancelled"
+	exit $1
+}
+echo 95 >&11
+echo \#Restarting network interface >&11
+ifdown $NETWORKINT
+ifup $NETWORKINT
+
+touch /opt/karoshi/linuxclientsetup/flags/domainset
+echo 100 >&11
+
+#Write new variables to file
+updateVariables
+
+exit 0
+

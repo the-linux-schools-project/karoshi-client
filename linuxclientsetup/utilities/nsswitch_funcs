@@ -1,0 +1,30 @@
+#!/bin/sh
+
+nss_is_enabled()
+{
+  name="$1"
+  property="$2"
+  grep -q '^[[:space:]]*'$name'[[:space:]]*:.*'$property'.*' /etc/nsswitch.conf
+}
+
+nss_enable()
+{
+  name="$1"
+  property="$2"
+  if ! nss_is_enabled "$name" "$property"
+  then
+    echo "/etc/nsswitch.conf: enable $property lookups for $name" >&2
+    if grep -q '^[[:space:]]*'$name'[[:space:]]*:' /etc/nsswitch.conf
+    then
+      # modify an existing entry by just adding $property to the end
+      sed -i 's/^\([[:space:]]*'$name'[[:space:]]*:.*[^[:space:]]\)[[:space:]]*$/\1 '$property'/' /etc/nsswitch.conf
+    else
+      # append a new line
+      printf '%-15s '$property'\n' $name':' >> /etc/nsswitch.conf
+    fi
+    # invalidate nscd cache
+    nscd -i "$name" > /dev/null 2>&1 || true
+  fi
+  # we're done
+  return 0
+}

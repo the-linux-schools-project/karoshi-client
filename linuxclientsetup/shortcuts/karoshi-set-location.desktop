@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=gksudo /opt/karoshi/linuxclientsetup/utilities/set_location
+Name=Set Location
+Icon=/opt/karoshi/linuxclientsetup/images/set_location.png

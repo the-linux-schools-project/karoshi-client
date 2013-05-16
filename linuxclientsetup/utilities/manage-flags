@@ -1,0 +1,47 @@
+#!/bin/bash
+
+flagsDir="/opt/karoshi/linuxclientsetup/flags"
+
+flags=( networkset domainset passwordset nokaroshi forcesetpdc no_idle_shutdown )
+flagsCanonical=( "Network Set" "Domain Set" "Password Set" "No Karoshi" "Force Set PDC" "No Idle Shutdown" )
+
+function checkFlag {
+	if [ -f "$flagsDir"/$1 ]; then eval $1=true; else eval $1=false; fi
+}
+function setFlag {
+	if ${!1}; then
+		touch "$flagsDir"/$1
+	else
+		[ -f "$flagsDir"/$1 ] && rm -f "$flagsDir"/$1
+	fi
+}
+
+while true; do
+	COMMAND=(  )
+	COUNTER=0
+	
+	# check flags and create COMMAND
+	for flag in "${flags[@]}"; do
+		checkFlag $flag
+		COMMAND+=( "--field=${flagsCanonical[$COUNTER]}:CHK" "${!flag}" )
+		(( ++COUNTER ))
+	done
+
+	DATA=`yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 \
+	          --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
+	          --form "${COMMAND[@]}"`
+	YADSTATUS=$?
+	[ $YADSTATUS -eq 1 ] && exit
+	[ $YADSTATUS -eq 2 ] && continue
+	
+	# decypher DATA and set flags
+	COUNTER=1
+	for flag in "${flags[@]}"; do
+		eval $flag=`cut -d"|" -f$COUNTER <<< "$DATA" | tr '[:upper:]' '[:lower:]'`
+		setFlag $flag
+		(( ++COUNTER ))
+	done
+	
+	# break out of the while loop
+	break
+done

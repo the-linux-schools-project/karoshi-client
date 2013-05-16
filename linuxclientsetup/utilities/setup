@@ -1,0 +1,62 @@
+#!/bin/bash
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+#Exit this script if running live.
+if [ `mount | grep -c -w /cow` -gt 0 ]
+then
+	exit 
+fi
+
+#Logging
+[ ! -d /var/log/karoshi ] && mkdir -p /var/log/karoshi
+
+if [ -f /var/log/karoshi/setup.log ]; then
+	i=1
+	while [ -e /var/log/karoshi/setup.log.$i.gz ]; do
+		if [ $i -gt 3 ]; then
+			rm -f /var/log/karoshi/setup.log.$i.gz
+			break
+		fi
+		(( ++i ))
+	done
+	(( --i ))
+	while [ $i -gt 0 ]; do
+		mv /var/log/karoshi/setup.log.$i.gz /var/log/karoshi/setup.log.$(( i-- + 1 )).gz
+	done
+	chmod 400 /var/log/karoshi/setup.log
+	mv /var/log/karoshi/setup.log /var/log/karoshi/setup.log.1
+	gzip /var/log/karoshi/setup.log.1
+fi
+
+touch /var/log/karoshi/setup.log
+chmod 600 /var/log/karoshi/setup.log
+exec &>/var/log/karoshi/setup.log
+
+#Allow root to connect to X even after hostname is changed (temporarily)
+xhost +si:localuser:root
+
+#Configure network
+if [ ! -f /opt/karoshi/linuxclientsetup/flags/networkset ] || ( [ ! -f /opt/karoshi/linuxclientsetup/flags/domainset ] && [ ! -f /opt/karoshi/linuxclientsetup/flags/nokaroshi ] ); then
+	/opt/karoshi/linuxclientsetup/utilities/set_network
+fi
+
+#Change client password
+[ ! -f /opt/karoshi/linuxclientsetup/flags/passwordset ] && /opt/karoshi/linuxclientsetup/utilities/set_local_password
+
+#Stop Auto logon
+sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
+#Stop running this script on administrator login
+[ -f /opt/administrator/.config/autostart/karoshi-setup.desktop ] && rm -f /opt/administrator/.config/autostart/karoshi-setup.desktop
+
+#Set up xinitrc for {pre,post}-session
+sed -i 's@^\([[:space:]]*\)\(xfce4-session.*\)@\1\2\n\1/opt/karoshi/linuxclientsetup/scripts/post-session@' /etc/xdg/xfce4/xinitrc
+sed -i '2i/opt/karoshi/linuxclientsetup/scripts/pre-session' /etc/xdg/xfce4/xinitrc
+
+#Allow tech users to sudo
+[ -f /opt/karoshi/linuxclientsetup/flags/domainset ] && echo '%tech	ALL=(ALL:ALL) ALL' >> /etc/sudoers
+
+#Perform final restart
+shutdown -r now
+exit
+
