@@ -4,7 +4,9 @@ Karoshi Client
 *Repository for storing scripts and configuration files for Karoshi Client*
 
 **Maintainer:** Robin McCorkell <rmccorkell@karoshi.org.uk>
+
 **Website:** http://linuxgfx.co.uk/
+
 **Documentation:** http://www.linuxgfx.co.uk/karoshi/documentation/wiki/
 
 File list
