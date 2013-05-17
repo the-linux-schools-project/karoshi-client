@@ -27,7 +27,7 @@ OnlyShowIn=XFCE;" | tee ~/Desktop/karoshi-"$filename".desktop > ~/.local/share/a
 ##################
 #create user.js for default Firefox settings
 ##################
-if which firefox >/dev/null; then
+if which firefox >/dev/null && [ -d ~/.mozilla/firefox ]; then
 	firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
 	if [[ "$firefox_profile" ]] && [ -d ~/.mozilla/firefox/"$firefox_profile" ]; then
 		#Apply CA certificate
@@ -84,7 +84,7 @@ fi
 ##################
 #create user.js for default Thunderbird settings
 ##################
-if which thunderbird >/dev/null; then
+if which thunderbird >/dev/null && [ -d ~/.thunderbird ]; then
 	thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
 	if [[ "$thunderbird_profile" ]] && [ -d ~/.thunderbird/"$thunderbird_profile" ]; then
 		#Apply CA certificate
