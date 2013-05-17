@@ -9,6 +9,12 @@ Karoshi Client
 - **Current stable version:** 2.0
 - **Current dev version:** 2.2_rc6
 
+**ISO Syntax:** karoshi-client-&lt;version&gt;-&lt;arch&gt;.iso
+
+**Title Syntax:** Karoshi Client &lt;version&gt;-&lt;arch&gt;
+
+
+
 File list
 --------------
 
@@ -16,6 +22,3 @@ File list
 - **linuxclientsetup/** contains the main client-side scripts
 - **skel/** contains configuration files for the client, usually placed on the server
 - other files are assorted temporary configuration files
-
-- **ISO Syntax:** karoshi-client-<version>-<arch>.iso
-- **Title Syntax:** Karoshi Client <version>-<arch>
