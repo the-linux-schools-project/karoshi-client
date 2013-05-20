@@ -28,7 +28,7 @@ function info_alert {
 }
 
 function progress_info {
-	yad --title="$1" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --progress --no-buttons --text="$2" --image-on-top --geometry=400x100-40+40
+	yad --title="$1" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --progress --no-buttons --text="$2" --image-on-top --auto-close --geometry=400x100-40+40
 }
 
 function exitfunc {
