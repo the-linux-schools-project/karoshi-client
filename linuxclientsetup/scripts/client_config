@@ -41,6 +41,13 @@ IFS=$'\n'
 unset IFS
 
 ####################
+#Set apt settings through proxy
+####################
+if [ "$PROXYSERVER" ]; then
+	echo "Acquire::http::Proxy 'http://$PROXYSERVER.$DNSSUFFIX:3142/apt-cacher/';" > /etc/apt/apt.conf.d/01proxy
+fi
+
+####################
 #Domain specific stuff
 ####################
 rm -f /etc/security/pam_mount.conf.xml
