@@ -221,6 +221,9 @@ if [ -d ~/network/home ]; then
 	sed -i 's@exo-open --launch TerminalEmulator@exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
 fi
 
+#Disable Firefox crash reporter
+export MOZ_CRASHREPORTER_DISABLE=1
+
 #Extract configuration
 [ -f ~/network/home/.configuration.tar.gz ] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
 [ -f ~/network/home/.desktop-icons.tar.gz ] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
