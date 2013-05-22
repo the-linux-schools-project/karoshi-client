@@ -7,7 +7,7 @@ Karoshi Client
 - **Website:** http://linuxgfx.co.uk/
 - **Documentation:** http://www.linuxgfx.co.uk/karoshi/documentation/wiki/
 - **Current stable version:** 2.0
-- **Current dev version:** 2.2_rc6
+- **Current dev version:** 2.2_rc7
 
 **ISO Syntax:** karoshi-client-&lt;version&gt;-&lt;arch&gt;.iso
 
@@ -18,7 +18,10 @@ Karoshi Client
 File list
 --------------
 
-- **checklist** is a short guide for creating a remaster
+- **CHECKLIST.md** is a short guide for creating a remaster
+- **TODO.md** is a list of items that need to be looked at
+- **README.md** is this file
+- **configuration/** contains the system configuration
 - **linuxclientsetup/** contains the main client-side scripts
 - **skel/** contains configuration files for the client, usually placed on the server
 - other files are assorted temporary configuration files
