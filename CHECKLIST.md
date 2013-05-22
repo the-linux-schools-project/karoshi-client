@@ -5,7 +5,8 @@ Karsohi Client release checklist
 
 - Update system
 - Reboot if kernel updated
-- Copy in latest scripts
+- Copy in latest scripts, remove existing directory
+- Copy in latest configuration, just overwrite
 - Ensure permissions of 755 on scripts in /utilities
 - Ensure permissions of 644 on .conf files in /utilities
 - Ensure permissions of 755 on scripts in /scripts
