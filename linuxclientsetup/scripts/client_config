@@ -82,7 +82,7 @@ rm -rf --one-file-system /home/*
 ####################
 #Copy configuration
 ####################
-[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/* /
+[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ] && [ "$(ls -A /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/)" ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/* /
 [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ /opt/karoshi/linuxclientsetup/
 #Do skel (properly)
 if [ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz ]; then

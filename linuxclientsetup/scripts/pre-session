@@ -20,8 +20,13 @@ Categories=X-XFCE;X-Xfce-Toplevel;Karoshi;
 OnlyShowIn=XFCE;" | tee ~/Desktop/karoshi-"$filename".desktop > ~/.local/share/applications/karoshi-"$filename".desktop
 }
 
+######################
+#Extract configuration
+######################
+[ -f ~/network/home/.configuration.tar.gz ] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
+[ -f ~/network/home/.desktop-icons.tar.gz ] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
+
 [ ! -d ~/.local/share/applications ] && mkdir -p ~/.local/share/applications
-[ ! -d ~/.config/xfce4/xfconf/xfce-perchannel-xml ] && mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
 [ ! -d ~/Desktop ] && mkdir ~/Desktop
 
 ##################
@@ -214,19 +219,16 @@ fi
 
 #Set default directory for terminal emulator and file manager to network/home
 if [ -d ~/network/home ]; then
+	mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
 	cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
-	sed -i 's@exo-open --launch \(TerminalEmulator\|FileManager\)@exo-open --launch \1 --working-directory network/home@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+	sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory network/home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 	
 	cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
-	sed -i 's@exo-open --launch TerminalEmulator@exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
+	sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
 fi
 
 #Disable Firefox crash reporter
 export MOZ_CRASHREPORTER_DISABLE=1
-
-#Extract configuration
-[ -f ~/network/home/.configuration.tar.gz ] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
-[ -f ~/network/home/.desktop-icons.tar.gz ] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
 
 #Create rednotebook link
 [ ! -d ~/network/home/.rednotebook ] && mkdir ~/network/home/.rednotebook

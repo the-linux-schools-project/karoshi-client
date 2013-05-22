@@ -36,7 +36,7 @@ if which thunderbird >/dev/null && [ -d ~/.thunderbird ]; then
 	fi
 fi
 
-[[ "${list[@]}" ]] && tar -cz --one-file-system -C ~ -f ~/network/home/.configuration.tar.gz "${list[@]}"
+[[ "${list[@]}" ]] && tar -cz --one-file-system --exclude='karoshi-*.desktop' -C ~ -f ~/network/home/.configuration.tar.gz "${list[@]}"
 
 #####################
 #Backup desktop files
