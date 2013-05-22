@@ -49,13 +49,6 @@ sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 #Stop running this script on administrator login
 [ -f /opt/administrator/.config/autostart/karoshi-setup.desktop ] && rm -f /opt/administrator/.config/autostart/karoshi-setup.desktop
 
-#Set up xinitrc for {pre,post}-session
-sed -i 's@^\([[:space:]]*\)\(xfce4-session.*\)@\1\2\n\1/opt/karoshi/linuxclientsetup/scripts/post-session@' /etc/xdg/xfce4/xinitrc
-sed -i '2i/opt/karoshi/linuxclientsetup/scripts/pre-session' /etc/xdg/xfce4/xinitrc
-
-#Allow tech users to sudo
-[ -f /opt/karoshi/linuxclientsetup/flags/domainset ] && echo '%tech	ALL=(ALL:ALL) ALL' >> /etc/sudoers
-
 #Perform final restart
 shutdown -r now
 exit

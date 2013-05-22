@@ -526,9 +526,6 @@ echo \#Finalising network configuration >&11
 #Set NTP settings
 echo "server $PDC.$DNSSUFFIX" > /etc/ntp.conf
 
-#Give local groups to domain users
-echo "*;*;*;Al0000-2400;audio,cdrom,floppy,wireshark" > /etc/security/group.conf
-
 #Last few variables
 updateHostname
 

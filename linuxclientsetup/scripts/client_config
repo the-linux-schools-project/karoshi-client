@@ -85,8 +85,10 @@ rm -rf --one-file-system /home/*
 [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/* /
 [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ /opt/karoshi/linuxclientsetup/
 #Do skel (properly)
-[ -e /etc/skel ] && rm -rf /etc/skel
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz ] && tar -x -C /etc -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz
+if [ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz ]; then
+	[ -e /etc/skel ] && rm -rf /etc/skel
+	tar -x -C /etc -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz
+fi
 #/etc/skel should be readable by all, and directories should be 755
 chown -R root:root /etc/skel
 chmod -R +r /etc/skel
