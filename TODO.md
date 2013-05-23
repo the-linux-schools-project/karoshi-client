@@ -14,7 +14,6 @@ Urgent
 Planned Features
 ---------------
 
-- Replace all variables in scripts with lower case versions
 - Create hardware information upload script
 - Auto install on network
 
