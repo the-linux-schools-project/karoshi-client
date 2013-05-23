@@ -34,29 +34,29 @@ function isWired {
 
 function getClientSettings {
 	echo \#Asking for network settings >&11
-	while ! $CLIENTSETTINGS; do
-		#Create NETWORKINTLIST for use in combo box in yad
-		NETWORKINTLIST=$NETWORKINT
-		for i in "${NETWORKINTS[@]}"; do
+	while ! $client_settings; do
+		#Create network_int_list for use in combo box in yad
+		network_int_list=$NETWORKINT
+		for i in "${network_ints[@]}"; do
 			[ "$i" == "$NETWORKINT" ] && continue
-			NETWORKINTLIST="$NETWORKINTLIST!$i"
+			network_int_list="$network_int_list!$i"
 		done
 		#Get and set temporary network settings
 		understandableYad "--form --title 'Network Settings' --text 'IP Address, Netmask and Gateway are not required if DHCP is selected' --wrap \
 							--field='Client Name' --field='Network Interface':CB --field='IP Address' --field='Netmask' --field='Gateway' --field='DHCP':CHK \
 							--button='gtk-cancel:1' --button='gtk-ok:0' \
-							'$CLIENT_NAME' '$NETWORKINTLIST' '$IPADDR' '$NETMASK' '$GATEWAY' '$DHCP'"
+							'$CLIENT_NAME' '$network_int_list' '$IPADDR' '$NETMASK' '$GATEWAY' '$dhcp'"
 		CLIENT_NAME=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
 		NETWORKINT=`cut -d"|" -f2 <<< "$DATA" | sed 's/ //g'`
 		IPADDR=`cut -d"|" -f3 <<< "$DATA"`
 		NETMASK=`cut -d"|" -f4 <<< "$DATA"`
 		GATEWAY=`cut -d"|" -f5 <<< "$DATA"`
-		DHCP=`cut -d"|" -f6 <<< "$DATA" | tr '[:upper:]' '[:lower:]'`
+		dhcp=`cut -d"|" -f6 <<< "$DATA" | tr '[:upper:]' '[:lower:]'`
 		if [ -z "$CLIENT_NAME" ] || [ -z "$NETWORKINT" ]; then
 			info_alert "Error" "You must enter a client name and network interface"
 			continue
 		fi
-		if ! ( $DHCP || ( [[ $IPADDR =~ $IPREGEX ]] && [[ $NETMASK =~ $IPREGEX ]] && [[ $GATEWAY =~ $IPREGEX ]] ) ); then
+		if ! ( $dhcp || ( [[ $IPADDR =~ $IPREGEX ]] && [[ $NETMASK =~ $IPREGEX ]] && [[ $GATEWAY =~ $IPREGEX ]] ) ); then
 			info_alert "Error" "You must enter a valid IP address, netmask and gateway, or choose DHCP"
 			continue
 		fi
@@ -65,31 +65,31 @@ function getClientSettings {
 			understandableYad "--form --title 'Wireless Network Settings' --text 'Wireless interface detected' --wrap \
 								--field='SSID' --field='WPA2-PSK Key' \
 								--button='gtk-go-back:2' --button='gtk-cancel:1' --button='gtk-ok:0'
-								'$WIFISSID' '$WIFIKEY'"
+								'$wifi_ssid' '$wifi_key'"
 			if [ $? -ne 0 ]; then
 				continue
 			fi
-			WIFISSID=`cut -d"|" -f1 <<< "$DATA"`
-			WIFIKEY=`cut -d"|" -f2 <<< "$DATA"`
-			if [ -z "$WIFISSID" ] || [ -z "$WIFIKEY" ]; then
+			wifi_ssid=`cut -d"|" -f1 <<< "$DATA"`
+			wifi_key=`cut -d"|" -f2 <<< "$DATA"`
+			if [ -z "$wifi_ssid" ] || [ -z "$wifi_key" ]; then
 				info_alert "Error" "You must enter an SSID and key"
 				continue
 			fi
 		fi
 
-		CLIENTSETTINGS=true
+		client_settings=true
 	done
 }
 
 function writeNetworkSettings {
-	if $DHCP; then IPTYPE=dhcp; else IPTYPE=static; fi
+	if $dhcp; then ip_type=dhcp; else ip_type=static; fi
 	echo "auto lo
 iface lo inet loopback
 auto $NETWORKINT
-iface $NETWORKINT inet $IPTYPE" > /etc/network/interfaces
+iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 
 	#If static
-	if ! $DHCP; then
+	if ! $dhcp; then
 		echo "	address $IPADDR
 	netmask $NETMASK
 	gateway $GATEWAY" >> /etc/network/interfaces
@@ -97,8 +97,8 @@ iface $NETWORKINT inet $IPTYPE" > /etc/network/interfaces
 	
 	#If wireless
 	if isWireless $NETWORKINT; then
-		echo "	wpa-ssid $WIFISSID
-	wpa-psk $WIFIKEY" >> /etc/network/interfaces
+		echo "	wpa-ssid $wifi_ssid
+	wpa-psk $wifi_key" >> /etc/network/interfaces
 	fi
 }
 
@@ -107,7 +107,7 @@ function updateHostname {
 	echo "$CLIENT_NAME" > /etc/hostname
 	hostname "$CLIENT_NAME"
 	
-	if $DHCP; then
+	if $dhcp; then
 		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
 		if grep "^127\.0\.1\.1" /etc/hosts; then
 			sed -i "s/^127\.0\.1\.1.*/127.0.1.1	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME/" /etc/hosts
@@ -125,23 +125,23 @@ function updateHostname {
 ####################
 #Detect network interface(s)
 ####################
-NETWORKINTS=(`ifconfig -a | sed -n '/^[^[:blank:]]/s/^\(\w*\).*/\1/p' | grep -v ^lo\$`)
+network_ints=(`ifconfig -a | sed -n '/^[^[:blank:]]/s/^\(\w*\).*/\1/p' | grep -v ^lo\$`)
 
-for NETWORKINT in "${NETWORKINTS[@]}"; do
+for NETWORKINT in "${network_ints[@]}"; do
 	isWired $NETWORKINT && break
 done
 if laptop-detect; then
-	for WIFINETWORKINT in "${NETWORKINTS[@]}"; do
-		isWireless $WIFINETWORKINT && break
+	for wifi_network_int in "${network_ints[@]}"; do
+		isWireless $wifi_network_int && break
 	done
 fi
 
 ####################
 #Get network settings
 ####################
-PDCSET=false
-CLIENTSETTINGS=false
-DHCP=false
+pdc_set=false
+client_settings=false
+dhcp=false
 [ ! -d /tmp/netlogon ] && mkdir -p /tmp/netlogon
 
 #Attempt to guess SERVERIP by DHCP
@@ -159,10 +159,10 @@ echo \#Bringing up network interface >&11
 ifup $NETWORKINT
 echo 10 >&11
 # flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
-if [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ] && ! [ -f /opt/karoshi/linuxclientsetup/flags/forcesetpdc ]; then DHCP=true; fi
+if [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ] && ! [ -f /opt/karoshi/linuxclientsetup/flags/forcesetpdc ]; then dhcp=true; fi
 
 #Try until we have a PDC
-while ! $PDCSET; do
+while ! $pdc_set; do
 	rm -f /opt/karoshi/linuxclientsetup/flags/networkset
 	SERVERIP=
 	#We define exitfunc further down, so this just resets it
@@ -170,19 +170,19 @@ while ! $PDCSET; do
 		info_alert "Configuration" "Configuration cancelled"
 		exit $1
 	}
-	if $DHCP && [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]; then
+	if $dhcp && [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]; then
 	#If we have a DHCP lease
 		SERVERIP=`sed -n 's/.*option domain-name-servers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
 		NETMASK=`sed -n 's/.*option subnet-mask *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
 		GATEWAY=`sed -n 's/.*option routers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
-	elif $DHCP; then
+	elif $dhcp; then
 	#If we wanted a DHCP lease
-		info_alert "Error" "Did not get DHCP lease"
-		DHCP=false
+		info_alert "Error" "Did not get dhcp lease"
+		dhcp=false
 		continue
 	else
 	#If we didn't get a DHCP lease
-		CLIENTSETTINGS=false
+		client_settings=false
 		echo 5 >&11
 		echo \#Bringing down network interface >&11
 		ifdown $NETWORKINT
@@ -193,7 +193,7 @@ while ! $PDCSET; do
 		echo \#Bringing up network interface >&11
 		ifup $NETWORKINT
 		echo 5 >&11
-		if $DHCP; then
+		if $dhcp; then
 			#Continue to hit DHCP logic again
 			continue
 		fi
@@ -218,12 +218,12 @@ while ! $PDCSET; do
 	if [ "$SERVERIP" ]; then
 	#SERVERIP was set, so attempt to mount netlogon
 		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
-			PDCSET=true
+			pdc_set=true
 		else
-			PDCSET=false
+			pdc_set=false
 		fi
 	fi
-	if ! $PDCSET; then
+	if ! $pdc_set; then
 	#We still haven't connected to the PDC
 		understandableYad "--form --title 'Network Settings' \
 							--field='PDC IP Address' \
@@ -232,11 +232,11 @@ while ! $PDCSET; do
 		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
 		echo \#Attempting to mount netlogon >&11
 		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
-			PDCSET=true
+			pdc_set=true
 		else
 			info_alert "Error" "Invalid PDC"
-			PDCSET=false
-			DHCP=false
+			pdc_set=false
+			dhcp=false
 		fi
 	fi
 	#If we got to this point still having not connected to a PDC,
@@ -268,9 +268,9 @@ function getMac {
 	ifconfig $1 | sed -n 's/.*HWaddr \(..\):\(..\):\(..\):\(..\):\(..\):\(..\).*/\U\1\2\3\4\5\6/p'
 }
 #Try the WiFi interface first, since we may be a laptop
-TEMPNETWORKINT=$NETWORKINT
-if [ "$WIFINETWORKINT" ]; then
-	NETWORKINT=$WIFINETWORKINT
+temp_network_int=$NETWORKINT
+if [ "$wifi_network_int" ]; then
+	NETWORKINT=$wifi_network_int
 fi
 #Get mac address for the iface
 CLIENTMAC=`getMac $NETWORKINT`
@@ -280,8 +280,8 @@ function pullClientInformation {
 	read -r -d $'\0' CLIENT_NAME IPADDR LOCATION _ < /tmp/netlogon/clients/$CLIENTMAC
 	unset IFS
 
-	CLIENTSETTINGS=true
-	DHCP=false
+	client_settings=true
+	dhcp=false
 }
 
 if [ -f /tmp/netlogon/clients/$CLIENTMAC ]; then
@@ -289,7 +289,7 @@ if [ -f /tmp/netlogon/clients/$CLIENTMAC ]; then
 else
 #We may be here because the WiFi interface did not have a CLIENTMAC entry,
 # so go back to the first interface and try again
-	NETWORKINT=$TEMPNETWORKINT
+	NETWORKINT=$temp_network_int
 	CLIENTMAC=`getMac $NETWORKINT`
 	[ -f /tmp/netlogon/clients/$CLIENTMAC ] && pullClientInformation
 fi
@@ -316,17 +316,17 @@ function exitfunc {
 }
 #If NETWORKINT is a wireless interface, and don't already have wireless information,
 # get wireless information from server
-if isWireless $NETWORKINT && ( [ -z "$WIFISSID" ] || [ -z "$WIFIKEY" ] ); then
+if isWireless $NETWORKINT && ( [ -z "$wifi_ssid" ] || [ -z "$wifi_key" ] ); then
 	echo \#Checking wireless network settings >&11
-	WIFISSID=` < /tmp/netlogon/domain_information/wifi_ssid`
-	WIFIKEY=` < /tmp/netlogon/domain_information/wifi_key`
-	if [ -z "$WIFISSID" ] || [ -z "$WIFIKEY" ]; then
+	wifi_ssid=` < /tmp/netlogon/domain_information/wifi_ssid`
+	wifi_key=` < /tmp/netlogon/domain_information/wifi_key`
+	if [ -z "$wifi_ssid" ] || [ -z "$wifi_key" ]; then
 	#Couldn't find wireless information on server, but that's OK
 	# because we can just prompt the user for it
 		understandableYad "--form --title 'Wireless Network Settings' \
 							--field='SSID' --field='WPA2-PSK Key' \
 							--button='gtk-cancel:1' --button='gtk-ok:0'\
-							'$WIFISSID' '$WIFIKEY'"
+							'$wifi_ssid' '$wifi_key'"
 	fi
 	echo \#Setting network configuration >&11
 fi
@@ -380,35 +380,34 @@ echo \#Performing domain setup >&11
 
 if [ -f /tmp/netlogon/domain_information/samba4 ]; then
 	#Using a Samba4 domain
-	DNSDOMAIN=` < /tmp/netlogon/domain_information/dns_domain`
-	[ -z "$DNSDOMAIN" ] && exitfunc 1
-	DNSSUFFIX="$DNSDOMAIN"
+	DNSSUFFIX=` < /tmp/netlogon/domain_information/dns_domain`
+	[ -z "$DNSSUFFIX" ] && exitfunc 1
 	#Copy files and change variables
-	DNSDOMAINCAPS=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSDOMAIN"`
-	DOMAIN=`sed "s/^\([^.]*\).*/\1/" <<< "$DNSDOMAINCAPS"`
+	dns_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSSUFFIX"`
+	DOMAIN=`sed "s/^\([^.]*\).*/\1/" <<< "$dns_domain_caps"`
 	echo 55 >&11
 	echo \#Copying files >&11
 	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
 	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba4/* /
-	sed -i "s/CHANGETHISREALM/$DNSDOMAINCAPS/g" /etc/krb5.conf
-	sed -i "1idomain $DNSDOMAIN" /etc/resolv.conf
+	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
+	sed -i "1idomain $DNSSUFFIX" /etc/resolv.conf
 	
 	#Check if we are to use winbind instead of LDAP
 	if [ -f /tmp/netlogon/domain_information/samba4_winbind ]; then
 		echo 60 >&1
 		echo \#Configuring Samba >&11
 		DOMAINTYPE=samba4_winbind
-		SAMBADOMAIN=` < /tmp/netlogon/domain_information/domain_name`
-		[ -z "$SAMBADOMAIN" ] && exitfunc 1
-		SAMBADOMAINCAPS=`tr '[[:lower:]]' '[[:upper:]]' <<< "$SAMBADOMAIN"`
-		DOMAIN=$SAMBADOMAINCAPS
+		samba_domain=` < /tmp/netlogon/domain_information/domain_name`
+		[ -z "$samba_domain" ] && exitfunc 1
+		samba_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
+		DOMAIN=$samba_domain_caps
 		#Configure smb.conf
-		sed -i "s/CHANGETHISDOMAIN/$SAMBADOMAIN/g" /etc/samba/smb.conf
+		sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
 		sed -i "s/CHANGETHISSERVER/$PDC/g" /etc/samba/smb.conf
-		sed -i "s/CHANGETHISREALM/$DNSDOMAINCAPS/g" /etc/samba/smb.conf
+		sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/samba/smb.conf
 		
 		#Create folder for users
-		[ ! -d /home/$SAMBADOMAINCAPS ] && mkdir /home/$SAMBADOMAINCAPS
+		[ ! -d /home/$samba_domain_caps ] && mkdir /home/$samba_domain_caps
 		function exitfunc {
 			info_alert "Error" "Not joining domain - system may be in an inconsistent state"
 			umount /tmp/netlogon
@@ -417,15 +416,15 @@ if [ -f /tmp/netlogon/domain_information/samba4 ]; then
 		#Join domain
 		echo 70 >&11
 		echo \#Joining domain >&11
-		JOINSTATUS=1
-		while [ $JOINSTATUS -ne 0 ]; do
+		join_status=1
+		while [ $join_status -ne 0 ]; do
 			understandableYad "--form --title='Domain Access' --wrap \
 								--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
 								--button='gtk-cancel:1' --button='gtk-ok:0' "
-			DOMAINUSERNAME=`cut -d"|" -f1 <<< "$DATA"`
-			DOMAINPASSWORD=`cut -d"|" -f2 <<< "$DATA"`
-			net ads join -S $PDC -U $DOMAINUSERNAME%$DOMAINPASSWORD
-			JOINSTATUS=$?
+			domain_username=`cut -d"|" -f1 <<< "$DATA"`
+			domain_password=`cut -d"|" -f2 <<< "$DATA"`
+			net ads join -S $PDC -U $domain_username%$domain_password
+			join_status=$?
 		done
 		
 		echo 75 >&11
@@ -442,13 +441,13 @@ if [ -f /tmp/netlogon/domain_information/samba4 ]; then
 		service winbind restart
 	else
 		DOMAINTYPE=samba4
-		DOMAINSID=` < /tmp/netlogon/domain_information/domain_sid`
-		LDAPBASE=` < /tmp/netlogon/domain_information/ldap_base`
-		[ -z "$DOMAINSID" ] && exitfunc 1
+		domain_sid=` < /tmp/netlogon/domain_information/domain_sid`
+		ldap_base=` < /tmp/netlogon/domain_information/ldap_base`
+		[ -z "$domain_sid" ] && exitfunc 1
 		#Configure nslcd.conf
 		sed -i "s/CHANGETHISSERVER/$PDC.$DNSSUFFIX/g" /etc/nslcd.conf
-		sed -i "s/CHANGETHISSID/$DOMAINSID/g" /etc/nslcd.conf
-		sed -i "s/CHANGETHISLDAPBASE/$LDAPBASE/g" /etc/nslcd.conf
+		sed -i "s/CHANGETHISSID/$domain_sid/g" /etc/nslcd.conf
+		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/nslcd.conf
 		
 		echo 75 >&11
 		echo \#Finalising domain configuration >&11
@@ -467,11 +466,11 @@ if [ -f /tmp/netlogon/domain_information/samba4 ]; then
 	fi
 else
 	#Using a Samba3 domain
-	SAMBADOMAIN=` < /tmp/netlogon/domain_information/domain_name`
-	[ -z "$SAMBADOMAIN" ] && exitfunc 1
+	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
+	[ -z "$samba_domain" ] && exitfunc 1
 	#Copy files and change variables
-	SAMBADOMAINCAPS=`tr 'a-z' 'A-Z' <<< "$SAMBADOMAIN"`
-	DOMAIN=$SAMBADOMAINCAPS
+	samba_domain_caps=`tr 'a-z' 'A-Z' <<< "$samba_domain"`
+	DOMAIN=$samba_domain_caps
 	DOMAINTYPE=samba3
 	
 	echo 55 >&11
@@ -479,11 +478,11 @@ else
 	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
 	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba3/* /
 	#Configure smb.conf
-	sed -i "s/CHANGETHISDOMAIN/$SAMBADOMAIN/g" /etc/samba/smb.conf
+	sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISPDC/$PDC/g" /etc/samba/smb.conf
 	
 	#Create folder for users
-	[ ! -d /home/$SAMBADOMAINCAPS ] && mkdir /home/$SAMBADOMAINCAPS
+	[ ! -d /home/$samba_domain_caps ] && mkdir /home/$samba_domain_caps
 	function exitfunc {
 		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
 		umount /tmp/netlogon
@@ -492,15 +491,15 @@ else
 	#Join domain
 	echo 70 >&11
 	echo \#Joining domain >&11
-	JOINSTATUS=1
-	while [ $JOINSTATUS -ne 0 ]; do
+	join_status=1
+	while [ $join_status -ne 0 ]; do
 		understandableYad "--form --title='Domain Access' --wrap \
 							--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
 							--button='gtk-cancel:1' --button='gtk-ok:0' "
-		DOMAINUSERNAME=`cut -d"|" -f1 <<< "$DATA"`
-		DOMAINPASSWORD=`cut -d"|" -f2 <<< "$DATA"`
-		net rpc join -S $PDC -U $DOMAINUSERNAME%$DOMAINPASSWORD
-		JOINSTATUS=$?
+		domain_username=`cut -d"|" -f1 <<< "$DATA"`
+		domain_password=`cut -d"|" -f2 <<< "$DATA"`
+		net rpc join -S $PDC -U $domain_username%$domain_password
+		join_status=$?
 	done
 	
 	echo 75 >&11

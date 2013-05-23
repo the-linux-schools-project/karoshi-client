@@ -44,11 +44,11 @@ fi
 #######################
 #Choose room
 #######################
-SELECTION=` < /tmp/netlogon/locations.txt`
+selection=` < /tmp/netlogon/locations.txt`
 understandableYad "--wrap --entry --title 'Client Location' \
 					--button='Cancel:200' --button='Ok:0' \
 					--text 'Choose the location of this computer' \
-					$SELECTION"
+					$selection"
 LOCATION=$DATA
 
 #Completed message

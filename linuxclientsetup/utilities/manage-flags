@@ -17,27 +17,27 @@ function setFlag {
 }
 
 while true; do
-	COMMAND=(  )
-	COUNTER=0
+	command=(  )
+	counter=0
 	
-	# check flags and create COMMAND
+	# check flags and create command
 	for flag in "${flags[@]}"; do
 		checkFlag $flag
-		COMMAND+=( "--field=${flagsCanonical[$COUNTER]}:CHK" "${!flag}" )
-		(( ++COUNTER ))
+		command+=( "--field=${flagsCanonical[$counter]}:CHK" "${!flag}" )
+		(( ++counter ))
 	done
 
-	DATA=`yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 \
+	data=`yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 \
 	          --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
-	          --form "${COMMAND[@]}"`
-	YADSTATUS=$?
-	[ $YADSTATUS -eq 1 ] && exit
-	[ $YADSTATUS -eq 2 ] && continue
+	          --form "${command[@]}"`
+	yadstatus=$?
+	[ $yadstatus -eq 1 ] && exit
+	[ $yadstatus -eq 2 ] && continue
 	
 	# decypher DATA and set flags
-	COUNTER=1
+	counter=1
 	for flag in "${flags[@]}"; do
-		eval $flag=`cut -d"|" -f$COUNTER <<< "$DATA" | tr '[:upper:]' '[:lower:]'`
+		eval $flag=`cut -d"|" -f$counter <<< "$data" | tr '[:upper:]' '[:lower:]'`
 		setFlag $flag
 		(( ++COUNTER ))
 	done

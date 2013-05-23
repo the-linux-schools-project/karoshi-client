@@ -2,7 +2,7 @@
 
 #Common functions used in multiple scripts
 
-#IPREGEX
+#ipregex
 #	regex for use in matching IPs with bash regex
 #function exitfunc
 #	custom exiting function
@@ -21,7 +21,7 @@
 
 source /opt/karoshi/linuxclientsetup/variables
 
-IPREGEX='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+ipregex='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
 function info_alert {
 	yad --title="$1" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 --button="gtk-ok" --text="$2"
@@ -37,26 +37,26 @@ function exitfunc {
 }
 
 function persistantYad {
-	YADSTATUS=252
-	while [ $YADSTATUS -eq 252 ]; do
+	yad_status=252
+	while [ $yad_status -eq 252 ]; do
 		DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
-		YADSTATUS=$?
-		if [ $YADSTATUS -eq 1 ]; then
+		yad_status=$?
+		if [ $yad_status -eq 1 ]; then
 			exitfunc 1
 		fi
-		[ $YADSTATUS -eq 0 ] && break
+		[ $yad_status -eq 0 ] && break
 		info_alert "Warning" "You must complete the form"
 	done
-	return $YADSTATUS
+	return $yad_status
 }
 
 function understandableYad {
 	DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
-	YADSTATUS=$?
-	if [ $YADSTATUS -eq 252 ] || [ $YADSTATUS -eq 1 ]; then
+	yad_status=$?
+	if [ $yad_status -eq 252 ] || [ $yad_status -eq 1 ]; then
 		exitfunc 1
 	fi
-	return $YADSTATUS
+	return $yad_status
 }
 
 function updateVariables {
