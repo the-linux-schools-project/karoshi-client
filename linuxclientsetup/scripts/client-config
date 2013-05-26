@@ -132,6 +132,12 @@ echo "Copying other files"
 #Static ARPs
 [[ -f /tmp/netlogon/domain_information/static_arps ]] && arp -f /tmp/netlogon/domain_information/static_arps
 
+#Create GPG keyring for verifying server messages
+[ -e /opt/karoshi/keyring.gpg ] && rm -f /opt/karoshi/keyring.gpg
+if [ -f /tmp/netlogon/linuxclient/server-verify.key ]; then
+	gpg --batch --no-default-keyring --keyring /opt/karoshi/keyring.gpg --import /tmp/netlogon/linuxclient/server-verify.key
+fi
+
 #######################
 #Thunderbird extensions
 #######################

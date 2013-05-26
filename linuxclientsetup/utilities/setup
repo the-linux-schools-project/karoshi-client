@@ -49,8 +49,9 @@ chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,setup}.lo
 
 exec &>/var/log/karoshi/setup.log
 
-#Create symlink to Karoshi update log
+#Create symlink to Upstart logs
 ln -s /var/log/upstart/karoshi-update.log /var/log/karoshi/update.log
+ln -s /var/log/upstart/karoshi-multicast.log /var/log/karoshi/multicast.log
 
 #Allow root to connect to X even after hostname is changed (temporarily)
 xhost +si:localuser:root
@@ -66,6 +67,10 @@ fi
 if [[ -e /etc/init/karoshi-idle-shutdown.conf ]]; then
 	stop karoshi-idle-shutdown
 	rm -rf /etc/init/karoshi-idle-shutdown.conf
+fi
+if [[ -e /etc/init/karoshi-multicast.conf ]]; then
+	stop karoshi-multicast
+	rm -rf /etc/init/karoshi-multicast.conf
 fi
 
 is_reconfigure=false
@@ -138,8 +143,8 @@ fi
 ##################
 
 if karoshi-manage-flags get domainset; then
-	cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown}.conf /etc/init
-	chmod 644 /etc/init/karoshi-{update,idle-shutdown}.conf
+	cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown,multicast}.conf /etc/init
+	chmod 644 /etc/init/karoshi-{update,idle-shutdown,multicast}.conf
 	
 	[[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
 	cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi

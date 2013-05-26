@@ -31,8 +31,8 @@ if [[ ! -d $flagsDir ]]; then
 	fi
 fi
 
-flags=( networkset domainset passwordset nokaroshi forcesetpdc no_idle_shutdown )
-flagsCanonical=( "Network Set" "Domain Set" "Password Set" "No Karoshi" "Force Set PDC" "No Idle Shutdown" )
+flags=( networkset domainset passwordset nokaroshi forcesetpdc no_idle_shutdown no-multicast )
+flagsCanonical=( "Network Set" "Domain Set" "Password Set" "No Karoshi" "Force Set PDC" "No Idle Shutdown" "Disable Multicast Messages" )
 
 function checkFlag {
 	if [[ -f $flagsDir/$1 ]]; then eval $1=true; else eval $1=false; fi

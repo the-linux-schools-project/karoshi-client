@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#Copyright (C) 2013 Robin McCorkell
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/variables
+
+while true; do
+	#Listen for message of length up to 64KiB
+	data=$(perl -e '
+	use IO::Socket::Multicast;
+	my $s = IO::Socket::Multicast->new(LocalPort=>51000);
+	$s->mcast_add("239.0.11.1");
+	my $data;
+	$s->recv($data, 65536);
+	$s->mcast_drop("239.0.11.1");
+	print($data);')
+	
+	#Check integrity of message
+	gpg --batch --no-default-keyring --keyring /opt/karoshi/keyring.gpg --verify <<< "$data"
+	gpg_status=$?
+	
+	if [ $gpg_status -eq 0 ]; then
+		#Execute
+		echo Received authentic message, executing
+		command=$(sed -n '4,/^-----BEGIN PGP SIGNATURE-----$/ { /^-----BEGIN PGP SIGNATURE-----$/d; s/^- //; p; }' <<< "$data")
+		eval "$command"
+		echo Completed execution, returning to listening
+	else
+		echo Invalid signature - ignoring message
+	fi
+done
