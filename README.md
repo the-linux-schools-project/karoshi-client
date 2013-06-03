@@ -19,7 +19,6 @@ File list
 --------------
 
 - **CHECKLIST.md** is a short guide for creating a remaster
-- **TODO.md** is a list of items that need to be looked at
 - **README.md** is this file
 - **configuration/** contains the system configuration
 - **linuxclientsetup/** contains the main client-side scripts
