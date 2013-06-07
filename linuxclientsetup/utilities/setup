@@ -8,7 +8,9 @@ then
 	exit 
 fi
 
+##################
 #Logging
+##################
 [ ! -d /var/log/karoshi ] && mkdir -p /var/log/karoshi
 
 if [ -f /var/log/karoshi/setup.log ]; then
@@ -36,6 +38,9 @@ exec &>/var/log/karoshi/setup.log
 #Allow root to connect to X even after hostname is changed (temporarily)
 xhost +si:localuser:root
 
+##################
+#Configure system
+##################
 #Configure network
 if [ ! -f /opt/karoshi/linuxclientsetup/flags/networkset ] || ( [ ! -f /opt/karoshi/linuxclientsetup/flags/domainset ] && [ ! -f /opt/karoshi/linuxclientsetup/flags/nokaroshi ] ); then
 	/opt/karoshi/linuxclientsetup/utilities/set_network
@@ -44,12 +49,30 @@ fi
 #Change client password
 [ ! -f /opt/karoshi/linuxclientsetup/flags/passwordset ] && /opt/karoshi/linuxclientsetup/utilities/set_local_password
 
+#Configure Wireshark to allow non-root to capture packets
+if [[ -e /usr/bin/dumpcap ]]; then
+	groupadd --system wireshark
+	chown root:wireshark /usr/bin/dumpcap
+	if which setcap > /dev/null ; then
+		chmod u=rwx,g=rx,o=r /usr/bin/dumpcap
+		if ! setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap; then
+			echo "Setting capabilities for dumpcap using Linux Capabilities failed."
+			echo "Falling back to setting set-user-id bit."
+			chmod u=rwxs,g=rx,o=r /usr/bin/dumpcap
+		fi
+	else
+			chmod u=rwxs,g=rx,o=r /usr/bin/dumpcap
+	fi
+fi
+
+##################
+#Finish and restart
+##################
 #Stop Auto logon
 sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 #Stop running this script on administrator login
 [ -f /opt/administrator/.config/autostart/karoshi-setup.desktop ] && rm -f /opt/administrator/.config/autostart/karoshi-setup.desktop
 
-#Perform final restart
 shutdown -r now
 exit
 
