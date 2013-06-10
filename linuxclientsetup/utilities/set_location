@@ -30,7 +30,6 @@ if ! mount.cifs //$PDC.$DNSSUFFIX/netlogon /tmp/netlogon -o guest,nounix 1>/dev/
 fi
 
 function exitfunc {
-	info_alert "Configuration" "Configuration cancelled"
 	umount /tmp/netlogon
 	exit $1
 }
