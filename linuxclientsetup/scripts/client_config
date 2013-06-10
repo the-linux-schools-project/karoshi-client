@@ -264,7 +264,7 @@ if ! grep -Eq '^[^[:space:]]+[[:space:]]+/opt/virtualbox[[:space:]]' /etc/fstab;
 	#Detect any SATA or SCSI drives with no partitions
 	drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
 	if [[ $drive ]]; then
-		echo Detected candidate drive for /opt/virtualbox: $drive
+		echo "Detected candidate drive for /opt/virtualbox: $drive"
 		#Make GPT partition table and single logical partition
 		parted -s "$drive" -- mktable gpt
 		parted -s -a optimal "$drive" -- mkpart logical 0% 100%
