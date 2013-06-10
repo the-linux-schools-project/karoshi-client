@@ -24,7 +24,7 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 
 #Connect to netlogon
 [ ! -d /tmp/netlogon ] && mkdir /tmp/netlogon
-if ! mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix 1>/dev/null; then
+if ! mount.cifs //$PDC.$DNSSUFFIX/netlogon /tmp/netlogon -o guest,nounix 1>/dev/null; then
 	info_alert "Error" "Unable to contact PDC"
 	exitfunc 1
 fi
@@ -46,7 +46,7 @@ fi
 #######################
 selection=` < /tmp/netlogon/locations.txt`
 understandableYad "--wrap --entry --title 'Client Location' \
-					--button='Cancel:200' --button='Ok:0' \
+					--button='gtk-cancel:1' --button='gtk-ok:0' \
 					--text 'Choose the location of this computer' \
 					$selection"
 LOCATION=$DATA
@@ -54,4 +54,4 @@ LOCATION=$DATA
 #Completed message
 info_alert "Information" "`hostname` set to location $LOCATION"
 
-exit 0
+updateVariables

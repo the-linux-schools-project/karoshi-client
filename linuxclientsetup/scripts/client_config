@@ -25,7 +25,7 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 ####################
 #Refresh client information
 ####################
-unset LOCATION
+#unset LOCATION
 unset PRINTSERVER
 unset PROXYSERVER
 unset CLIENTSHUTDOWNTIME
