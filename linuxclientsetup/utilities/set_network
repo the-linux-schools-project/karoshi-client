@@ -392,19 +392,21 @@ if [ -f /tmp/netlogon/domain_information/samba4 ]; then
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
 	sed -i "1idomain $DNSSUFFIX" /etc/resolv.conf
 	
+	#Samba information required for ksmb, regardless of winbind or not
+	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
+	[ -z "$samba_domain" ] && exitfunc 1
+	samba_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
+	#Configure smb.conf
+	sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
+	sed -i "s/CHANGETHISSERVER/$PDC/g" /etc/samba/smb.conf
+	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/samba/smb.conf
+	
 	#Check if we are to use winbind instead of LDAP
 	if [ -f /tmp/netlogon/domain_information/samba4_winbind ]; then
 		echo 60 >&1
 		echo \#Configuring Samba >&11
 		DOMAINTYPE=samba4_winbind
-		samba_domain=` < /tmp/netlogon/domain_information/domain_name`
-		[ -z "$samba_domain" ] && exitfunc 1
-		samba_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
 		DOMAIN=$samba_domain_caps
-		#Configure smb.conf
-		sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
-		sed -i "s/CHANGETHISSERVER/$PDC/g" /etc/samba/smb.conf
-		sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/samba/smb.conf
 		
 		#Create folder for users
 		[ ! -d /home/$samba_domain_caps ] && mkdir /home/$samba_domain_caps
