@@ -2,7 +2,3 @@ WebBrowser=firefox
 MailReader=thunderbird
 FileManager=Thunar
 TerminalEmulator=Terminal
-OfficeSuite=libreoffice
-ImageEditor=gimp
-Calculator=gcalctool
-TextEditor=gedit

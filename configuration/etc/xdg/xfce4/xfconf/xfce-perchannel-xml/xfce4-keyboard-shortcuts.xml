@@ -23,11 +23,11 @@
       <property name="&lt;Super&gt;f" type="string" value="exo-open --launch FileManager"/>
       <property name="&lt;Super&gt;t" type="string" value="exo-open --launch TerminalEmulator"/>
       <property name="&lt;Super&gt;v" type="string" value="virtualbox"/>
-      <property name="&lt;Super&gt;o" type="string" value="exo-open --launch OfficeSuite"/>
-      <property name="&lt;Super&gt;g" type="string" value="exo-open --launch ImageEditor"/>
-      <property name="&lt;Super&gt;c" type="string" value="exo-open --launch Calculator"/>
+      <property name="&lt;Super&gt;o" type="string" value="libreoffice"/>
+      <property name="&lt;Super&gt;g" type="string" value="gimp"/>
+      <property name="&lt;Super&gt;c" type="string" value="gcalctool"/>
       <property name="&lt;Super&gt;r" type="string" value="xfce4-appfinder"/>
-      <property name="&lt;Super&gt;e" type="string" value="exo-open --launch TextEditor"/>
+      <property name="&lt;Super&gt;e" type="string" value="gedit"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">
