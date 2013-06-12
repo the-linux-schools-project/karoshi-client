@@ -43,5 +43,5 @@ counter=1
 for flag in "${flags[@]}"; do
 	eval $flag=`cut -d"|" -f$counter <<< "$data" | tr '[:upper:]' '[:lower:]'`
 	setFlag $flag
-	(( ++COUNTER ))
+	(( ++counter ))
 done
