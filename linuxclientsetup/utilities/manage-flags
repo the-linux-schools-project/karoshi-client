@@ -16,7 +16,9 @@ function setFlag {
 	fi
 }
 
-while true; do
+running=true
+
+while $running; do
 	command=(  )
 	counter=0
 	
@@ -31,17 +33,15 @@ while true; do
 	          --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
 	          --form "${command[@]}"`
 	yadstatus=$?
+	
 	[ $yadstatus -eq 1 ] && exit
-	[ $yadstatus -eq 2 ] && continue
-	
-	# decypher DATA and set flags
-	counter=1
-	for flag in "${flags[@]}"; do
-		eval $flag=`cut -d"|" -f$counter <<< "$data" | tr '[:upper:]' '[:lower:]'`
-		setFlag $flag
-		(( ++COUNTER ))
-	done
-	
-	# break out of the while loop
-	break
+	[ $yadstatus -ne 2 ] && running=false
+done
+
+# decypher DATA and set flags
+counter=1
+for flag in "${flags[@]}"; do
+	eval $flag=`cut -d"|" -f$counter <<< "$data" | tr '[:upper:]' '[:lower:]'`
+	setFlag $flag
+	(( ++COUNTER ))
 done
