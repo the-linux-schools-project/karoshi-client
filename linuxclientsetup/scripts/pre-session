@@ -182,15 +182,12 @@ fi
 #Create icons
 ##################
 mountpoints=false
-> ~/.gtk-bookmarks
 
 #Create home icon first so that it appears first on the desktop
 mountpath=`mount | grep "$USER/network/home type cifs" | cut -d' ' -f3`
 if [ "$mountpath" ]; then
 	mountname=`basename $mountpath`
 	create_entries "$mountname" "$mountpath" folder-home
-	#Thunar
-	echo "file://$mountpath $mountname" >> ~/.gtk-bookmarks
 	mountpoints=true
 fi
 
@@ -199,8 +196,6 @@ for mountpath in `mount | grep "$USER/network/[^[:blank:]]* type cifs" | cut -d'
 	mountname=`basename $mountpath`
 	if [ $mountname != home ] && [ $mountname != netlogon ]; then
 		create_entries "$mountname" "$mountpath" folder-publicshare
-		#Thunar
-		echo "file://$mountpath $mountname" >> ~/.gtk-bookmarks
 		mountpoints=true
 	fi
 done
