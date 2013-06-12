@@ -242,8 +242,10 @@ fi
 export MOZ_CRASHREPORTER_DISABLE=1
 
 #Create rednotebook link
-[ ! -d ~/network/home/.rednotebook ] && mkdir ~/network/home/.rednotebook
-[ ! -d ~/.rednotebook ] && ln -s network/home/.rednotebook ~/.rednotebook
+if [ -d ~/network/home ]; then
+	[ ! -d ~/network/home/.rednotebook ] && mkdir ~/network/home/.rednotebook
+	[ ! -d ~/.rednotebook ] && ln -s network/home/.rednotebook ~/.rednotebook
+fi
 
 #Set permissions on icons
 chmod 0700 ~/Desktop/*.desktop
