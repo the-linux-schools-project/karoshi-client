@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<channel name="xsettings" version="1.0" unlocked="@tech">
+<channel name="xsettings" version="1.0" unlocked="@tech;@sudo;root">
   <property name="Net" type="empty">
     <property name="ThemeName" type="string" value="Clearlooks"/>
     <property name="IconThemeName" type="string" value="elementary-xfce"/>
