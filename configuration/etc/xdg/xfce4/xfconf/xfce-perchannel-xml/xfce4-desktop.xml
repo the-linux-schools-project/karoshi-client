@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<channel name="xfce4-desktop" version="1.0" unlocked="@tech">
+<channel name="xfce4-desktop" version="1.0" unlocked="@tech;@sudo;root">
   <property name="desktop-icons" type="empty">
     <property name="style" type="int" value="2"/>
     <property name="file-icons" type="empty">
