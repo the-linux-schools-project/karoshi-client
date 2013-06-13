@@ -95,6 +95,8 @@
         <value type="string" value="-logout"/>
         <value type="string" value="+logout-dialog"/>
       </property>
+      <property name="appearance" type="uint" value="1"/>
+      <property name="invert-orientation" type="bool" value="false"/>
     </property>
     <property name="plugin-2" type="string" value="tasklist">
       <property name="flat-buttons" type="bool" value="false"/>
