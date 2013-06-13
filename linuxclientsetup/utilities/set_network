@@ -525,7 +525,7 @@ echo 80 >&11
 echo \#Finalising network configuration >&11
 
 #Set NTP settings
-echo "server $PDC.$DNSSUFFIX" > /etc/ntp.conf
+sed -i "s/### KAROSHI HOOK ###/server $PDC.$DNSSUFFIX/" /etc/ntp.conf
 
 #Last few variables
 updateHostname
