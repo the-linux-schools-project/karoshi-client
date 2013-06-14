@@ -162,4 +162,5 @@ These packages should be **removed** to save disk space or remove conflicts
 - linux-image-generic
 - linux-headers-generic
 - network-manager
+- resolvconf
 
