@@ -42,12 +42,12 @@ xhost +si:localuser:root
 #Configure system
 ##################
 #Configure network
-if [ ! -f /opt/karoshi/linuxclientsetup/flags/networkset ] || ( [ ! -f /opt/karoshi/linuxclientsetup/flags/domainset ] && [ ! -f /opt/karoshi/linuxclientsetup/flags/nokaroshi ] ); then
+if ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get networkset || ( ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get domainset && ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get nokaroshi ); then
 	/opt/karoshi/linuxclientsetup/utilities/set_network
 fi
 
 #Change client password
-[ ! -f /opt/karoshi/linuxclientsetup/flags/passwordset ] && /opt/karoshi/linuxclientsetup/utilities/set_local_password
+/opt/karoshi/linuxclientsetup/utilities/manage-flags get passwordset || /opt/karoshi/linuxclientsetup/utilities/set_local_password
 
 #Configure Wireshark to allow non-root to capture packets
 if [[ -e /usr/bin/dumpcap ]]; then
