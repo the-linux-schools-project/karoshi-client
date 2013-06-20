@@ -113,8 +113,8 @@ find /etc/skel -type d -print0 | xargs -0 chmod 755
 ##########################
 #Update the upstart scripts
 ##########################
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf /opt/karoshi/linuxclientsetup/utilities/
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf /opt/karoshi/linuxclientsetup/utilities/
+[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf /etc/init
+[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf /etc/init
 
 ###########################
 #Create cronjob to shut computer down

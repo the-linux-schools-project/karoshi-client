@@ -66,6 +66,14 @@ if [[ -e /usr/bin/dumpcap ]]; then
 fi
 
 ##################
+#Install upstart scripts
+##################
+[ -e /etc/init/karoshi-update.conf ] && rm -rf /etc/init/karoshi-update.conf
+[ -e /etc/init/karoshi-idle-shutdown.conf ] && rm -rf /etc/init/karoshi-idle-shutdown.conf
+cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-update.conf /etc/init
+cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+
+##################
 #Finish and restart
 ##################
 #Stop Auto logon
