@@ -121,8 +121,8 @@ find /etc/skel -type d -print0 | xargs -0 chmod 755
 ###########################
 if [ "$CLIENTSHUTDOWNTIME" ]; then
 	echo Setting auto shutdown time at $CLIENTSHUTDOWNTIME
-	hours=`cut -d: -f1 <<< "$SHUTDOWNTIME"`
-	minutes=`cut -d: -f2 <<< "$SHUTDOWNTIME"`
+	hours=`cut -d: -f1 <<< "$CLIENTSHUTDOWNTIME"`
+	minutes=`cut -d: -f2 <<< "$CLIENTSHUTDOWNTIME"`
 
 	if [ "$hours" ] && [ "$minutes" ]
 	then
