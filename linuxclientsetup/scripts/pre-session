@@ -1,6 +1,10 @@
 #!/bin/bash
 
-source /opt/karoshi/linuxclientsetup/variables
+if [ -f /opt/karoshi/variables ]; then
+	source /opt/karoshi/variables
+else
+	source /opt/karoshi/linuxclientsetup/variables
+fi
 
 #function create_entries
 #	$1 is mount name
