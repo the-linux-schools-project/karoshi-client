@@ -41,6 +41,9 @@ xhost +si:localuser:root
 ##################
 #Configure system
 ##################
+#Create flag directory
+mkdir -p /opt/karoshi/flags
+
 #Configure network
 if ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get networkset || ( ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get domainset && ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get nokaroshi ); then
 	/opt/karoshi/linuxclientsetup/utilities/set_network

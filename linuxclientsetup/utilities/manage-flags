@@ -1,6 +1,6 @@
 #!/bin/bash
 
-flagsDir="/opt/karoshi/linuxclientsetup/flags"
+flagsDir="/opt/karoshi/flags"
 
 if [[ ! -d $flagsDir ]]; then
 	echo "Warning: flagsDir $flagsDir did not exist" >&2
