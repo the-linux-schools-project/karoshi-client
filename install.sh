@@ -113,11 +113,14 @@ apt-get -qy install xfce4 indicator-application-gtk2 indicator-sound-gtk2 indica
     musescore pavucontrol qsynth fluid-soundfont-gm lmms yoshimi lame stopmotion gtk-recordmydesktop openshot vlc codeblocks eclipse glade greenfoot netbeans \
     g++ libboost1.48-all-dev libglew1.6-dev libsfml-dev libgmp-dev libmpfr-dev libncurses5-dev default-jdk liblwjgl-java cifs-utils libpam-mount krb5-user \
     libpam-krb5 libpam-winbind nslcd ntp bleachbit xautolock remastersys-gui yad winbind ubiquity-casper linux-lowlatency gnupg language-pack-en ldap-utils \
-    synaptic
+    synaptic rubygems
 
 #Remove packages
 echo "Removing packages..."
 apt-get -qy purge unity avahi-daemon ntpdate mousepad nautilus linux-image-generic linux-headers-generic network-manager
+
+#Install git-up
+gem install git-up
 
 #Copy in new configuration (overwrite)
 echo "Installing configuration..."

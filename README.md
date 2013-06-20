@@ -149,6 +149,8 @@ These packages need to be installed on the client prior to a remaster
 - language-pack-en
 - ldap-utils
 - synaptic
+- rubygems
+- -> git-up
 
 ## Packages to remove
 
