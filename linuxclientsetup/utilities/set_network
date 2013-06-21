@@ -259,7 +259,7 @@ function exitfunc {
 	exit $1
 }
 
-echo $SERVERIP > /opt/karoshi/linuxclientsetup/serverip
+echo $SERVERIP > /opt/karoshi/serverip
 
 ####################
 #Pull down server information
