@@ -159,11 +159,11 @@ echo \#Bringing up network interface >&11
 ifup $NETWORKINT
 echo 10 >&11
 # flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
-if [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ] && ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get forcesetpdc; then dhcp=true; fi
+if [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ] && ! karoshi-manage-flags get forcesetpdc; then dhcp=true; fi
 
 #Try until we have a PDC
 while ! $pdc_set; do
-	/opt/karoshi/linuxclientsetup/utilities/manage-flags unset networkset
+	karoshi-manage-flags unset networkset
 	SERVERIP=
 	#We define exitfunc further down, so this just resets it
 	function exitfunc {
@@ -207,12 +207,12 @@ while ! $pdc_set; do
 	updateHostname
 	
 	#At this point a network has been configured, so the flag is set
-	/opt/karoshi/linuxclientsetup/utilities/manage-flags set networkset
+	karoshi-manage-flags set networkset
 
 	#exitfunc if the user cancelled selecting a PDC
 	function exitfunc {
 		info_alert "Network Settings" "Not configuring for Karoshi Server"
-		/opt/karoshi/linuxclientsetup/utilities/manage-flags set nokaroshi
+		karoshi-manage-flags set nokaroshi
 		exit $1
 	}
 	if [ "$SERVERIP" ]; then
@@ -250,7 +250,7 @@ echo \#Setting network configuration >&11
 #At this point it is assumed that a PDC can be contacted
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-/opt/karoshi/linuxclientsetup/utilities/manage-flags unset nokaroshi
+karoshi-manage-flags unset nokaroshi
 
 #exitfunc to unmount the share, and exit
 function exitfunc {
@@ -341,7 +341,7 @@ echo \#Setting network configuration >&11
 
 #Automation steps
 if [ -f /tmp/netlogon/domain_information/lockadministrator ]; then
-	/opt/karoshi/linuxclientsetup/utilities/manage-flags set passwordset
+	karoshi-manage-flags set passwordset
 	passwd -l administrator
 	passwd -l root
 fi
@@ -361,7 +361,7 @@ echo 50 >&11
 
 echo "nameserver $SERVERIP" > /etc/resolv.conf
 
-/opt/karoshi/linuxclientsetup/utilities/manage-flags set networkset
+karoshi-manage-flags set networkset
 
 #############
 #Domain setup
@@ -542,7 +542,7 @@ echo \#Restarting network interface >&11
 ifdown $NETWORKINT
 ifup $NETWORKINT
 
-/opt/karoshi/linuxclientsetup/utilities/manage-flags set domainset
+karoshi-manage-flags set domainset
 echo 100 >&11
 
 #Write new variables to file

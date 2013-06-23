@@ -45,12 +45,14 @@ xhost +si:localuser:root
 mkdir -p /opt/karoshi/flags
 
 #Configure network
-if ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get networkset || ( ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get domainset && ! /opt/karoshi/linuxclientsetup/utilities/manage-flags get nokaroshi ); then
-	/opt/karoshi/linuxclientsetup/utilities/set_network
+if ! karoshi-manage-flags get networkset || ( ! karoshi-manage-flags get domainset && ! karoshi-manage-flags get nokaroshi ); then
+	karoshi-set-network
 fi
 
 #Change client password
-/opt/karoshi/linuxclientsetup/utilities/manage-flags get passwordset || /opt/karoshi/linuxclientsetup/utilities/set_local_password
+if ! karoshi-manage-flags get passwordset; then
+	karoshi-set-local-password
+fi
 
 #Configure Wireshark to allow non-root to capture packets
 if [[ -e /usr/bin/dumpcap ]]; then
