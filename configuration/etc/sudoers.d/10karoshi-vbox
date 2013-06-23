@@ -1,1 +1,1 @@
-ALL ALL=(root)NOPASSWD:/usr/local/bin/virtualbox
+ALL ALL=(root)NOPASSWD:/usr/bin/karoshi-virtualbox-mkdir

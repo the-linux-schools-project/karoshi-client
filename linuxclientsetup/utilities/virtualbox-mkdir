@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+	echo "ERROR: Must be run as root!" >&2
+	exit 1
+fi
+if [ ! "$SUDO_USER" ]; then
+	echo "ERROR: Must be run under sudo!" >&2
+	exit 1
+fi
+
+virtualbox_path="/opt/virtualbox"
+user_home=$(getent passwd "$SUDO_USER" | cut -d":" -f6)
+
+if [ ! -d "$virtualbox_path" ]; then
+	mkdir -p "$virtualbox_path" -m 0755
+fi
+if [ ! -d "$virtualbox_path"/isos ]; then
+	mkdir "$virtualbox_path"/isos -m 1777
+fi
+if [ ! -d "$virtualbox_path"/users ]; then
+	mkdir "$virutalbox_path"/users -m 0755
+fi
+
+function make_virtualbox_dir {
+	mkdir "$virtualbox_path"/users/"$SUDO_USER" -m 0700
+	chown $SUDO_UID:$SUDO_GID "$virtualbox_path"/users/"$SUDO_USER"
+}
+
+if [ ! -d "$virtualbox_path"/users/"$SUDO_USER" ]; then
+	make_virtualbox_dir
+fi
+
+if [[ $(stat -c %U "$virtualbox_path"/users/"$SUDO_USER") != $SUDO_USER ]]; then
+	[ -e "$virtualbox_path"/users/"$SUDO_USER".old ] && rm -rf "$virtualbox_path"/users/"$SUDO_USER".old
+	mv "$virtualbox_path"/users/"$SUDO_USER" "$virtualbox_path"/users/"$SUDO_USER".old
+	make_virtualbox_dir
+fi
+
+echo "$virtualbox_path"/users/"$SUDO_USER"
