@@ -164,3 +164,12 @@ These packages should be **removed** to save disk space or remove conflicts
 - network-manager
 - resolvconf
 
+## Symlinks
+
+Some Karoshi utilities need to be symlinked into /usr/bin from their /opt/karoshi/linuxclientsetup/utilities location, to allow desktop icons to correctly reference them and be used system-wide:
+
+- /opt/karoshi/linuxclientsetup/utilities/set_local_password -> /usr/bin/karoshi-set-local-password
+- /opt/karoshi/linuxclientsetup/utilities/set_location -> /usr/bin/karoshi-set-location
+- /opt/karoshi/linuxclientsetup/utilities/set_network -> /usr/bin/karoshi-set-network
+- /opt/karoshi/linuxclientsetup/utilities/setup -> /usr/bin/karoshi-setup
+- /opt/karoshi/linuxclientsetup/utilities/manage-flags -> /usr/bin/karoshi-manage-flags

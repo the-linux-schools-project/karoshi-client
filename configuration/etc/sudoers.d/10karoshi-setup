@@ -1,1 +1,1 @@
-administrator ALL=(ALL:ALL)NOPASSWD:/opt/karoshi/linuxclientsetup/utilities/setup
+administrator ALL=(ALL:ALL)NOPASSWD:/usr/bin/karoshi-setup
