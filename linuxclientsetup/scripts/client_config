@@ -136,11 +136,6 @@ $minutes $hours * * * /opt/karoshi/scripts/clientshutdown" | crontab -
 fi
 
 ###########################
-#Kill Procs
-###########################
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/killprocscron.cron ] && crontab /tmp/netlogon/linuxclient/$LINUX_VERSION/killprocscron.cron
-
-###########################
 #Update acceptable_use
 ###########################
 [ -f /tmp/netlogon/linuxclient/acceptable_use.txt ] && cp -f /tmp/netlogon/linuxclient/acceptable_use.txt /opt/karoshi/
