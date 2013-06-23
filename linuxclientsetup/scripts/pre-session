@@ -247,10 +247,5 @@ if [ -d ~/network/home ]; then
 	[ ! -d ~/.rednotebook ] && ln -s network/home/.rednotebook ~/.rednotebook
 fi
 
-#Create VirtualBox folder on /opt and link
-virtualbox_path=$(sudo karoshi-virtualbox-mkdir)
-[[ -e $HOME/.VirtualBox ]] || ln -sf "$virtualbox_path" "$HOME"/.VirtualBox
-[[ -e $HOME/"VirtualBox VMs" ]] || ln -sf "$virtualbox_path" "$HOME"/"VirtualBox VMs"
-
 #Set permissions on icons
 find ~/Desktop -name '*.desktop' -print0 | xargs -0 chmod 0700

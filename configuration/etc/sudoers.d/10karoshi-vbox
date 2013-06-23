@@ -1,1 +1,0 @@
-ALL ALL=(root)NOPASSWD:/usr/bin/karoshi-virtualbox-mkdir

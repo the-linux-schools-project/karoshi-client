@@ -1,0 +1,6 @@
+Name: Create VirtualBox folder in separate location
+Default: yes
+Priority: 1024
+Session-Type: Additional
+Session:
+	optional	pam_exec.so log=/var/log/karoshi/virtualbox-mkdir.log karoshi-virtualbox-mkdir
