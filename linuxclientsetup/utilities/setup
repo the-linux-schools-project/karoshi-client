@@ -14,26 +14,15 @@ fi
 [ ! -d /var/log/karoshi ] && mkdir -p /var/log/karoshi
 
 if [ -f /var/log/karoshi/setup.log ]; then
-	i=1
-	while [ -e /var/log/karoshi/setup.log.$i.gz ]; do
-		if [ $i -gt 3 ]; then
-			rm -f /var/log/karoshi/setup.log.$i.gz
-			break
-		fi
-		(( ++i ))
-	done
-	(( --i ))
-	while [ $i -gt 0 ]; do
-		mv /var/log/karoshi/setup.log.$i.gz /var/log/karoshi/setup.log.$(( i-- + 1 )).gz
-	done
-	chmod 400 /var/log/karoshi/setup.log
-	mv /var/log/karoshi/setup.log /var/log/karoshi/setup.log.1
-	gzip /var/log/karoshi/setup.log.1
+	rm -rf /var/log/karoshi/setup.log
 fi
 
 touch /var/log/karoshi/setup.log
 chmod 600 /var/log/karoshi/setup.log
 exec &>/var/log/karoshi/setup.log
+
+#Create symlink to Karoshi update log
+ln -s /var/log/upstart/karoshi-update.log /var/log/karoshi/update.log
 
 #Allow root to connect to X even after hostname is changed (temporarily)
 xhost +si:localuser:root
