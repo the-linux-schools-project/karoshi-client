@@ -75,7 +75,7 @@ if [[ $drop_priv ]]; then
 		echo "ERROR: Attempted to drop privilages to a non-existent user" >&2
 		exit 1
 	fi
-	sudo -E -n -u "$PAM_USER" "$command"
+	sudo -E -H -n -u "$PAM_USER" "$command"
 else
 	"$command"
 fi
