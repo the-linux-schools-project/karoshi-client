@@ -166,12 +166,12 @@ These packages should be **removed** to save disk space or remove conflicts
 
 ## Symlinks
 
-Some Karoshi utilities need to be symlinked into /usr/bin from their /opt/karoshi/linuxclientsetup/utilities location, to allow desktop icons to correctly reference them and be used system-wide:
+Some Karoshi utilities need to be symlinked to karoshi-run-script in /usr/bin so that they can be run using the PATH variable:
 
-- /opt/karoshi/linuxclientsetup/utilities/set_local_password -> /usr/bin/karoshi-set-local-password
-- /opt/karoshi/linuxclientsetup/utilities/set_location -> /usr/bin/karoshi-set-location
-- /opt/karoshi/linuxclientsetup/utilities/set_network -> /usr/bin/karoshi-set-network
-- /opt/karoshi/linuxclientsetup/utilities/setup -> /usr/bin/karoshi-setup
-- /opt/karoshi/linuxclientsetup/utilities/manage-flags -> /usr/bin/karoshi-manage-flags
-- /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir -> /usr/bin/karoshi-virtualbox-mkdir
-- /opt/karoshi/linuxclientsetup/utilities/pam-wrapper -> /usr/bin/karoshi-pam-wrapper
+- ln -s karoshi-run-script /usr/bin/karoshi-set_local_password
+- ln -s karoshi-run-script /usr/bin/karoshi-set_location
+- ln -s karoshi-run-script /usr/bin/karoshi-set_network
+- ln -s karoshi-run-script /usr/bin/karoshi-setup
+- ln -s karoshi-run-script /usr/bin/karoshi-manage-flags
+- ln -s karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir
+- ln -s karoshi-run-script /usr/bin/karoshi-pam-wrapper
