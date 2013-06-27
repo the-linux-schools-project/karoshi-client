@@ -83,7 +83,11 @@ find /home -mindepth 1 -xdev -delete
 #Copy configuration
 ####################
 [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ] && find /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /
-[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ] && find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin_skel
+if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]; then
+	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+elif [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]
+	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+fi
 #Do skel (properly)
 if [ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz ]; then
 	[ -e /etc/skel ] && rm -rf /etc/skel
@@ -97,7 +101,7 @@ find /etc/skel -type d -print0 | xargs -0 chmod 755
 #Version agnostic configuration
 #Background images
 [ -f /tmp/netlogon/linuxclient/background.png ] && cp -f /tmp/netlogon/linuxclient/background.png /opt/karoshi/images/
-[ -f /tmp/netlogon/linuxclient/login_background.png ] && cp -f /tmp/netlogon/linuxclient/login_background.png /opt/karoshi/images/
+[ -f /tmp/netlogon/linuxclient/login-background.png ] && cp -f /tmp/netlogon/linuxclient/login-background.png /opt/karoshi/images/
 
 #Clipboard sites for later on
 [ -f /opt/karoshi/allow_clipboard_sites ] && rm -f /opt/karoshi/allow_clipboard_sites
@@ -131,7 +135,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=\"\"
 HOME=/
 
-$minutes $hours * * * /opt/karoshi/scripts/clientshutdown" | crontab -
+$minutes $hours * * * /opt/karoshi/scripts/client-shutdown" | crontab -
 	fi
 fi
 

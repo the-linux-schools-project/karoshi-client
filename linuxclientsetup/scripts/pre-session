@@ -223,9 +223,9 @@ pri_group=`id -g -n`
 ##################
 #Miscellaneous things
 ##################
-#Copy in admin_skel
-if [ $pri_group == itadmin -o $pri_group == tech ] && [ -d /opt/karoshi/admin_skel ]; then
-	find /opt/karoshi/admin_skel -mindepth 1 -print0 | xargs -0 cp -rf -t ~
+#Copy in admin-skel
+if [ $pri_group == itadmin -o $pri_group == tech ] && [ -d /opt/karoshi/admin-skel ]; then
+	find /opt/karoshi/admin-skel -mindepth 1 -print0 | xargs -0 cp -rf -t ~
 fi
 
 #Set default directory for terminal emulator and file manager to network/home

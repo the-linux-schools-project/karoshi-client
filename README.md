@@ -168,9 +168,9 @@ These packages should be **removed** to save disk space or remove conflicts
 
 Some Karoshi utilities need to be symlinked to karoshi-run-script in /usr/bin so that they can be run using the PATH variable:
 
-- ln -s karoshi-run-script /usr/bin/karoshi-set_local_password
-- ln -s karoshi-run-script /usr/bin/karoshi-set_location
-- ln -s karoshi-run-script /usr/bin/karoshi-set_network
+- ln -s karoshi-run-script /usr/bin/karoshi-set-local-password
+- ln -s karoshi-run-script /usr/bin/karoshi-set-location
+- ln -s karoshi-run-script /usr/bin/karoshi-set-network
 - ln -s karoshi-run-script /usr/bin/karoshi-setup
 - ln -s karoshi-run-script /usr/bin/karoshi-manage-flags
 - ln -s karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir

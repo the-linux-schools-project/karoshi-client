@@ -71,15 +71,15 @@ chmod 644 /etc/init/karoshi-{update,idle-shutdown}.conf
 cp -f /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
 find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -0 chmod 755
 
-[ -e /opt/karoshi/admin_skel ] && rm -rf /opt/karoshi/admin_skel
-cp -f /opt/karoshi/linuxclientsetup/admin_skel /opt/karoshi
+[ -e /opt/karoshi/admin-skel ] && rm -rf /opt/karoshi/admin-skel
+cp -f /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
 
 [ -e /opt/karoshi/images ] && rm -rf /opt/karoshi/images
 mkdir -p /opt/karoshi/images
-cp -f /opt/karoshi/linuxclientsetup/images/{,login_}background.png /opt/karoshi/images
+cp -f /opt/karoshi/linuxclientsetup/images/{,login-}background.png /opt/karoshi/images
 
 #Configure LightDM to use new background location
-sed -i "s@^Background=.*@Background=/opt/karoshi/images/login_background.png@" /etc/lightdm/lightdm-kde-greeter.conf
+sed -i "s@^Background=.*@Background=/opt/karoshi/images/login-background.png@" /etc/lightdm/lightdm-kde-greeter.conf
 #Configure XFCE to use new background location
 sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 

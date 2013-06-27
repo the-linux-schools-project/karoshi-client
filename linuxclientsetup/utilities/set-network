@@ -368,7 +368,7 @@ karoshi-manage-flags set networkset
 #############
 DNSSUFFIX="internal"
 #Get nsswitch functions
-source /opt/karoshi/linuxclientsetup/utilities/nsswitch_funcs
+source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
 
 function exitfunc {
 	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
@@ -387,8 +387,8 @@ if [ -f /tmp/netlogon/domain_information/samba4 ]; then
 	DOMAIN=`sed "s/^\([^.]*\).*/\1/" <<< "$dns_domain_caps"`
 	echo 55 >&11
 	echo \#Copying files >&11
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba4/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/common/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
 	sed -i "1idomain $DNSSUFFIX" /etc/resolv.conf
 	
@@ -477,8 +477,8 @@ else
 	
 	echo 55 >&11
 	echo \#Copying files >&11
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba3/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/common/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/samba3/* /
 	#Configure smb.conf
 	sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISPDC/$PDC/g" /etc/samba/smb.conf
