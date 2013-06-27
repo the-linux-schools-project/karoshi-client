@@ -36,19 +36,19 @@ echo
 
 #Check if running as root (duh)
 if [[ $EUID -ne 0 ]]; then
-	echo "ERROR: Not running as root - aborting" >&2
+	echo "ERROR: Not running as root - aborting"
 	exit
 fi
 
 #Check for internet connection
 if ! ping -w 1 -c 1 8.8.8.8; then
-	echo "ERROR: No direct internet connection - aborting" >&2
+	echo "ERROR: No direct internet connection - aborting"
 	exit
 fi
 
 #Check for required packages
 if ! (which apt-get); then
-	echo "ERROR: Missing packages - aborting" >&2
+	echo "ERROR: Missing packages - aborting"
 	exit
 fi
 
@@ -56,8 +56,8 @@ fi
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 #Make sure our files are here
-if ! ( [[ -d configuration ]] && [[ -d linuxclientsetup ]] && [[ -f linuxclientsetup/scripts/client_config ]] ); then
-	echo "ERROR: Missing files required for installation - aborting" >&2
+if ! ( [[ -d configuration ]] && [[ -d linuxclientsetup ]] && [[ -f linuxclientsetup/scripts/client-config ]] ); then
+	echo "ERROR: Missing files required for installation - aborting"
 	exit
 fi
 
@@ -117,14 +117,10 @@ apt-get -qy install xfce4 indicator-application-gtk2 indicator-sound-gtk2 indica
 
 #Remove packages
 echo "Removing packages..."
-apt-get -qy purge unity avahi-daemon ntpdate mousepad nautilus linux-image-generic linux-headers-generic network-manager
+apt-get -qy purge unity avahi-daemon ntpdate mousepad nautilus linux-image-generic linux-headers-generic network-manager resolvconf
 
 #Install git-up
 gem install git-up
-
-#Copy in new configuration (overwrite)
-echo "Installing configuration..."
-find configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -f -t /
 
 #Create administrator user
 [[ -e /opt/administrator ]] && rm -rf /opt/administrator
@@ -144,6 +140,13 @@ done < <(getent passwd)
 #Clean up /home
 find /home -mindepth 1 -delete
 
+#Copy in new configuration (overwrite)
+echo "Installing configuration..."
+find configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -f -t /
+
+find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -f -t ~administrator
+chown -R administrator:administrator ~administrator
+
 #Install linuxclientsetup
 [[ -e /opt/karoshi ]] && rm -rf /opt/karoshi
 mkdir /opt/karoshi
@@ -153,13 +156,100 @@ chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
 chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
 chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
 
+#Link karoshi-run-script
+ln -s karoshi-run-script /usr/bin/karoshi-set-local-password
+ln -s karoshi-run-script /usr/bin/karoshi-set-location
+ln -s karoshi-run-script /usr/bin/karoshi-set-network
+ln -s karoshi-run-script /usr/bin/karoshi-setup
+ln -s karoshi-run-script /usr/bin/karoshi-manage-flags
+ln -s karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir
+ln -s karoshi-run-script /usr/bin/karoshi-pam-wrapper
+
 echo "Installation complete!"
+
+echo "Press Ctrl + C to stop before remastering"
+echo
+echo "Continuing in:"
+echo "5 seconds"
+sleep 1
+echo "4 seconds"
+sleep 1
+echo "3 seconds"
+sleep 1
+echo "2 seconds"
+sleep 1
+echo "1 second"
+sleep 1
 echo
 
 ###################
 #Start remastersys
 ###################
+echo "Beginning remaster..."
 
 #Link karoshi-setup
-[[ -d /opt/administrator/.config/autostart/ ]] || mkdir -p /opt/administrator/.config/autostart/
-ln -s /opt/karoshi/linuxclientsetup/karoshi-setup.desktop /opt/administrator/.config/autostart/
+[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
+ln -s /opt/karoshi/linuxclientsetup/karoshi-setup.desktop ~administrator/.config/autostart/
+chown -R administrator:administrator ~administrator
+
+#Determine ISO parameters
+if [[ -f README.md ]]; then
+	iso_version=$(sed -n 's/.*\*\*Current dev version:\*\* \(.*\)/\1/p' README.md)
+	iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
+else
+	echo "WARNING: No README.md detected, using timestamp as version" >&2
+	iso_version=$(date +%s)
+	iso_website="http://linuxgfx.co.uk/"
+fi
+#Determine ISO architecture
+iso_arch=$(uname -i)
+[[ $iso_arch == x86_64 ]] && iso_arch=amd64
+
+echo "ISO Label:   Karoshi Client $iso_version-$iso_arch"
+echo "ISO Website: $iso_website"
+
+#Configure remastersys
+sed -i -e "s/^WORKDIR=.*/WORKDIR='$(pwd | sed 's@/@\\/@')'/" \
+       -e "s/^EXCLUDES=.*/EXCLUDES='/tmp /mnt'/" \
+       -e "s/^LIVEUSER=.*/LIVEUSER='administrator'/" \
+	   -e "s/^LIVECDLABEL=.*/LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'/" \
+	   -e "s/^CUSTOMISO=.*/CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'/" \
+	   -e "s/^LIVECDURL=.*/LIVECDURL='$iso_website'/" \
+	   /etc/remastersys.conf
+
+#Configure boot menu image
+if [[ -e install/splash.png ]]; then
+	echo "Found custom splash.png"
+	[[ -e /etc/remastersys/isolinux/splash.png ]] && rm -f /etc/remastersys/isolinux/splash.png
+	cp install/splash.png /etc/remastersys/isolinux/splash.png
+fi
+#Configure preseed
+if [[ -e install/preseed.cfg ]]; then
+	echo "Found custom preseed.cfg"
+	[[ -e /etc/remastersys/preseed/custom.seed ]] && rm -f /etc/remastersys/preseed/custom.seed
+	cp install/preseed.cfg /etc/remastersys/preseed/custom.seed
+fi
+
+#Start creating the remaster
+remastersys clean
+remastersys backup
+
+mv remastersys/karoshi-client-"$iso_version"-"$iso_arch".iso{,.md5} .
+
+echo
+echo "Remaster complete!"
+echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso"
+echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5"
+echo
+
+###################
+#Clean up
+###################
+
+rm -rf remastersys
+
+rm -f ~administrator/.config/autostart/karoshi-setup.desktop
+#Stop Auto logon
+sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
+
+echo "Full Karoshi install and remaster complete!"

@@ -12,8 +12,6 @@
 
 **Title Syntax:** Karoshi Client &lt;version&gt;-&lt;arch&gt;
 
-
-
 ## File list
 
 - **CHECKLIST.md** is a short guide for creating a remaster
