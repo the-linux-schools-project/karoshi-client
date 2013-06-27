@@ -127,7 +127,8 @@ function do_xpi {
 	unzip -q "$1" -d /opt/karoshi/thunderbird/extensions/"$xpi_name"
 	
 	xpi_id=$(xmlstarlet sel -N rdf=http://www.w3.org/1999/02/22-rdf-syntax-ns# -N em=http://www.mozilla.org/2004/em-rdf# \
-				-t -v "//rdf:Description[@about='urn:mozilla:install-manifest']/em:id" /opt/karoshi/thunderbird/extensions/"$xpi_name"/install.rdf)
+				-t -m "//rdf:Description[@about='urn:mozilla:install-manifest']" -i "em:id" -v "em:id" --else -v "@em:id" \
+				/opt/karoshi/thunderbird/extensions/"$xpi_name"/install.rdf)
 	#Check if we actually have a valid extension id
 	if [[ -z $xpi_id ]]; then
 		echo "Warning: Thunderbird extension $xpi_name is invalid" >&2
