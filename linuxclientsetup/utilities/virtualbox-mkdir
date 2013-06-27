@@ -1,0 +1,59 @@
+#!/bin/bash
+
+virtualbox_path="/opt/virtualbox"
+user_info=$(getent passwd "$PAM_USER")
+user_uid=$(cut -d":" -f3 <<< "$user_info")
+user_gid=$(cut -d":" -f4 <<< "$user_info")
+user_home=$(cut -d":" -f6 <<< "$user_info")
+
+echo "`date`: karoshi-virtualbox-mkdir for $PAM_USER"
+
+if ! [[ -d $user_home/network/home ]]; then
+	echo "User is not a domain user - exiting"
+	exit 0
+fi
+
+if [[ ! -d $virtualbox_path ]]; then
+	echo "$virtualbox_path did not exist - creating"
+	mkdir -p "$virtualbox_path" -m 0755
+fi
+if [[ ! -d $virtualbox_path/isos ]]; then
+	echo "$virtualbox_path/isos did not exist - creating"
+	mkdir "$virtualbox_path"/isos -m 1777
+fi
+if [[ ! -d $virtualbox_path/users ]]; then
+	echo "$virtualbox_path/users did not exist - creating"
+	mkdir "$virutalbox_path"/users -m 0755
+fi
+
+function make_virtualbox_dir {
+	echo "Creating user folder: '$virtualbox_path/users/$PAM_USER'"
+	mkdir "$virtualbox_path"/users/"$PAM_USER" -m 0700
+	chown $user_uid:$user_gid "$virtualbox_path"/users/"$PAM_USER"
+}
+
+if [[ ! -d $virtualbox_path/users/$PAM_USER ]]; then
+	make_virtualbox_dir
+fi
+
+folder_owner=$(stat -c %U "$virtualbox_path"/users/"$PAM_USER")
+if [[ $folder_owner != $PAM_USER ]]; then
+	echo "Incorrect owner of user folder: $folder_owner"
+	echo "Moving '$virtualbox_path/users/$PAM_USER' to '$virtualbox_path/users/$PAM_USER.old'"
+	[[ -e $virtualbox_path/users/$PAM_USER.old ]] && rm -rf "$virtualbox_path"/users/"$PAM_USER".old
+	mv "$virtualbox_path"/users/"$PAM_USER" "$virtualbox_path"/users/"$PAM_USER".old
+	make_virtualbox_dir
+fi
+
+if ! [[ -e $user_home/.VirtualBox ]]; then
+	ln -sf "$virtualbox_path"/users/"$PAM_USER" "$user_home"/.VirtualBox
+else
+	echo "'$user_home/.VirtualBox' already exists! Not creating symlink"
+fi
+if ! [[ -e $user_home/VirtualBox VMs ]]; then
+	ln -sf "$virtualbox_path"/users/"$PAM_USER" "$user_home"/"VirtualBox VMs"
+else
+	echo "'$user_home/VirtualBox VMs' already exists! Not creating symlink"
+fi
+
+exit 0

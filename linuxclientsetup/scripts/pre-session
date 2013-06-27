@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /opt/karoshi/linuxclientsetup/variables
+source /opt/karoshi/linuxclientsetup/utilities/common
 
 #function create_entries
 #	$1 is mount name
@@ -41,16 +41,16 @@ if [ -d ~/network/home ]; then
 		firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
 		if [[ "$firefox_profile" ]] && [ -d ~/.mozilla/firefox/"$firefox_profile" ]; then
 			#Apply CA certificate
-			if [ -f /opt/karoshi/linuxclientsetup/cacert.pem ]; then
-				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/linuxclientsetup/cacert.pem -d ~/.mozilla/firefox/"$firefox_profile"
+			if [ -f /opt/karoshi/cacert.pem ]; then
+				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.mozilla/firefox/"$firefox_profile"
 			fi
 	
 			#Default download directory
 			echo "user_pref('browser.download.lastDir', '~/network/home/');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
 	
 			#Give clipboard capability to Moodle and other sites
-			if [ -f /opt/karoshi/linuxclientsetup/allow_clipboard_sites ]; then
-				echo "user_pref('capability.policy.allowclipboard.sites', '` < /opt/karoshi/linuxclientsetup/allow_clipboard_sites`');
+			if [ -f /opt/karoshi/allow_clipboard_sites ]; then
+				echo "user_pref('capability.policy.allowclipboard.sites', '` < /opt/karoshi/allow_clipboard_sites`');
 user_pref('capability.policy.allowclipboard.Clipboard.cutcopy', 'allAccess');
 user_pref('capability.policy.allowclipboard.Clipboard.paste', 'allAccess');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
@@ -98,8 +98,8 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
 		if [[ "$thunderbird_profile" ]] && [ -d ~/.thunderbird/"$thunderbird_profile" ]; then
 			#Apply CA certificate
-			if [ -f /opt/karoshi/linuxclientsetup/cacert.pem ]; then
-				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/linuxclientsetup/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
+			if [ -f /opt/karoshi/cacert.pem ]; then
+				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
 			fi
 		
 			#Remove updated messages and extension checking
@@ -214,18 +214,18 @@ if ! $mountpoints; then
 fi
 
 #Copy in default icons
-[ -d /opt/karoshi/linuxclientsetup/desktop_icons/all ] && cp -rf /opt/karoshi/linuxclientsetup/desktop_icons/all/* ~/Desktop
+[ -d /opt/karoshi/desktop_icons/all ] && find /opt/karoshi/desktop_icons/all -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
 
 #Copy in extra icons for groups
 pri_group=`id -g -n`
-[ -d /opt/karoshi/linuxclientsetup/desktop_icons/$pri_group ] && cp -rf /opt/karoshi/linuxclientsetup/desktop_icons/$pri_group/* ~/Desktop
+[ -d /opt/karoshi/desktop_icons/$pri_group ] && find /opt/karoshi/desktop_icons/$pri_group -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
 
 ##################
 #Miscellaneous things
 ##################
-#Copy in admin_skel
-if [ $pri_group == itadmin -o $pri_group == tech ] && [ -d /opt/karoshi/linuxclientsetup/admin_skel ]; then
-	cp -rf /opt/karoshi/linuxclientsetup/admin_skel/.config ~
+#Copy in admin-skel
+if [ $pri_group == itadmin -o $pri_group == tech ] && [ -d /opt/karoshi/admin-skel ]; then
+	find /opt/karoshi/admin-skel -mindepth 1 -print0 | xargs -0 cp -rf -t ~
 fi
 
 #Set default directory for terminal emulator and file manager to network/home
@@ -248,4 +248,4 @@ if [ -d ~/network/home ]; then
 fi
 
 #Set permissions on icons
-chmod 0700 ~/Desktop/*.desktop
+find ~/Desktop -name '*.desktop' -print0 | xargs -0 chmod 0700

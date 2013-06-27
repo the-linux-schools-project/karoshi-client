@@ -3,6 +3,6 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec=gksudo /opt/karoshi/linuxclientsetup/utilities/setup
+Exec=gksudo karoshi-setup
 Name=Setup Client
 Icon=/opt/karoshi/linuxclientsetup/images/smalllogo.xpm

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+script_name=$(basename "$0")
+if ! [[ $script_name == karoshi-* ]]; then
+	echo "ERROR: Not a Karoshi script" >&2
+	exit 1
+fi
+script_name=${script_name#karoshi-}
+
+if [[ -x /opt/karoshi/utilities/$script_name ]]; then
+	/opt/karoshi/utilities/$script_name
+elif [[ -x /opt/karoshi/linuxclientsetup/utilities/$script_name ]]; then
+	/opt/karoshi/linuxclientsetup/utilities/$script_name
+elif [[ -x /opt/karoshi/scripts/$script_name ]]; then
+	/opt/karoshi/scripts/$script_name
+elif [[ -x /opt/karoshi/linuxclientsetup/scripts/$script_name ]]; then
+	/opt/karoshi/linuxclientsetup/scripts/$script_name
+else
+	echo "ERROR: Script not found" >&2
+	exit 1
+fi

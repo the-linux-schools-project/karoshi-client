@@ -1,6 +1,14 @@
 #!/bin/bash
 
-flagsDir="/opt/karoshi/linuxclientsetup/flags"
+flagsDir="/opt/karoshi/flags"
+
+if [[ ! -d $flagsDir ]]; then
+	echo "Warning: flagsDir $flagsDir did not exist" >&2
+	if ! mkdir -p "$flagsDir"; then
+		echo "Error: Could not create flagsDir $flagsDir!" >&2
+		exit 255
+	fi
+fi
 
 flags=( networkset domainset passwordset nokaroshi forcesetpdc no_idle_shutdown )
 flagsCanonical=( "Network Set" "Domain Set" "Password Set" "No Karoshi" "Force Set PDC" "No Idle Shutdown" )
@@ -12,36 +20,82 @@ function setFlag {
 	if ${!1}; then
 		touch "$flagsDir"/$1
 	else
-		[ -f "$flagsDir"/$1 ] && rm -f "$flagsDir"/$1
+		if [ -f "$flagsDir"/$1 ]; then
+			rm -f "$flagsDir"/$1
+		fi
 	fi
 }
-
-running=true
-
-while $running; do
-	command=(  )
-	counter=0
-	
-	# check flags and create command
+function validFlag {
 	for flag in "${flags[@]}"; do
-		checkFlag $flag
-		command+=( "--field=${flagsCanonical[$counter]}:CHK" "${!flag}" )
-		(( ++counter ))
+		if [[ $1 == $flag ]]; then
+			return
+		fi
+	done
+	echo "Invalid flag '$1'" >&2
+	exit 255
+}
+function printHelp {
+	echo "Usage:" >&2
+	echo "	$0 <get|set|unset> <flag>" >&2
+	exit 255
+}
+
+if [ $# -eq 2 ]; then
+	#Command line mode
+	case "$1" in
+	get)
+		validFlag "$2"
+		checkFlag "$2"
+		"${!2}" && echo "$flagsDir/$2"
+		;;
+	set)
+		validFlag "$2"
+		eval "$2"=true
+		setFlag "$2"
+		;;
+	unset)
+		validFlag "$2"
+		eval "$2"=false
+		setFlag "$2"
+		;;
+	*)
+		printHelp
+	esac
+elif [ $# -eq 0 ]; then
+	#Interactive mode
+	running=true
+	if ! which yad >/dev/null; then
+		echo "Error: yad is not installed" >&2
+		exit 255
+	fi
+
+	while $running; do
+		command=(  )
+		counter=0
+		
+		# check flags and create command
+		for flag in "${flags[@]}"; do
+			checkFlag $flag
+			command+=( "--field=${flagsCanonical[$counter]}:CHK" "${!flag}" )
+			(( ++counter ))
+		done
+
+		data=`yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 \
+				  --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
+				  --form "${command[@]}"`
+		yadstatus=$?
+		
+		[ $yadstatus -eq 1 ] && exit 2
+		[ $yadstatus -ne 2 ] && running=false
 	done
 
-	data=`yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 \
-	          --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
-	          --form "${command[@]}"`
-	yadstatus=$?
-	
-	[ $yadstatus -eq 1 ] && exit
-	[ $yadstatus -ne 2 ] && running=false
-done
-
-# decypher DATA and set flags
-counter=1
-for flag in "${flags[@]}"; do
-	eval $flag=`cut -d"|" -f$counter <<< "$data" | tr '[:upper:]' '[:lower:]'`
-	setFlag $flag
-	(( ++counter ))
-done
+	# decypher DATA and set flags
+	counter=1
+	for flag in "${flags[@]}"; do
+		eval $flag=`cut -d"|" -f$counter <<< "$data" | tr '[:upper:]' '[:lower:]'`
+		setFlag $flag
+		(( ++counter ))
+	done
+else
+	printHelp
+fi

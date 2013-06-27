@@ -164,4 +164,16 @@ These packages should be **removed** to save disk space or remove conflicts
 - linux-image-generic
 - linux-headers-generic
 - network-manager
+- resolvconf
 
+## Symlinks
+
+Some Karoshi utilities need to be symlinked to karoshi-run-script in /usr/bin so that they can be run using the PATH variable:
+
+- ln -s karoshi-run-script /usr/bin/karoshi-set-local-password
+- ln -s karoshi-run-script /usr/bin/karoshi-set-location
+- ln -s karoshi-run-script /usr/bin/karoshi-set-network
+- ln -s karoshi-run-script /usr/bin/karoshi-setup
+- ln -s karoshi-run-script /usr/bin/karoshi-manage-flags
+- ln -s karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir
+- ln -s karoshi-run-script /usr/bin/karoshi-pam-wrapper

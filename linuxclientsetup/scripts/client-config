@@ -58,12 +58,12 @@ samba4)
 samba4_winbind)
 	[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
 	#Clear cache
-	rm -rf /var/cache/samba/*
+	find /var/cache/samba -mindepth 1 -delete
 	;;
 samba3)
 	[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml ] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml /etc/security/pam_mount.conf.xml
 	#Clear cache
-	rm -rf /var/cache/samba/*
+	find /var/cache/samba -mindepth 1 -delete
 	;;
 *)
 	echo "Warning! Unrecognized domain type $DOMAINTYPE"
@@ -77,13 +77,17 @@ esac
 #[ -f /etc/security/pam_mount.conf.xml ] && sed -i "0,/[[:blank:]]*<volume/s@@<volume options=\"size=100m,uid=%(USERUID),gid=%(USERGID),mode=0700\" mountpoint=\"~\" uid=\"1000-50000\" fstype=\"tmpfs\" />\n<volume@" /etc/security/pam_mount.conf.xml
 
 #Clear home areas
-rm -rf --one-file-system /home/*
+find /home -mindepth 1 -xdev -delete
 
 ####################
 #Copy configuration
 ####################
-[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ] && [ "$(ls -A /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/)" ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/* /
-[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ /opt/karoshi/linuxclientsetup/
+[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ] && find /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /
+if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]; then
+	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+elif [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]
+	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+fi
 #Do skel (properly)
 if [ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz ]; then
 	[ -e /etc/skel ] && rm -rf /etc/skel
@@ -96,16 +100,16 @@ find /etc/skel -type d -print0 | xargs -0 chmod 755
 
 #Version agnostic configuration
 #Background images
-[ -f /tmp/netlogon/linuxclient/background.png ] && cp -f /tmp/netlogon/linuxclient/background.png /opt/karoshi/linuxclientsetup/images/
-[ -f /tmp/netlogon/linuxclient/login_background.png ] && cp -f /tmp/netlogon/linuxclient/login_background.png /opt/karoshi/linuxclientsetup/images/
+[ -f /tmp/netlogon/linuxclient/background.png ] && cp -f /tmp/netlogon/linuxclient/background.png /opt/karoshi/images/
+[ -f /tmp/netlogon/linuxclient/login-background.png ] && cp -f /tmp/netlogon/linuxclient/login-background.png /opt/karoshi/images/
 
 #Clipboard sites for later on
-[ -f /opt/karoshi/linuxclientsetup/allow_clipboard_sites ] && rm -f /opt/karoshi/linuxclientsetup/allow_clipboard_sites
-[ -f /tmp/netlogon/domain_information/allow_clipboard_sites ] && cp /tmp/netlogon/domain_information/allow_clipboard_sites /opt/karoshi/linuxclientsetup/
+[ -f /opt/karoshi/allow_clipboard_sites ] && rm -f /opt/karoshi/allow_clipboard_sites
+[ -f /tmp/netlogon/domain_information/allow_clipboard_sites ] && cp /tmp/netlogon/domain_information/allow_clipboard_sites /opt/karoshi
 
 #Copy domain CA certificate
-[ -f /opt/karoshi/linuxclientsetup/cacert.pem ] && rm -f /opt/karoshi/linuxclientsetup/cacert.pem
-[ -f /tmp/netlogon/domain_information/cacert.pem ] && cp /tmp/netlogon/domain_information/cacert.pem /opt/karoshi/linuxclientsetup
+[ -f /opt/karoshi/cacert.pem ] && rm -f /opt/karoshi/cacert.pem
+[ -f /tmp/netlogon/domain_information/cacert.pem ] && cp /tmp/netlogon/domain_information/cacert.pem /opt/karoshi
 
 #Static ARPs
 [ -f /tmp/netlogon/domain_information/static_arps ] && arp -f /tmp/netlogon/domain_information/static_arps
@@ -113,16 +117,16 @@ find /etc/skel -type d -print0 | xargs -0 chmod 755
 ##########################
 #Update the upstart scripts
 ##########################
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf /opt/karoshi/linuxclientsetup/utilities/
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf /opt/karoshi/linuxclientsetup/utilities/
+[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf /etc/init
+[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf /etc/init
 
 ###########################
 #Create cronjob to shut computer down
 ###########################
 if [ "$CLIENTSHUTDOWNTIME" ]; then
 	echo Setting auto shutdown time at $CLIENTSHUTDOWNTIME
-	hours=`cut -d: -f1 <<< "$SHUTDOWNTIME"`
-	minutes=`cut -d: -f2 <<< "$SHUTDOWNTIME"`
+	hours=`cut -d: -f1 <<< "$CLIENTSHUTDOWNTIME"`
+	minutes=`cut -d: -f2 <<< "$CLIENTSHUTDOWNTIME"`
 
 	if [ "$hours" ] && [ "$minutes" ]
 	then
@@ -131,44 +135,29 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=\"\"
 HOME=/
 
-$minutes $hours * * * /opt/karoshi/linuxclientsetup/scripts/clientshutdown" > /opt/karoshi/linuxclientsetup/clientshutdowntime.cron
-		crontab /opt/karoshi/linuxclientsetup/clientshutdowntime.cron
-		rm -f /opt/karoshi/linuxclientsetup/clientshutdowntime.cron
+$minutes $hours * * * /opt/karoshi/scripts/client-shutdown" | crontab -
 	fi
-fi
-
-###########################
-#Kill Procs
-###########################
-rm -f /opt/karoshi/killprocs
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/killprocs ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/killprocs /opt/karoshi/
-rm -f /opt/karoshi/killprocscron.cron
-[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/killprocscron.cron ] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/killprocscron.cron /opt/karoshi/
-
-#Create cronjob to run killprocs
-if [ -f /opt/karoshi/killprocscron.cron ]; then
-	echo Setting killprocs crontab
-	crontab /opt/karoshi/killprocscron.cron
 fi
 
 ###########################
 #Update acceptable_use
 ###########################
-[ -f /tmp/netlogon/linuxclient/acceptable_use.txt ] && cp -f /tmp/netlogon/linuxclient/acceptable_use.txt /opt/karoshi/linuxclientsetup/
+[ -f /tmp/netlogon/linuxclient/acceptable_use.txt ] && cp -f /tmp/netlogon/linuxclient/acceptable_use.txt /opt/karoshi/
 [ -f /opt/karoshi/acceptable_use.txt ] && chmod 0644 /opt/karoshi/acceptable_use.txt
 
 ###########################
 #Update desktop icons for groups
 ###########################
-rm -rf /opt/karoshi/linuxclientsetup/desktop_icons/*
-[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons /opt/karoshi/linuxclientsetup/
-if [ -d /opt/karoshi/linuxclientsetup/desktop_icons ]; then
-	chmod -R 0644 /opt/karoshi/linuxclientsetup/desktop_icons
-	chmod -R u+X,g+X,o+X /opt/karoshi/linuxclientsetup/desktop_icons
+[ -e /opt/karoshi/desktop_icons ] && rm -rf /opt/karoshi/desktop_icons
+[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons ] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons /opt/karoshi/
+
+if [ -d /opt/karoshi/desktop_icons ]; then
+	chmod -R 0644 /opt/karoshi/desktop_icons
+	chmod -R u+X,g+X,o+X /opt/karoshi/desktop_icons
 	while read file; do
 		filename="$(tr '[:upper:] ' '[:lower:]-' <<< "$(basename "$file")")"
 		mv "$file" "`dirname "$file"`/karoshi-$filename"
-	done < <(find /opt/karoshi/linuxclientsetup/desktop_icons/ -name "*.desktop" -and -not -name "karoshi-*.desktop")
+	done < <(find /opt/karoshi/desktop_icons/ -name "*.desktop" -and -not -name "karoshi-*.desktop")
 fi
 
 ############################
@@ -241,7 +230,6 @@ then
 		install_list=`sed 's/ //g' /tmp/netlogon/linuxclient/$LINUX_VERSION/install_list`
 		if [ "$install_list" ]; then
 			apt-get -y install --no-upgrade $install_list
-			[ $? -eq 0 ] && cat /tmp/netlogon/linuxclient/$LINUX_VERSION/install_list >> /opt/karoshi/linuxclient/installed_software
 		fi
 	fi
 	

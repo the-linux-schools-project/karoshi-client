@@ -159,11 +159,11 @@ echo \#Bringing up network interface >&11
 ifup $NETWORKINT
 echo 10 >&11
 # flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
-if [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ] && ! [ -f /opt/karoshi/linuxclientsetup/flags/forcesetpdc ]; then dhcp=true; fi
+if [ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ] && ! karoshi-manage-flags get forcesetpdc; then dhcp=true; fi
 
 #Try until we have a PDC
 while ! $pdc_set; do
-	rm -f /opt/karoshi/linuxclientsetup/flags/networkset
+	karoshi-manage-flags unset networkset
 	SERVERIP=
 	#We define exitfunc further down, so this just resets it
 	function exitfunc {
@@ -207,12 +207,12 @@ while ! $pdc_set; do
 	updateHostname
 	
 	#At this point a network has been configured, so the flag is set
-	touch /opt/karoshi/linuxclientsetup/flags/networkset
+	karoshi-manage-flags set networkset
 
 	#exitfunc if the user cancelled selecting a PDC
 	function exitfunc {
 		info_alert "Network Settings" "Not configuring for Karoshi Server"
-		touch /opt/karoshi/linuxclientsetup/flags/nokaroshi
+		karoshi-manage-flags set nokaroshi
 		exit $1
 	}
 	if [ "$SERVERIP" ]; then
@@ -250,7 +250,7 @@ echo \#Setting network configuration >&11
 #At this point it is assumed that a PDC can be contacted
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-rm -f /opt/karoshi/linuxclientsetup/flags/nokaroshi
+karoshi-manage-flags unset nokaroshi
 
 #exitfunc to unmount the share, and exit
 function exitfunc {
@@ -259,7 +259,7 @@ function exitfunc {
 	exit $1
 }
 
-echo $SERVERIP > /opt/karoshi/linuxclientsetup/serverip
+echo $SERVERIP > /opt/karoshi/serverip
 
 ####################
 #Pull down server information
@@ -341,7 +341,7 @@ echo \#Setting network configuration >&11
 
 #Automation steps
 if [ -f /tmp/netlogon/domain_information/lockadministrator ]; then
-	touch /opt/karoshi/linuxclientsetup/flags/passwordset
+	karoshi-manage-flags set passwordset
 	passwd -l administrator
 	passwd -l root
 fi
@@ -361,14 +361,14 @@ echo 50 >&11
 
 echo "nameserver $SERVERIP" > /etc/resolv.conf
 
-touch /opt/karoshi/linuxclientsetup/flags/networkset
+karoshi-manage-flags set networkset
 
 #############
 #Domain setup
 #############
 DNSSUFFIX="internal"
 #Get nsswitch functions
-source /opt/karoshi/linuxclientsetup/utilities/nsswitch_funcs
+source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
 
 function exitfunc {
 	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
@@ -387,8 +387,8 @@ if [ -f /tmp/netlogon/domain_information/samba4 ]; then
 	DOMAIN=`sed "s/^\([^.]*\).*/\1/" <<< "$dns_domain_caps"`
 	echo 55 >&11
 	echo \#Copying files >&11
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba4/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/common/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
 	sed -i "1idomain $DNSSUFFIX" /etc/resolv.conf
 	
@@ -477,8 +477,8 @@ else
 	
 	echo 55 >&11
 	echo \#Copying files >&11
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/common/* /
-	cp -rf /opt/karoshi/linuxclientsetup/config_files/samba3/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/common/* /
+	cp -rf /opt/karoshi/linuxclientsetup/config-files/samba3/* /
 	#Configure smb.conf
 	sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISPDC/$PDC/g" /etc/samba/smb.conf
@@ -542,7 +542,7 @@ echo \#Restarting network interface >&11
 ifdown $NETWORKINT
 ifup $NETWORKINT
 
-touch /opt/karoshi/linuxclientsetup/flags/domainset
+karoshi-manage-flags set domainset
 echo 100 >&11
 
 #Write new variables to file

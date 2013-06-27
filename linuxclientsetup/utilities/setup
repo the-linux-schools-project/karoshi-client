@@ -14,26 +14,15 @@ fi
 [ ! -d /var/log/karoshi ] && mkdir -p /var/log/karoshi
 
 if [ -f /var/log/karoshi/setup.log ]; then
-	i=1
-	while [ -e /var/log/karoshi/setup.log.$i.gz ]; do
-		if [ $i -gt 3 ]; then
-			rm -f /var/log/karoshi/setup.log.$i.gz
-			break
-		fi
-		(( ++i ))
-	done
-	(( --i ))
-	while [ $i -gt 0 ]; do
-		mv /var/log/karoshi/setup.log.$i.gz /var/log/karoshi/setup.log.$(( i-- + 1 )).gz
-	done
-	chmod 400 /var/log/karoshi/setup.log
-	mv /var/log/karoshi/setup.log /var/log/karoshi/setup.log.1
-	gzip /var/log/karoshi/setup.log.1
+	rm -rf /var/log/karoshi/setup.log
 fi
 
 touch /var/log/karoshi/setup.log
 chmod 600 /var/log/karoshi/setup.log
 exec &>/var/log/karoshi/setup.log
+
+#Create symlink to Karoshi update log
+ln -s /var/log/upstart/karoshi-update.log /var/log/karoshi/update.log
 
 #Allow root to connect to X even after hostname is changed (temporarily)
 xhost +si:localuser:root
@@ -41,13 +30,18 @@ xhost +si:localuser:root
 ##################
 #Configure system
 ##################
+#Create flag directory
+mkdir -p /opt/karoshi/flags
+
 #Configure network
-if [ ! -f /opt/karoshi/linuxclientsetup/flags/networkset ] || ( [ ! -f /opt/karoshi/linuxclientsetup/flags/domainset ] && [ ! -f /opt/karoshi/linuxclientsetup/flags/nokaroshi ] ); then
-	/opt/karoshi/linuxclientsetup/utilities/set_network
+if ! karoshi-manage-flags get networkset || ( ! karoshi-manage-flags get domainset && ! karoshi-manage-flags get nokaroshi ); then
+	karoshi-set-network
 fi
 
 #Change client password
-[ ! -f /opt/karoshi/linuxclientsetup/flags/passwordset ] && /opt/karoshi/linuxclientsetup/utilities/set_local_password
+if ! karoshi-manage-flags get passwordset; then
+	karoshi-set-local-password
+fi
 
 #Configure Wireshark to allow non-root to capture packets
 if [[ -e /usr/bin/dumpcap ]]; then
@@ -64,6 +58,30 @@ if [[ -e /usr/bin/dumpcap ]]; then
 			chmod u=rwxs,g=rx,o=r /usr/bin/dumpcap
 	fi
 fi
+
+##################
+#Install Karoshi files
+##################
+[ -e /etc/init/karoshi-update.conf ] && rm -rf /etc/init/karoshi-update.conf
+[ -e /etc/init/karoshi-idle-shutdown.conf ] && rm -rf /etc/init/karoshi-idle-shutdown.conf
+cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown}.conf /etc/init
+chmod 644 /etc/init/karoshi-{update,idle-shutdown}.conf
+
+[ -e /opt/karoshi/scripts ] && rm -rf /opt/karoshi/scripts
+cp -f /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
+find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -0 chmod 755
+
+[ -e /opt/karoshi/admin-skel ] && rm -rf /opt/karoshi/admin-skel
+cp -f /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
+
+[ -e /opt/karoshi/images ] && rm -rf /opt/karoshi/images
+mkdir -p /opt/karoshi/images
+cp -f /opt/karoshi/linuxclientsetup/images/{,login-}background.png /opt/karoshi/images
+
+#Configure LightDM to use new background location
+sed -i "s@^Background=.*@Background=/opt/karoshi/images/login-background.png@" /etc/lightdm/lightdm-kde-greeter.conf
+#Configure XFCE to use new background location
+sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 ##################
 #Finish and restart

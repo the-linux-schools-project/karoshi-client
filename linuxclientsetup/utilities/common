@@ -19,7 +19,11 @@
 #function updateVariables
 #	updates variables file
 
-source /opt/karoshi/linuxclientsetup/variables
+if [ -f /opt/karoshi/variables ]; then
+	source /opt/karoshi/variables
+else
+	source /opt/karoshi/linuxclientsetup/variables
+fi
 
 ipregex='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
@@ -72,5 +76,5 @@ DOMAINTYPE=$DOMAINTYPE
 DOMAIN=$DOMAIN
 DNSSUFFIX=$DNSSUFFIX
 CLIENTSHUTDOWNTIME=$CLIENTSHUTDOWNTIME
-IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/linuxclientsetup/variables
+IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/variables
 }
