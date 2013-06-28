@@ -56,27 +56,10 @@ fi
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 #Make sure our files are here
-if ! ( [[ -d configuration ]] && [[ -d linuxclientsetup ]] && [[ -f linuxclientsetup/scripts/client-config ]] ); then
+if ! ( [[ -d configuration ]] && [[ -d linuxclientsetup ]] && [[ -d install ]] ); then
 	echo "ERROR: Missing files required for installation - aborting"
 	exit
 fi
-
-#Last chance to exit
-echo "Configuration checks passed!"
-echo "This is your last chance to abort:"
-echo "Press Ctrl + C to halt the installation..."
-echo
-echo "Continuing in:"
-echo "5 seconds"
-sleep 1
-echo "4 seconds"
-sleep 1
-echo "3 seconds"
-sleep 1
-echo "2 seconds"
-sleep 1
-echo "1 second"
-sleep 1
 
 ###################
 #Pre-installation configuration
@@ -90,8 +73,12 @@ echo "         an inconsistent state"
 echo "nameserver 8.8.8.8
 nameserver 8.8.4.4" > /etc/resolv.conf
 
-#Copy in new APT repositories
-find configuration/etc/apt/sources.list.d -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -f -t /etc/apt/sources.list.d
+#Add new APT repositories
+if [[ -f install/apt-repositories ]]; then
+	while read -r apt_repo; do
+		add-apt-repository "$apt_repo"
+	done < install/apt-repositories
+fi
 
 #Update APT
 apt-get update
@@ -104,51 +91,70 @@ echo
 ###################
 
 #Install packages
-echo "Installing packages..."
-apt-get -qy install xfce4 indicator-application-gtk2 indicator-sound-gtk2 indicator-multiload xfce4-datetime-plugin xfce4-indicator-plugin xfce4-screenshooter \
-    xfce4-terminal xubuntu-artwork xubuntu-icon-theme thunar-archive-plugin thunar-media-tags-plugin catfish lightdm lightdm-kde-greeter firefox \
-    flashplugin-installer thunderbird xul-ext-lightning file-roller wine filezilla krdc wireshark virtualbox geogebra celestia stellarium kcolorchooser \
-    libreoffice libreoffice-l10n-en-gb libreoffice-help-en-gb myspell-en-gb mytheus-en-us wbritish rednotebook gedit gedit-plugins scribus kompozer planner \
-    freemind ttf-dejavu ttf-mscorefonts-installer tty-freefont dia blender gimp inkscape ardour audacity jackd2 qjackctl a2jmidid hydrogen rosegarden \
-    musescore pavucontrol qsynth fluid-soundfont-gm lmms yoshimi lame stopmotion gtk-recordmydesktop openshot vlc codeblocks eclipse glade greenfoot netbeans \
-    g++ libboost1.48-all-dev libglew1.6-dev libsfml-dev libgmp-dev libmpfr-dev libncurses5-dev default-jdk liblwjgl-java cifs-utils libpam-mount krb5-user \
-    libpam-krb5 libpam-winbind nslcd ntp bleachbit xautolock remastersys-gui yad winbind ubiquity-casper linux-lowlatency gnupg language-pack-en ldap-utils \
-    synaptic rubygems
+if [[ -f install/install-list ]]; then
+	echo "Installing packages..."
+	while read -r package; do
+		apt-get -qy --allow-unauthenticated install $package
+	done < install/install-list
+fi
 
 #Remove packages
-echo "Removing packages..."
-apt-get -qy purge unity avahi-daemon ntpdate mousepad nautilus linux-image-generic linux-headers-generic network-manager resolvconf
+if [[ -f install/remove-list ]]; then
+	echo "Removing packages..."
+	while read -r package; do
+		apt-get -qy purge $package
+	done < install/remove-list
+fi
 
 #Update everything
 echo "Updating packages..."
-apt-get qy dist-upgrade
+apt-get -qy dist-upgrade
 
-#Install git-up
-gem install git-up
+#Clean up unneeded packages
+echo "Autoremoving unneeded packages..."
+apt-get -qy autoremove
+
+#Install rubygems
+if which gem; then
+	gem install git-up
+fi
 
 #Create administrator user
 [[ -e /opt/administrator ]] && rm -rf /opt/administrator
-if ! useradd -d /opt/administrator -m -U -r; then
+if ! useradd -d /opt/administrator -m -U -r administrator; then
 	echo "Error in creating administrator user - removing existing user and trying again" >&2
-	userdel administrator
-	useradd -d /opt/administrator -m -U -r
+	userdel administrator -r
+	if ! useradd -d /opt/administrator -m -U -r administrator; then
+		echo "ERROR: Unable to create administrator user" >&2
+		echo "       Resolve manually, then press Enter to continue" >&2
+		read
+	fi
+fi
+if ! [[ -d ~administrator ]]; then
+	echo "ERROR: We have a problem - administrator doesn't have a home directory" >&2
+	exit 1
 fi
 
 #Move home directories that currently exist in /home
 while IFS=":" read -r username _ _ _ _ home _; do
 	if [[ $home =~ ^/home ]]; then
-		usermod -d /opt/"$username" -m "$username"
+		if ! usermod -d /opt/"$username" -m "$username"; then
+			echo "ERROR: Moving home directory for $username has failed" >&2
+			echo "       Press Enter to continue" >&2
+			read
+		fi
 	fi
 done < <(getent passwd)
 
 #Clean up /home
+echo "Cleaning up /home..."
 find /home -mindepth 1 -delete
 
 #Copy in new configuration (overwrite)
 echo "Installing configuration..."
-find configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -f -t /
+find configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /
 
-find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -f -t ~administrator
+find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t ~administrator
 chown -R administrator:administrator ~administrator
 
 #Install linuxclientsetup
@@ -171,89 +177,92 @@ ln -s karoshi-run-script /usr/bin/karoshi-pam-wrapper
 
 echo "Installation complete!"
 
-echo "Press Ctrl + C to stop before remastering"
-echo
-echo "Continuing in:"
-echo "5 seconds"
-sleep 1
-echo "4 seconds"
-sleep 1
-echo "3 seconds"
-sleep 1
-echo "2 seconds"
-sleep 1
-echo "1 second"
-sleep 1
-echo
+if ! [[ -e install/no-remaster ]]; then
 
-###################
-#Start remastersys
-###################
-echo "Beginning remaster..."
+	###################
+	#Start remastersys
+	###################
+	echo "Beginning remaster..."
 
-#Link karoshi-setup
-[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
-ln -s /opt/karoshi/linuxclientsetup/karoshi-setup.desktop ~administrator/.config/autostart/
-chown -R administrator:administrator ~administrator
+	if ! which remastersys; then
+		echo "ERROR: No remastersys detected - aborting" >&2
+		exit 1
+	fi
 
-#Determine ISO parameters
-if [[ -f README.md ]]; then
-	iso_version=$(sed -n 's/.*\*\*Current dev version:\*\* \(.*\)/\1/p' README.md)
-	iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
-else
-	echo "WARNING: No README.md detected, using timestamp as version" >&2
-	iso_version=$(date +%s)
-	iso_website="http://linuxgfx.co.uk/"
+	#Link karoshi-setup
+	[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
+	ln -s /opt/karoshi/linuxclientsetup/karoshi-setup.desktop ~administrator/.config/autostart/
+	chown -R administrator:administrator ~administrator
+
+	#Administrator autologin
+	if ! grep "^autologin-user=" /etc/lightdm/lightdm.conf; then
+		echo "autologin-user=administrator
+	autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
+	fi
+
+	#Determine ISO parameters
+	if [[ -f README.md ]]; then
+		iso_version=$(sed -n 's/.*\*\*Current dev version:\*\* \(.*\)/\1/p' README.md)
+		iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
+	else
+		echo "WARNING: No README.md detected, using timestamp as version" >&2
+		iso_version=$(date +%s)
+		iso_website="http://linuxgfx.co.uk/"
+	fi
+	#Determine ISO architecture
+	iso_arch=$(uname -i)
+	[[ $iso_arch == x86_64 ]] && iso_arch=amd64
+
+	echo "ISO Label:   Karoshi Client $iso_version-$iso_arch"
+	echo "ISO Website: $iso_website"
+
+	#Configure remastersys
+	sed -i -e "s/^WORKDIR=.*/WORKDIR='/tmp'/" \
+		   -e "s/^EXCLUDES=.*/EXCLUDES='/tmp /mnt'/" \
+		   -e "s/^LIVEUSER=.*/LIVEUSER='administrator'/" \
+		   -e "s/^LIVECDLABEL=.*/LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'/" \
+		   -e "s/^CUSTOMISO=.*/CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'/" \
+		   -e "s/^LIVECDURL=.*/LIVECDURL='$iso_website'/" \
+		   /etc/remastersys.conf
+
+	#Configure boot menu image
+	if [[ -e install/splash.png ]]; then
+		echo "Found custom splash.png"
+		[[ -e /etc/remastersys/isolinux/splash.png ]] && rm -f /etc/remastersys/isolinux/splash.png
+		cp install/splash.png /etc/remastersys/isolinux/splash.png
+	fi
+	#Configure preseed
+	if [[ -e install/preseed.cfg ]]; then
+		echo "Found custom preseed.cfg"
+		[[ -e /etc/remastersys/preseed/custom.seed ]] && rm -f /etc/remastersys/preseed/custom.seed
+		cp install/preseed.cfg /etc/remastersys/preseed/custom.seed
+	fi
+
+	#Start creating the remaster
+	if ! remastersys clean; then
+		echo "WARNING: Error in cleaning remastersys working directory (/tmp/remastersys)" >&2
+		echo "         Resolve manually, then press Enter to continue" >&2
+		read
+	fi
+	if ! remastersys backup; then
+		echo "ERROR: remastersys backup failed" >&2
+	else
+		echo
+		echo "Remaster complete!"
+		echo "ISO Location: /tmp/remastersys"
+		echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso"
+		echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5"
+		echo
+	fi
+
+	###################
+	#Clean up
+	###################
+
+	echo "Cleaning up..."
+	rm -f ~administrator/.config/autostart/karoshi-setup.desktop
+	#Stop Auto logon
+	sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 fi
-#Determine ISO architecture
-iso_arch=$(uname -i)
-[[ $iso_arch == x86_64 ]] && iso_arch=amd64
 
-echo "ISO Label:   Karoshi Client $iso_version-$iso_arch"
-echo "ISO Website: $iso_website"
-
-#Configure remastersys
-sed -i -e "s/^WORKDIR=.*/WORKDIR='$(pwd | sed 's@/@\\/@')'/" \
-       -e "s/^EXCLUDES=.*/EXCLUDES='/tmp /mnt'/" \
-       -e "s/^LIVEUSER=.*/LIVEUSER='administrator'/" \
-	   -e "s/^LIVECDLABEL=.*/LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'/" \
-	   -e "s/^CUSTOMISO=.*/CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'/" \
-	   -e "s/^LIVECDURL=.*/LIVECDURL='$iso_website'/" \
-	   /etc/remastersys.conf
-
-#Configure boot menu image
-if [[ -e install/splash.png ]]; then
-	echo "Found custom splash.png"
-	[[ -e /etc/remastersys/isolinux/splash.png ]] && rm -f /etc/remastersys/isolinux/splash.png
-	cp install/splash.png /etc/remastersys/isolinux/splash.png
-fi
-#Configure preseed
-if [[ -e install/preseed.cfg ]]; then
-	echo "Found custom preseed.cfg"
-	[[ -e /etc/remastersys/preseed/custom.seed ]] && rm -f /etc/remastersys/preseed/custom.seed
-	cp install/preseed.cfg /etc/remastersys/preseed/custom.seed
-fi
-
-#Start creating the remaster
-remastersys clean
-remastersys backup
-
-mv remastersys/karoshi-client-"$iso_version"-"$iso_arch".iso{,.md5} .
-
-echo
-echo "Remaster complete!"
-echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso"
-echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5"
-echo
-
-###################
-#Clean up
-###################
-
-rm -rf remastersys
-
-rm -f ~administrator/.config/autostart/karoshi-setup.desktop
-#Stop Auto logon
-sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
-
-echo "Full Karoshi install and remaster complete!"
+[[ -e /etc/rc1.d/S89karoshi-install ]] && rm -f /etc/rc1.d/S89karoshi-install

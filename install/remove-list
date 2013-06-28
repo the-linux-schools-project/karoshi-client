@@ -1,0 +1,9 @@
+unity
+avahi-daemon
+ntpdate
+mousepad
+nautilus
+linux-image-generic
+linux-headers-generic
+network-manager
+resolvconf
