@@ -119,6 +119,10 @@ apt-get -qy install xfce4 indicator-application-gtk2 indicator-sound-gtk2 indica
 echo "Removing packages..."
 apt-get -qy purge unity avahi-daemon ntpdate mousepad nautilus linux-image-generic linux-headers-generic network-manager resolvconf
 
+#Update everything
+echo "Updating packages..."
+apt-get qy dist-upgrade
+
 #Install git-up
 gem install git-up
 
