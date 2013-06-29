@@ -93,30 +93,81 @@ echo
 #Install packages
 if [[ -f install/install-list ]]; then
 	echo "Installing packages..."
-	while read -r package; do
-		apt-get -qy --allow-unauthenticated install $package
-	done < install/install-list
+	packages=( $(< install/install-list) )
+	#This is a bit of a hack to get error output stored in a variable as well as output
+	exec 11>&1
+	rm_packages=$(apt-get -qy --allow-unauthenticated install ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p')
+	err=$?
+	exec 11>&-
+	if [[ $err -eq 100 ]]; then
+		while read -r rm_package; do
+			packages=( $(sed "s/\<$rm_package\>//" <<< "${packages[@]}") )
+		done <<< "$rm_packages"
+		if [[ $packages ]]; then
+			if ! apt-get -qy --allow-unauthenticated install ${packages[@]}; then
+				echo "ERROR: Failed to install packages" >&2
+				echo "       Press Enter to continue" >&2
+				read
+			fi
+		fi
+	elif [[ $err -ne 0 ]]; then
+		echo "ERROR: Failed to install packages" >&2
+		echo "       Press Enter to continue" >&2
+		read
+	fi
 fi
 
 #Remove packages
 if [[ -f install/remove-list ]]; then
 	echo "Removing packages..."
-	while read -r package; do
-		apt-get -qy purge $package
-	done < install/remove-list
+	packages=( $(< install/remove-list) )
+	#This is a bit of a hack to get error output stored in a variable as well as output
+	exec 11>&1
+	rm_packages=$(apt-get -qy purge ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p')
+	err=$?
+	exec 11>&-
+	if [[ $err -eq 100 ]]; then
+		while read -r rm_package; do
+			packages=( $(sed "s/\<$rm_package\>//" <<< "${packages[@]}") )
+		done <<< "$rm_packages"
+		if [[ $packages ]]; then
+			if ! apt-get -qy purge ${packages[@]}; then
+				echo "ERROR: Failed to remove packages" >&2
+				echo "       Press Enter to continue" >&2
+				read
+			fi
+		fi
+	elif [[ $err -ne 0 ]]; then
+		echo "ERROR: Failed to remove packages" >&2
+		echo "       Press Enter to continue" >&2
+		read
+	fi
 fi
 
 #Update everything
 echo "Updating packages..."
-apt-get -qy dist-upgrade
+if ! apt-get -qy --allow-unauthenticated dist-upgrade; then
+	echo "ERROR: Failed to update packages" >&2
+	echo "       Press Enter to continue" >&2
+	read
+fi
 
 #Clean up unneeded packages
 echo "Autoremoving unneeded packages..."
-apt-get -qy autoremove
+if ! apt-get -qy autoremove; then
+	echo "ERROR: Failed to autoremove packages" >&2
+	echo "       Press Enter to continue" >&2
+	read
+fi
 
 #Install rubygems
-if which gem; then
-	gem install git-up
+if which gem && [[ -f install/rubygem-list ]]; then
+	gems=( $(< install/rubygem-list) )
+	if ! gem install ${gems[@]}; then
+			echo "ERROR: Failed to install rubygems" >&2
+			echo "       Press Enter to continue" >&2
+			read
+	fi
 fi
 
 #Create administrator user
