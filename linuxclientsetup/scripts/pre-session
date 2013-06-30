@@ -39,7 +39,7 @@ if [[ -d ~/network/home ]]; then
 	##################
 	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 		firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
-		if [[ "$firefox_profile" ]] && [[ -d ~/.mozilla/firefox/"$firefox_profile" ]]; then
+		if [[ $firefox_profile ]] && [[ -d ~/.mozilla/firefox/$firefox_profile ]]; then
 			#Apply CA certificate
 			if [[ -f /opt/karoshi/cacert.pem ]]; then
 				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.mozilla/firefox/"$firefox_profile"
@@ -65,7 +65,7 @@ user_pref('extensions.lastPlatformVersion', '$firefox_version');" >> ~/.mozilla/
 			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 	
 			#Proxy server
-			if [[ "$PROXYSERVER" ]]; then
+			if [[ $PROXYSERVER ]]; then
 				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.http_port', 3128);
 user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
@@ -85,7 +85,7 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 			fi
 	
 			#Set up Kerberos
-			if [[ "$DOMAINTYPE" == samba4 ]] || [[ "$DOMAINTYPE" == samba4_winbind ]]; then
+			if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
 				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
 		fi
@@ -96,7 +96,7 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 	##################
 	if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
 		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
-		if [[ "$thunderbird_profile" ]] && [[ -d ~/.thunderbird/"$thunderbird_profile" ]]; then
+		if [[ $thunderbird_profile ]] && [[ -d ~/.thunderbird/$thunderbird_profile ]]; then
 			#Apply CA certificate
 			if [[ -f /opt/karoshi/cacert.pem ]]; then
 				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
@@ -112,7 +112,7 @@ user_pref('mailnews.start_page_override.mstone', '$thunderbird_version');" >> ~/
 			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 		
 			#Proxy server
-			if [[ "$PROXYSERVER" ]]; then
+			if [[ $PROXYSERVER ]]; then
 				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.http_port', 3128);
 user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
@@ -128,11 +128,11 @@ user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $P
 			fi
 		
 			#Set up Kerberos
-			if [[ "$DOMAINTYPE" == samba4 ]] || [[ "$DOMAINTYPE" == samba4_winbind ]]; then
+			if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
 				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 			fi
 		
-			if [[ "$MAILSERVER" ]]; then
+			if [[ $MAILSERVER ]]; then
 				user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
 		
 				echo "user_pref('mail.identity.id1.useremail', '$USER@$DNSSUFFIX');
@@ -193,7 +193,7 @@ mountpoints=false
 
 #Create home icon first so that it appears first on the desktop
 mountpath=`mount | grep "$USER/network/home type cifs" | cut -d' ' -f3`
-if [[ "$mountpath" ]]; then
+if [[ $mountpath ]]; then
 	mountname=`basename $mountpath`
 	create_entries "$mountname" "$mountpath" folder-home
 	mountpoints=true

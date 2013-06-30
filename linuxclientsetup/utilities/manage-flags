@@ -14,13 +14,13 @@ flags=( networkset domainset passwordset nokaroshi forcesetpdc no_idle_shutdown 
 flagsCanonical=( "Network Set" "Domain Set" "Password Set" "No Karoshi" "Force Set PDC" "No Idle Shutdown" )
 
 function checkFlag {
-	if [[ -f "$flagsDir"/$1 ]]; then eval $1=true; else eval $1=false; fi
+	if [[ -f $flagsDir/$1 ]]; then eval $1=true; else eval $1=false; fi
 }
 function setFlag {
 	if ${!1}; then
 		touch "$flagsDir"/$1
 	else
-		if [[ -f "$flagsDir"/$1 ]]; then
+		if [[ -f $flagsDir/$1 ]]; then
 			rm -f "$flagsDir"/$1
 		fi
 	fi

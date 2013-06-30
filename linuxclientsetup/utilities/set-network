@@ -38,7 +38,7 @@ function getClientSettings {
 		#Create network_int_list for use in combo box in yad
 		network_int_list=$NETWORKINT
 		for i in "${network_ints[@]}"; do
-			[[ "$i" == "$NETWORKINT" ]] && continue
+			[[ $i == $NETWORKINT ]] && continue
 			network_int_list="$network_int_list!$i"
 		done
 		#Get and set temporary network settings
@@ -52,7 +52,7 @@ function getClientSettings {
 		NETMASK=`cut -d"|" -f4 <<< "$DATA"`
 		GATEWAY=`cut -d"|" -f5 <<< "$DATA"`
 		dhcp=`cut -d"|" -f6 <<< "$DATA" | tr '[:upper:]' '[:lower:]'`
-		if [[ -z "$CLIENT_NAME" ]] || [[ -z "$NETWORKINT" ]]; then
+		if [[ -z $CLIENT_NAME ]] || [[ -z $NETWORKINT ]]; then
 			info_alert "Error" "You must enter a client name and network interface"
 			continue
 		fi
@@ -71,7 +71,7 @@ function getClientSettings {
 			fi
 			wifi_ssid=`cut -d"|" -f1 <<< "$DATA"`
 			wifi_key=`cut -d"|" -f2 <<< "$DATA"`
-			if [[ -z "$wifi_ssid" ]] || [[ -z "$wifi_key" ]]; then
+			if [[ -z $wifi_ssid ]] || [[ -z $wifi_key ]]; then
 				info_alert "Error" "You must enter an SSID and key"
 				continue
 			fi
@@ -103,7 +103,7 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 }
 
 function updateHostname {
-	[[ -z "$CLIENT_NAME" ]] && return
+	[[ -z $CLIENT_NAME ]] && return
 	echo "$CLIENT_NAME" > /etc/hostname
 	hostname "$CLIENT_NAME"
 	
@@ -215,7 +215,7 @@ while ! $pdc_set; do
 		karoshi-manage-flags set nokaroshi
 		exit $1
 	}
-	if [[ "$SERVERIP" ]]; then
+	if [[ $SERVERIP ]]; then
 	#SERVERIP was set, so attempt to mount netlogon
 		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
 			pdc_set=true
@@ -269,7 +269,7 @@ function getMac {
 }
 #Try the WiFi interface first, since we may be a laptop
 temp_network_int=$NETWORKINT
-if [[ "$wifi_network_int" ]]; then
+if [[ $wifi_network_int ]]; then
 	NETWORKINT=$wifi_network_int
 fi
 #Get mac address for the iface
@@ -307,7 +307,7 @@ function exitfunc {
 if [[ -f /tmp/netlogon/domain_information/netmask ]]; then NETMASK=` < /tmp/netlogon/domain_information/netmask`; fi
 if [[ -f /tmp/netlogon/domain_information/gateway ]]; then GATEWAY=` < /tmp/netlogon/domain_information/gateway`; fi
 if [[ -f /tmp/netlogon/domain_information/main_server ]]; then PDC=` < /tmp/netlogon/domain_information/main_server`; fi
-! ( [[ "$PDC" ]] && [[ $NETMASK =~ $IPREGEX ]] && [[ $GATEWAY =~ $IPREGEX ]] ) && exitfunc 1
+! ( [[ $PDC ]] && [[ $NETMASK =~ $IPREGEX ]] && [[ $GATEWAY =~ $IPREGEX ]] ) && exitfunc 1
 
 function exitfunc {
 	info_alert "Error" "Configuration cancelled"
@@ -316,11 +316,11 @@ function exitfunc {
 }
 #If NETWORKINT is a wireless interface, and don't already have wireless information,
 # get wireless information from server
-if isWireless $NETWORKINT && ( [[ -z "$wifi_ssid" ]] || [[ -z "$wifi_key" ]] ); then
+if isWireless $NETWORKINT && ( [[ -z $wifi_ssid ]] || [[ -z $wifi_key ]] ); then
 	echo \#Checking wireless network settings >&11
 	wifi_ssid=` < /tmp/netlogon/domain_information/wifi_ssid`
 	wifi_key=` < /tmp/netlogon/domain_information/wifi_key`
-	if [[ -z "$wifi_ssid" ]] || [[ -z "$wifi_key" ]]; then
+	if [[ -z $wifi_ssid ]] || [[ -z $wifi_key ]]; then
 	#Couldn't find wireless information on server, but that's OK
 	# because we can just prompt the user for it
 		understandableYad "--form --title 'Wireless Network Settings' \
@@ -381,7 +381,7 @@ echo \#Performing domain setup >&11
 if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	#Using a Samba4 domain
 	DNSSUFFIX=` < /tmp/netlogon/domain_information/dns_domain`
-	[[ -z "$DNSSUFFIX" ]] && exitfunc 1
+	[[ -z $DNSSUFFIX ]] && exitfunc 1
 	#Copy files and change variables
 	dns_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSSUFFIX"`
 	DOMAIN=`sed "s/^\([^.]*\).*/\1/" <<< "$dns_domain_caps"`
@@ -394,7 +394,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	
 	#Samba information required for ksmb, regardless of winbind or not
 	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
-	[[ -z "$samba_domain" ]] && exitfunc 1
+	[[ -z $samba_domain ]] && exitfunc 1
 	samba_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
 	#Configure smb.conf
 	sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
@@ -445,7 +445,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		DOMAINTYPE=samba4
 		domain_sid=` < /tmp/netlogon/domain_information/domain_sid`
 		ldap_base=` < /tmp/netlogon/domain_information/ldap_base`
-		[[ -z "$domain_sid" ]] && exitfunc 1
+		[[ -z $domain_sid ]] && exitfunc 1
 		#Configure nslcd.conf
 		sed -i "s/CHANGETHISSERVER/$PDC.$DNSSUFFIX/g" /etc/nslcd.conf
 		sed -i "s/CHANGETHISSID/$domain_sid/g" /etc/nslcd.conf
@@ -469,7 +469,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 else
 	#Using a Samba3 domain
 	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
-	[[ -z "$samba_domain" ]] && exitfunc 1
+	[[ -z $samba_domain ]] && exitfunc 1
 	#Copy files and change variables
 	samba_domain_caps=`tr 'a-z' 'A-Z' <<< "$samba_domain"`
 	DOMAIN=$samba_domain_caps

@@ -43,7 +43,7 @@ unset IFS
 ####################
 #Set apt settings through proxy
 ####################
-if [[ "$PROXYSERVER" ]]; then
+if [[ $PROXYSERVER ]]; then
 	echo "Acquire::http::Proxy 'http://$PROXYSERVER.$DNSSUFFIX:3142/apt-cacher/';" > /etc/apt/apt.conf.d/01proxy
 fi
 
@@ -123,12 +123,12 @@ find /etc/skel -type d -print0 | xargs -0 chmod 755
 ###########################
 #Create cronjob to shut computer down
 ###########################
-if [[ "$CLIENTSHUTDOWNTIME" ]]; then
+if [[ $CLIENTSHUTDOWNTIME ]]; then
 	echo Setting auto shutdown time at $CLIENTSHUTDOWNTIME
 	hours=`cut -d: -f1 <<< "$CLIENTSHUTDOWNTIME"`
 	minutes=`cut -d: -f2 <<< "$CLIENTSHUTDOWNTIME"`
 
-	if [[ "$hours" ]] && [[ "$minutes" ]]
+	if [[ $hours ]] && [[ $minutes ]]
 	then
 		echo "SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
@@ -171,25 +171,25 @@ BrowseInterval 0" >> /etc/cups/cupsd.conf
 fi
 
 #Assign printers depending on the location
-if [[ "$LOCATION" ]]; then
+if [[ $LOCATION ]]; then
 	#Remove all printers
 	while read -r printer _; do
-		if [[ "`lpstat -v $printer | grep 'smb:\|ipp:'`" ]]; then
+		if [[ `lpstat -v $printer | grep 'smb:\|ipp:'` ]]; then
 			echo Removing $printer
 			lpadmin -x $printer
 		fi
 	done < <(lpstat -a)
 	
 	#Add printers
-	if [[ "$PRINTSERVER" ]] && [[ -f /tmp/netlogon/printers.txt ]]; then
+	if [[ $PRINTSERVER ]] && [[ -f /tmp/netlogon/printers.txt ]]; then
 		all_printers=`grep $LOCATION /tmp/netlogon/printers.txt`
-		if [[ "$all_printers" ]]; then
+		if [[ $all_printers ]]; then
 			printer_count=`cut -d, -f2 <<< "$all_printers"`
 			default_printer=`cut -d, -f$(( printer_count + 3 )) <<< "$all_printers"`
 			for (( i = 3; i < printer_count + 3; ++i )); do
 				printer=`cut -d, -f$i <<< "$all_printers"`
 				echo Adding printer $printer
-				if [[ "$DOMAINTYPE" == samba3 ]]; then
+				if [[ $DOMAINTYPE == samba3 ]]; then
 					lpadmin -p $printer -v smb://$PRINTSERVER.$DNSSUFFIX/$printer -L "$LOCATION" -D "$printer" -E
 				else
 					lpadmin -p $printer -v ksmb://$PRINTSERVER.$DNSSUFFIX/$printer -L "$LOCATION" -D "$printer" -E
@@ -228,7 +228,7 @@ then
 		#Only run apt-get update if it has not already run
 		! $apt_updated && apt-get update
 		install_list=`sed 's/ //g' /tmp/netlogon/linuxclient/$LINUX_VERSION/install_list`
-		if [[ "$install_list" ]]; then
+		if [[ $install_list ]]; then
 			apt-get -y install --no-upgrade $install_list
 		fi
 	fi
@@ -237,7 +237,7 @@ then
 	if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/remove_list ]]
 	then
 		remove_list=`sed 's/ //g' /tmp/netlogon/linuxclient/$LINUX_VERSION/remove_list`
-		if [[ "$remove_list" ]]; then
+		if [[ $remove_list ]]; then
 			echo Removing Software
 			apt-get -y remove $remove_list
 		fi
@@ -287,7 +287,7 @@ echo root > /etc/at.allow
 #Enable trim support in fstab
 for device in /dev/sd*; do
 	device_uuid=`blkid $device | sed 's@.*UUID="\([^"]*\)".*@\1@'`
-	if [[ "$device_uuid" ]] && [[ "`hdparm -I $device | grep TRIM`" ]]; then
+	if [[ $device_uuid ]] && [[ `hdparm -I $device | grep TRIM` ]]; then
 		sed -i "/swap\|discard,noatime/!s@\(UUID=$device_uuid[[:blank:]]\+[^[:blank:]]\+[[:blank:]]\+[^[:blank:]]\+[[:blank:]]\+[^[:blank:]]\+\)@\1,discard,noatime@" /etc/fstab
 	fi
 done
