@@ -23,25 +23,25 @@ OnlyShowIn=XFCE;" | tee ~/Desktop/karoshi-"$filename".desktop > ~/.local/share/a
 ######################
 #Extract configuration
 ######################
-[ -f ~/network/home/.configuration.tar.gz ] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
-[ -f ~/network/home/.desktop-icons.tar.gz ] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
+[[ -f ~/network/home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
+[[ -f ~/network/home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
 
-[ ! -d ~/.local/share/applications ] && mkdir -p ~/.local/share/applications
-[ ! -d ~/Desktop ] && mkdir ~/Desktop
+[[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
+[[ ! -d ~/Desktop ]] && mkdir ~/Desktop
 
 ##############################
 #This only makes sense if running as a domain user
 ##############################
-if [ -d ~/network/home ]; then
+if [[ -d ~/network/home ]]; then
 
 	##################
 	#create user.js for default Firefox settings
 	##################
-	if which firefox >/dev/null && [ -d ~/.mozilla/firefox ]; then
+	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 		firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
-		if [[ "$firefox_profile" ]] && [ -d ~/.mozilla/firefox/"$firefox_profile" ]; then
+		if [[ "$firefox_profile" ]] && [[ -d ~/.mozilla/firefox/"$firefox_profile" ]]; then
 			#Apply CA certificate
-			if [ -f /opt/karoshi/cacert.pem ]; then
+			if [[ -f /opt/karoshi/cacert.pem ]]; then
 				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.mozilla/firefox/"$firefox_profile"
 			fi
 	
@@ -49,7 +49,7 @@ if [ -d ~/network/home ]; then
 			echo "user_pref('browser.download.lastDir', '~/network/home/');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
 	
 			#Give clipboard capability to Moodle and other sites
-			if [ -f /opt/karoshi/allow_clipboard_sites ]; then
+			if [[ -f /opt/karoshi/allow_clipboard_sites ]]; then
 				echo "user_pref('capability.policy.allowclipboard.sites', '` < /opt/karoshi/allow_clipboard_sites`');
 user_pref('capability.policy.allowclipboard.Clipboard.cutcopy', 'allAccess');
 user_pref('capability.policy.allowclipboard.Clipboard.paste', 'allAccess');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
@@ -65,7 +65,7 @@ user_pref('extensions.lastPlatformVersion', '$firefox_version');" >> ~/.mozilla/
 			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 	
 			#Proxy server
-			if [ "$PROXYSERVER" ]; then
+			if [[ "$PROXYSERVER" ]]; then
 				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.http_port', 3128);
 user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
@@ -85,7 +85,7 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 			fi
 	
 			#Set up Kerberos
-			if [ "$DOMAINTYPE" == samba4 ] || [ "$DOMAINTYPE" == samba4_winbind ]; then
+			if [[ "$DOMAINTYPE" == samba4 ]] || [[ "$DOMAINTYPE" == samba4_winbind ]]; then
 				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
 		fi
@@ -94,11 +94,11 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 	##################
 	#create user.js for default Thunderbird settings
 	##################
-	if which thunderbird >/dev/null && [ -d ~/.thunderbird ]; then
+	if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
 		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
-		if [[ "$thunderbird_profile" ]] && [ -d ~/.thunderbird/"$thunderbird_profile" ]; then
+		if [[ "$thunderbird_profile" ]] && [[ -d ~/.thunderbird/"$thunderbird_profile" ]]; then
 			#Apply CA certificate
-			if [ -f /opt/karoshi/cacert.pem ]; then
+			if [[ -f /opt/karoshi/cacert.pem ]]; then
 				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
 			fi
 		
@@ -112,7 +112,7 @@ user_pref('mailnews.start_page_override.mstone', '$thunderbird_version');" >> ~/
 			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 		
 			#Proxy server
-			if [ "$PROXYSERVER" ]; then
+			if [[ "$PROXYSERVER" ]]; then
 				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.http_port', 3128);
 user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
@@ -128,11 +128,11 @@ user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $P
 			fi
 		
 			#Set up Kerberos
-			if [ "$DOMAINTYPE" == samba4 ] || [ "$DOMAINTYPE" == samba4_winbind ]; then
+			if [[ "$DOMAINTYPE" == samba4 ]] || [[ "$DOMAINTYPE" == samba4_winbind ]]; then
 				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 			fi
 		
-			if [ "$MAILSERVER" ]; then
+			if [[ "$MAILSERVER" ]]; then
 				user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
 		
 				echo "user_pref('mail.identity.id1.useremail', '$USER@$DNSSUFFIX');
@@ -193,7 +193,7 @@ mountpoints=false
 
 #Create home icon first so that it appears first on the desktop
 mountpath=`mount | grep "$USER/network/home type cifs" | cut -d' ' -f3`
-if [ "$mountpath" ]; then
+if [[ "$mountpath" ]]; then
 	mountname=`basename $mountpath`
 	create_entries "$mountname" "$mountpath" folder-home
 	mountpoints=true
@@ -202,7 +202,7 @@ fi
 #Create icons to other mounted network shares
 for mountpath in `mount | grep "$USER/network/[^[:blank:]]* type cifs" | cut -d' ' -f3 | sort`; do
 	mountname=`basename $mountpath`
-	if [ $mountname != home ] && [ $mountname != netlogon ]; then
+	if [[ $mountname != home ]] && [[ $mountname != netlogon ]]; then
 		create_entries "$mountname" "$mountpath" folder-publicshare
 		mountpoints=true
 	fi
@@ -214,22 +214,22 @@ if ! $mountpoints; then
 fi
 
 #Copy in default icons
-[ -d /opt/karoshi/desktop_icons/all ] && find /opt/karoshi/desktop_icons/all -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
+[[ -d /opt/karoshi/desktop_icons/all ]] && find /opt/karoshi/desktop_icons/all -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
 
 #Copy in extra icons for groups
 pri_group=`id -g -n`
-[ -d /opt/karoshi/desktop_icons/$pri_group ] && find /opt/karoshi/desktop_icons/$pri_group -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
+[[ -d /opt/karoshi/desktop_icons/$pri_group ]] && find /opt/karoshi/desktop_icons/$pri_group -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
 
 ##################
 #Miscellaneous things
 ##################
 #Copy in admin-skel
-if [ $pri_group == itadmin -o $pri_group == tech ] && [ -d /opt/karoshi/admin-skel ]; then
+if [[ $pri_group == itadmin -o $pri_group == tech ]] && [[ -d /opt/karoshi/admin-skel ]]; then
 	find /opt/karoshi/admin-skel -mindepth 1 -print0 | xargs -0 cp -rf -t ~
 fi
 
 #Set default directory for terminal emulator and file manager to network/home
-if [ -d ~/network/home ]; then
+if [[ -d ~/network/home ]]; then
 	mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
 	cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
 	sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory network/home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
@@ -242,9 +242,9 @@ fi
 export MOZ_CRASHREPORTER_DISABLE=1
 
 #Create rednotebook link
-if [ -d ~/network/home ]; then
-	[ ! -d ~/network/home/.rednotebook ] && mkdir ~/network/home/.rednotebook
-	[ ! -d ~/.rednotebook ] && ln -s network/home/.rednotebook ~/.rednotebook
+if [[ -d ~/network/home ]]; then
+	[[ ! -d ~/network/home/.rednotebook ]] && mkdir ~/network/home/.rednotebook
+	[[ ! -d ~/.rednotebook ]] && ln -s network/home/.rednotebook ~/.rednotebook
 fi
 
 #Set permissions on icons

@@ -23,7 +23,7 @@
 source /opt/karoshi/linuxclientsetup/utilities/common
 
 #Connect to netlogon
-[ ! -d /tmp/netlogon ] && mkdir /tmp/netlogon
+[[ ! -d /tmp/netlogon ]] && mkdir /tmp/netlogon
 if ! mount.cifs //$PDC.$DNSSUFFIX/netlogon /tmp/netlogon -o guest,nounix 1>/dev/null; then
 	info_alert "Error" "Unable to contact PDC"
 	exitfunc 1
@@ -35,7 +35,7 @@ function exitfunc {
 }
 
 #Check that room list exists
-if [ ! -f /tmp/netlogon/locations.txt ]; then
+if [[ ! -f /tmp/netlogon/locations.txt ]]; then
 	info_alert "Error" "No locations have been created on the PDC"
 	exitfunc 1
 fi
