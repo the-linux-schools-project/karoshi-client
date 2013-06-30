@@ -27,7 +27,7 @@ function setFlag {
 }
 function validFlag {
 	for flag in "${flags[@]}"; do
-		if [[ $1 == $flag ]]; then
+		if [[ $1 == "$flag" ]]; then
 			return
 		fi
 	done

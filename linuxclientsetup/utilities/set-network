@@ -38,7 +38,7 @@ function getClientSettings {
 		#Create network_int_list for use in combo box in yad
 		network_int_list=$NETWORKINT
 		for i in "${network_ints[@]}"; do
-			[[ $i == $NETWORKINT ]] && continue
+			[[ $i == "$NETWORKINT" ]] && continue
 			network_int_list="$network_int_list!$i"
 		done
 		#Get and set temporary network settings
