@@ -114,7 +114,7 @@ if [[ -f install/install-list ]]; then
 	packages=( $(< install/install-list) )
 	#This is a bit of a hack to get error output stored in a variable as well as output
 	exec 11>&1
-	rm_packages=$(apt-get -qy --allow-unauthenticated install ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p')
+	rm_packages=$(apt-get -qy --allow-unauthenticated install ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p'; exit ${PIPESTATUS[0]})
 	err=$?
 	exec 11>&-
 	if [[ $err -eq 100 ]]; then
