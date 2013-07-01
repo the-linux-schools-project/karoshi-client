@@ -8,6 +8,7 @@
 	<DefaultMergeDirs/>
 	<Include>
 		<Filename>exo-web-browser.desktop</Filename>
+		<Filename>exo-mail-reader.desktop</Filename>
 		<Category>Karoshi</Category>
 		<Filename>xfce4-session-logout.desktop</Filename>
 	</Include>
@@ -39,12 +40,6 @@
 		<Exclude>
 			<Filename>exo-file-manager.desktop</Filename>
 		</Exclude>
-		<Exclude>
-			<Filename>globaltime.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>xfburn.desktop</Filename>
-		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Development</Name>
@@ -66,9 +61,6 @@
 		<Include>
 			<Category>Graphics</Category>
 		</Include>
-		<Exclude>
-			<Filename>evince.desktop</Filename>
-		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Multimedia</Name>
@@ -78,9 +70,6 @@
 			<Category>Video</Category>
 			<Category>AudioVideo</Category>
 		</Include>
-		<Exclude>
-			<Filename>xfburn.desktop</Filename>
-		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Network</Name>
@@ -88,12 +77,6 @@
 		<Include>
 			<Category>Network</Category>
 		</Include>
-		<Exclude>
-			<Or>
-				<Filename>exo-mail-reader.desktop</Filename>
-				<Filename>exo-web-browser.desktop</Filename>
-			</Or>
-		</Exclude>
 		<Exclude>
 			<Filename>xchat.desktop</Filename>
 		</Exclude>
@@ -104,12 +87,6 @@
 		<Include>
 			<Category>Office</Category>
 		</Include>
-		<Exclude>
-			<Filename>globaltime.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>xfcalendar.desktop</Filename>
-		</Exclude>
 	</Menu>
 	
 	<Menu>
