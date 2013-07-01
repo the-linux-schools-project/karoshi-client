@@ -149,6 +149,7 @@ These packages need to be installed on the client prior to a remaster
 - synaptic
 - rubygems
 - -> git-up
+- xmlstarlet
 
 ## Packages to remove
 
