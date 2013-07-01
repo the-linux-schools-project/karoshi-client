@@ -92,7 +92,8 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 	if ! $dhcp; then
 		echo "	address $IPADDR
 	netmask $NETMASK
-	gateway $GATEWAY" >> /etc/network/interfaces
+	gateway $GATEWAY
+	dns-nameservers $SERVERIP" >> /etc/network/interfaces
 	fi
 	
 	#If wireless
@@ -100,6 +101,9 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 		echo "	wpa-ssid $wifi_ssid
 	wpa-psk $wifi_key" >> /etc/network/interfaces
 	fi
+	
+	#Reconfigure DNS nameservers
+	resolvconf -u
 }
 
 function updateHostname {
@@ -359,8 +363,6 @@ echo 45 >&11
 mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
 echo 50 >&11
 
-echo "nameserver $SERVERIP" > /etc/resolv.conf
-
 karoshi-manage-flags set networkset
 
 #############
@@ -390,7 +392,6 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	cp -rf /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rf /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
-	sed -i "1idomain $DNSSUFFIX" /etc/resolv.conf
 	
 	#Samba information required for ksmb, regardless of winbind or not
 	samba_domain=` < /tmp/netlogon/domain_information/domain_name`

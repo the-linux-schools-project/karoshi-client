@@ -69,9 +69,25 @@ echo "Preparing environment..."
 echo "Warning: Do not interrupt the procedure or your system may be in"
 echo "         an inconsistent state"
 
-#Set up resolv.conf for reliable DNS
-echo "nameserver 8.8.8.8
+function set_network {
+	# $1 = network interface
+	# $2 = IP address/netmask
+	# $3 = gateway
+	( [[ $1 ]] && [[ $2 ]] && [[ $3 ]] ) || return
+	ip link set "$1" up
+	ip addr flush dev "$1"
+	ip addr add "$2" dev "$1"
+	ip route add default via "$3"
+	
+	#Set up resolv.conf for reliable DNS
+	echo "nameserver 8.8.8.8
 nameserver 8.8.4.4" > /etc/resolv.conf
+}
+
+#Save current network settings
+net_int=$(ip route | sed -n 's/^default .*dev \([^ ]*\).*/\1/p')
+net_ip=$(ip addr show eth0 | sed -n 's/^[[:space:]]*inet \([^ ]*\).*/\1/p')
+net_gw=$(ip route | sed -n 's/^default .*via \([^ ]*\).*/\1/p')
 
 #Add new APT repositories
 if [[ -f install/apt-repositories ]]; then
@@ -89,6 +105,8 @@ echo
 ###################
 #Installation
 ###################
+
+export DEBIAN_FRONTEND=noninteractive
 
 #Install packages
 if [[ -f install/install-list ]]; then
@@ -117,6 +135,9 @@ if [[ -f install/install-list ]]; then
 	fi
 fi
 
+#Reset network settings in case a package clobbered it
+set_network "$net_int" "$net_ip" "$net_gw"
+
 #Remove packages
 if [[ -f install/remove-list ]]; then
 	echo "Removing packages..."
@@ -144,6 +165,9 @@ if [[ -f install/remove-list ]]; then
 	fi
 fi
 
+#Reset network settings in case a package clobbered it
+set_network "$net_int" "$net_ip" "$net_gw"
+
 #Update everything
 echo "Updating packages..."
 if ! apt-get -qy --allow-unauthenticated dist-upgrade; then
@@ -152,6 +176,9 @@ if ! apt-get -qy --allow-unauthenticated dist-upgrade; then
 	read
 fi
 
+#Reset network settings in case a package clobbered it
+set_network "$net_int" "$net_ip" "$net_gw"
+
 #Clean up unneeded packages
 echo "Autoremoving unneeded packages..."
 if ! apt-get -qy autoremove; then
@@ -159,6 +186,9 @@ if ! apt-get -qy autoremove; then
 	echo "       Press Enter to continue" >&2
 	read
 fi
+
+#Reset network settings in case a package clobbered it
+set_network "$net_int" "$net_ip" "$net_gw"
 
 #Install rubygems
 if which gem && [[ -f install/rubygem-list ]]; then
@@ -315,5 +345,3 @@ if ! [[ -e install/no-remaster ]]; then
 	#Stop Auto logon
 	sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 fi
-
-[[ -e /etc/rc1.d/S89karoshi-install ]] && rm -f /etc/rc1.d/S89karoshi-install

@@ -150,6 +150,7 @@ These packages need to be installed on the client prior to a remaster
 - rubygems
 - -> git-up
 - xmlstarlet
+- resolvconf
 
 ## Packages to remove
 
@@ -163,7 +164,6 @@ These packages should be **removed** to save disk space or remove conflicts
 - linux-image-generic
 - linux-headers-generic
 - network-manager
-- resolvconf
 
 ## Symlinks
 
