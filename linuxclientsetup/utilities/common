@@ -1,5 +1,24 @@
 #!/bin/bash
 
+#Copyright (C) 2013 Robin McCorkell
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
 #Common functions used in multiple scripts
 
 #ipregex
@@ -19,7 +38,7 @@
 #function updateVariables
 #	updates variables file
 
-if [ -f /opt/karoshi/variables ]; then
+if [[ -f /opt/karoshi/variables ]]; then
 	source /opt/karoshi/variables
 else
 	source /opt/karoshi/linuxclientsetup/variables
@@ -42,13 +61,13 @@ function exitfunc {
 
 function persistantYad {
 	yad_status=252
-	while [ $yad_status -eq 252 ]; do
+	while [[ $yad_status -eq 252 ]]; do
 		DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
 		yad_status=$?
-		if [ $yad_status -eq 1 ]; then
+		if [[ $yad_status -eq 1 ]]; then
 			exitfunc 1
 		fi
-		[ $yad_status -eq 0 ] && break
+		[[ $yad_status -eq 0 ]] && break
 		info_alert "Warning" "You must complete the form"
 	done
 	return $yad_status
@@ -57,7 +76,7 @@ function persistantYad {
 function understandableYad {
 	DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
 	yad_status=$?
-	if [ $yad_status -eq 252 ] || [ $yad_status -eq 1 ]; then
+	if [[ $yad_status -eq 252 ]] || [[ $yad_status -eq 1 ]]; then
 		exitfunc 1
 	fi
 	return $yad_status
