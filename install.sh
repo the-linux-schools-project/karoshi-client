@@ -36,20 +36,27 @@ echo
 
 #Check if running as root (duh)
 if [[ $EUID -ne 0 ]]; then
-	echo "ERROR: Not running as root - aborting"
-	exit
+	echo "ERROR: Not running as root - aborting" >&2
+	exit 1
 fi
 
 #Check for internet connection
 if ! ping -w 1 -c 1 8.8.8.8; then
-	echo "ERROR: No direct internet connection - aborting"
-	exit
+	echo "ERROR: No direct internet connection - aborting" >&2
+	exit 1
 fi
 
 #Check for required packages
 if ! (which apt-get); then
-	echo "ERROR: Missing packages - aborting"
-	exit
+	echo "ERROR: Missing packages - aborting" >&2
+	exit 1
+fi
+
+#Check if logged in as user with home in /home
+if [[ ~ =~ ^/home ]]; then
+	echo "ERROR: Current user has home area in /home" >&2
+	echo "       Switch to different user to allow home directories to be moved correctly" >&2
+	exit 1
 fi
 
 #Change directory to the script's location
@@ -57,8 +64,8 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 #Make sure our files are here
 if ! ( [[ -d configuration ]] && [[ -d linuxclientsetup ]] && [[ -d install ]] ); then
-	echo "ERROR: Missing files required for installation - aborting"
-	exit
+	echo "ERROR: Missing files required for installation - aborting" >&2
+	exit 1
 fi
 
 ###################
