@@ -16,3 +16,5 @@ indicator-messages
 indicator-power
 indicator-printers
 indicator-session
+lilypond-doc
+fonts-horai-umefont
