@@ -229,7 +229,7 @@ while IFS=":" read -r username _ _ _ _ home _; do
 		if ! usermod -d /opt/"$username" -m "$username"; then
 			echo "ERROR: Moving home directory for $username has failed" >&2
 			echo "       Press Enter to continue" >&2
-			read
+			read <&1
 		fi
 	fi
 done < <(getent passwd)
