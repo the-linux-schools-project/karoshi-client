@@ -248,6 +248,9 @@ find configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /
 find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t ~administrator
 chown -R administrator:administrator ~administrator
 
+#Correct permissions for sudoers.d files
+find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
+
 #Install linuxclientsetup
 [[ -e /opt/karoshi ]] && rm -rf /opt/karoshi
 mkdir /opt/karoshi
