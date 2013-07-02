@@ -3,6 +3,6 @@ avahi-daemon
 ntpdate
 mousepad
 nautilus
-linux-image-generic
-linux-headers-generic
+linux-.*-generic
 network-manager
+gnome-screenshot
