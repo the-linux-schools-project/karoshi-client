@@ -270,92 +270,92 @@ ln -sf karoshi-run-script /usr/bin/karoshi-manage-flags
 ln -sf karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir
 ln -sf karoshi-run-script /usr/bin/karoshi-pam-wrapper
 
-echo "Installation complete!"
+echo
+echo "Installation of Karoshi Client complete - press Ctrl + C now to finish"
+echo "Alternatively, press Enter to continue to remaster the current system"
+read
 
-if ! [[ -e install/no-remaster ]]; then
+###################
+#Start remastersys
+###################
+echo "Beginning remaster..."
 
-	###################
-	#Start remastersys
-	###################
-	echo "Beginning remaster..."
-
-	if ! which remastersys; then
-		echo "ERROR: No remastersys detected - aborting" >&2
-		exit 1
-	fi
-
-	#Link karoshi-setup
-	[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
-	ln -sf /opt/karoshi/linuxclientsetup/karoshi-setup.desktop ~administrator/.config/autostart/
-	chown -R administrator:administrator ~administrator
-
-	#Administrator autologin
-	if ! grep "^autologin-user=" /etc/lightdm/lightdm.conf; then
-		echo "autologin-user=administrator
-autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
-	fi
-
-	#Determine ISO parameters
-	if [[ -f README.md ]]; then
-		iso_version=$(sed -n 's/.*\*\*Current dev version:\*\* \(.*\)/\1/p' README.md)
-		iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
-	else
-		echo "WARNING: No README.md detected, using timestamp as version" >&2
-		iso_version=$(date +%s)
-		iso_website="http://linuxgfx.co.uk/"
-	fi
-	#Determine ISO architecture
-	iso_arch=$(uname -i)
-	[[ $iso_arch == x86_64 ]] && iso_arch=amd64
-
-	echo "ISO Label:   Karoshi Client $iso_version-$iso_arch"
-	echo "ISO Website: $iso_website"
-
-	#Configure remastersys
-	sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
-		   -e "s@^EXCLUDES=.*@EXCLUDES='/tmp /mnt'@" \
-		   -e "s@^LIVEUSER=.*@LIVEUSER='administrator'@" \
-		   -e "s@^LIVECDLABEL=.*@LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'@" \
-		   -e "s@^CUSTOMISO=.*@CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'@" \
-		   -e "s@^LIVECDURL=.*@LIVECDURL='$iso_website'@" \
-		   /etc/remastersys.conf
-
-	#Configure boot menu image
-	if [[ -e install/splash.png ]]; then
-		echo "Found custom splash.png"
-		[[ -e /etc/remastersys/isolinux/splash.png ]] && rm -f /etc/remastersys/isolinux/splash.png
-		cp install/splash.png /etc/remastersys/isolinux/splash.png
-	fi
-	#Configure preseed
-	if [[ -e install/preseed.cfg ]]; then
-		echo "Found custom preseed.cfg"
-		[[ -e /etc/remastersys/preseed/custom.seed ]] && rm -f /etc/remastersys/preseed/custom.seed
-		cp install/preseed.cfg /etc/remastersys/preseed/custom.seed
-	fi
-
-	#Start creating the remaster
-	if ! remastersys clean; then
-		echo "WARNING: Error in cleaning remastersys working directory (/tmp/remastersys)" >&2
-		echo "         Resolve manually, then press Enter to continue" >&2
-		read
-	fi
-	if ! remastersys backup; then
-		echo "ERROR: remastersys backup failed" >&2
-	else
-		echo
-		echo "Remaster complete!"
-		echo "ISO Location: /tmp/remastersys"
-		echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso"
-		echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5"
-		echo
-	fi
-
-	###################
-	#Clean up
-	###################
-
-	echo "Cleaning up..."
-	rm -f ~administrator/.config/autostart/karoshi-setup.desktop
-	#Stop Auto logon
-	sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
+if ! which remastersys; then
+	echo "ERROR: No remastersys detected - aborting" >&2
+	exit 1
 fi
+
+#Link karoshi-setup
+[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
+ln -sf /opt/karoshi/linuxclientsetup/karoshi-setup.desktop ~administrator/.config/autostart/
+chown -R administrator:administrator ~administrator
+
+#Administrator autologin
+if ! grep "^autologin-user=" /etc/lightdm/lightdm.conf; then
+	echo "autologin-user=administrator
+autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
+fi
+
+#Determine ISO parameters
+if [[ -f README.md ]]; then
+	iso_version=$(sed -n 's/.*\*\*Current dev version:\*\* \(.*\)/\1/p' README.md)
+	iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
+else
+	echo "WARNING: No README.md detected, using timestamp as version" >&2
+	iso_version=$(date +%s)
+	iso_website="http://linuxgfx.co.uk/"
+fi
+#Determine ISO architecture
+iso_arch=$(uname -i)
+[[ $iso_arch == x86_64 ]] && iso_arch=amd64
+
+echo "ISO Label:   Karoshi Client $iso_version-$iso_arch"
+echo "ISO Website: $iso_website"
+
+#Configure remastersys
+sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
+	   -e "s@^EXCLUDES=.*@EXCLUDES='/tmp /mnt'@" \
+	   -e "s@^LIVEUSER=.*@LIVEUSER='administrator'@" \
+	   -e "s@^LIVECDLABEL=.*@LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'@" \
+	   -e "s@^CUSTOMISO=.*@CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'@" \
+	   -e "s@^LIVECDURL=.*@LIVECDURL='$iso_website'@" \
+	   /etc/remastersys.conf
+
+#Configure boot menu image
+if [[ -e install/splash.png ]]; then
+	echo "Found custom splash.png"
+	[[ -e /etc/remastersys/isolinux/splash.png ]] && rm -f /etc/remastersys/isolinux/splash.png
+	cp install/splash.png /etc/remastersys/isolinux/splash.png
+fi
+#Configure preseed
+if [[ -e install/preseed.cfg ]]; then
+	echo "Found custom preseed.cfg"
+	[[ -e /etc/remastersys/preseed/custom.seed ]] && rm -f /etc/remastersys/preseed/custom.seed
+	cp install/preseed.cfg /etc/remastersys/preseed/custom.seed
+fi
+
+#Start creating the remaster
+if ! remastersys clean; then
+	echo "WARNING: Error in cleaning remastersys working directory (/tmp/remastersys)" >&2
+	echo "         Resolve manually, then press Enter to continue" >&2
+	read
+fi
+if ! remastersys backup; then
+	echo "ERROR: remastersys backup failed" >&2
+else
+	echo
+	echo "Remaster complete!"
+	echo "ISO Location: /tmp/remastersys"
+	echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso"
+	echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5"
+	echo
+fi
+
+###################
+#Clean up
+###################
+
+echo "Cleaning up..."
+rm -f ~administrator/.config/autostart/karoshi-setup.desktop
+#Stop Auto logon
+sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
