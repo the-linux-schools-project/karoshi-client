@@ -255,13 +255,13 @@ chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
 chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
 
 #Link karoshi-run-script
-ln -s karoshi-run-script /usr/bin/karoshi-set-local-password
-ln -s karoshi-run-script /usr/bin/karoshi-set-location
-ln -s karoshi-run-script /usr/bin/karoshi-set-network
-ln -s karoshi-run-script /usr/bin/karoshi-setup
-ln -s karoshi-run-script /usr/bin/karoshi-manage-flags
-ln -s karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir
-ln -s karoshi-run-script /usr/bin/karoshi-pam-wrapper
+ln -sf karoshi-run-script /usr/bin/karoshi-set-local-password
+ln -sf karoshi-run-script /usr/bin/karoshi-set-location
+ln -sf karoshi-run-script /usr/bin/karoshi-set-network
+ln -sf karoshi-run-script /usr/bin/karoshi-setup
+ln -sf karoshi-run-script /usr/bin/karoshi-manage-flags
+ln -sf karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir
+ln -sf karoshi-run-script /usr/bin/karoshi-pam-wrapper
 
 echo "Installation complete!"
 
@@ -279,13 +279,13 @@ if ! [[ -e install/no-remaster ]]; then
 
 	#Link karoshi-setup
 	[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
-	ln -s /opt/karoshi/linuxclientsetup/karoshi-setup.desktop ~administrator/.config/autostart/
+	ln -sf /opt/karoshi/linuxclientsetup/karoshi-setup.desktop ~administrator/.config/autostart/
 	chown -R administrator:administrator ~administrator
 
 	#Administrator autologin
 	if ! grep "^autologin-user=" /etc/lightdm/lightdm.conf; then
 		echo "autologin-user=administrator
-	autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
+autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
 	fi
 
 	#Determine ISO parameters
@@ -305,12 +305,12 @@ if ! [[ -e install/no-remaster ]]; then
 	echo "ISO Website: $iso_website"
 
 	#Configure remastersys
-	sed -i -e "s/^WORKDIR=.*/WORKDIR='/tmp'/" \
-		   -e "s/^EXCLUDES=.*/EXCLUDES='/tmp /mnt'/" \
-		   -e "s/^LIVEUSER=.*/LIVEUSER='administrator'/" \
-		   -e "s/^LIVECDLABEL=.*/LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'/" \
-		   -e "s/^CUSTOMISO=.*/CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'/" \
-		   -e "s/^LIVECDURL=.*/LIVECDURL='$iso_website'/" \
+	sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
+		   -e "s@^EXCLUDES=.*@EXCLUDES='/tmp /mnt'@" \
+		   -e "s@^LIVEUSER=.*@LIVEUSER='administrator'@" \
+		   -e "s@^LIVECDLABEL=.*@LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'@" \
+		   -e "s@^CUSTOMISO=.*@CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'@" \
+		   -e "s@^LIVECDURL=.*@LIVECDURL='$iso_website'@" \
 		   /etc/remastersys.conf
 
 	#Configure boot menu image
