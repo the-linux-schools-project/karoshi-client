@@ -209,20 +209,22 @@ fi
 
 #Create administrator user
 [[ -e /opt/administrator ]] && rm -rf /opt/administrator
-if ! useradd -d /opt/administrator -m -U -r -s /bin/bash administrator; then
+if ! useradd -d /opt/administrator -m -U -r administrator; then
 	echo "Error in creating administrator user - removing existing user and trying again" >&2
 	userdel administrator -r
-	if ! useradd -d /opt/administrator -m -U -r -s /bin/bash administrator; then
+	if ! useradd -d /opt/administrator -m -U -r administrator; then
 		echo "ERROR: Unable to create administrator user" >&2
 		echo "       Resolve manually, then press Enter to continue" >&2
 		read
 	fi
-	echo "administrator:karoshi" | chpasswd
 fi
 if ! [[ -d ~administrator ]]; then
 	echo "ERROR: We have a problem - administrator doesn't have a home directory" >&2
 	exit 1
 fi
+#Set password and other parameters for administrator
+echo "administrator:karoshi" | chpasswd
+usermod -a -G adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare -s /bin/bash
 
 #Move home directories that currently exist in /home
 while IFS=":" read -r username _ _ _ _ home _; do
