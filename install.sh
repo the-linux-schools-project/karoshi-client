@@ -243,7 +243,7 @@ find /home -mindepth 1 -delete
 
 #Copy in new configuration (overwrite)
 echo "Installing configuration..."
-find configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /
+find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp -rf -t /
 
 find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t ~administrator
 chown -R administrator:administrator ~administrator
@@ -255,6 +255,7 @@ find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
 [[ -e /opt/karoshi ]] && rm -rf /opt/karoshi
 mkdir /opt/karoshi
 cp -rf linuxclientsetup /opt/karoshi
+find /opt/karoshi/linuxclientsetup -name '*~' -delete
 
 chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
 chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
