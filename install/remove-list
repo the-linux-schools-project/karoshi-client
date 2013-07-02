@@ -6,3 +6,13 @@ nautilus
 linux-.*-generic
 network-manager
 gnome-screenshot
+empathy
+gwibber
+transmission-gtk
+remmina
+indicator-appmenu
+indicator-datetime
+indicator-messages
+indicator-power
+indicator-printers
+indicator-session
