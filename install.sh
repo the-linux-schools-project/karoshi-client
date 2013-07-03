@@ -201,6 +201,15 @@ fi
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
 
+#Require restart if kernel has changed
+if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
+	echo
+	echo "The kernel has been updated"
+	echo "Please restart the machine and restart this installation script to continue"
+	echo "The installation will resume from where it left off"
+	exit 2
+fi
+
 #Install rubygems
 if which gem && [[ -f install/rubygem-list ]]; then
 	gems=( $(< install/rubygem-list) )
