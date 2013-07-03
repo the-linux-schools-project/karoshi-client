@@ -121,15 +121,19 @@ if [[ -f install/install-list ]]; then
 	packages=( $(< install/install-list) )
 	#This is a bit of a hack to get error output stored in a variable as well as output
 	exec 11>&1
-	rm_packages=$(apt-get -y --allow-unauthenticated install ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p'; exit ${PIPESTATUS[0]})
+	rm_packages=$(apt-get -y --allow-unauthenticated install --no-install-recommends ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p'; exit ${PIPESTATUS[0]})
 	err=$?
 	exec 11>&-
 	if [[ $err -eq 100 ]]; then
+		echo "WARNING: Unable to find some packages to install" >&2
+		echo "         Press Enter to remove these packages from the install list" >&2
+		echo "         and proceed with the installation" >&2
+		read
 		while read -r rm_package; do
 			packages=( $(sed "s/\<$rm_package\>//" <<< "${packages[@]}") )
 		done <<< "$rm_packages"
 		if [[ $packages ]]; then
-			if ! apt-get -y --allow-unauthenticated install ${packages[@]}; then
+			if ! apt-get -y --allow-unauthenticated install --no-install-recommends ${packages[@]}; then
 				echo "ERROR: Failed to install packages" >&2
 				echo "       Press Enter to continue" >&2
 				read
