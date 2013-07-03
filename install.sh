@@ -96,6 +96,8 @@ net_int=$(ip route | sed -n 's/^default .*dev \([^ ]*\).*/\1/p')
 net_ip=$(ip addr show eth0 | sed -n 's/^[[:space:]]*inet \([^ ]*\).*/\1/p')
 net_gw=$(ip route | sed -n 's/^default .*via \([^ ]*\).*/\1/p')
 
+set_network "$net_int" "$net_ip" "$net_gw"
+
 #Add new APT repositories
 if [[ -f install/apt-repositories ]]; then
 	while read -r apt_repo; do
