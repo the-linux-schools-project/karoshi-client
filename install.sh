@@ -31,29 +31,32 @@
 #Configuration checks
 ###################
 
-echo "Performing configuration checks..."
-echo
+echo "Performing configuration checks..." >&2
 
 #Check if running as root (duh)
 if [[ $EUID -ne 0 ]]; then
-	echo "ERROR: Not running as root - aborting" >&2
+	echo >&2
+	echo "ERROR: Not running as root" >&2
 	exit 1
 fi
 
 #Check for internet connection
 if ! ping -w 1 -c 1 8.8.8.8; then
-	echo "ERROR: No direct internet connection - aborting" >&2
+	echo >&2
+	echo "ERROR: No direct internet connection" >&2
 	exit 1
 fi
 
 #Check for required packages
 if ! (which apt-get); then
-	echo "ERROR: Missing packages - aborting" >&2
+	echo >&2
+	echo "ERROR: Missing apt-get - is this Ubuntu?" >&2
 	exit 1
 fi
 
 #Check if logged in as user with home in /home
 if [[ ~ =~ ^/home ]]; then
+	echo >&2
 	echo "ERROR: Current user has home area in /home" >&2
 	echo "       Switch to different user to allow home directories to be moved correctly" >&2
 	exit 1
@@ -72,9 +75,9 @@ fi
 #Pre-installation configuration
 ###################
 
-echo "Preparing environment..."
-echo "Warning: Do not interrupt the procedure or your system may be in"
-echo "         an inconsistent state"
+echo "Preparing environment..." >&2
+echo "Warning: Do not interrupt the procedure or your system may be in" >&2
+echo "         an inconsistent state" >&2
 
 function set_network {
 	# $1 = network interface
@@ -108,73 +111,95 @@ fi
 #Update APT
 apt-get update
 
-echo "Preparation finished!"
-echo
+echo "Preparation finished!" >&2
 
 ###################
-#Installation
+#Package installation/removal
 ###################
 
 export DEBIAN_FRONTEND=noninteractive
 
-#Install packages
+#Remove packages from install list that do not exist
 if [[ -f install/install-list ]]; then
-	echo "Installing packages..."
-	packages=( $(< install/install-list) )
-	#This is a bit of a hack to get error output stored in a variable as well as output
-	exec 11>&1
-	rm_packages=$(apt-get -y --allow-unauthenticated install ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p'; exit ${PIPESTATUS[0]})
+	install_packages=( $(< install/install-list) )
+	#Run simulation of install - this should tell us if the packages are valid or not
+	invalid_packages=$(apt-get -s install ${install_packages[@]} 2> >(sed -n 's/^E: Unable to locate package //p') >/dev/null )
 	err=$?
-	exec 11>&-
-	if [[ $err -eq 100 ]]; then
-		echo "WARNING: Unable to find some packages to install" >&2
+	if [[ $err -eq 100 ]] && [[ $invalid_packages ]]; then
+		echo >&2
+		echo "WARNING: Unable to locate some packages in the install list:" >&2
+		sed 's/^/         /' <<< "$invalid_packages" >&2
+		echo >&2
 		echo "         Press Enter to remove these packages from the install list" >&2
 		echo "         and proceed with the installation" >&2
 		read
-		while read -r rm_package; do
-			packages=( $(sed "s/\<$rm_package\>//" <<< "${packages[@]}") )
-		done <<< "$rm_packages"
-		if [[ $packages ]]; then
-			if ! apt-get -y --allow-unauthenticated install ${packages[@]}; then
-				echo "ERROR: Failed to install packages" >&2
-				echo "       Press Enter to continue" >&2
-				read
-			fi
-		fi
+		while read -r pkg; do
+			install_packages=( $(sed "s/\<$pkg\>//" <<< "${install_packages[@]}") )
+		done <<< "$invalid_packages"
 	elif [[ $err -ne 0 ]]; then
-		echo "ERROR: Failed to install packages" >&2
-		echo "       Press Enter to continue" >&2
-		read
+		echo >&2
+		echo "ERROR: Error calculating install list - error code from apt-get: $err" >&2
+		exit 2
 	fi
 fi
+
+#Remove packages from remove list that do not exist
+if [[ -f install/remove-list ]]; then
+	remove_packages=( $(< install/remove-list) )
+	#Run simulation of remove - this should tell us if the packages are valid or not
+	invalid_packages=$(apt-get -s remove ${remove_packages[@]} 2> >(sed -n 's/^E: Unable to locate package //p') >/dev/null )
+	err=$?
+	if [[ $err -eq 100 ]] && [[ $invalid_packages ]]; then
+		echo >&2
+		echo "WARNING: Unable to locate some packages in the remove list:" >&2
+		sed 's/^/         /' <<< "$invalid_packages" >&2
+		echo >&2
+		echo "         Press Enter to remove these packages from the remove list" >&2
+		echo "         and proceed with the installation" >&2
+		read
+		while read -r pkg; do
+			remove_packages=( $(sed "s/\<$pkg\>//" <<< "${remove_packages[@]}") )
+		done <<< "$invalid_packages"
+	elif [[ $err -ne 0 ]]; then
+		echo >&2
+		echo "ERROR: Error calculating remove list - error code from apt-get: $err" >&2
+		exit 2
+	fi
+fi
+
+#Configure DPKG holds to prevent packages to be removed from being installed
+apt-mark showhold | xargs apt-mark unhold
+if [[ $remove_packages ]]; then
+	apt-mark hold "${remove_packages[@]}"
+fi
+
+#Install packages
+if [[ $install_packages ]]; then
+	echo "Installing packages..." >&2
+	apt-get -y --allow-unauthenticated install ${install_packages[@]}
+	err=$?
+	if [[ $err -ne 0 ]]; then
+		echo >&2
+		echo "ERROR: Failed to install packages - error code from apt-get: $err" >&2
+		exit 2
+	fi
+fi
+
+#Unmark DPKG holds
+apt-mark showhold | xargs apt-mark unhold
 
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
 
 #Remove packages
-if [[ -f install/remove-list ]]; then
-	echo "Removing packages..."
-	packages=( $(< install/remove-list) )
-	#This is a bit of a hack to get error output stored in a variable as well as output
-	exec 11>&1
-	rm_packages=$(apt-get -y purge ${packages[@]} 2>&1 >&11 | tee /dev/fd/2 | sed -n 's/^E: Unable to locate package //p'; exit ${PIPESTATUS[0]})
+if [[ $remove_packages ]]; then
+	echo "Removing packages..." >&2
+	apt-get -y purge ${remove_packages[@]}
 	err=$?
-	exec 11>&-
-	if [[ $err -eq 100 ]]; then
-		while read -r rm_package; do
-			packages=( $(sed "s/\<$rm_package\>//" <<< "${packages[@]}") )
-		done <<< "$rm_packages"
-		if [[ $packages ]]; then
-			if ! apt-get -y purge ${packages[@]}; then
-				echo "ERROR: Failed to remove packages" >&2
-				echo "       Press Enter to continue" >&2
-				read
-			fi
-		fi
-	elif [[ $err -ne 0 ]]; then
-		echo "ERROR: Failed to remove packages" >&2
-		echo "       Press Enter to continue" >&2
-		read
+	if [[ $err -ne 0 ]]; then
+		echo >&2
+		echo "ERROR: Failed to remove packages - error code from apt-get: $err" >&2
+		exit 2
 	fi
 fi
 
@@ -182,22 +207,22 @@ fi
 set_network "$net_int" "$net_ip" "$net_gw"
 
 #Update everything
-echo "Updating packages..."
+echo "Updating packages..." >&2
 if ! apt-get -y --allow-unauthenticated dist-upgrade; then
+	echo >&2
 	echo "ERROR: Failed to update packages" >&2
-	echo "       Press Enter to continue" >&2
-	read
+	exit 2
 fi
 
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
 
 #Clean up unneeded packages
-echo "Autoremoving unneeded packages..."
+echo "Autoremoving unneeded packages..." >&2
 if ! apt-get -y autoremove; then
+	echo >&2
 	echo "ERROR: Failed to autoremove packages" >&2
-	echo "       Press Enter to continue" >&2
-	read
+	exit 2
 fi
 
 #Reset network settings in case a package clobbered it
@@ -205,68 +230,104 @@ set_network "$net_int" "$net_ip" "$net_gw"
 
 #Require restart if kernel has changed
 if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
-	echo
-	echo "The kernel has been updated"
-	echo "Please restart the machine and restart this installation script to continue"
-	echo "The installation will resume from where it left off"
-	exit 2
+	echo >&2
+	echo "The kernel has been updated" >&2
+	echo "Please restart the machine and restart this installation script to continue" >&2
+	echo "The installation will resume from where it left off" >&2
+	exit 100
 fi
+
+###########################
+#Non-essential installation
+###########################
 
 #Install rubygems
 if which gem && [[ -f install/rubygem-list ]]; then
 	gems=( $(< install/rubygem-list) )
 	if ! gem install ${gems[@]}; then
-			echo "ERROR: Failed to install rubygems" >&2
-			echo "       Press Enter to continue" >&2
-			read
+		echo >&2
+		echo "ERROR: Failed to install rubygems" >&2
+		echo "       Press Enter to continue" >&2
+		read
 	fi
 fi
+
+#####################
+#Users and home areas
+#####################
+
+echo "Preparing users and home areas..." >&2
 
 #Create administrator user
 [[ -e /opt/administrator ]] && rm -rf /opt/administrator
 if ! useradd -d /opt/administrator -m -U -r administrator; then
 	echo "Error in creating administrator user - removing existing user and trying again" >&2
 	userdel administrator -r
-	if ! useradd -d /opt/administrator -m -U -r administrator; then
-		echo "ERROR: Unable to create administrator user" >&2
-		echo "       Resolve manually, then press Enter to continue" >&2
-		read
+	useradd -d /opt/administrator -m -U -r administrator
+	err=$?
+	if [[ $err -ne 0 ]]; then
+		echo >&2
+		echo "ERROR: Unable to create administrator user - error code from useradd: $err" >&2
+		exit 4
 	fi
 fi
 if ! [[ -d ~administrator ]]; then
+	echo >&2
 	echo "ERROR: We have a problem - administrator doesn't have a home directory" >&2
-	exit 1
+	exit 4
 fi
 #Set password and other parameters for administrator
-echo "administrator:karoshi" | chpasswd
+chpasswd <<< "administrator:karoshi"
+err=$?
+if [[ $err -ne 0 ]]; then
+	echo >&2
+	echo "ERROR: Failed to set password for administrator user" >&2
+	echo "       Error code from chpasswd: $err" >&2
+	exit 4
+fi
 usermod -a -G adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare -s /bin/bash administrator
+err=$?
+if [[ $err -ne 0 ]]; then
+	echo >&2
+	echo "ERROR: Error setting various paramters to administrator user" >&2
+	echo "       Error code from usermod: $err" >&2
+	exit 4
+fi
+
+echo "Copying necessary admin files to administrator home area..." >&2
+find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t ~administrator
+chown -R administrator:administrator ~administrator
 
 #Move home directories that currently exist in /home
+echo "Moving user home directories that are in /home..." >&2
 while IFS=":" read -r username _ _ _ _ home _; do
 	if [[ $home =~ ^/home ]]; then
 		if ! usermod -d /opt/"$username" -m "$username"; then
-			echo "ERROR: Moving home directory for $username has failed" >&2
-			echo "       Press Enter to continue" >&2
+			echo >&2
+			echo "WARNING: Moving home directory for $username has failed" >&2
+			echo "         Press Enter to continue" >&2
 			read <&1
 		fi
 	fi
 done < <(getent passwd)
 
 #Clean up /home
-echo "Cleaning up /home..."
+echo "Cleaning up /home..." >&2
 find /home -mindepth 1 -delete
 
-#Copy in new configuration (overwrite)
-echo "Installing configuration..."
-find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp -rf -t /
+################
+#Install Karoshi
+################
 
-find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t ~administrator
-chown -R administrator:administrator ~administrator
+#Copy in new configuration (overwrite)
+echo "Installing configuration..." >&2
+find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp -rf -t /
 
 #Correct permissions for sudoers.d files
 find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
 
 #Install linuxclientsetup
+echo "Installing Karoshi..." >&2
 [[ -e /opt/karoshi ]] && rm -rf /opt/karoshi
 mkdir /opt/karoshi
 cp -rf linuxclientsetup /opt/karoshi
@@ -285,19 +346,18 @@ ln -sf /opt/karoshi/linuxclientsetup/utilities/manage-flags /usr/bin/karoshi-man
 ln -sf /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir /usr/bin/karoshi-virtualbox-mkdir
 ln -sf /opt/karoshi/linuxclientsetup/utilities/pam-wrapper /usr/bin/karoshi-pam-wrapper
 
-echo
-echo "Installation of Karoshi Client complete - press Ctrl + C now to finish"
-echo "Alternatively, press Enter to continue to remaster the current system"
+echo >&2
+echo "Installation of Karoshi Client complete - press Ctrl + C now to finish" >&2
+echo "Alternatively, press Enter to continue to remaster the current system" >&2
 read
 
 ###################
-#Start remastersys
+#Remastersys
 ###################
-echo "Beginning remaster..."
 
 if ! which remastersys; then
-	echo "ERROR: No remastersys detected - aborting" >&2
-	exit 1
+	echo "ERROR: No remastersys detected" >&2
+	exit 5
 fi
 
 #Link karoshi-setup
@@ -324,8 +384,8 @@ fi
 iso_arch=$(uname -i)
 [[ $iso_arch == x86_64 ]] && iso_arch=amd64
 
-echo "ISO Label:   Karoshi Client $iso_version-$iso_arch"
-echo "ISO Website: $iso_website"
+echo "ISO Label:   Karoshi Client $iso_version-$iso_arch" >&2
+echo "ISO Website: $iso_website" >&2
 
 #Configure remastersys
 sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
@@ -341,13 +401,13 @@ sed -i "s@only-ubiquity@automatic-ubiquity@" /etc/remastersys/isolinux/isolinux.
 
 #Configure boot menu image
 if [[ -e install/splash.png ]]; then
-	echo "Found custom splash.png"
+	echo "Found custom splash.png" >&2
 	[[ -e /etc/remastersys/isolinux/splash.png ]] && rm -f /etc/remastersys/isolinux/splash.png
 	cp install/splash.png /etc/remastersys/isolinux/splash.png
 fi
 #Configure preseed
 if [[ -e install/preseed.cfg ]]; then
-	echo "Found custom preseed.cfg"
+	echo "Found custom preseed.cfg" >&2
 	[[ -e /etc/remastersys/preseed/custom.seed ]] && rm -f /etc/remastersys/preseed/custom.seed
 	cp install/preseed.cfg /etc/remastersys/preseed/custom.seed
 fi
@@ -358,22 +418,20 @@ if ! remastersys clean; then
 	echo "         Resolve manually, then press Enter to continue" >&2
 	read
 fi
+echo "Beginning remaster..." >&2
 if ! remastersys backup; then
 	echo "ERROR: remastersys backup failed" >&2
 else
-	echo
-	echo "Remaster complete!"
-	echo "ISO Location: /tmp/remastersys"
-	echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso"
-	echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5"
-	echo
+	echo >&2
+	echo "Remaster complete!" >&2
+	echo "ISO Location: /tmp/remastersys" >&2
+	echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso" >&2
+	echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5" >&2
+	echo >&2
 fi
 
-###################
 #Clean up
-###################
-
-echo "Cleaning up..."
+echo "Cleaning up..." >&2
 rm -f ~administrator/.config/autostart/karoshi-setup.desktop
 #Stop Auto logon
 sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
