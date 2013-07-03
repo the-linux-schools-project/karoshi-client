@@ -228,7 +228,7 @@ if ! [[ -d ~administrator ]]; then
 fi
 #Set password and other parameters for administrator
 echo "administrator:karoshi" | chpasswd
-usermod -a -G adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare -s /bin/bash
+usermod -a -G adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare -s /bin/bash administrator
 
 #Move home directories that currently exist in /home
 while IFS=":" read -r username _ _ _ _ home _; do
