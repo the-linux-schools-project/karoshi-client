@@ -97,5 +97,6 @@ language-pack-en
 ldap-utils
 synaptic
 rubygems
+ruby-dev
 xmlstarlet
 resolvconf
