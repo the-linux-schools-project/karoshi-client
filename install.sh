@@ -165,7 +165,7 @@ if [[ -f install/remove-list ]]; then
 			packages=( $(sed "s/\<$rm_package\>//" <<< "${packages[@]}") )
 		done <<< "$rm_packages"
 		if [[ $packages ]]; then
-			if ! apt-get -qy purge ${packages[@]}; then
+			if ! apt-get -y purge ${packages[@]}; then
 				echo "ERROR: Failed to remove packages" >&2
 				echo "       Press Enter to continue" >&2
 				read
@@ -194,7 +194,7 @@ set_network "$net_int" "$net_ip" "$net_gw"
 
 #Clean up unneeded packages
 echo "Autoremoving unneeded packages..."
-if ! apt-get -qy autoremove; then
+if ! apt-get -y autoremove; then
 	echo "ERROR: Failed to autoremove packages" >&2
 	echo "       Press Enter to continue" >&2
 	read
