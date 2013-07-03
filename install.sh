@@ -336,6 +336,9 @@ sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
 	   -e "s@^LIVECDURL=.*@LIVECDURL='$iso_website'@" \
 	   /etc/remastersys.conf
 
+#Configure isolinux to use automatic-ubiquity
+sed -i "s@only-ubiquity@automatic-ubiquity@" /etc/remastersys/isolinux/isolinux.cfg.vesamenu
+
 #Configure boot menu image
 if [[ -e install/splash.png ]]; then
 	echo "Found custom splash.png"
