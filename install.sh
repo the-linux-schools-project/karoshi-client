@@ -277,13 +277,13 @@ chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
 chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
 
 #Link karoshi-run-script
-ln -sf karoshi-run-script /usr/bin/karoshi-set-local-password
-ln -sf karoshi-run-script /usr/bin/karoshi-set-location
-ln -sf karoshi-run-script /usr/bin/karoshi-set-network
-ln -sf karoshi-run-script /usr/bin/karoshi-setup
-ln -sf karoshi-run-script /usr/bin/karoshi-manage-flags
-ln -sf karoshi-run-script /usr/bin/karoshi-virtualbox-mkdir
-ln -sf karoshi-run-script /usr/bin/karoshi-pam-wrapper
+ln -sf /opt/karoshi/linuxclientsetup/utilities/set-local-password /usr/bin/karoshi-set-local-password
+ln -sf /opt/karoshi/linuxclientsetup/utilities/set-location /usr/bin/karoshi-set-location
+ln -sf /opt/karoshi/linuxclientsetup/utilities/set-network /usr/bin/karoshi-set-network
+ln -sf /opt/karoshi/linuxclientsetup/utilities/setup /usr/bin/karoshi-setup
+ln -sf /opt/karoshi/linuxclientsetup/utilities/manage-flags /usr/bin/karoshi-manage-flags
+ln -sf /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir /usr/bin/karoshi-virtualbox-mkdir
+ln -sf /opt/karoshi/linuxclientsetup/utilities/pam-wrapper /usr/bin/karoshi-pam-wrapper
 
 echo
 echo "Installation of Karoshi Client complete - press Ctrl + C now to finish"
