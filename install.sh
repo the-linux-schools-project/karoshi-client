@@ -300,6 +300,8 @@ chown -R administrator:administrator ~administrator
 
 #Adjust any other users that exist
 echo "Adjusting any conflicting users found..." >&2
+#Create temporary FD for use inside &0-redirected while loop below
+exec 4<&0
 while IFS=":" read -r username _ uid gid gecos home shell; do
 	if [[ $uid -ge 1000 ]]; then
 		echo "WARNING: $username has a UID greater than or equal to 1000" >&2
@@ -308,7 +310,7 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 		resolved=false
 		while ! $resolved; do
 			echo -n "Delete user [d] or recreate with lower UID [l]? [d]: " >&2
-			read -r usr_input
+			read -r usr_input <&4
 			case "$usr_input" in
 			d*)
 				echo "Deleting user $username..." >&2
@@ -402,10 +404,11 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 			echo >&2
 			echo "WARNING: Moving home directory for $username has failed" >&2
 			echo "         Press Enter to continue" >&2
-			read <&1
+			read <&4
 		fi
 	fi
 done < <(getent passwd)
+exec 4<&-
 
 #Adjust existing groups
 echo "Adjusting any conflicting groups found..." >&2
