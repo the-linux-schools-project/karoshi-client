@@ -309,7 +309,8 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 		while ! $resolved; do
 			echo -n "Delete user [d] or recreate with lower UID [l]? [d]: " >&2
 			read -r usr_input
-			if [[ $usr_input == d* ]]; then
+			case "$usr_input" in
+			d*)
 				echo "Deleting user $username..." >&2
 				userdel -r $username
 				err=$?
@@ -333,7 +334,8 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 				else
 					echo "ERROR: Unable to remove $username - error code from userdel: $err" >&2
 				fi
-			elif [[ $usr_input == l* ]]; then
+				;;
+			l*)
 				#Get a list of groups to add the user to later
 				groups=( $(id -G $username) )
 				echo "Recreating $username with lower UID..." >&2
@@ -386,9 +388,11 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 				else
 					echo "ERROR: Unable to remove $username - error code from userdel: $err" >&2
 				fi
-			else
+				;;
+			*)
 				echo "$usr_input is not a valid option" >&2
-			fi
+				;;
+			esac
 		done
 	fi
 	#Deal with home areas that exist in /home
