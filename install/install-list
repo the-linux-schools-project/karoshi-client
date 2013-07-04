@@ -101,3 +101,5 @@ ruby-dev
 xmlstarlet
 resolvconf
 iputils-arping
+virtualbox-guest-utils
+virutalbox-guest-x11
