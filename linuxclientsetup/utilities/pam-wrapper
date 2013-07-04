@@ -64,17 +64,18 @@ fi
 
 #Make sure command is valid
 if ! [[ -x $command ]]; then
-	echo "$command is not an executable file" >&2
+	echo "ERROR: $command is not an executable file" >&2
+	exit 3
 fi
 
 #Needs to be root and running through PAM
 if [[ $EUID -ne 0 ]]; then
 	echo "ERROR: Must be run as root" >&2
-	exit 1
+	exit 4
 fi
 if [[ ! $PAM_USER ]]; then
 	echo "ERROR: Must be run through pam_exec.so" >&2
-	exit 1
+	exit 4
 fi
 
 #Fix relative path commands
@@ -92,7 +93,7 @@ if [[ $drop_priv ]]; then
 	#Make sure the user exists
 	if ! getent passwd "$PAM_USER" >/dev/null; then
 		echo "ERROR: Attempted to drop privilages to a non-existent user" >&2
-		exit 1
+		exit 5
 	fi
 	sudo -E -H -n -u "$PAM_USER" "$command"
 else
