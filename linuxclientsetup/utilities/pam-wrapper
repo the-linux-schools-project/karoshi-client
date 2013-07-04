@@ -63,8 +63,8 @@ if ! [[ $command ]]; then
 fi
 
 #Make sure command is valid
-if ! [[ -x $command ]]; then
-	echo "ERROR: $command is not an executable file" >&2
+if ! ( which "$command" >/dev/null || [[ -x $command ]] ); then
+	echo "ERROR: $command is not an executable file or a command" >&2
 	exit 3
 fi
 
