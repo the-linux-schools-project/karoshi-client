@@ -303,7 +303,7 @@ echo "Adjusting any conflicting users found..." >&2
 #Create temporary FD for use inside &0-redirected while loop below
 exec 4<&0
 while IFS=":" read -r username _ uid gid gecos home shell; do
-	if [[ $uid -ge 1000 ]]; then
+	if [[ $uid -ge 1000 ]] && [[ $uid -ne 65534 ]]; then
 		echo "WARNING: $username has a UID greater than or equal to 1000" >&2
 		echo "         Karoshi requires that no local users exist with UIDs above 999" >&2
 		echo >&2
@@ -312,7 +312,7 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 			echo -n "Delete user [d] or recreate with lower UID [l]? [d]: " >&2
 			read -r usr_input <&4
 			case "$usr_input" in
-			d*)
+			d*|"")
 				echo "Deleting user $username..." >&2
 				userdel -r $username
 				err=$?
@@ -408,18 +408,18 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 		fi
 	fi
 done < <(getent passwd)
-exec 4<&-
+
 
 #Adjust existing groups
 echo "Adjusting any conflicting groups found..." >&2
 while IFS=":" read -r groupname _ gid members; do
-	if [[ $gid -ge 1000 ]]; then
+	if [[ $gid -ge 1000 ]] && [[ $gid -ne 65534 ]]; then
 		echo "WARNING: $groupname has a GID greater than or equal to 1000" >&2
 		echo "         Karoshi requires that no local groups exist with GIDs above 999" >&2
 		echo >&2
 		[[ $members ]] || echo "$groupname has no members" >&2
 		echo "Press Enter to remove $groupname" >&2
-		read
+		read <&4
 		groupdel $groupname
 		err=$?
 		if [[ $err -eq 0 ]]; then
@@ -430,6 +430,8 @@ while IFS=":" read -r groupname _ gid members; do
 		fi
 	fi
 done < <(getent group)
+
+exec 4<&-
 
 #Clean up /home
 echo "Cleaning up /home..." >&2
