@@ -83,11 +83,18 @@ find /home -mindepth 1 -xdev -delete
 #Copy configuration
 ####################
 [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ]] && find /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /
+
+#Admin skel
+[[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
+mkdir /opt/karoshi/admin-skel
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]]; then
 	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
 elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]]
 	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+else
+	find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
 fi
+
 #Do skel (properly)
 if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz ]]; then
 	[[ -e /etc/skel ]] && rm -rf /etc/skel
