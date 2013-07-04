@@ -17,4 +17,4 @@ indicator-power
 indicator-printers
 indicator-session
 .*-doc$
-fonts-horai-umefont
+ttf-umefont
