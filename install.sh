@@ -298,10 +298,102 @@ echo "Copying necessary admin files to administrator home area..." >&2
 find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t ~administrator
 chown -R administrator:administrator ~administrator
 
-#Move home directories that currently exist in /home
-echo "Moving user home directories that are in /home..." >&2
-while IFS=":" read -r username _ _ _ _ home _; do
-	if [[ $home =~ ^/home ]]; then
+#Adjust any other users that exist
+echo "Adjusting any conflicting users found..." >&2
+while IFS=":" read -r username _ uid gid gecos home shell; do
+	if [[ $uid -ge 1000 ]]; then
+		echo "WARNING: $username has a UID greater than or equal to 1000" >&2
+		echo "         Karoshi requires that no local users exist with UIDs above 999" >&2
+		echo >&2
+		resolved=false
+		while ! $resolved; do
+			echo -n "Delete user [d] or recreate with lower UID [l]? [d]: " >&2
+			read -r usr_input
+			if [[ $usr_input == d* ]]; then
+				echo "Deleting user $username..." >&2
+				userdel -r $username
+				err=$?
+				if [[ $err -eq 0 ]]; then
+					IFS=":" read -r _ _ user_group_gid user_group_members < <(getent group $username)
+					if [[ $user_group_gid == "$gid" ]]; then
+						if ! [[ $user_group_members ]]; then
+							echo "Detected empty user group with same name as user" >&2
+							groupdel $username
+							err=$?
+							if [[ $err -eq 0 ]]; then
+								echo "Took the liberty of removing the user group" >&2
+							else
+								echo "WARNING: Removing user group failed - error code from groupdel: $err" >&2
+							fi
+						else
+							echo "WARNING: Detected user group with the same name as user, but it was not empty" >&2
+						fi
+					fi
+					resolved=true
+				else
+					echo "ERROR: Unable to remove $username - error code from userdel: $err" >&2
+				fi
+			elif [[ $usr_input == l* ]]; then
+				#Get a list of groups to add the user to later
+				groups=( $(id -G $username) )
+				echo "Recreating $username with lower UID..." >&2
+				userdel $username
+				err=$?
+				if [[ $err -eq 0 ]]; then
+					IFS=":" read -r _ _ user_group_gid user_group_members < <(getent group $username)
+					user_group=false
+					if [[ $user_group_gid == "$gid" ]]; then
+						user_group=true
+						if ! [[ $user_group_members ]]; then
+							echo "Detected empty user group with same name as user" >&2
+							groupdel $username
+							err=$?
+							if [[ $err -eq 0 ]]; then
+								echo "Removed the user group" >&2
+								declare -a new_groups
+								#Remove old user group from list of groups
+								for group in "${groups[@]}"; do
+									[[ $group != "$user_group_gid" ]] && new_groups+=($group)
+								done
+								groups=( "${new_groups[@]}" )
+							else
+								echo "WARNING: Removing user group failed - error code from groupdel: $err" >&2
+							fi
+						else
+							echo "WARNING: Detected user group with the same name as user, but it was not empty" >&2
+						fi
+					fi
+					
+					#Recreate user
+					echo "Creating new user with same username $username..." >&2
+					if $user_group; then
+						useradd -c "$gecos" -d "$home" -G "${groups[@]}" -M -r -s "$shell" -U
+						err=$?
+					else
+						groups=( "${groups[@]#* }" )
+						useradd -c "$gecos" -d "$home" -g "${groups[0]}" -G "${groups[@]}" -M -N -r -s "$shell"
+						err=$?
+					fi
+					
+					if [[ $err -eq 0 ]]; then
+						chown -R $username: "$home"
+						echo "Successfully recreated $username" >&2
+						resolved=true
+					else
+						echo "ERROR: Failed to recreate user - error code from useradd: $err" >&2
+						exit 4
+					fi
+				else
+					echo "ERROR: Unable to remove $username - error code from userdel: $err" >&2
+				fi
+			else
+				echo "$usr_input is not a valid option" >&2
+			fi
+		done
+	fi
+	#Deal with home areas that exist in /home
+	if [[ $home =~ ^/home ]] && [[ -e $home ]]; then
+		echo "Moving home directory for $username..." >&2
 		if ! usermod -d /opt/"$username" -m "$username"; then
 			echo >&2
 			echo "WARNING: Moving home directory for $username has failed" >&2
@@ -310,6 +402,27 @@ while IFS=":" read -r username _ _ _ _ home _; do
 		fi
 	fi
 done < <(getent passwd)
+
+#Adjust existing groups
+echo "Adjusting any conflicting groups found..." >&2
+while IFS=":" read -r groupname _ gid members; do
+	if [[ $gid -ge 1000 ]]; then
+		echo "WARNING: $groupname has a GID greater than or equal to 1000" >&2
+		echo "         Karoshi requires that no local groups exist with GIDs above 999" >&2
+		echo >&2
+		[[ $members ]] || echo "$groupname has no members" >&2
+		echo "Press Enter to remove $groupname" >&2
+		read
+		groupdel $groupname
+		err=$?
+		if [[ $err -eq 0 ]]; then
+			echo "Deleted $groupname successfully" >&2
+		else
+			echo "ERROR: Failed to delete $groupname - error code from groupdel: $err" >&2
+			exit 4
+		fi
+	fi
+done < <(getent group)
 
 #Clean up /home
 echo "Cleaning up /home..." >&2
