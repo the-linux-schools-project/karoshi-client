@@ -93,7 +93,12 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 		echo "	address $IPADDR
 	netmask $NETMASK
 	gateway $GATEWAY" >> /etc/network/interfaces
-		[[ $SERVERIP ]] && echo "	dns-nameservers $SERVERIP" >> /etc/network/interfaces
+		if [[ $SERVERIP ]]; then
+			if [[ $DNSSUFFIX ]]; then
+				echo "	dns-search $DNSSUFFIX" >> /etc/network/interfaces
+			fi
+			echo "	dns-nameservers $SERVERIP" >> /etc/network/interfaces
+		fi
 	fi
 	
 	#If wireless
@@ -168,7 +173,7 @@ if [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]] && ! karoshi-manage-flags 
 #Try until we have a PDC
 while ! $pdc_set; do
 	karoshi-manage-flags unset networkset
-	SERVERIP=
+	unset SERVERIP
 	#We define exitfunc further down, so this just resets it
 	function exitfunc {
 		info_alert "Configuration" "Configuration cancelled"
