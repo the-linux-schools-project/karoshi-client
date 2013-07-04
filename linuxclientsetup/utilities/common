@@ -47,11 +47,11 @@ fi
 ipregex='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
 function info_alert {
-	yad --title="$1" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 --button="gtk-ok" --text="$2"
+	yad --title="$1" --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 --button="gtk-ok" --text="$2"
 }
 
 function progress_info {
-	yad --title="$1" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --progress --no-buttons --text="$2" --image-on-top --auto-close --geometry=400x100-40+40
+	yad --title="$1" --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --progress --no-buttons --text="$2" --image-on-top --auto-close --geometry=400x100-40+40
 }
 
 function exitfunc {
@@ -62,7 +62,7 @@ function exitfunc {
 function persistantYad {
 	yad_status=252
 	while [[ $yad_status -eq 252 ]]; do
-		DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
+		DATA=$(eval yad --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
 		yad_status=$?
 		if [[ $yad_status -eq 1 ]]; then
 			exitfunc 1
@@ -74,7 +74,7 @@ function persistantYad {
 }
 
 function understandableYad {
-	DATA=$(eval yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
+	DATA=$(eval yad --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
 	yad_status=$?
 	if [[ $yad_status -eq 252 ]] || [[ $yad_status -eq 1 ]]; then
 		exitfunc 1
