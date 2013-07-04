@@ -482,6 +482,19 @@ if ! which remastersys; then
 	exit 5
 fi
 
+#Make sure we are running as administrator before starting the remaster
+is_administrator=false
+while read -r user; do
+	if [[ $user == "administrator" ]]; then
+		is_administrator=true
+		break
+	fi
+done < <(who -u | grep -v root | cut -d" " -f1 | uniq)
+if ! $is_administrator; then
+	echo "ERROR: To perform a remaster, you must be logged in as administrator" >&2
+	exit 6
+fi
+
 #Link karoshi-setup
 [[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
 ln -sf ~administrator/Desktop/karoshi-setup.desktop ~administrator/.config/autostart/
