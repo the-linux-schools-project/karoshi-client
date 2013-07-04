@@ -359,6 +359,9 @@ if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
 	echo "The kernel has been updated" >&2
 	echo "Please restart the machine and restart this installation script to continue" >&2
 	echo "The installation will resume from where it left off" >&2
+	echo >&2
+	echo "When you have restarted, log in as administrator (password: karoshi) if you" >&2
+	echo "wish to perform a remaster after installation" >&2
 	exit 100
 fi
 
