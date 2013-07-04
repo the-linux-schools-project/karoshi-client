@@ -108,7 +108,7 @@ sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].
 #Stop Auto logon
 sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 #Stop running this script on administrator login
-[[ -f /opt/administrator/.config/autostart/karoshi-setup.desktop ]] && rm -f /opt/administrator/.config/autostart/karoshi-setup.desktop
+[[ -f ~administrator/.config/autostart/karoshi-setup.desktop ]] && rm -f ~administrator/.config/autostart/karoshi-setup.desktop
 
 shutdown -r now
 exit
