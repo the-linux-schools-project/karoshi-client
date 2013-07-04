@@ -4,7 +4,7 @@ ntpdate
 mousepad
 nautilus
 ^linux.*-generic$
-network-manager
+^network-manager.*
 gnome-screenshot
 empathy
 gwibber
