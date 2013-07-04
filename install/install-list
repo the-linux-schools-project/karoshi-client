@@ -100,4 +100,4 @@ rubygems
 ruby-dev
 xmlstarlet
 resolvconf
-arping
+iputils-arping
