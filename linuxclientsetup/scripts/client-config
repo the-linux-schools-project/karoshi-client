@@ -198,16 +198,20 @@ fi
 ###########################
 #Update desktop icons for groups
 ###########################
-[[ -e /opt/karoshi/desktop_icons ]] && rm -rf /opt/karoshi/desktop_icons
-[[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons ]] && cp -rf /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons /opt/karoshi/
+[[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
+if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop-icons ]]; then
+	cp -rfT /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop-icons /opt/karoshi/desktop-icons
+elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons ]]; then
+	cp -rfT /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons /opt/karoshi/desktop-icons
+fi
 
-if [[ -d /opt/karoshi/desktop_icons ]]; then
-	chmod -R 0644 /opt/karoshi/desktop_icons
-	chmod -R u+X,g+X,o+X /opt/karoshi/desktop_icons
+if [[ -d /opt/karoshi/desktop-icons ]]; then
+	chmod -R 0644 /opt/karoshi/desktop-icons
+	chmod -R u+X,g+X,o+X /opt/karoshi/desktop-icons
 	while read file; do
 		filename="$(tr '[:upper:] ' '[:lower:]-' <<< "$(basename "$file")")"
 		mv "$file" "`dirname "$file"`/karoshi-$filename"
-	done < <(find /opt/karoshi/desktop_icons/ -name "*.desktop" -and -not -name "karoshi-*.desktop")
+	done < <(find /opt/karoshi/desktop-icons/ -name "*.desktop" -and -not -name "karoshi-*.desktop")
 fi
 
 ############################

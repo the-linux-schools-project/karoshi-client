@@ -218,11 +218,11 @@ if ! $mountpoints; then
 fi
 
 #Copy in default icons
-[[ -d /opt/karoshi/desktop_icons/all ]] && find /opt/karoshi/desktop_icons/all -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
+[[ -d /opt/karoshi/desktop-icons/all ]] && find /opt/karoshi/desktop-icons/all -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
 
 #Copy in extra icons for groups
 pri_group=`id -g -n`
-[[ -d /opt/karoshi/desktop_icons/$pri_group ]] && find /opt/karoshi/desktop_icons/$pri_group -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
+[[ -d /opt/karoshi/desktop-icons/$pri_group ]] && find /opt/karoshi/desktop-icons/$pri_group -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
 
 ##################
 #Miscellaneous things
