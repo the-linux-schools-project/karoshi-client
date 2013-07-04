@@ -18,3 +18,4 @@ indicator-printers
 indicator-session
 .*-doc$
 ttf-umefont
+update-manager
