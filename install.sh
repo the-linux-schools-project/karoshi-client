@@ -367,11 +367,11 @@ while IFS=":" read -r username _ uid gid gecos home shell; do
 					#Recreate user
 					echo "Creating new user with same username $username..." >&2
 					if $user_group; then
-						useradd -c "$gecos" -d "$home" -G "${groups[@]}" -M -r -s "$shell" -U
+						useradd -c "$gecos" -d "$home" -G "${groups[@]}" -M -r -s "$shell" -U "$username"
 						err=$?
 					else
 						groups=( "${groups[@]#* }" )
-						useradd -c "$gecos" -d "$home" -g "${groups[0]}" -G "${groups[@]}" -M -N -r -s "$shell"
+						useradd -c "$gecos" -d "$home" -g "${groups[0]}" -G "${groups[@]}" -M -N -r -s "$shell" "$username"
 						err=$?
 					fi
 					
