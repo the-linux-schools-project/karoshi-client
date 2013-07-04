@@ -87,11 +87,11 @@ cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown}.con
 chmod 644 /etc/init/karoshi-{update,idle-shutdown}.conf
 
 [[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
-cp -f /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
+cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
 find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -0 chmod 755
 
 [[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
-cp -f /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
+cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
 
 [[ -e /opt/karoshi/images ]] && rm -rf /opt/karoshi/images
 mkdir -p /opt/karoshi/images
