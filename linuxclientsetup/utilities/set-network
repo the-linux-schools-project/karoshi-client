@@ -92,8 +92,8 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 	if ! $dhcp; then
 		echo "	address $IPADDR
 	netmask $NETMASK
-	gateway $GATEWAY
-	dns-nameservers $SERVERIP" >> /etc/network/interfaces
+	gateway $GATEWAY" >> /etc/network/interfaces
+		[[ $SERVERIP ]] && echo "	dns-nameservers $SERVERIP" >> /etc/network/interfaces
 	fi
 	
 	#If wireless
