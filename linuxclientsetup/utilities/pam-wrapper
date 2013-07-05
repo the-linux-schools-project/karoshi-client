@@ -21,38 +21,50 @@
 
 function usage {
 	echo "Usage:" >&2
-	echo "	$0 <command>" >&2
+	echo "	$0 [<options>] <command> [<command-options>]" >&2
 	echo >&2
 	echo " Options:" >&2
 	echo "  --event=<pam-event>		Only execute on PAM_TYPE of <pam-event>" >&2
 	echo "  --drop-privilages		Drop privilages to PAM_USER" >&2
+	echo "  --						Do not parse further arguments as options" >&2
 	exit 1
 }
 
 #Get options
+drop_priv=false
+force_command_option=false
+is_command_set=false
+command_options=( )
 while (( "$#" )); do
-	case "$1" in
-	--event=?*)
-		pam_event=${1:8}
-		;;
-	--drop-privilages)
-		drop_priv=true
-		;;
-	--help)
-		usage
-		;;
-	-*)
-		echo "Unrecognised option $1" >&2
-		usage
-		;;
-	*)
-		if [[ $command ]]; then
-			echo "Attempted to set command twice - $1" >&2
-			usage
+	if $force_command_option; then
+		if $is_command_set; then
+			command_options+=("$1")
+		else
+			command=$1
 		fi
-		command=$1
-		;;
-	esac
+	else
+		case "$1" in
+		--event=?*)
+			pam_event=${1:8}
+			;;
+		--drop-privilages)
+			drop_priv=true
+			;;
+		--help)
+			usage
+			;;
+		--)
+			force_command_option=true
+			;;
+		*)
+			if $is_command_set; then
+				command_options+=("$1")
+			else
+				command=$1
+			fi
+			;;
+		esac
+	fi
 	
 	shift
 done
@@ -89,13 +101,13 @@ if [[ $pam_event ]] && [[ $PAM_TYPE != $pam_event ]]; then
 fi
 
 #Actually run
-if [[ $drop_priv ]]; then
+if $drop_priv; then
 	#Make sure the user exists
 	if ! getent passwd "$PAM_USER" >/dev/null; then
 		echo "ERROR: Attempted to drop privilages to a non-existent user" >&2
 		exit 5
 	fi
-	sudo -E -H -n -u "$PAM_USER" "$command"
+	sudo -E -H -n -u "$PAM_USER" -- "$command" "${command_options[@]}"
 else
-	"$command"
+	"$command" "${command_options[@]}"
 fi
