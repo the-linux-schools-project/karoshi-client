@@ -87,11 +87,11 @@ cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown}.con
 chmod 644 /etc/init/karoshi-{update,idle-shutdown}.conf
 
 [[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
-cp -f /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
+cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
 find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -0 chmod 755
 
 [[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
-cp -f /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
+cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
 
 [[ -e /opt/karoshi/images ]] && rm -rf /opt/karoshi/images
 mkdir -p /opt/karoshi/images
@@ -108,7 +108,7 @@ sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].
 #Stop Auto logon
 sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 #Stop running this script on administrator login
-[[ -f /opt/administrator/.config/autostart/karoshi-setup.desktop ]] && rm -f /opt/administrator/.config/autostart/karoshi-setup.desktop
+[[ -f ~administrator/.config/autostart/karoshi-setup.desktop ]] && rm -f ~administrator/.config/autostart/karoshi-setup.desktop
 
 shutdown -r now
 exit

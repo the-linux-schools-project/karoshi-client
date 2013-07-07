@@ -1,0 +1,6 @@
+Name: Enable Karoshi post-session support
+Default: yes
+Priority: 256
+Session-Type: Additional
+Session:
+	optional	pam_exec.so log=/var/log/karoshi/post-session.log /usr/bin/karoshi-pam-wrapper --drop-privilages --event=close_session /opt/karoshi/scripts/post-session
