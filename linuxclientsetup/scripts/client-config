@@ -317,16 +317,8 @@ function process_rules {
 [[ -f /tmp/netlogon/client_settings/firewall/rules ]] && process_rules /tmp/netlogon/client_settings/firewall/rules karoshi-domain
 [[ -f /opt/karoshi/firewall_rules ]] && process_rules /opt/karoshi/firewall_rules karoshi-local
 
-#Generate auto rules for running services on privilaged ports
-while read -r protocol _ _ _ bind_addr _; do
-	port=${bind_addr##*:}
-	if ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ) && [[ $port =~ ^[0-9]*$ ]]; then
-		iptables -A karoshi-auto -p "$protocol" --dport "$port" -j ACCEPT
-	else
-		echo "WARNING: Unknown error auto-generating ACCEPTion" >&2
-		echo "Protocol: $protocol	Bind address: $bind_addr" >&2
-	fi
-done < <(ss -4tuan sport != 127.0.0.1: and sport lt :1024 | tail -n +2)
+#Generate auto rules
+karoshi-generate-firewall-rules
 
 #Set default policies - done last to prevent connection dropouts
 iptables -P INPUT DROP

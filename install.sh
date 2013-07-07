@@ -595,6 +595,7 @@ ln -sf /opt/karoshi/linuxclientsetup/utilities/setup /usr/bin/karoshi-setup
 ln -sf /opt/karoshi/linuxclientsetup/utilities/manage-flags /usr/bin/karoshi-manage-flags
 ln -sf /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir /usr/bin/karoshi-virtualbox-mkdir
 ln -sf /opt/karoshi/linuxclientsetup/utilities/pam-wrapper /usr/bin/karoshi-pam-wrapper
+ln -sf /opt/karoshi/linuxclientsetup/utilities/generate-firewall-rules /usr/bin/karoshi-generate-firewall-rules
 
 echo >&2
 echo "Installation of Karoshi Client complete - press Ctrl + C now to finish" >&2

@@ -38,3 +38,4 @@ Some Karoshi utilities need to be symlinked into /usr/bin from their /opt/karosh
 - /opt/karoshi/linuxclientsetup/utilities/manage-flags -> /usr/bin/karoshi-manage-flags
 - /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir -> /usr/bin/karoshi-virtualbox-mkdir
 - /opt/karoshi/linuxclientsetup/utilities/pam-wrapper -> /usr/bin/karoshi-pam-wrapper
+- /opt/karoshi/linuxclientsetup/utilities/generate-firewall-rules-> /usr/bin/generate-firewall-rules

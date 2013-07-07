@@ -1,0 +1,2 @@
+post-invoke 'if [ "$DPKG_HOOK_ACTION" == "remove" ] || [ "$DPKG_HOOK_ACTION" == "configure" ]; then karoshi-generate-firewall-rules; fi'
+
