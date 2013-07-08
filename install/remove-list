@@ -19,3 +19,4 @@ indicator-session
 .*-doc$
 ttf-umefont
 update-manager
+software-center
