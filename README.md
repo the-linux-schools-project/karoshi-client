@@ -29,13 +29,6 @@ See **install/remove-list** for a list of packages that are removed as part of a
 
 ## Symlinks
 
-Some Karoshi utilities need to be symlinked into /usr/bin from their /opt/karoshi/linuxclientsetup/utilities location, to allow desktop icons to correctly reference them and be used system-wide:
+Some Karoshi utilities need to be symlinked into /usr/bin from their /opt/karoshi/linuxclientsetup/utilities location, to allow desktop icons to correctly reference them and be used system-wide.
 
-- /opt/karoshi/linuxclientsetup/utilities/set-local-password -> /usr/bin/karoshi-set-local-password
-- /opt/karoshi/linuxclientsetup/utilities/set-location -> /usr/bin/karoshi-set-location
-- /opt/karoshi/linuxclientsetup/utilities/set-network -> /usr/bin/karoshi-set-network
-- /opt/karoshi/linuxclientsetup/utilities/setup -> /usr/bin/karoshi-setup
-- /opt/karoshi/linuxclientsetup/utilities/manage-flags -> /usr/bin/karoshi-manage-flags
-- /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir -> /usr/bin/karoshi-virtualbox-mkdir
-- /opt/karoshi/linuxclientsetup/utilities/pam-wrapper -> /usr/bin/karoshi-pam-wrapper
-- /opt/karoshi/linuxclientsetup/utilities/generate-firewall-rules-> /usr/bin/generate-firewall-rules
+See **install/link-list** for a list of files that are linked into various places

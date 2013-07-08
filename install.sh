@@ -587,15 +587,14 @@ chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
 chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
 chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
 
-#Link karoshi-run-script
-ln -sf /opt/karoshi/linuxclientsetup/utilities/set-local-password /usr/bin/karoshi-set-local-password
-ln -sf /opt/karoshi/linuxclientsetup/utilities/set-location /usr/bin/karoshi-set-location
-ln -sf /opt/karoshi/linuxclientsetup/utilities/set-network /usr/bin/karoshi-set-network
-ln -sf /opt/karoshi/linuxclientsetup/utilities/setup /usr/bin/karoshi-setup
-ln -sf /opt/karoshi/linuxclientsetup/utilities/manage-flags /usr/bin/karoshi-manage-flags
-ln -sf /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir /usr/bin/karoshi-virtualbox-mkdir
-ln -sf /opt/karoshi/linuxclientsetup/utilities/pam-wrapper /usr/bin/karoshi-pam-wrapper
-ln -sf /opt/karoshi/linuxclientsetup/utilities/generate-firewall-rules /usr/bin/karoshi-generate-firewall-rules
+#Link Karoshi utilities
+if [[ -f install/link-list ]]; then
+	while read -r link_name _ link_to; do
+		if [[ -e $link_to ]] && [[ $link_name ]]; then
+			ln -sf "$link_to" "$link_name"
+		fi
+	done < install/link-list
+fi
 
 echo >&2
 echo "Installation of Karoshi Client complete - press Ctrl + C now to finish" >&2
