@@ -62,7 +62,7 @@ function exitfunc {
 function persistantYad {
 	yad_status=252
 	while [[ $yad_status -eq 252 ]]; do
-		DATA=$(eval yad --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
+		DATA=$(yad --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 "$@")
 		yad_status=$?
 		if [[ $yad_status -eq 1 ]]; then
 			exitfunc 1
@@ -74,7 +74,7 @@ function persistantYad {
 }
 
 function understandableYad {
-	DATA=$(eval yad --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 $1)
+	DATA=$(yad --wrap --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 "$@")
 	yad_status=$?
 	if [[ $yad_status -eq 252 ]] || [[ $yad_status -eq 1 ]]; then
 		exitfunc 1

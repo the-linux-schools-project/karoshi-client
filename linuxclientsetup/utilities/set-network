@@ -42,10 +42,10 @@ function getClientSettings {
 			network_int_list="$network_int_list!$i"
 		done
 		#Get and set temporary network settings
-		understandableYad "--form --title 'Network Settings' --text 'IP Address, Netmask and Gateway are not required if DHCP is selected' --wrap \
+		understandableYad --form --title 'Network Settings' --text 'IP Address, Netmask and Gateway are not required if DHCP is selected' --wrap \
 							--field='Client Name' --field='Network Interface':CB --field='IP Address' --field='Netmask' --field='Gateway' --field='DHCP':CHK \
 							--button='gtk-cancel:1' --button='gtk-ok:0' \
-							'$CLIENT_NAME' '$network_int_list' '$IPADDR' '$NETMASK' '$GATEWAY' '$dhcp'"
+							"$CLIENT_NAME" "$network_int_list" "$IPADDR" "$NETMASK" "$GATEWAY" "$dhcp"
 		CLIENT_NAME=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
 		NETWORKINT=`cut -d"|" -f2 <<< "$DATA" | sed 's/ //g'`
 		IPADDR=`cut -d"|" -f3 <<< "$DATA"`
@@ -62,10 +62,10 @@ function getClientSettings {
 		fi
 
 		if isWireless $NETWORKINT; then
-			understandableYad "--form --title 'Wireless Network Settings' --text 'Wireless interface detected' --wrap \
+			understandableYad --form --title 'Wireless Network Settings' --text 'Wireless interface detected' --wrap \
 								--field='SSID' --field='WPA2-PSK Key' \
 								--button='gtk-go-back:2' --button='gtk-cancel:1' --button='gtk-ok:0'
-								'$wifi_ssid' '$wifi_key'"
+								"$wifi_ssid" "$wifi_key"
 			if [[ $? -ne 0 ]]; then
 				continue
 			fi
@@ -234,10 +234,10 @@ while ! $pdc_set; do
 	fi
 	if ! $pdc_set; then
 	#We still haven't connected to the PDC
-		understandableYad "--form --title 'Network Settings' \
+		understandableYad --form --title 'Network Settings' \
 							--field='PDC IP Address' \
 							--button='Skip:1' --button='gtk-ok:0' \
-							'$SERVERIP'"
+							"$SERVERIP"
 		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
 		echo \#Attempting to mount netlogon >&11
 		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
@@ -332,10 +332,10 @@ if isWireless $NETWORKINT && ( [[ -z $wifi_ssid ]] || [[ -z $wifi_key ]] ); then
 	if [[ -z $wifi_ssid ]] || [[ -z $wifi_key ]]; then
 	#Couldn't find wireless information on server, but that's OK
 	# because we can just prompt the user for it
-		understandableYad "--form --title 'Wireless Network Settings' \
+		understandableYad --form --title 'Wireless Network Settings' \
 							--field='SSID' --field='WPA2-PSK Key' \
 							--button='gtk-cancel:1' --button='gtk-ok:0'\
-							'$wifi_ssid' '$wifi_key'"
+							"$wifi_ssid" "$wifi_key"
 	fi
 	echo \#Setting network configuration >&11
 fi
@@ -426,9 +426,9 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		echo \#Joining domain >&11
 		join_status=1
 		while [[ $join_status -ne 0 ]]; do
-			understandableYad "--form --title='Domain Access' --wrap \
+			understandableYad --form --title='Domain Access' --wrap \
 								--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
-								--button='gtk-cancel:1' --button='gtk-ok:0' "
+								--button='gtk-cancel:1' --button='gtk-ok:0'
 			domain_username=`cut -d"|" -f1 <<< "$DATA"`
 			domain_password=`cut -d"|" -f2 <<< "$DATA"`
 			net ads join -S $PDC -U $domain_username%$domain_password
@@ -501,9 +501,9 @@ else
 	echo \#Joining domain >&11
 	join_status=1
 	while [[ $join_status -ne 0 ]]; do
-		understandableYad "--form --title='Domain Access' --wrap \
+		understandableYad --form --title='Domain Access' --wrap \
 							--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
-							--button='gtk-cancel:1' --button='gtk-ok:0' "
+							--button='gtk-cancel:1' --button='gtk-ok:0'
 		domain_username=`cut -d"|" -f1 <<< "$DATA"`
 		domain_password=`cut -d"|" -f2 <<< "$DATA"`
 		net rpc join -S $PDC -U $domain_username%$domain_password

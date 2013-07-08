@@ -44,10 +44,10 @@ fi
 #Choose room
 #######################
 selection=` < /tmp/netlogon/locations.txt`
-understandableYad "--wrap --image-on-top --entry --title 'Client Location' \
+understandableYad --wrap --image-on-top --entry --title 'Client Location' \
 					--button='gtk-cancel:1' --button='gtk-ok:0' \
 					--text 'Choose the location of this computer' \
-					$selection"
+					$selection
 LOCATION=$DATA
 
 #Completed message
