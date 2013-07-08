@@ -35,6 +35,15 @@ function do_remastersys {
 		echo "ERROR: No remastersys detected" >&2
 		exit 5
 	fi
+	
+	#Require restart if kernel has changed
+	if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
+		echo >&2
+		echo "The kernel has been updated" >&2
+		echo "Please restart the machine, log in as administrator (default password: karoshi)," >&2
+		echo "and restart this installation script to perform a remaster" >&2
+		exit 100
+	fi
 
 	#Make sure we are running as administrator before starting the remaster
 	is_administrator=false
@@ -352,18 +361,6 @@ fi
 
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
-
-#Require restart if kernel has changed
-if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
-	echo >&2
-	echo "The kernel has been updated" >&2
-	echo "Please restart the machine and restart this installation script to continue" >&2
-	echo "The installation will resume from where it left off" >&2
-	echo >&2
-	echo "When you have restarted, log in as administrator (password: karoshi) if you" >&2
-	echo "wish to perform a remaster after installation" >&2
-	exit 100
-fi
 
 ###########################
 #Non-essential installation
