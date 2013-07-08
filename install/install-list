@@ -30,7 +30,7 @@ libreoffice
 libreoffice-l10n-en-gb
 libreoffice-help-en-gb
 myspell-en-gb
-mytheus-en-us
+mythes-en-us
 wbritish
 rednotebook
 gedit
@@ -67,7 +67,6 @@ vlc
 codeblocks
 eclipse
 glade
-greenfoot
 netbeans
 g++
 libboost1.48-all-dev
