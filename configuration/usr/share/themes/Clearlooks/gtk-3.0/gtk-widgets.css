@@ -1168,13 +1168,6 @@ DbusmenuGtkMenu .menuitem .accelerator:insensitive,
     text-shadow: none;
 }
 
-/******************
- * resize-grip *
- ******************/
-.grip {
-	-unico-centroid-texture:  url("../gtk-2.0/resize_grip.png");
-}
-
 /*******************
  * Notebook & Tabs *
  *******************/
