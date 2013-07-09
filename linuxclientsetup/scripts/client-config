@@ -25,7 +25,7 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 ####################
 #Refresh client information
 ####################
-echo Retrieving client information
+echo "Retrieving client information"
 #unset LOCATION
 unset PRINTSERVER
 unset PROXYSERVER
@@ -45,14 +45,14 @@ unset IFS
 #Set apt settings through proxy
 ####################
 if [[ $PROXYSERVER ]]; then
-	echo Configuring APT proxy
+	echo "Configuring APT proxy"
 	echo "Acquire::http::Proxy \"http://$PROXYSERVER.$DNSSUFFIX:3142/apt-cacher/\";" > /etc/apt/apt.conf.d/01proxy
 fi
 
 ####################
 #Domain specific stuff
 ####################
-echo Configuring pam_mount
+echo "Configuring pam_mount"
 rm -f /etc/security/pam_mount.conf.xml
 case "$DOMAINTYPE" in
 samba4)
@@ -69,7 +69,7 @@ samba3)
 	find /var/cache/samba -mindepth 1 -delete
 	;;
 *)
-	echo "Warning! Unrecognized domain type $DOMAINTYPE"
+	echo "WARNING: Unrecognized domain type $DOMAINTYPE"
 	;;
 esac
 
@@ -80,17 +80,17 @@ esac
 #[[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "0,/[[:blank:]]*<volume/s@@<volume options=\"size=100m,uid=%(USERUID),gid=%(USERGID),mode=0700\" mountpoint=\"~\" uid=\"1000-50000\" fstype=\"tmpfs\" />\n<volume@" /etc/security/pam_mount.conf.xml
 
 #Clear home areas
-echo Clearing home areas
+echo "Clearing /home"
 find /home -mindepth 1 -xdev -delete
 
 ####################
 #Copy configuration
 ####################
-echo Copying configuration
+echo "Copying configuration"
 [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ]] && find /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /
 
 #Admin skel
-echo Copying admin skel
+echo "Copying admin skel"
 [[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
 mkdir /opt/karoshi/admin-skel
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]]; then
@@ -98,12 +98,13 @@ if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]]; then
 elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]]; then
 	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 else
+	echo "WARNING: No admin skel found on server - using default one"
 	find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 fi
 
 #Do skel (properly)
 if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz ]]; then
-	echo Found new skel - replacing existing one
+	echo "Found new skel - replacing existing one"
 	[[ -e /etc/skel ]] && rm -rf /etc/skel
 	tar -x -C /etc -f /tmp/netlogon/linuxclient/$LINUX_VERSION/skel.tar.gz
 fi
@@ -113,7 +114,7 @@ chmod -R +r /etc/skel
 find /etc/skel -type d -print0 | xargs -r0 chmod 755
 
 #Version agnostic configuration
-echo Copying other files
+echo "Copying other files"
 #Background images
 [[ -f /tmp/netlogon/linuxclient/background.png ]] && cp -f /tmp/netlogon/linuxclient/background.png /opt/karoshi/images/
 [[ -f /tmp/netlogon/linuxclient/login-background.png ]] && cp -f /tmp/netlogon/linuxclient/login-background.png /opt/karoshi/images/
@@ -163,20 +164,20 @@ function do_xpi {
 [[ -d /opt/karoshi/thunderbird/extensions ]] || mkdir -p /opt/karoshi/thunderbird/extensions
 
 if [[ -d /tmp/netlogon/client_settings/thunderbird/extensions ]]; then
-	echo Clearing current Thunderbird extensions
+	echo "Clearing current Thunderbird extensions"
 	#Clear all extensions
 	find /opt/karoshi/thunderbird/extensions -mindepth 1 -delete
 	find /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} -maxdepth 1 -lname '/opt/karoshi/thunderbird/extensions/*' -delete
 	
 	#Global extensions
 	while read -r -d $'\0' xpi; do
-		echo Found new global extension: $xpi
+		echo "Found new global extension: $xpi"
 		do_xpi "$xpi"
 	done < <(find /tmp/netlogon/client_settings/thunderbird/extensions -maxdepth 1 -mindepth 1 -name '*.xpi' -print0)
 	#Linux-specific extensions
 	if [ -d /tmp/netlogon/client_settings/thunderbird/extensions/linux-$(uname -i) ]; then
 		while read -r -d $'\0' xpi; do
-			echo Found new architecture extension: $xpi
+			echo "Found new architecture extension: $xpi"
 			do_xpi "$xpi"
 		done < <(find /tmp/netlogon/client_settings/thunderbird/extensions/linux-$(uname -i) -maxdepth 1 -mindepth 1 -name '*.xpi' -print0)
 	fi
@@ -185,7 +186,7 @@ fi
 ##########################
 #Update the upstart scripts
 ##########################
-echo Updating Upstart scripts
+echo "Updating Upstart scripts"
 [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf ]] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf /etc/init
 [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf ]] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf /etc/init
 
@@ -193,7 +194,7 @@ echo Updating Upstart scripts
 #Create cronjob to shut computer down
 ###########################
 if [[ $CLIENTSHUTDOWNTIME ]]; then
-	echo Setting auto shutdown time to $CLIENTSHUTDOWNTIME
+	echo "Setting auto shutdown time to $CLIENTSHUTDOWNTIME"
 	hours=`cut -d: -f1 <<< "$CLIENTSHUTDOWNTIME"`
 	minutes=`cut -d: -f2 <<< "$CLIENTSHUTDOWNTIME"`
 
@@ -211,7 +212,7 @@ fi
 ###########################
 #Configure firewall
 ###########################
-echo Configuring firewall
+echo "Configuring firewall"
 #Reset firewall to defaults
 iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
@@ -331,7 +332,7 @@ function process_rules {
 [[ -f /opt/karoshi/firewall_rules ]] && process_rules /opt/karoshi/firewall_rules karoshi-local
 
 #Generate auto rules
-echo Performing auto-generation of firewall rules
+echo "Performing auto-generation of firewall rules"
 karoshi-generate-firewall-rules
 
 #Set default policies - done last to prevent connection dropouts
@@ -348,12 +349,14 @@ iptables -P OUTPUT ACCEPT
 ###########################
 #Update desktop icons for groups
 ###########################
-echo Updating desktop icons
+echo "Updating desktop icons"
 [[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop-icons ]]; then
 	cp -rfT /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop-icons /opt/karoshi/desktop-icons
 elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons ]]; then
 	cp -rfT /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons /opt/karoshi/desktop-icons
+else
+	echo "WARNING: Could not find any desktop icons on server"
 fi
 
 if [[ -d /opt/karoshi/desktop-icons ]]; then
@@ -368,7 +371,7 @@ fi
 ############################
 #Printers
 ############################
-echo Configuring printers
+echo "Configuring printers"
 #Turn off cups browsing
 if [[ `grep -c "Browsing Off" /etc/cups/cupsd.conf` -eq 0 ]]
 then
@@ -381,7 +384,7 @@ if [[ $LOCATION ]]; then
 	#Remove all printers
 	while read -r printer _; do
 		if [[ `lpstat -v $printer | grep 'smb:\|ipp:'` ]]; then
-			echo Removing $printer
+			echo "Removing $printer"
 			lpadmin -x $printer
 		fi
 	done < <(lpstat -a)
@@ -394,7 +397,7 @@ if [[ $LOCATION ]]; then
 			default_printer=`cut -d, -f$(( printer_count + 3 )) <<< "$all_printers"`
 			for (( i = 3; i < printer_count + 3; ++i )); do
 				printer=`cut -d, -f$i <<< "$all_printers"`
-				echo Adding printer $printer
+				echo "Adding printer $printer"
 				if [[ $DOMAINTYPE == samba3 ]]; then
 					lpadmin -p $printer -v smb://$PRINTSERVER.$DNSSUFFIX/$printer -L "$LOCATION" -D "$printer" -E
 				else
@@ -416,7 +419,7 @@ apt_updated=false
 #Only run if flag file is present
 if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/enable_updates ]]
 then
-	echo Updating Software
+	echo "Updating Software"
 	apt-get update
 	apt_updated=true
 	apt-get -y upgrade
@@ -444,7 +447,7 @@ then
 	then
 		remove_list=`sed 's/ //g' /tmp/netlogon/linuxclient/$LINUX_VERSION/remove_list`
 		if [[ $remove_list ]]; then
-			echo Removing Software
+			echo "Removing Software"
 			apt-get -y remove $remove_list
 		fi
 	fi
