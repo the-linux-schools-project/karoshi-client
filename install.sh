@@ -566,6 +566,20 @@ find /home -mindepth 1 -delete
 #Install Karoshi
 ################
 
+#Remove old PAM modules
+pam_modules=( )
+while read -r -d $'\0' file; do
+	if ! dpkg-query -S "$file"; then
+		pam_modules+=( "$(basename "$file")" )
+	fi
+done < <(find /usr/share/pam-configs -print0)
+if [[ $pam_modules ]]; then
+	pam-auth-update --package --remove "${pam_modules[@]}"
+	for file in "${pam_modules[@]}"; do
+		rm -rf /usr/share/pam-configs/"$file"
+	done
+fi
+
 #Copy in new configuration (overwrite)
 echo "Installing configuration..." >&2
 find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp -rf -t /
