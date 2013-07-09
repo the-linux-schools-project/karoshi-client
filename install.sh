@@ -570,6 +570,12 @@ find /home -mindepth 1 -delete
 echo "Installing configuration..." >&2
 find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp -rf -t /
 
+#Create /var/log/karoshi and populate it
+[[ -e /var/log/karoshi ]] && rm -rf /var/log/karoshi
+mkdir -p /var/log/karoshi
+touch /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}
+chmod 0600 /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}
+
 #Adjust libpam-mount to only run on interactive sessions
 pam-auth-update --remove libpam-mount
 if ! grep -q 'Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount; then
