@@ -582,6 +582,9 @@ pam-auth-update --remove winbind krb5
 echo "winbind" >> /var/lib/pam/seen
 echo "krb5" >> /var/lib/pam/seen
 
+#Correct permissions for PAM configuration
+find /usr/share/pam-configs -mindepth 1 -maxdepth 1 -execdir chmod 0644 {} +
+
 #Reconfigure PAM
 pam-auth-update --package
 
