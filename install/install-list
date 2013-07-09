@@ -102,3 +102,4 @@ resolvconf
 iputils-arping
 virtualbox-guest-utils
 virtualbox-guest-x11
+libnss3-tools
