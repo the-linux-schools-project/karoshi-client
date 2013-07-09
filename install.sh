@@ -570,6 +570,21 @@ find /home -mindepth 1 -delete
 echo "Installing configuration..." >&2
 find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp -rf -t /
 
+#Adjust libpam-mount to only run on interactive sessions
+pam-auth-update --remove libpam-mount
+if ! grep -q 'Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount; then
+	sed -i '/Session-Type:/ a\
+Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
+fi
+
+#Remove auth modules from PAM to be added back in in set-network
+pam-auth-update --remove winbind krb5
+echo "winbind" >> /var/lib/pam/seen
+echo "krb5" >> /var/lib/pam/seen
+
+#Reconfigure PAM
+pam-auth-update --package
+
 #Correct permissions for sudoers.d files
 find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
 
