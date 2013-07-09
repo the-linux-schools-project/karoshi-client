@@ -107,6 +107,11 @@ if $drop_priv; then
 		echo "ERROR: Attempted to drop privilages to a non-existent user" >&2
 		exit 5
 	fi
+	#Make sure this isn't being run by sudo in the first place
+	if [[ $PAM_SERVICE == "sudo" ]]; then
+		echo "ERROR: Attempted to use sudo from a sudo-invoked PAM-script" >&2
+		exit 6
+	fi
 	sudo -E -H -n -u "$PAM_USER" -- "$command" "${command_options[@]}"
 else
 	"$command" "${command_options[@]}"
