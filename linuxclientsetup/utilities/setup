@@ -32,13 +32,13 @@ fi
 ##################
 [[ ! -d /var/log/karoshi ]] && mkdir -p /var/log/karoshi
 
-if [[ -f /var/log/karoshi/setup.log ]]; then
-	rm -rf /var/log/karoshi/setup.log
-fi
+[[ -e /var/log/karoshi ]] && rm -rf /var/log/karoshi
+mkdir -p /var/log/karoshi
 
-touch /var/log/karoshi/setup.log
-chown root:adm /var/log/karoshi/setup.log
-chmod 0640 /var/log/karoshi/setup.log
+touch /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,setup}.log
+chown root:adm /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,setup}.log
+chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,setup}.log
+
 exec &>/var/log/karoshi/setup.log
 
 #Create symlink to Karoshi update log
@@ -102,6 +102,10 @@ cp -f /opt/karoshi/linuxclientsetup/images/{,login-}background.png /opt/karoshi/
 sed -i "s@^Background=.*@Background=/opt/karoshi/images/login-background.png@" /etc/lightdm/lightdm-kde-greeter.conf
 #Configure XFCE to use new background location
 sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+
+#Configure Karoshi PAM modules
+pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
+pam-auth-update --package
 
 ##################
 #Finish and restart

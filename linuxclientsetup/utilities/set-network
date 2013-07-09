@@ -443,7 +443,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		nss_enable group winbind
 		nss_enable shadow winbind
 		#Update PAM
-		pam-auth-update --remove winbind
+		pam-auth-update --package --remove winbind
 		pam-auth-update --package
 		#Restart winbind
 		service winbind restart
@@ -466,7 +466,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		nss_enable shadow ldap
 		#Update PAM - bit of a hack, removes the 'seen' entry of the pam
 		# module, causing it to be reconfigured into pam.d
-		pam-auth-update --remove krb5
+		pam-auth-update --package --remove krb5
 		pam-auth-update --package
 		#Restart nslcd and nscd
 		service nslcd restart
@@ -518,7 +518,7 @@ else
 	nss_enable group winbind
 	nss_enable shadow winbind
 	#Update PAM - see above for rationale
-	pam-auth-update --remove winbind
+	pam-auth-update --package --remove winbind
 	pam-auth-update --package
 	#Restart winbind
 	service winbind restart
