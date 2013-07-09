@@ -159,10 +159,10 @@ function do_xpi {
 }
 
 #{3550f703-e582-4d05-9a08-453d09bdfdc6} is the app-id for Thunderbird
-[ -d /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} ] || mkdir -p /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6}
-[ -d /opt/karoshi/thunderbird/extensions ] || mkdir -p /opt/karoshi/thunderbird/extensions
+[[ -d /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} ]] || mkdir -p /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6}
+[[ -d /opt/karoshi/thunderbird/extensions ]] || mkdir -p /opt/karoshi/thunderbird/extensions
 
-if [ -d /tmp/netlogon/client_settings/thunderbird/extensions ]; then
+if [[ -d /tmp/netlogon/client_settings/thunderbird/extensions ]]; then
 	echo Clearing current Thunderbird extensions
 	#Clear all extensions
 	find /opt/karoshi/thunderbird/extensions -mindepth 1 -delete
