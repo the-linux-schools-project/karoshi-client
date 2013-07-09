@@ -28,6 +28,7 @@ is_admin=false
 groups=( $(id -nG) )
 for group in "${groups[@]}"; do
 	if [[ $group == "admin" ]] || [[ $group == "sudo" ]] || [[ $group == "tech" ]]; then
+		echo "Detected admin user"
 		is_admin=true
 		break
 	fi
@@ -39,6 +40,7 @@ fi
 #Detect a domain user
 is_domain=false
 if [[ $(id -u) -ge 1000 ]] && [[ $(id -u) -ne 65534 ]]; then
+	echo "Detected domain user"
 	is_domain=true
 fi
 
@@ -63,12 +65,14 @@ if $is_domain; then
 	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 		firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
 		if [[ $firefox_profile ]] && [[ -d ~/.mozilla/firefox/$firefox_profile ]]; then
+			echo "Found Firefox profile - preserving places.sqlite"
 			checkAndList .mozilla/firefox/"$firefox_profile"/places.sqlite
 		fi
 	fi
 	if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
 		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
 		if [[ $thunderbird_profile ]] && [[ -d ~/.thunderbird/$thunderbird_profile ]]; then
+			echo "Found Thunderbird profile - preserving places.sqlite"
 			checkAndList .thunderbird/"$thunderbird_profile"/places.sqlite
 		fi
 	fi

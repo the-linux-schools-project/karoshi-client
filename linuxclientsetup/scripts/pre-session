@@ -27,6 +27,7 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 #	$3 is icon
 function create_entries {
 	filename=`tr '[:upper:] ' '[:lower:]-' <<< "$1"`
+	echo "Generating desktop and menu entry: $1"
 	#Desktop and Menu
 	echo "[Desktop Entry]
 Version=1.0
@@ -48,6 +49,7 @@ is_admin=false
 groups=( $(id -nG) )
 for group in "${groups[@]}"; do
 	if [[ $group == "admin" ]] || [[ $group == "sudo" ]] || [[ $group == "tech" ]]; then
+		echo "Detected admin user"
 		is_admin=true
 		break
 	fi
@@ -59,11 +61,13 @@ fi
 #Detect a domain user
 is_domain=false
 if [[ $(id -u) -ge 1000 ]] && [[ $(id -u) -ne 65534 ]]; then
+	echo "Detected domain user"
 	is_domain=true
 fi
 
 #Copy in admin-skel
 if $is_admin && [[ -d /opt/karoshi/admin-skel ]]; then
+	echo "Copying admin-skel into home area"
 	find /opt/karoshi/admin-skel -mindepth 1 -print0 | xargs -r0 cp -rf -t ~
 fi
 
@@ -82,8 +86,10 @@ if $is_domain; then
 
 	#Create home icon first so that it appears first on the desktop
 	if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
+		echo "Domain home area found"
 		create_entries "home" "$HOME/network/home" folder-home
 	else
+		echo "No domain home area found"
 		create_entries "Home" ~ folder-home
 	fi
 
@@ -118,8 +124,10 @@ if $is_domain; then
 	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 		firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
 		if [[ $firefox_profile ]] && [[ -d ~/.mozilla/firefox/$firefox_profile ]]; then
+			echo "Found Firefox profile: $firefox_profile"
 			#Apply CA certificate
 			if [[ -f /opt/karoshi/cacert.pem ]]; then
+				echo "Installing cacert.pem for Firefox"
 				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.mozilla/firefox/"$firefox_profile"
 			fi
 	
@@ -173,8 +181,10 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 	if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
 		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
 		if [[ $thunderbird_profile ]] && [[ -d ~/.thunderbird/$thunderbird_profile ]]; then
+			echo "Found Thunderbird profile: $thunderbird_profile"
 			#Apply CA certificate
 			if [[ -f /opt/karoshi/cacert.pem ]]; then
+				echo "Installing cacert.pem for Thunderbird"
 				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
 			fi
 		
@@ -210,6 +220,7 @@ user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $P
 		
 			if [[ $MAILSERVER ]]; then
 				user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
+				echo "Using $user_fullname as real name for user email"
 		
 				echo "user_pref('mail.identity.id1.useremail', '$USER@$DNSSUFFIX');
 user_pref('mail.identity.id1.valid', true);
