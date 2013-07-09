@@ -37,7 +37,8 @@ if [[ -f /var/log/karoshi/setup.log ]]; then
 fi
 
 touch /var/log/karoshi/setup.log
-chmod 600 /var/log/karoshi/setup.log
+chown root:adm /var/log/karoshi/setup.log
+chmod 0640 /var/log/karoshi/setup.log
 exec &>/var/log/karoshi/setup.log
 
 #Create symlink to Karoshi update log
