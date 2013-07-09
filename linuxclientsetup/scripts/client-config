@@ -89,7 +89,7 @@ find /home -mindepth 1 -xdev -delete
 mkdir /opt/karoshi/admin-skel
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]]; then
 	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
-elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]]
+elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]]; then
 	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
 else
 	find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
