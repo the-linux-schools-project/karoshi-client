@@ -302,7 +302,7 @@ if [[ -f install/remove-list ]]; then
 fi
 
 #Configure DPKG holds to prevent packages to be removed from being installed
-apt-mark showhold | xargs apt-mark unhold
+apt-mark showhold | xargs -r apt-mark unhold
 if [[ $remove_packages ]]; then
 	apt-mark hold "${remove_packages[@]}"
 fi
@@ -320,7 +320,7 @@ if [[ $install_packages ]]; then
 fi
 
 #Unmark DPKG holds
-apt-mark showhold | xargs apt-mark unhold
+apt-mark showhold | xargs -r apt-mark unhold
 
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
@@ -420,7 +420,7 @@ if [[ $err -ne 0 ]]; then
 fi
 
 echo "Copying necessary admin files to administrator home area..." >&2
-find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t ~administrator
+find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~administrator
 chown -R administrator:administrator ~administrator
 
 #Adjust any other users that exist
@@ -582,7 +582,7 @@ fi
 
 #Copy in new configuration (overwrite)
 echo "Installing configuration..." >&2
-find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp -rf -t /
+find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -r0 cp -rf -t /
 
 #Correct permissions for sudoers.d files
 find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +

@@ -64,7 +64,7 @@ fi
 
 #Copy in admin-skel
 if $is_admin && [[ -d /opt/karoshi/admin-skel ]]; then
-	find /opt/karoshi/admin-skel -mindepth 1 -print0 | xargs -0 cp -rf -t ~
+	find /opt/karoshi/admin-skel -mindepth 1 -print0 | xargs -r0 cp -rf -t ~
 fi
 
 #Create file manager entries
@@ -96,11 +96,11 @@ if $is_domain; then
 	done
 	
 	#Copy in default icons
-	[[ -d /opt/karoshi/desktop-icons/all ]] && find /opt/karoshi/desktop-icons/all -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
+	[[ -d /opt/karoshi/desktop-icons/all ]] && find /opt/karoshi/desktop-icons/all -mindepth 1 -print0 | xargs -r0 cp -rf -t ~/Desktop
 
 	#Copy in extra icons for groups
 	pri_group=`id -gn`
-	[[ -d /opt/karoshi/desktop-icons/$pri_group ]] && find /opt/karoshi/desktop-icons/$pri_group -mindepth 1 -print0 | xargs -0 cp -rf -t ~/Desktop
+	[[ -d /opt/karoshi/desktop-icons/$pri_group ]] && find /opt/karoshi/desktop-icons/$pri_group -mindepth 1 -print0 | xargs -r0 cp -rf -t ~/Desktop
 	
 	#Extract configuration
 	[[ -f ~/network/home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
@@ -263,4 +263,4 @@ if $is_admin; then
 fi
 
 #Set permissions on icons
-find ~/Desktop -name '*.desktop' -print0 | xargs -0 chmod 0700
+find ~/Desktop -name '*.desktop' -print0 | xargs -r0 chmod 0700

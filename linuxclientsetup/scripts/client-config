@@ -87,18 +87,18 @@ find /home -mindepth 1 -xdev -delete
 #Copy configuration
 ####################
 echo Copying configuration
-[[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ]] && find /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /
+[[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration/ ]] && find /tmp/netlogon/linuxclient/$LINUX_VERSION/configuration -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /
 
 #Admin skel
 echo Copying admin skel
 [[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
 mkdir /opt/karoshi/admin-skel
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]]; then
-	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]]; then
-	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 else
-	find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -0 cp -rf -t /opt/karoshi/admin-skel
+	find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 fi
 
 #Do skel (properly)
@@ -110,7 +110,7 @@ fi
 #/etc/skel should be readable by all, and directories should be 755
 chown -R root:root /etc/skel
 chmod -R +r /etc/skel
-find /etc/skel -type d -print0 | xargs -0 chmod 755
+find /etc/skel -type d -print0 | xargs -r0 chmod 755
 
 #Version agnostic configuration
 echo Copying other files
@@ -468,7 +468,7 @@ if ! grep -Eq '^[^[:space:]]+[[:space:]]+/opt/virtualbox[[:space:]]' /etc/fstab;
 		if ! [[ $(find /opt/virtualbox -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
 			mkdir -p /tmp/karoshi-virtualbox
 			mount "$drive"1 /tmp/karoshi-virtualbox
-			find /opt/virtualbox -mindepth 1 -maxdepth 1 -print0 | xargs -0 mv -t /tmp/karoshi-virtualbox
+			find /opt/virtualbox -mindepth 1 -maxdepth 1 -print0 | xargs -r0 mv -t /tmp/karoshi-virtualbox
 			umount /tmp/karoshi-virtualbox
 			rmdir /tmp/karoshi-virtualbox
 		fi

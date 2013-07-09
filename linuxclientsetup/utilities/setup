@@ -89,7 +89,7 @@ chmod 644 /etc/init/karoshi-{update,idle-shutdown}.conf
 
 [[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
 cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
-find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -0 chmod 755
+find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
 
 [[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
 cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
