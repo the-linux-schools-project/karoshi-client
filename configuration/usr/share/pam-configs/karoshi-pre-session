@@ -4,4 +4,4 @@ Priority: 64
 Session-Type: Additional
 Session-Interactive-Only: yes
 Session:
-	optional	pam_exec.so log=/var/log/karoshi/pre-session.log /usr/bin/karoshi-pam-wrapper --drop-privilages --event=open_session /opt/karoshi/scripts/pre-session
+	optional	pam_exec.so log=/var/log/karoshi/pre-session.log seteuid quiet /usr/bin/karoshi-pam-wrapper --drop-privilages --event=open_session /opt/karoshi/scripts/pre-session
