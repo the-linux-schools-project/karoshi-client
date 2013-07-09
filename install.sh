@@ -573,9 +573,9 @@ find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -0 cp
 #Create /var/log/karoshi and populate it
 [[ -e /var/log/karoshi ]] && rm -rf /var/log/karoshi
 mkdir -p /var/log/karoshi
-touch /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}
-chown root:adm /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}
-chmod 0640 /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}
+touch /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}.log
+chown root:adm /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}.log
+chmod 0640 /var/log/karsohi/{pre-session,post-session,virtualbox-mkdir}.log
 
 #Adjust libpam-mount to only run on interactive sessions
 pam-auth-update --remove libpam-mount
