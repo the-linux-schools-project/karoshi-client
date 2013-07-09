@@ -52,7 +52,7 @@ if [[ ! -d $virtualbox_path/isos ]]; then
 fi
 if [[ ! -d $virtualbox_path/users ]]; then
 	echo "$virtualbox_path/users did not exist - creating"
-	mkdir "$virutalbox_path"/users -m 0755
+	mkdir "$virtualbox_path"/users -m 0755
 fi
 
 function make_virtualbox_dir {
@@ -79,7 +79,7 @@ if ! [[ -e $user_home/.VirtualBox ]]; then
 else
 	echo "'$user_home/.VirtualBox' already exists! Not creating symlink"
 fi
-if ! [[ -e $user_home/VirtualBox VMs ]]; then
+if ! [[ -e $user_home/"VirtualBox VMs" ]]; then
 	ln -sf "$virtualbox_path"/users/"$PAM_USER" "$user_home"/"VirtualBox VMs"
 else
 	echo "'$user_home/VirtualBox VMs' already exists! Not creating symlink"
