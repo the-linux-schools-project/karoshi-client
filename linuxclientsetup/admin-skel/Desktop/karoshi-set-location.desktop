@@ -5,4 +5,4 @@ Type=Application
 Terminal=false
 Exec=gksudo karoshi-set-location
 Name=Set Location
-Icon=/opt/karoshi/linuxclientsetup/images/set-location.png
+Icon=karoshi-set-location.png
