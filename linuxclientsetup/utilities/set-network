@@ -546,6 +546,7 @@ function exitfunc {
 echo 95 >&11
 echo \#Restarting network interface >&11
 ifdown $NETWORKINT
+writeNetworkSettings
 ifup $NETWORKINT
 
 karoshi-manage-flags set domainset
