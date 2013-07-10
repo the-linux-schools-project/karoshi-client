@@ -69,12 +69,6 @@ if [[ $(id -u) -ge 1000 ]] && [[ $(id -u) -ne 65534 ]]; then
 	is_domain=true
 fi
 
-#Copy in admin-skel
-if $is_admin && [[ -d /opt/karoshi/admin-skel ]]; then
-	echo "Copying admin-skel into home area"
-	find /opt/karoshi/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~
-fi
-
 #Create file manager entries
 [[ ! -d ~/Desktop ]] && mkdir ~/Desktop
 [[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
@@ -104,6 +98,11 @@ if $is_domain; then
 			create_entries "$mountname" "$mountpath" folder-publicshare
 		fi
 	done
+	
+	#Add file manager entry to / if administrator
+	if $is_admin; then
+		create_entries "File System" / folder-system
+	fi
 	
 	#Copy in default icons
 	[[ -d /opt/karoshi/desktop-icons/all ]] && find /opt/karoshi/desktop-icons/all -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~/Desktop
@@ -270,11 +269,17 @@ else
 	#Local user
 	###############
 	create_entries "Home" ~ folder-home
+	
+	#Add file manager entry to / if administrator
+	if $is_admin; then
+		create_entries "File System" / folder-system
+	fi
 fi
 
-#Add file manager entry to / if administrator
-if $is_admin; then
-	create_entries "File System" / folder-system
+#Copy in admin-skel
+if $is_admin && [[ -d /opt/karoshi/admin-skel ]]; then
+	echo "Copying admin-skel into home area"
+	find /opt/karoshi/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~
 fi
 
 #Set permissions on icons
