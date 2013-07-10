@@ -180,6 +180,7 @@ if ! ( [[ -d configuration ]] && [[ -d linuxclientsetup ]] && [[ -d install ]] )
 fi
 
 #Check if administrator user already exists and /opt/karoshi already exists
+skip_install=false
 if getent passwd administrator >/dev/null && [[ -d /opt/karoshi ]] && [[ ~administrator == "/opt/administrator" ]]; then
 	echo "You seem to have already installed Karoshi" >&2
 	resolved=false
@@ -190,8 +191,7 @@ if getent passwd administrator >/dev/null && [[ -d /opt/karoshi ]] && [[ ~admini
 		y*)
 			echo "Skipping directly to remaster" >&2
 			resolved=true
-			do_remastersys
-			exit 0
+			skip_install=true
 			;;
 		n*|"")
 			echo "Continuing with normal installation" >&2
@@ -234,6 +234,12 @@ net_ip=$(ip addr show eth0 | sed -n 's/^[[:space:]]*inet \([^ ]*\).*/\1/p')
 net_gw=$(ip route | sed -n 's/^default .*via \([^ ]*\).*/\1/p')
 
 set_network "$net_int" "$net_ip" "$net_gw"
+
+if $skip_install; then
+	echo "Preparation finished!" >&2
+	do_remastersys
+	exit 0
+fi
 
 #Add new APT repositories
 if [[ -f install/apt-repositories ]]; then
