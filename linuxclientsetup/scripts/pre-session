@@ -31,7 +31,7 @@ function create_entries {
 	filename=`tr '[:upper:] ' '[:lower:]-' <<< "$1"`
 	command="exo-open"
 	if [[ $sudo_open ]]; then
-		command="gksudo exo-open"
+		command="gksudo -- exo-open"
 	fi
 	echo "Generating desktop and menu entry: $1"
 	#Desktop and Menu
