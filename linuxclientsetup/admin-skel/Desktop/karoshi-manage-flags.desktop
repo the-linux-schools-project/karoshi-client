@@ -7,4 +7,3 @@ Terminal=false
 Exec=gksudo karoshi-manage-flags
 Name=Manage Flags
 Icon=tag-new
-GenericName=

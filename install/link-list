@@ -6,3 +6,4 @@
 /usr/bin/karoshi-virtualbox-mkdir           -> /opt/karoshi/linuxclientsetup/utilities/virtualbox-mkdir
 /usr/bin/karoshi-pam-wrapper                -> /opt/karoshi/linuxclientsetup/utilities/pam-wrapper
 /usr/bin/karoshi-generate-firewall-rules    -> /opt/karoshi/linuxclientsetup/utilities/generate-firewall-rules
+/usr/bin/karoshi-unset-network              -> /opt/karoshi/linuxclientsetup/utilities/unset-network

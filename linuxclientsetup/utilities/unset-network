@@ -1,0 +1,154 @@
+#!/bin/bash
+
+#Copyright (C) 2013 Robin McCorkell
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+if [[ $EUID -ne 0 ]]; then
+	echo "ERROR: Must be running as effective root" >&2
+	info_alert "Privilage Error" "This script must be run as root"
+	exit 1
+fi
+
+#Get nsswitch functions
+source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
+
+exec 11> >(progress_info "Karoshi Setup" "Karoshi Client Setup: Network Deconfiguration")
+echo 10 >&11
+echo \#Deconfiguring domain settings >&11
+
+#Deconfigure domain
+case "$DOMAINTYPE" in
+samba3)
+	#Deconfigure PAM
+	pam-auth-update --package --remove winbind
+	echo "winbind" >> /var/lib/pam/seen
+	
+	#Deconfigure nsswitch.conf
+	nss_disable passwd winbind
+	nss_disable group winbind
+	nss_disable shadow winbind
+	
+	echo 20 >&11
+	
+	service winbind stop
+	;;
+samba4)
+	#Deconfigure PAM
+	pam-auth-update --package --remove krb5
+	echo "krb5" >> /var/lib/pam/seen
+	
+	#Deconfigure nsswitch.conf
+	nss_disable passwd ldap
+	nss_disable group ldap
+	nss_disable shadow ldap
+	
+	echo 20 >&11
+	
+	service nslcd stop
+	;;
+samba4_winbind)
+	net ads leave
+	
+	#Deconfigure PAM
+	pam-auth-update --package --remove winbind
+	echo "winbind" >> /var/lib/pam/seen
+	
+	#Deconfigure nsswitch.conf
+	nss_disable passwd winbind
+	nss_disable group winbind
+	nss_disable shadow winbind
+	
+	echo 20 >&11
+	
+	service winbind stop
+	;;
+esac
+
+echo 30 >&11
+echo \#Restarting nscd >&11
+service nscd restart
+
+#Revert configuration files
+config_root="/opt/karoshi/linuxclientsetup/config_files"
+
+function revert_backup {
+	config_suffix="$1"
+	while read -r -d $'\0' filename; do
+		realpath=${filename#$config_root/$config_suffix}
+		if [[ -f $realpath.karoshi-$config_suffix~ ]]; then
+			#Replace existing file with backup
+			mv -fT "$realpath".karoshi-"$config_suffix"~ "$realpath"
+		else
+			#Delete file
+			rm -rf "$realpath"
+		fi
+	done < <(find "$config_root"/"$config_suffix" -type f -print0)
+}
+
+echo 40 >&11
+echo \#Reverting specific configuration files >&11
+
+case "$DOMAINTYPE" in
+samba3)
+	revert_backup "samba3"
+	;;
+samba4|samba4_winbind)
+	revert_backup "samba4"
+	;;
+esac
+
+echo 50 >&11
+echo \#Reverting common configuration files >&11
+
+revert_backup "common"
+
+echo 60 >&11
+echo \#Resetting hostname >&11
+
+#Deconfigure hostname
+echo "ubuntu" > /etc/hostname
+hostname "ubuntu"
+
+sed -i "/##STATIC##/{ N; d; }" /etc/hosts
+if grep "^127\.0\.1\.1" /etc/hosts; then
+	sed -i "s/^127\.0\.1\.1.*/127.0.1.1 ubuntu/" /etc/hosts
+else
+	echo "127.0.1.1	ubuntu" >> /etc/hosts
+fi
+
+#Deconfigure all network interfaces
+echo 70 >&11
+echo \#Bringing down old network interface >&11
+ifdown --force $NETWORKINT
+echo 80 >&11
+echo \#Resetting network interface configuration >&11
+echo "auto lo
+iface lo inet loopback" > /etc/network/interfaces
+
+#Reset DNS information
+echo 90 >&11
+echo \#Resetting DNS information >&11
+resolvconf -u
+
+echo 100 >&11
+
+exit 0
+
