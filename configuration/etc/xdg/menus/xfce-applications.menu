@@ -108,6 +108,7 @@
 	</Menu>
 	<Layout>
 		<Filename>exo-web-browser.desktop</Filename>
+		<Filename>exo-mail-reader.desktop</Filename>
 		<Filename>exo-home.desktop</Filename>
 		<Merge type="files"/>
 		<Separator/>
