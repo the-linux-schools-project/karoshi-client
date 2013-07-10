@@ -620,6 +620,9 @@ chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
 chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
 chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
 
+#Copy LICENCE
+[[ -f LICENCE ]] && cp -f LICENCE /opt/karoshi/linuxclientsetup/LICENCE
+
 #Link Karoshi utilities
 if [[ -f install/link-list ]]; then
 	while read -r link_name _ link_to; do
