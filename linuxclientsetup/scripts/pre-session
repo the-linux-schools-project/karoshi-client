@@ -29,13 +29,17 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 #	$3 is icon
 function create_entries {
 	filename=`tr '[:upper:] ' '[:lower:]-' <<< "$1"`
+	command="exo-open"
+	if [[ $sudo_open ]]; then
+		command="gksudo exo-open"
+	fi
 	echo "Generating desktop and menu entry: $1"
 	#Desktop and Menu
 	echo "[Desktop Entry]
 Version=1.0
 Type=Application
 Terminal=false
-Exec=exo-open --launch FileManager $2
+Exec=$command --launch FileManager $2
 Name=$1
 Icon=$3
 Categories=X-XFCE;X-Xfce-Toplevel;Karoshi;
@@ -101,7 +105,9 @@ if $is_domain; then
 	
 	#Add file manager entry to / if administrator
 	if $is_admin; then
+		sudo_open=true
 		create_entries "File System" / folder-system
+		unset sudo_open
 	fi
 	
 	#Copy in default icons
@@ -274,7 +280,9 @@ else
 	
 	#Add file manager entry to / if administrator
 	if $is_admin; then
+		sudo_open=true
 		create_entries "File System" / folder-system
+		unset sudo_open
 	fi
 fi
 
