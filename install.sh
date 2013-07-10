@@ -572,7 +572,7 @@ while read -r -d $'\0' file; do
 	if ! dpkg-query -S "$file"; then
 		pam_modules+=( "$(basename "$file")" )
 	fi
-done < <(find /usr/share/pam-configs -print0)
+done < <(find /usr/share/pam-configs -mindepth 1 -print0)
 if [[ $pam_modules ]]; then
 	pam-auth-update --package --remove "${pam_modules[@]}"
 	for file in "${pam_modules[@]}"; do
