@@ -116,12 +116,18 @@ if $is_domain; then
 	[[ -f ~/network/home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
 	
 	#Set default directory for terminal emulator and file manager to network/home
-	mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
-	cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
-	sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory network/home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+	if [[ -d ~/network/home ]]; then
+		mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory network/home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 	
-	cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
-	sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
+		cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
+		sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
+		
+		#Create rednotebook link
+		[[ -d ~/network/home/.rednotebook ]] || mkdir ~/network/home/.rednotebook
+		[[ -d ~/.rednotebook ]] || ln -s network/home/.rednotebook ~/.rednotebook
+	fi
 	
 	#create user.js for default Firefox settings
 	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
@@ -257,10 +263,6 @@ user_pref('mail.smtpservers', 'smtp1');" >> ~/.thunderbird/"$thunderbird_profile
 			fi
 		fi
 	fi
-	
-	#Create rednotebook link
-	[[ ! -d ~/network/home/.rednotebook ]] && mkdir ~/network/home/.rednotebook
-	[[ ! -d ~/.rednotebook ]] && ln -s network/home/.rednotebook ~/.rednotebook
 	
 	#Disable Firefox crash reporter
 	export MOZ_CRASHREPORTER_DISABLE=1
