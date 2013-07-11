@@ -89,7 +89,7 @@ echo \#Restarting nscd >&11
 service nscd restart
 
 #Revert configuration files
-config_root="/opt/karoshi/linuxclientsetup/config_files"
+config_root="/opt/karoshi/linuxclientsetup/config-files"
 
 function revert_backup {
 	config_suffix="$1"
