@@ -26,7 +26,7 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 
 #Connect to netlogon
 [[ ! -d /tmp/netlogon ]] && mkdir /tmp/netlogon
-if ! mount.cifs //$PDC.$DNSSUFFIX/netlogon /tmp/netlogon -o guest,nounix 1>/dev/null; then
+if ! mount.cifs //$PDC.$DNSSUFFIX/netlogon /tmp/netlogon -o guest 1>/dev/null; then
 	info_alert "Error" "Unable to contact PDC"
 	exitfunc 1
 fi
