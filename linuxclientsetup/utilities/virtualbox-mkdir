@@ -37,13 +37,6 @@ user_uid=$(cut -d":" -f3 <<< "$user_info")
 user_gid=$(cut -d":" -f4 <<< "$user_info")
 user_home=$(cut -d":" -f6 <<< "$user_info")
 
-echo "$0 for $PAM_USER"
-
-if ! [[ $user_uid -ge 1000 ]]; then
-	echo "User is not a domain user - exiting"
-	exit $PAM_IGNORE
-fi
-
 if [[ ! -d $virtualbox_path ]]; then
 	echo "$virtualbox_path did not exist - creating"
 	mkdir -p "$virtualbox_path" -m 0755
@@ -55,6 +48,13 @@ fi
 if [[ ! -d $virtualbox_path/users ]]; then
 	echo "$virtualbox_path/users did not exist - creating"
 	mkdir "$virtualbox_path"/users -m 0755
+fi
+
+echo "$0 for $PAM_USER"
+
+if ! [[ $user_uid -ge 1000 ]]; then
+	echo "User is not a domain user - exiting"
+	exit $PAM_IGNORE
 fi
 
 function make_virtualbox_dir {
