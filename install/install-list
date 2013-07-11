@@ -69,6 +69,7 @@ eclipse
 glade
 netbeans
 g++
+git
 libboost1.48-all-dev
 libglew1.6-dev
 libsfml-dev
