@@ -40,22 +40,9 @@ function do_remastersys {
 	if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
 		echo >&2
 		echo "The kernel has been updated" >&2
-		echo "Please restart the machine, log in as administrator (default password: karoshi)," >&2
-		echo "and restart this installation script to perform a remaster" >&2
+		echo "Please restart the machine, then run this installation script again to" >&2
+		echo "perform a remaster" >&2
 		exit 100
-	fi
-
-	#Make sure we are running as administrator before starting the remaster
-	is_administrator=false
-	while read -r user; do
-		if [[ $user == "administrator" ]]; then
-			is_administrator=true
-			break
-		fi
-	done < <(who -u | grep -v root | cut -d" " -f1 | uniq)
-	if ! $is_administrator; then
-		echo "ERROR: To perform a remaster, you must be logged in as administrator" >&2
-		exit 6
 	fi
 	
 	#Modify remastersys with several tweaks
