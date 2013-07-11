@@ -83,7 +83,7 @@ function do_remastersys {
 		c
 	}' "$remastersys_path"
 	#Use proper logic for removing Ubiquity icon from desktop
-	sed -i 's@\([[:space:]]*\)rm -rf /home/\*/Desktop/ubiquity\*\.desktop &> /dev/null@\1find "$LIVEHOME"/Desktop -name "ubiquity*.desktop" -delete &> /dev/null@' "$remastersys_path"
+	sed -i 's@\([[:space:]]*\)rm -rf /home/\*/Desktop/ubiquity\*\.desktop &> /dev/null@\1find "$LIVEHOME"/Desktop -name "ubiquity*.desktop" -delete \&> /dev/null@' "$remastersys_path"
 
 	#Link karoshi-setup
 	[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
