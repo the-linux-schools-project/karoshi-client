@@ -57,6 +57,46 @@ function do_remastersys {
 		echo "ERROR: To perform a remaster, you must be logged in as administrator" >&2
 		exit 6
 	fi
+	
+	#Modify remastersys with several tweaks
+	echo "Performing remastersys tweaks..." >&2
+	remastersys_path=$(which remastersys)
+	#Check sha1sum of remastersys script
+	if [[ $(sha1sum "$remastersys_path") != "d47d49de9a594b4e703a476f87ec5e311e63ce9a  $remastersys_path" ]]; then
+		echo "WARNING: $remastersys_path is a different version to the one this" >&2
+		echo "         install script was designed for" >&2
+		resolved=false
+		while ! $resolved; do
+			echo -n "Do you want to continue and make the tweaks [y/n]? [n]: " >&2
+			read -r input
+			case "$input" in
+			y*)
+				echo "Proceeding with tweaks" >&2
+				resolved=true
+				;;
+			n*|"")
+				echo "Aborting remaster" >&2
+				resolved=true
+				exit 1
+				;;
+			*)
+				echo "$input is not a valid option" >&2
+				echo "Choose from 'y' or 'n'" >&2
+				;;
+			esac
+		done
+	fi
+		
+	cp "$remastersys_path" "$remastersys_path".orig
+	#Remove silly LIVEUSER logic
+	sed -i '/LIVEUSER="`who -u | grep -v root | cut -d " " -f1| uniq`"/ {
+		N
+		N
+		N
+		c
+	}' "$remastersys_path"
+	#Use proper logic for removing Ubiquity icon from desktop
+	sed -i 's@\([[:space:]]*\)rm -rf /home/\*/Desktop/ubiquity\*\.desktop &> /dev/null@\1find "$LIVEHOME"/Desktop -name "ubiquity*.desktop" -delete &> /dev/null@' "$remastersys_path"
 
 	#Link karoshi-setup
 	[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
@@ -64,10 +104,19 @@ function do_remastersys {
 	chown -R administrator:administrator ~administrator
 
 	#Administrator autologin
-	if ! grep "^autologin-user=" /etc/lightdm/lightdm.conf; then
-		echo "autologin-user=administrator
+	cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.orig
+	echo "autologin-user=administrator
 autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
-	fi
+	
+	function clean_up {
+		echo "Cleaning up..." >&2
+		mv "$remastersys_path".orig "$remastersys_path"
+		rm -f ~administrator/.config/autostart/karoshi-setup.desktop
+		#Stop Auto logon
+		mv /etc/lightdm/lightdm.conf.orig /etc/lightdm/lightdm.conf
+	}
+	
+	trap clean_up SIGINT SIGTERM
 
 	#Determine ISO parameters
 	if [[ -f README.md ]]; then
@@ -128,11 +177,7 @@ autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
 		echo >&2
 	fi
 
-	#Clean up
-	echo "Cleaning up..." >&2
-	rm -f ~administrator/.config/autostart/karoshi-setup.desktop
-	#Stop Auto logon
-	sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
+	clean_up
 }
 
 ###################
