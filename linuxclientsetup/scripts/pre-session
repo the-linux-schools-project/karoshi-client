@@ -92,6 +92,18 @@ if $is_domain; then
 	if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
 		echo "Domain home area found"
 		create_entries "home" "$HOME/network/home" folder-home
+		
+		#Set default directory for terminal emulator and file manager to network/home
+		mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory network/home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+	
+		cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
+		sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
+		
+		#Create rednotebook link
+		[[ -d ~/network/home/.rednotebook ]] || mkdir ~/network/home/.rednotebook
+		[[ -d ~/.rednotebook ]] || ln -s network/home/.rednotebook ~/.rednotebook
 	else
 		echo "No domain home area found"
 		create_entries "Home" ~ folder-home
@@ -122,20 +134,6 @@ if $is_domain; then
 	#Extract configuration
 	[[ -f ~/network/home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
 	[[ -f ~/network/home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
-	
-	#Set default directory for terminal emulator and file manager to network/home
-	if [[ -d ~/network/home ]]; then
-		mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
-		cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
-		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory network/home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-	
-		cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
-		sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
-		
-		#Create rednotebook link
-		[[ -d ~/network/home/.rednotebook ]] || mkdir ~/network/home/.rednotebook
-		[[ -d ~/.rednotebook ]] || ln -s network/home/.rednotebook ~/.rednotebook
-	fi
 	
 	#create user.js for default Firefox settings
 	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
