@@ -233,9 +233,15 @@ while ! $pdc_set; do
 		exit $1
 	}
 	if [[ $SERVERIP ]]; then
-	#SERVERIP was set, so attempt to mount netlogon
+	#SERVERIP was set, so attempt to mount netlogon and check for existence of network information
 		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
-			pdc_set=true
+			CLIENTMAC=`getMac $NETWORKINT`
+			if [[ -f /tmp/netlogon/clients/$CLIENTMAC ]] || ( [[ $wifi_network_int ]] && [[ -f /tmp/netlogon/clients/`getMac $wifi_network_int` ]] ); then
+				pdc_set=true
+			else
+				pdc_set=false
+				umount /tmp/netlogon
+			fi
 		else
 			pdc_set=false
 		fi
