@@ -399,52 +399,52 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	[[ -z $DNSSUFFIX ]] && exitfunc 1
 	#Copy files and change variables
 	dns_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSSUFFIX"`
-	DOMAIN=`sed "s/^\([^.]*\).*/\1/" <<< "$dns_domain_caps"`
 	echo 55 >&11
 	echo \#Copying files >&11
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba4~' /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
 	
+	echo 60 >&11
+	echo \#Configuring Samba >&11
+	
 	#Samba information required for ksmb, regardless of winbind or not
 	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
 	[[ -z $samba_domain ]] && exitfunc 1
-	samba_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
+	DOMAIN=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
 	#Configure smb.conf
-	sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
+	sed -i "s/CHANGETHISDOMAIN/$DOMAIN/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISSERVER/$PDC/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/samba/smb.conf
 	
+	#Join domain
+	echo 70 >&11
+	echo \#Joining domain >&11
+	join_status=1
+	while [[ $join_status -ne 0 ]]; do
+		understandableYad --form --title='Domain Access' --wrap \
+							--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
+							--button='gtk-cancel:1' --button='gtk-ok:0'
+		domain_username=`cut -d"|" -f1 <<< "$DATA"`
+		domain_password=`cut -d"|" -f2 <<< "$DATA"`
+		net ads join -S $PDC -U $domain_username%$domain_password
+		join_status=$?
+	done
+	
+	echo 75 >&11
+	echo \#Finalising domain configuration >&11
+	
 	#Check if we are to use winbind instead of LDAP
 	if [[ -f /tmp/netlogon/domain_information/samba4_winbind ]]; then
-		echo 60 >&1
-		echo \#Configuring Samba >&11
 		DOMAINTYPE=samba4_winbind
-		DOMAIN=$samba_domain_caps
 		
 		#Create folder for users
-		[[ ! -d /home/$samba_domain_caps ]] && mkdir /home/$samba_domain_caps
+		[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
 		function exitfunc {
 			info_alert "Error" "Not joining domain - system may be in an inconsistent state"
 			umount /tmp/netlogon
 			exit 1
 		}
-		#Join domain
-		echo 70 >&11
-		echo \#Joining domain >&11
-		join_status=1
-		while [[ $join_status -ne 0 ]]; do
-			understandableYad --form --title='Domain Access' --wrap \
-								--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
-								--button='gtk-cancel:1' --button='gtk-ok:0'
-			domain_username=`cut -d"|" -f1 <<< "$DATA"`
-			domain_password=`cut -d"|" -f2 <<< "$DATA"`
-			net ads join -S $PDC -U $domain_username%$domain_password
-			join_status=$?
-		done
-		
-		echo 75 >&11
-		echo \#Finalising domain configuration >&11
 		
 		#Update nsswitch.conf
 		nss_enable passwd winbind
@@ -465,9 +465,6 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		sed -i "s/CHANGETHISSID/$domain_sid/g" /etc/nslcd.conf
 		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/nslcd.conf
 		
-		echo 75 >&11
-		echo \#Finalising domain configuration >&11
-		
 		#Update nsswitch.conf
 		nss_enable passwd ldap
 		nss_enable group ldap
@@ -485,8 +482,7 @@ else
 	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
 	[[ -z $samba_domain ]] && exitfunc 1
 	#Copy files and change variables
-	samba_domain_caps=`tr 'a-z' 'A-Z' <<< "$samba_domain"`
-	DOMAIN=$samba_domain_caps
+	DOMAIN=`tr 'a-z' 'A-Z' <<< "$samba_domain"`
 	DOMAINTYPE=samba3
 	
 	echo 55 >&11
@@ -494,11 +490,11 @@ else
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba3~' /opt/karoshi/linuxclientsetup/config-files/samba3/* /
 	#Configure smb.conf
-	sed -i "s/CHANGETHISDOMAIN/$samba_domain/g" /etc/samba/smb.conf
+	sed -i "s/CHANGETHISDOMAIN/$DOMAIN/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISPDC/$PDC/g" /etc/samba/smb.conf
 	
 	#Create folder for users
-	[[ ! -d /home/$samba_domain_caps ]] && mkdir /home/$samba_domain_caps
+	[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
 	function exitfunc {
 		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
 		umount /tmp/netlogon
