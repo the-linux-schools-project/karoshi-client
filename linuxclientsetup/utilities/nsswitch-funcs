@@ -35,7 +35,7 @@ nss_disable()
   property="$2"
   if nss_is_enabled "$name" "$property"
   then
-    echo "/etc/nsswitch.conf: enable $property lookups for $name" >&2
+    echo "/etc/nsswitch.conf: disable $property lookups for $name" >&2
     sed -i 's/^\([[:space:]]*'$name'[[:space:]]*:.*[^[:space:]]\)[[:space:]]*\<'$property'\>\(.*\)$/\1\2/' /etc/nsswitch.conf
     # invalidate nscd cache
     nscd -i "$name" > /dev/null 2>&1 || true
