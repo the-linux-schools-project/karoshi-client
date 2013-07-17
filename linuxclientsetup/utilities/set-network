@@ -420,7 +420,6 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	DOMAIN=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
 	#Configure smb.conf
 	sed -i "s/CHANGETHISDOMAIN/$DOMAIN/g" /etc/samba/smb.conf
-	sed -i "s/CHANGETHISSERVER/$PDC/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/samba/smb.conf
 	
 	#Join domain
@@ -466,21 +465,21 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		domain_sid=` < /tmp/netlogon/domain_information/domain_sid`
 		ldap_base=` < /tmp/netlogon/domain_information/ldap_base`
 		[[ -z $domain_sid ]] && exitfunc 1
-		#Configure nslcd.conf
-		sed -i "s/CHANGETHISSERVER/$PDC.$DNSSUFFIX/g" /etc/nslcd.conf
-		sed -i "s/CHANGETHISSID/$domain_sid/g" /etc/nslcd.conf
-		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/nslcd.conf
+		#Configure sssd.conf
+		sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/sssd/sssd.conf
+		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/sssd/sssd.conf
+		sed -i "s/CHANGETHISDOMAINSID/$(net getdomainsid | sed -n 's/SID for domain[^:]*: //p')/g" /etc/sssd/sssd.conf
+		sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/sssd/sssd.conf
 		
 		#Update nsswitch.conf
-		nss_enable passwd ldap
-		nss_enable group ldap
-		nss_enable shadow ldap
+		nss_enable passwd sss
+		nss_enable group sss
 		#Update PAM - bit of a hack, removes the 'seen' entry of the pam
 		# module, causing it to be reconfigured into pam.d
-		pam-auth-update --package --remove krb5
+		pam-auth-update --package --remove sss
 		pam-auth-update --package
-		#Restart nslcd and nscd
-		service nslcd restart
+		#Restart sssd and nscd
+		restart sssd
 		service nscd restart
 	fi
 else
