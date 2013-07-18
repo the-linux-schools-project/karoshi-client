@@ -434,6 +434,88 @@ if which gem && [[ -f install/rubygem-list ]]; then
 	fi
 fi
 
+################
+#Install Karoshi
+################
+
+#Remove old PAM modules
+pam_modules=( )
+while read -r -d $'\0' file; do
+	if ! dpkg-query -S "$file"; then
+		pam_modules+=( "$(basename "$file")" )
+	fi
+done < <(find /usr/share/pam-configs -mindepth 1 -print0)
+if [[ $pam_modules ]]; then
+	pam-auth-update --package --remove "${pam_modules[@]}"
+	for file in "${pam_modules[@]}"; do
+		echo "Removing orphan PAM config $file"
+		rm -rf /usr/share/pam-configs/"$file"
+	done
+fi
+
+#Remove PAM modules modified in configuration
+while read -r -d $'\0' file; do
+	config=$(basename "$file")
+	if [[ -f /usr/share/pam-configs/$config ]]; then
+		echo "Removing PAM config $config - found in new configuration"
+		pam-auth-update --package --remove "$config"
+		echo "$config" >> /var/lib/pam/seen
+	fi
+done < <(find configuration/usr/share/pam-configs -mindepth 1 -print0)
+
+#Copy in new configuration (overwrite)
+echo "Installing configuration..." >&2
+find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -r0 cp -rf -t /
+
+#Correct permissions for sudoers.d files
+find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
+
+echo "Adjusting PAM configuration..." >&2
+#Adjust libpam-mount to only run on interactive sessions
+pam-auth-update --package --remove libpam-mount
+if ! grep -q 'Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount; then
+	sed -i '/Session-Type:/ a\
+Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
+fi
+
+#Remove auth modules from PAM to be added back in in setup
+pam-auth-update --package --remove winbind sss sss-password karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
+echo "winbind
+sss
+sss-password
+karoshi-pre-session
+karoshi-post-session
+karoshi-virtualbox-mkdir" >> /var/lib/pam/seen
+
+#Correct permissions for PAM configuration
+find /usr/share/pam-configs -mindepth 1 -maxdepth 1 -execdir chmod 0644 {} +
+
+#Reconfigure PAM
+pam-auth-update --package
+
+#Install linuxclientsetup
+echo "Installing Karoshi..." >&2
+[[ -e /opt/karoshi ]] && rm -rf /opt/karoshi
+mkdir /opt/karoshi
+cp -rf linuxclientsetup /opt/karoshi
+find /opt/karoshi/linuxclientsetup -name '*~' -delete
+
+chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
+chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
+chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
+
+#Copy LICENCE
+[[ -f LICENCE ]] && cp -f LICENCE /opt/karoshi/linuxclientsetup/LICENCE
+
+#Link Karoshi utilities
+if [[ -f install/link-list ]]; then
+	while read -r link_name _ link_to; do
+		if [[ -e $link_to ]] && [[ $link_name ]]; then
+			ln -sf "$link_to" "$link_name"
+		fi
+	done < install/link-list
+fi
+
 #####################
 #Users and home areas
 #####################
@@ -618,77 +700,6 @@ exec 4<&-
 #Clean up /home
 echo "Cleaning up /home..." >&2
 find /home -mindepth 1 -delete
-
-################
-#Install Karoshi
-################
-
-#Remove old PAM modules
-pam_modules=( )
-while read -r -d $'\0' file; do
-	if ! dpkg-query -S "$file"; then
-		pam_modules+=( "$(basename "$file")" )
-	fi
-done < <(find /usr/share/pam-configs -mindepth 1 -print0)
-if [[ $pam_modules ]]; then
-	pam-auth-update --package --remove "${pam_modules[@]}"
-	for file in "${pam_modules[@]}"; do
-		rm -rf /usr/share/pam-configs/"$file"
-	done
-fi
-
-#Copy in new configuration (overwrite)
-echo "Installing configuration..." >&2
-find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -r0 cp -rf -t /
-
-#Correct permissions for sudoers.d files
-find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
-
-echo "Adjusting PAM configuration..." >&2
-#Adjust libpam-mount to only run on interactive sessions
-pam-auth-update --package --remove libpam-mount
-if ! grep -q 'Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount; then
-	sed -i '/Session-Type:/ a\
-Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
-fi
-
-#Remove auth modules from PAM to be added back in in setup
-pam-auth-update --package --remove winbind sss sss-password karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
-echo "winbind
-sss
-sss-password
-karoshi-pre-session
-karoshi-post-session
-karoshi-virtualbox-mkdir" >> /var/lib/pam/seen
-
-#Correct permissions for PAM configuration
-find /usr/share/pam-configs -mindepth 1 -maxdepth 1 -execdir chmod 0644 {} +
-
-#Reconfigure PAM
-pam-auth-update --package
-
-#Install linuxclientsetup
-echo "Installing Karoshi..." >&2
-[[ -e /opt/karoshi ]] && rm -rf /opt/karoshi
-mkdir /opt/karoshi
-cp -rf linuxclientsetup /opt/karoshi
-find /opt/karoshi/linuxclientsetup -name '*~' -delete
-
-chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
-chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
-chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
-
-#Copy LICENCE
-[[ -f LICENCE ]] && cp -f LICENCE /opt/karoshi/linuxclientsetup/LICENCE
-
-#Link Karoshi utilities
-if [[ -f install/link-list ]]; then
-	while read -r link_name _ link_to; do
-		if [[ -e $link_to ]] && [[ $link_name ]]; then
-			ln -sf "$link_to" "$link_name"
-		fi
-	done < install/link-list
-fi
 
 echo >&2
 echo "Installation of Karoshi Client complete - press Ctrl + C now to finish" >&2
