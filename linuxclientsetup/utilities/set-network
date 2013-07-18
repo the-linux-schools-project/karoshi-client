@@ -477,6 +477,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/sssd/sssd.conf
 		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/sssd/sssd.conf
 		sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/sssd/sssd.conf
+		chmod 0600 /etc/sssd/sssd.conf
 		
 		#Update nsswitch.conf
 		nss_enable passwd sss
