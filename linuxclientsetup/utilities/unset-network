@@ -104,8 +104,6 @@ samba4_winbind)
 esac
 
 echo 30 >&11
-echo \#Restarting nscd >&11
-service nscd restart
 
 #Revert configuration files
 config_root="/opt/karoshi/linuxclientsetup/config-files"

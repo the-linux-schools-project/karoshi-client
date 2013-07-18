@@ -474,9 +474,8 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		# module, causing it to be reconfigured into pam.d
 		pam-auth-update --package --remove sss sss-password
 		pam-auth-update --package
-		#Restart sssd and nscd
+		#Restart sssd
 		restart sssd
-		service nscd restart
 	fi
 else
 	#Using a Samba3 domain
@@ -528,6 +527,10 @@ else
 	#Restart winbind
 	service winbind restart
 fi
+
+#Refresh nscd
+nscd -i passwd
+nscd -i group
 ####################
 #End of domain setup
 ####################
