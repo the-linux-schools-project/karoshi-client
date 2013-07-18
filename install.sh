@@ -27,6 +27,25 @@
 #configuration files and installing/removing packages. Use
 #at your own risk!
 
+#Logging
+[[ -e /tmp/karoshi-install.log ]] && rm -rf /tmp/karoshi-install.log
+touch /tmp/karoshi-install.log
+chmod 0644 /tmp/karoshi-install.log
+
+mkfifo /tmp/karoshi-install.fifo.$$
+tee /tmp/karoshi-install.log < /tmp/karoshi-install.fifo.$$ &
+log_wait_pid=$!
+exec &>/tmp/karoshi-install.fifo.$$
+
+function removeRedirection {
+	exec 1>&-
+	exec 2>&-
+	wait $log_wait_pid
+	rm /tmp/karoshi-install.fifo.$$
+}
+
+trap removeRedirection EXIT
+
 ###################
 #Remastersys
 ###################
