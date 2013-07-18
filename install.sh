@@ -634,9 +634,9 @@ Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
 fi
 
 #Remove auth modules from PAM to be added back in in setup
-pam-auth-update --package --remove winbind krb5 karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
+pam-auth-update --package --remove winbind sss karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
 echo "winbind
-krb5
+sss
 karoshi-pre-session
 karoshi-post-session
 karoshi-virtualbox-mkdir" >> /var/lib/pam/seen

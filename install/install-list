@@ -81,9 +81,7 @@ liblwjgl-java
 cifs-utils
 libpam-mount
 krb5-user
-libpam-krb5
 libpam-winbind
-nslcd
 ntp
 bleachbit
 xautolock
@@ -104,3 +102,4 @@ iputils-arping
 virtualbox-guest-utils
 virtualbox-guest-x11
 libnss3-tools
+sssd
