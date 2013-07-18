@@ -106,6 +106,8 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 				echo "	dns-search $DNSSUFFIX" >> /etc/network/interfaces
 			fi
 			echo "	dns-nameservers $SERVERIP" >> /etc/network/interfaces
+		else
+			echo "	dns-nameservers 8.8.8.8 8.8.4.4" >> /etc/network/interfaces
 		fi
 	fi
 	
