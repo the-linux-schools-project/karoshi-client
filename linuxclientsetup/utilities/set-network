@@ -475,7 +475,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		nss_enable group sss
 		#Update PAM - bit of a hack, removes the 'seen' entry of the pam
 		# module, causing it to be reconfigured into pam.d
-		pam-auth-update --package --remove sss
+		pam-auth-update --package --remove sss sss-password
 		pam-auth-update --package
 		#Restart sssd and nscd
 		restart sssd

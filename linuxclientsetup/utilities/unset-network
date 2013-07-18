@@ -73,8 +73,9 @@ samba4)
 	attemptAdsLeave
 	
 	#Deconfigure PAM
-	pam-auth-update --package --remove sss
-	echo "sss" >> /var/lib/pam/seen
+	pam-auth-update --package --remove sss sss-password
+	echo "sss
+sss-password" >> /var/lib/pam/seen
 	
 	#Deconfigure nsswitch.conf
 	nss_disable passwd sss
