@@ -53,18 +53,19 @@ samba3)
 	service winbind stop
 	;;
 samba4)
+	net ads leave
+	
 	#Deconfigure PAM
-	pam-auth-update --package --remove krb5
-	echo "krb5" >> /var/lib/pam/seen
+	pam-auth-update --package --remove sss
+	echo "sss" >> /var/lib/pam/seen
 	
 	#Deconfigure nsswitch.conf
-	nss_disable passwd ldap
-	nss_disable group ldap
-	nss_disable shadow ldap
+	nss_disable passwd sss
+	nss_disable group sss
 	
 	echo 20 >&11
 	
-	service nslcd stop
+	service sssd stop
 	;;
 samba4_winbind)
 	net ads leave
