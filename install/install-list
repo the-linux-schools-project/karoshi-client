@@ -83,7 +83,6 @@ libpam-mount
 krb5-user
 libpam-winbind
 ntp
-bleachbit
 xautolock
 remastersys-gui
 yad
