@@ -121,21 +121,26 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 
 function updateHostname {
 	[[ -z $CLIENT_NAME ]] && return
+	if [[ $DNSSUFFIX ]]; then
+		hosts_line="$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME"
+	else
+		hosts_line="$CLIENT_NAME"
+	fi
 	echo "$CLIENT_NAME" > /etc/hostname
 	hostname "$CLIENT_NAME"
 	
 	if $dhcp; then
 		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
 		if grep "^127\.0\.1\.1" /etc/hosts; then
-			sed -i "s/^127\.0\.1\.1.*/127.0.1.1	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME/" /etc/hosts
+			sed -i "s/^127\.0\.1\.1.*/127.0.1.1	$hosts_line/" /etc/hosts
 		else
-			echo "127.0.1.1	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME" >> /etc/hosts
+			echo "127.0.1.1	$hosts_line" >> /etc/hosts
 		fi
 	else
 		sed -i "/^127\.0\.1\.1/d" /etc/hosts
 		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
 		echo "##STATIC##" >> /etc/hosts
-		echo "$IPADDR	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME" >> /etc/hosts
+		echo "$IPADDR	$hosts_line" >> /etc/hosts
 	fi
 }
 
@@ -356,8 +361,7 @@ echo 30 >&11
 #Get network settings from user if not set
 getClientSettings
 
-echo 35 >&11
-echo \#Setting network configuration >&11
+echo 40 >&11
 
 #Automation steps
 if [[ -f /tmp/netlogon/domain_information/lockadministrator ]]; then
@@ -366,24 +370,24 @@ if [[ -f /tmp/netlogon/domain_information/lockadministrator ]]; then
 	passwd -l root
 fi
 
-echo \#Finalising network configuration >&11
-
-#Do network configuration and remount netlogon
-umount /tmp/netlogon
-ifdown $NETWORKINT
-echo 40 >&11
-writeNetworkSettings
-updateHostname
-ifup $NETWORKINT
-echo 45 >&11
-mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
-echo 50 >&11
-
 karoshi-manage-flags set networkset
 
 #############
 #Domain setup
 #############
+
+function reconfigureNetwork {
+	echo \#Setting network configuration >&11
+
+	#Do network configuration and remount netlogon
+	umount /tmp/netlogon
+	ifdown $NETWORKINT
+	writeNetworkSettings
+	updateHostname
+	ifup $NETWORKINT
+	mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
+}
+
 DNSSUFFIX="internal"
 #Get nsswitch functions
 source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
@@ -394,6 +398,7 @@ function exitfunc {
 	exit $1
 }
 
+echo 50 >&11
 echo \#Performing domain setup >&11
 
 if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
@@ -402,13 +407,17 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	[[ -z $DNSSUFFIX ]] && exitfunc 1
 	#Copy files and change variables
 	dns_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSSUFFIX"`
+	
 	echo 55 >&11
+	reconfigureNetwork
+		
+	echo 60 >&11
 	echo \#Copying files >&11
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba4~' /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
 	
-	echo 60 >&11
+	echo 65 >&11
 	echo \#Configuring Samba >&11
 	
 	#Samba information required for ksmb, regardless of winbind or not
@@ -486,6 +495,9 @@ else
 	DOMAINTYPE=samba3
 	
 	echo 55 >&11
+	reconfigureNetwork
+	
+	echo 60 >&11
 	echo \#Copying files >&11
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba3~' /opt/karoshi/linuxclientsetup/config-files/samba3/* /
@@ -541,9 +553,6 @@ echo \#Finalising network configuration >&11
 #Set NTP settings
 sed -i "s/### KAROSHI HOOK ###/server $PDC.$DNSSUFFIX/" /etc/ntp.conf
 
-#Last few variables
-updateHostname
-
 #Restart networking and finish
 echo 90 >&11
 umount /tmp/netlogon
@@ -551,11 +560,6 @@ function exitfunc {
 	info_alert "Configuration" "Configuration cancelled"
 	exit $1
 }
-echo 95 >&11
-echo \#Restarting network interface >&11
-ifdown $NETWORKINT
-writeNetworkSettings
-ifup $NETWORKINT
 
 karoshi-manage-flags set domainset
 echo 100 >&11
