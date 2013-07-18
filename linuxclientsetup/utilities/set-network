@@ -175,6 +175,13 @@ iface lo inet loopback
 auto $NETWORKINT
 iface $NETWORKINT inet dhcp" > /etc/network/interfaces
 exec 11> >(progress_info "Karoshi Setup" "Karoshi Client Setup: Network Configuration")
+
+function exitfunc {
+	info_alert "Configuration" "Configuration cancelled"
+	echo 100 >&11
+	exit $1
+}
+
 echo 5 >&11
 echo \#Bringing down network interface >&11
 ifdown --force $NETWORKINT
@@ -193,6 +200,7 @@ while ! $pdc_set; do
 	#We define exitfunc further down, so this just resets it
 	function exitfunc {
 		info_alert "Configuration" "Configuration cancelled"
+		echo 100 >&11
 		exit $1
 	}
 	if $dhcp && [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]]; then
@@ -238,6 +246,7 @@ while ! $pdc_set; do
 	function exitfunc {
 		info_alert "Network Settings" "Not configuring for Karoshi Server"
 		karoshi-manage-flags set nokaroshi
+		echo 100 >&11
 		exit 0
 	}
 	
@@ -283,6 +292,7 @@ karoshi-manage-flags unset nokaroshi
 function exitfunc {
 	info_alert "Error" "Configuration cancelled"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 
@@ -329,6 +339,7 @@ echo 25 >&11
 function exitfunc {
 	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 if [[ -f /tmp/netlogon/domain_information/netmask ]]; then NETMASK=` < /tmp/netlogon/domain_information/netmask`; fi
@@ -339,6 +350,7 @@ if [[ -f /tmp/netlogon/domain_information/main_server ]]; then PDC=` < /tmp/netl
 function exitfunc {
 	info_alert "Error" "Configuration cancelled"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 #If NETWORKINT is a wireless interface, and don't already have wireless information,
@@ -397,6 +409,7 @@ source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
 function exitfunc {
 	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 
@@ -433,6 +446,14 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	#Join domain
 	echo 70 >&11
 	echo \#Joining domain >&11
+	
+	function exitfunc {
+		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
+		umount /tmp/netlogon
+		echo 100 >&11
+		exit 1
+	}
+	
 	join_status=1
 	while [[ $join_status -ne 0 ]]; do
 		understandableYad --form --title='Domain Access' --wrap \
@@ -453,11 +474,6 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		
 		#Create folder for users
 		[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-		function exitfunc {
-			info_alert "Error" "Not joining domain - system may be in an inconsistent state"
-			umount /tmp/netlogon
-			exit 1
-		}
 		
 		#Update nsswitch.conf
 		nss_enable passwd winbind
@@ -510,14 +526,18 @@ else
 	
 	#Create folder for users
 	[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-	function exitfunc {
-		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
-		umount /tmp/netlogon
-		exit 1
-	}
+	
 	#Join domain
 	echo 70 >&11
 	echo \#Joining domain >&11
+	
+	function exitfunc {
+		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
+		umount /tmp/netlogon
+		echo 100 >&11
+		exit 1
+	}
+	
 	join_status=1
 	while [[ $join_status -ne 0 ]]; do
 		understandableYad --form --title='Domain Access' --wrap \
@@ -561,6 +581,7 @@ echo 90 >&11
 umount /tmp/netlogon
 function exitfunc {
 	info_alert "Configuration" "Configuration cancelled"
+	echo 100 >&11
 	exit $1
 }
 
