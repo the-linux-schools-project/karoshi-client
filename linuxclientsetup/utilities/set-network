@@ -106,6 +106,8 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 				echo "	dns-search $DNSSUFFIX" >> /etc/network/interfaces
 			fi
 			echo "	dns-nameservers $SERVERIP" >> /etc/network/interfaces
+		else
+			echo "	dns-nameservers 8.8.8.8 8.8.4.4" >> /etc/network/interfaces
 		fi
 	fi
 	
@@ -121,21 +123,26 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 
 function updateHostname {
 	[[ -z $CLIENT_NAME ]] && return
+	if [[ $DNSSUFFIX ]]; then
+		hosts_line="$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME"
+	else
+		hosts_line="$CLIENT_NAME"
+	fi
 	echo "$CLIENT_NAME" > /etc/hostname
 	hostname "$CLIENT_NAME"
 	
 	if $dhcp; then
 		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
 		if grep "^127\.0\.1\.1" /etc/hosts; then
-			sed -i "s/^127\.0\.1\.1.*/127.0.1.1	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME/" /etc/hosts
+			sed -i "s/^127\.0\.1\.1.*/127.0.1.1	$hosts_line/" /etc/hosts
 		else
-			echo "127.0.1.1	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME" >> /etc/hosts
+			echo "127.0.1.1	$hosts_line" >> /etc/hosts
 		fi
 	else
 		sed -i "/^127\.0\.1\.1/d" /etc/hosts
 		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
 		echo "##STATIC##" >> /etc/hosts
-		echo "$IPADDR	$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME" >> /etc/hosts
+		echo "$IPADDR	$hosts_line" >> /etc/hosts
 	fi
 }
 
@@ -157,6 +164,7 @@ fi
 #Get network settings
 ####################
 pdc_set=false
+manual_pdc=false
 client_settings=false
 dhcp=false
 [[ ! -d /tmp/netlogon ]] && mkdir -p /tmp/netlogon
@@ -167,6 +175,13 @@ iface lo inet loopback
 auto $NETWORKINT
 iface $NETWORKINT inet dhcp" > /etc/network/interfaces
 exec 11> >(progress_info "Karoshi Setup" "Karoshi Client Setup: Network Configuration")
+
+function exitfunc {
+	info_alert "Configuration" "Configuration cancelled"
+	echo 100 >&11
+	exit $1
+}
+
 echo 5 >&11
 echo \#Bringing down network interface >&11
 ifdown --force $NETWORKINT
@@ -185,6 +200,7 @@ while ! $pdc_set; do
 	#We define exitfunc further down, so this just resets it
 	function exitfunc {
 		info_alert "Configuration" "Configuration cancelled"
+		echo 100 >&11
 		exit $1
 	}
 	if $dhcp && [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]]; then
@@ -194,7 +210,7 @@ while ! $pdc_set; do
 		GATEWAY=`sed -n 's/.*option routers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
 	elif $dhcp; then
 	#If we wanted a DHCP lease
-		info_alert "Error" "Did not get dhcp lease"
+		info_alert "Error" "Did not get DHCP lease"
 		dhcp=false
 		continue
 	else
@@ -230,11 +246,24 @@ while ! $pdc_set; do
 	function exitfunc {
 		info_alert "Network Settings" "Not configuring for Karoshi Server"
 		karoshi-manage-flags set nokaroshi
-		exit $1
+		echo 100 >&11
+		exit 0
 	}
-	if [[ $SERVERIP ]]; then
-	#SERVERIP was set, so attempt to mount netlogon and check for existence of network information
-		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
+	
+	#Get PDC information
+	if ! [[ $SERVERIP ]]; then
+		understandableYad --form --title 'Network Settings' \
+						--field='PDC IP Address' \
+						--button='Skip:1' --button='gtk-ok:0' \
+						"$SERVERIP"
+		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
+		manual_pdc=true
+	fi
+	
+	echo \#Attempting to mount netlogon >&11
+	if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
+		#Only check for automatic network settings if this was not a manual setting
+		if ! $manual_pdc; then
 			CLIENTMAC=`getMac $NETWORKINT`
 			if [[ -f /tmp/netlogon/clients/$CLIENTMAC ]] || ( [[ $wifi_network_int ]] && [[ -f /tmp/netlogon/clients/`getMac $wifi_network_int` ]] ); then
 				pdc_set=true
@@ -243,27 +272,11 @@ while ! $pdc_set; do
 				umount /tmp/netlogon
 			fi
 		else
-			pdc_set=false
-		fi
-	fi
-	if ! $pdc_set; then
-	#We still haven't connected to the PDC
-		understandableYad --form --title 'Network Settings' \
-							--field='PDC IP Address' \
-							--button='Skip:1' --button='gtk-ok:0' \
-							"$SERVERIP"
-		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
-		echo \#Attempting to mount netlogon >&11
-		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
 			pdc_set=true
-		else
-			info_alert "Error" "Invalid PDC"
-			pdc_set=false
-			dhcp=false
 		fi
+	else
+		pdc_set=false
 	fi
-	#If we got to this point still having not connected to a PDC,
-	# send us back to the top to get network settings again.
 done
 
 echo 20 >&11
@@ -279,6 +292,7 @@ karoshi-manage-flags unset nokaroshi
 function exitfunc {
 	info_alert "Error" "Configuration cancelled"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 
@@ -325,6 +339,7 @@ echo 25 >&11
 function exitfunc {
 	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 if [[ -f /tmp/netlogon/domain_information/netmask ]]; then NETMASK=` < /tmp/netlogon/domain_information/netmask`; fi
@@ -335,6 +350,7 @@ if [[ -f /tmp/netlogon/domain_information/main_server ]]; then PDC=` < /tmp/netl
 function exitfunc {
 	info_alert "Error" "Configuration cancelled"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 #If NETWORKINT is a wireless interface, and don't already have wireless information,
@@ -359,8 +375,7 @@ echo 30 >&11
 #Get network settings from user if not set
 getClientSettings
 
-echo 35 >&11
-echo \#Setting network configuration >&11
+echo 40 >&11
 
 #Automation steps
 if [[ -f /tmp/netlogon/domain_information/lockadministrator ]]; then
@@ -369,24 +384,24 @@ if [[ -f /tmp/netlogon/domain_information/lockadministrator ]]; then
 	passwd -l root
 fi
 
-echo \#Finalising network configuration >&11
-
-#Do network configuration and remount netlogon
-umount /tmp/netlogon
-ifdown $NETWORKINT
-echo 40 >&11
-writeNetworkSettings
-updateHostname
-ifup $NETWORKINT
-echo 45 >&11
-mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
-echo 50 >&11
-
 karoshi-manage-flags set networkset
 
 #############
 #Domain setup
 #############
+
+function reconfigureNetwork {
+	echo \#Setting network configuration >&11
+
+	#Do network configuration and remount netlogon
+	umount /tmp/netlogon
+	ifdown $NETWORKINT
+	writeNetworkSettings
+	updateHostname
+	ifup $NETWORKINT
+	mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
+}
+
 DNSSUFFIX="internal"
 #Get nsswitch functions
 source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
@@ -394,9 +409,11 @@ source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
 function exitfunc {
 	info_alert "Error" "Fatal Error:\n Cannot find domain information on server"
 	umount /tmp/netlogon
+	echo 100 >&11
 	exit $1
 }
 
+echo 50 >&11
 echo \#Performing domain setup >&11
 
 if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
@@ -405,13 +422,17 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	[[ -z $DNSSUFFIX ]] && exitfunc 1
 	#Copy files and change variables
 	dns_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSSUFFIX"`
+	
 	echo 55 >&11
+	reconfigureNetwork
+		
+	echo 60 >&11
 	echo \#Copying files >&11
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba4~' /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
 	
-	echo 60 >&11
+	echo 65 >&11
 	echo \#Configuring Samba >&11
 	
 	#Samba information required for ksmb, regardless of winbind or not
@@ -420,12 +441,19 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	DOMAIN=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
 	#Configure smb.conf
 	sed -i "s/CHANGETHISDOMAIN/$DOMAIN/g" /etc/samba/smb.conf
-	sed -i "s/CHANGETHISSERVER/$PDC/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/samba/smb.conf
 	
 	#Join domain
 	echo 70 >&11
 	echo \#Joining domain >&11
+	
+	function exitfunc {
+		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
+		umount /tmp/netlogon
+		echo 100 >&11
+		exit 1
+	}
+	
 	join_status=1
 	while [[ $join_status -ne 0 ]]; do
 		understandableYad --form --title='Domain Access' --wrap \
@@ -446,11 +474,6 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		
 		#Create folder for users
 		[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-		function exitfunc {
-			info_alert "Error" "Not joining domain - system may be in an inconsistent state"
-			umount /tmp/netlogon
-			exit 1
-		}
 		
 		#Update nsswitch.conf
 		nss_enable passwd winbind
@@ -466,22 +489,21 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		domain_sid=` < /tmp/netlogon/domain_information/domain_sid`
 		ldap_base=` < /tmp/netlogon/domain_information/ldap_base`
 		[[ -z $domain_sid ]] && exitfunc 1
-		#Configure nslcd.conf
-		sed -i "s/CHANGETHISSERVER/$PDC.$DNSSUFFIX/g" /etc/nslcd.conf
-		sed -i "s/CHANGETHISSID/$domain_sid/g" /etc/nslcd.conf
-		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/nslcd.conf
+		#Configure sssd.conf
+		sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/sssd/sssd.conf
+		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/sssd/sssd.conf
+		sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/sssd/sssd.conf
+		chmod 0600 /etc/sssd/sssd.conf
 		
 		#Update nsswitch.conf
-		nss_enable passwd ldap
-		nss_enable group ldap
-		nss_enable shadow ldap
+		nss_enable passwd sss
+		nss_enable group sss
 		#Update PAM - bit of a hack, removes the 'seen' entry of the pam
 		# module, causing it to be reconfigured into pam.d
-		pam-auth-update --package --remove krb5
+		pam-auth-update --package --remove sss sss-password
 		pam-auth-update --package
-		#Restart nslcd and nscd
-		service nslcd restart
-		service nscd restart
+		#Restart sssd
+		restart sssd
 	fi
 else
 	#Using a Samba3 domain
@@ -492,6 +514,9 @@ else
 	DOMAINTYPE=samba3
 	
 	echo 55 >&11
+	reconfigureNetwork
+	
+	echo 60 >&11
 	echo \#Copying files >&11
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba3~' /opt/karoshi/linuxclientsetup/config-files/samba3/* /
@@ -501,14 +526,18 @@ else
 	
 	#Create folder for users
 	[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-	function exitfunc {
-		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
-		umount /tmp/netlogon
-		exit 1
-	}
+	
 	#Join domain
 	echo 70 >&11
 	echo \#Joining domain >&11
+	
+	function exitfunc {
+		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
+		umount /tmp/netlogon
+		echo 100 >&11
+		exit 1
+	}
+	
 	join_status=1
 	while [[ $join_status -ne 0 ]]; do
 		understandableYad --form --title='Domain Access' --wrap \
@@ -533,6 +562,10 @@ else
 	#Restart winbind
 	service winbind restart
 fi
+
+#Refresh nscd
+nscd -i passwd
+nscd -i group
 ####################
 #End of domain setup
 ####################
@@ -543,21 +576,14 @@ echo \#Finalising network configuration >&11
 #Set NTP settings
 sed -i "s/### KAROSHI HOOK ###/server $PDC.$DNSSUFFIX/" /etc/ntp.conf
 
-#Last few variables
-updateHostname
-
 #Restart networking and finish
 echo 90 >&11
 umount /tmp/netlogon
 function exitfunc {
 	info_alert "Configuration" "Configuration cancelled"
+	echo 100 >&11
 	exit $1
 }
-echo 95 >&11
-echo \#Restarting network interface >&11
-ifdown $NETWORKINT
-writeNetworkSettings
-ifup $NETWORKINT
 
 karoshi-manage-flags set domainset
 echo 100 >&11

@@ -36,6 +36,23 @@ exec 11> >(progress_info "Karoshi Setup" "Karoshi Client Setup: Network Deconfig
 echo 10 >&11
 echo \#Deconfiguring domain settings >&11
 
+function attemptAdsLeave {
+	if ! net ads testjoin -k; then
+		echo "WARNING: Was not joined to domain in the first place!" >&2
+		return
+	fi
+	leave_status=1
+	while [[ $leave_status -ne 0 ]]; do
+		understandableYad --form --title='Domain Access' --wrap \
+							--text 'Enter in a username and password to leave the domain' --field='Username' --field='Password':H \
+							--button='gtk-cancel:1' --button='gtk-ok:0'
+		domain_username=`cut -d"|" -f1 <<< "$DATA"`
+		domain_password=`cut -d"|" -f2 <<< "$DATA"`
+		net ads leave -U $domain_username%$domain_password
+		leave_status=$?
+	done
+}
+
 #Deconfigure domain
 case "$DOMAINTYPE" in
 samba3)
@@ -53,21 +70,23 @@ samba3)
 	service winbind stop
 	;;
 samba4)
+	attemptAdsLeave
+	
 	#Deconfigure PAM
-	pam-auth-update --package --remove krb5
-	echo "krb5" >> /var/lib/pam/seen
+	pam-auth-update --package --remove sss sss-password
+	echo "sss
+sss-password" >> /var/lib/pam/seen
 	
 	#Deconfigure nsswitch.conf
-	nss_disable passwd ldap
-	nss_disable group ldap
-	nss_disable shadow ldap
+	nss_disable passwd sss
+	nss_disable group sss
 	
 	echo 20 >&11
 	
-	service nslcd stop
+	service sssd stop
 	;;
 samba4_winbind)
-	net ads leave
+	attemptAdsLeave
 	
 	#Deconfigure PAM
 	pam-auth-update --package --remove winbind
@@ -85,8 +104,6 @@ samba4_winbind)
 esac
 
 echo 30 >&11
-echo \#Restarting nscd >&11
-service nscd restart
 
 #Revert configuration files
 config_root="/opt/karoshi/linuxclientsetup/config-files"
