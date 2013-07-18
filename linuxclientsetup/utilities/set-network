@@ -157,6 +157,7 @@ fi
 #Get network settings
 ####################
 pdc_set=false
+manual_pdc=false
 client_settings=false
 dhcp=false
 [[ ! -d /tmp/netlogon ]] && mkdir -p /tmp/netlogon
@@ -194,7 +195,7 @@ while ! $pdc_set; do
 		GATEWAY=`sed -n 's/.*option routers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
 	elif $dhcp; then
 	#If we wanted a DHCP lease
-		info_alert "Error" "Did not get dhcp lease"
+		info_alert "Error" "Did not get DHCP lease"
 		dhcp=false
 		continue
 	else
@@ -230,11 +231,23 @@ while ! $pdc_set; do
 	function exitfunc {
 		info_alert "Network Settings" "Not configuring for Karoshi Server"
 		karoshi-manage-flags set nokaroshi
-		exit $1
+		exit 0
 	}
-	if [[ $SERVERIP ]]; then
-	#SERVERIP was set, so attempt to mount netlogon and check for existence of network information
-		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
+	
+	#Get PDC information
+	if ! [[ $SERVERIP ]]; then
+		understandableYad --form --title 'Network Settings' \
+						--field='PDC IP Address' \
+						--button='Skip:1' --button='gtk-ok:0' \
+						"$SERVERIP"
+		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
+		manual_pdc=true
+	fi
+	
+	echo \#Attempting to mount netlogon >&11
+	if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
+		#Only check for automatic network settings if this was not a manual setting
+		if ! $manual_pdc; then
 			CLIENTMAC=`getMac $NETWORKINT`
 			if [[ -f /tmp/netlogon/clients/$CLIENTMAC ]] || ( [[ $wifi_network_int ]] && [[ -f /tmp/netlogon/clients/`getMac $wifi_network_int` ]] ); then
 				pdc_set=true
@@ -243,27 +256,11 @@ while ! $pdc_set; do
 				umount /tmp/netlogon
 			fi
 		else
-			pdc_set=false
-		fi
-	fi
-	if ! $pdc_set; then
-	#We still haven't connected to the PDC
-		understandableYad --form --title 'Network Settings' \
-							--field='PDC IP Address' \
-							--button='Skip:1' --button='gtk-ok:0' \
-							"$SERVERIP"
-		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
-		echo \#Attempting to mount netlogon >&11
-		if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
 			pdc_set=true
-		else
-			info_alert "Error" "Invalid PDC"
-			pdc_set=false
-			dhcp=false
 		fi
+	else
+		pdc_set=false
 	fi
-	#If we got to this point still having not connected to a PDC,
-	# send us back to the top to get network settings again.
 done
 
 echo 20 >&11
