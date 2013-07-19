@@ -96,9 +96,6 @@ mount -o remount,nosuid /home
 mount -o remount,nosuid /var
 mount -o remount,nosuid,nodev /tmp
 
-#Create /var/lib/karoshi
-mkdir -p /var/lib/karoshi 
-
 ####################
 #Copy configuration
 ####################
