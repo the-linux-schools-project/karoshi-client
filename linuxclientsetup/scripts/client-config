@@ -470,7 +470,7 @@ fi
 ##########################
 #Configure /var/lib/karoshi/virtualbox
 ##########################
-mkdir /var/lib/karoshi/virtualbox -m 0755
+[[ -d /var/lib/karoshi/virtualbox ]] || mkdir /var/lib/karoshi/virtualbox -m 0755
 if ! grep -Eq '^[^[:space:]]+[[:space:]]+/var/lib/karoshi/virtualbox[[:space:]]' /etc/fstab; then
 	#Detect any SATA or SCSI drives with no partitions
 	drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
