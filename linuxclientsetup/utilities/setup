@@ -73,6 +73,8 @@ if [[ -e /etc/init/karoshi-multicast.conf ]]; then
 	rm -rf /etc/init/karoshi-multicast.conf
 fi
 
+[[ -e /var/lib/karoshi ]] && rm -rf /var/lib/karoshi
+
 is_reconfigure=false
 
 #Deconfigure domain
@@ -144,30 +146,30 @@ fi
 #Install Karoshi files
 ##################
 
-if karoshi-manage-flags get domainset; then
-	cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown,multicast}.conf /etc/init
-	chmod 644 /etc/init/karoshi-{update,idle-shutdown,multicast}.conf
-	
-	[[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
-	cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
-	find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
-	
-	[[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
-	cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
-	
-	[[ -e /opt/karoshi/images ]] && rm -rf /opt/karoshi/images
-	mkdir -p /opt/karoshi/images
-	cp -f /opt/karoshi/linuxclientsetup/images/{,login-}background.png /opt/karoshi/images
-	
-	#Configure LightDM to use new background location
-	sed -i "s@^Background=.*@Background=/opt/karoshi/images/login-background.png@" /etc/lightdm/lightdm-kde-greeter.conf
-	#Configure XFCE to use new background location
-	sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-	
-	#Configure Karoshi PAM modules
-	pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
-	pam-auth-update --package
-fi
+cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown,multicast}.conf /etc/init
+chmod 644 /etc/init/karoshi-{update,idle-shutdown,multicast}.conf
+
+[[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
+cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
+find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
+
+[[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
+cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
+
+[[ -e /opt/karoshi/images ]] && rm -rf /opt/karoshi/images
+mkdir -p /opt/karoshi/images
+cp -f /opt/karoshi/linuxclientsetup/images/{,login-}background.png /opt/karoshi/images
+
+#Configure LightDM to use new background location
+sed -i "s@^Background=.*@Background=/opt/karoshi/images/login-background.png@" /etc/lightdm/lightdm-kde-greeter.conf
+#Configure XFCE to use new background location
+sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+
+#Configure Karoshi PAM modules
+pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
+pam-auth-update --package
+
+mkdir /var/lib/karoshi
 
 ##################
 #Finish and restart
