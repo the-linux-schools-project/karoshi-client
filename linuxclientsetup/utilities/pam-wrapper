@@ -136,7 +136,7 @@ if [[ $pam_event ]] && [[ $PAM_TYPE != $pam_event ]]; then
 	exit $PAM_IGNORE
 fi
 
-echo "$0 for $PAM_USER"
+echo "$command for $PAM_USER"
 
 #Actually run
 if $drop_priv; then
