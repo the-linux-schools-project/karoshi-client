@@ -56,8 +56,6 @@ if [[ ! -d $KAROSHI_BASE_DIR/$dir/users ]]; then
 	mkdir "$KAROSHI_BASE_DIR"/"$dir"/users -m 0755
 fi
 
-echo "$0 for $PAM_USER"
-
 if ! [[ $user_uid -ge 1000 ]]; then
 	echo "User is not a domain user - exiting"
 	exit $PAM_IGNORE

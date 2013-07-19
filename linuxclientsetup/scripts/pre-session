@@ -52,8 +52,6 @@ OnlyShowIn=XFCE;" | tee ~/Desktop/karoshi-"$filename".desktop > ~/.local/share/a
 #All users
 #####################
 
-echo "$0 for $USER"
-
 #Detect an administrator
 is_admin=false
 groups=( $(id -nG) )
