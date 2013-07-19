@@ -87,15 +87,6 @@ fi
 echo "Clearing /home"
 find /home -mindepth 1 -xdev -delete
 
-#Restrict permissions on world writable folders
-mount --bind /home /home
-mount --bind /var /var
-mount --bind /tmp /tmp
-
-mount -o remount,nosuid /home
-mount -o remount,nosuid /var
-mount -o remount,nosuid,nodev /tmp
-
 ####################
 #Copy configuration
 ####################
