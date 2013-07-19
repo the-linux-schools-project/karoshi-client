@@ -53,6 +53,8 @@ export PAM_TRY_AGAIN=27 #Unable to complete operation. Try again.
 export PAM_MODULE_UNKNOWN=28 #Module type unknown.
 export PAM_DOMAIN_UNKNOWN=29
 
+export KAROSHI_BASE_DIR="/var/lib/karoshi"
+
 function usage {
 	echo "Usage:" >&2
 	echo "	$0 [<options>] <command> [<command-options>]" >&2
