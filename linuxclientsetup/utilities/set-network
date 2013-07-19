@@ -30,6 +30,13 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
+#Make sure /tmp/netlogon isn't already mounted
+if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
+	echo "ERROR: /tmp/netlogon is already mounted - aborting" >&2
+	info_alert "System Error" "/tmp/netlogon is already mounted"
+	exit 1
+fi
+
 function isWireless {
 	[[ $1 =~ ^(wlan|wifi|ath)[[:digit:]]+ ]]
 	return $?
