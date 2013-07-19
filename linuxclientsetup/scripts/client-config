@@ -56,7 +56,7 @@ fi
 ####################
 echo "Configuring pam_mount"
 rm -f /etc/security/pam_mount.conf.xml
-if ! karoshi-manage-flags get offline-mode >/dev/null; then
+if ! karoshi-manage-flags get offline_mode >/dev/null; then
 	case "$DOMAINTYPE" in
 	samba4)
 		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
@@ -114,7 +114,7 @@ if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]]; then
 elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]]; then
 	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 else
-	karoshi-manage-flags get offline-mode >/dev/null || echo "WARNING: No admin skel found on server - using default one"
+	karoshi-manage-flags get offline_mode >/dev/null || echo "WARNING: No admin skel found on server - using default one"
 	find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 fi
 
@@ -379,7 +379,7 @@ elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons ]]; then
 	[[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
 	cp -rfT /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons /opt/karoshi/desktop-icons
 else
-	if ! karoshi-manage-flags get offline-mode >/dev/null; then
+	if ! karoshi-manage-flags get offline_mode >/dev/null; then
 		[[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
 		echo "WARNING: Could not find any desktop icons on server"
 	fi
@@ -406,7 +406,7 @@ BrowseInterval 0" >> /etc/cups/cupsd.conf
 fi
 
 #Assign printers depending on the location
-if [[ $LOCATION ]] && ! karoshi-manage-flags get offline-mode >/dev/null; then
+if [[ $LOCATION ]] && ! karoshi-manage-flags get offline_mode >/dev/null; then
 	#Remove all printers
 	while read -r printer _; do
 		if [[ `lpstat -v $printer | grep 'smb:\|ipp:'` ]]; then
@@ -528,7 +528,7 @@ for device in /dev/sd*; do
 done
 
 #Configure pam_group.so for offline users
-if karoshi-manage-flags get offline-mode >/dev/null; then
+if karoshi-manage-flags get offline_mode >/dev/null; then
 	sed -i 's/^### Karoshi Hook ###$/### * Karoshi Hook * ###\
 *;*;*;Al0000-2400;lpadmin,netdev/' /etc/security/group.conf
 else

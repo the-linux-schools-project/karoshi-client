@@ -51,7 +51,7 @@ if $is_domain; then
 	#Domain user
 	###################
 	
-	if karoshi-manage-flags get offline-mode >/dev/null; then
+	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if [[ -d $KAROSHI_BASE_DIR/offline-homes/users/$USER ]]; then
 			echo "Using offline-home as alternate home"
 			alternate_home="offline-home"

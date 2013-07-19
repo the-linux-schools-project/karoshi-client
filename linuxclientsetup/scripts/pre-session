@@ -88,7 +88,7 @@ if $is_domain; then
 	#Domain user
 	###############
 	
-	if karoshi-manage-flags get offline-mode >/dev/null; then
+	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
 			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
 			create_entries "Home" "$HOME/offline-home" folder-home
@@ -260,7 +260,7 @@ user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $P
 					echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 				fi
 		
-				if [[ $MAILSERVER ]] || karoshi-manage-flags get offline-mode >/dev/null; then
+				if [[ $MAILSERVER ]] || karoshi-manage-flags get offline_mode >/dev/null; then
 					user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
 					echo "Using $user_fullname as real name for user email"
 		
@@ -315,7 +315,7 @@ else
 fi
 
 #Copy in admin-skel
-if ( $is_admin || karoshi-manage-flags get offline-mode >/dev/null ) && [[ -d /opt/karoshi/admin-skel ]]; then
+if ( $is_admin || karoshi-manage-flags get offline_mode >/dev/null ) && [[ -d /opt/karoshi/admin-skel ]]; then
 	echo "Copying admin-skel into home area"
 	find /opt/karoshi/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~
 fi
