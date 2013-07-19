@@ -40,6 +40,10 @@ function isWired {
 	return $?
 }
 
+function getMac {
+	ifconfig $1 | sed -n 's/.*HWaddr \(..\):\(..\):\(..\):\(..\):\(..\):\(..\).*/\U\1\2\3\4\5\6/p'
+}
+
 function getClientSettings {
 	echo \#Asking for network settings >&11
 	while ! $client_settings; do
@@ -269,13 +273,16 @@ while ! $pdc_set; do
 				pdc_set=true
 			else
 				pdc_set=false
+				dhcp=false
 				umount /tmp/netlogon
 			fi
 		else
 			pdc_set=true
 		fi
 	else
+		$manual_pdc && info_alert "Error" "Invalid PDC" 
 		pdc_set=false
+		dhcp=false
 	fi
 done
 
@@ -301,9 +308,6 @@ echo $SERVERIP > /opt/karoshi/serverip
 ####################
 #Pull down server information
 ####################
-function getMac {
-	ifconfig $1 | sed -n 's/.*HWaddr \(..\):\(..\):\(..\):\(..\):\(..\):\(..\).*/\U\1\2\3\4\5\6/p'
-}
 #Try the WiFi interface first, since we may be a laptop
 temp_network_int=$NETWORKINT
 if [[ $wifi_network_int ]]; then
