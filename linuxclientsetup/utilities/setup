@@ -165,7 +165,7 @@ cp -f /opt/karoshi/linuxclientsetup/images/{,login-}background.png /opt/karoshi/
 #Configure LightDM to use new background location
 sed -i "s@^Background=.*@Background=/opt/karoshi/images/login-background.png@" /etc/lightdm/lightdm-kde-greeter.conf
 #Configure XFCE to use new background location
-sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>@" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 #Configure Karoshi PAM modules
 pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
