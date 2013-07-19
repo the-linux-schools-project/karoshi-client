@@ -43,9 +43,9 @@ fi
 [[ -e /var/log/karoshi ]] && rm -rf /var/log/karoshi
 mkdir -p /var/log/karoshi
 
-touch /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,setup}.log
-chown root:adm /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,setup}.log
-chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,setup}.log
+touch /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
+chown root:adm /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
+chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
 
 exec &>/var/log/karoshi/setup.log
 
@@ -88,16 +88,18 @@ if karoshi-manage-flags get domainset || karoshi-manage-flags get networkset; th
 	sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/linuxclientsetup/images/background.png\"/>@" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 	
 	#Deconfigure Karoshi PAM modules
-	pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
+	pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
 	
 	echo "karoshi-pre-session
 karoshi-post-session
-karoshi-virtualbox-mkdir" >> /var/lib/pam/seen
+karoshi-virtualbox-mkdir
+karoshi-offline-homes" >> /var/lib/pam/seen
 
 	#Clear out logs
 	> /var/log/karoshi/pre-session.log
 	> /var/log/karoshi/post-session.log
 	> /var/log/karoshi/virtualbox-mkdir.log
+	> /var/log/karoshi/offline-homes.log
 	find /var/log/upstart -name 'karoshi-*.log*' -delete
 fi
 
@@ -163,7 +165,7 @@ if karoshi-manage-flags get domainset; then
 	sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].*[\"']/>@<property name=\"image-path\" type=\"string\" value=\"/opt/karoshi/images/background.png\"/>" /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 	
 	#Configure Karoshi PAM modules
-	pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
+	pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
 	pam-auth-update --package
 fi
 

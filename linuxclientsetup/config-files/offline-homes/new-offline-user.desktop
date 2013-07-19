@@ -1,0 +1,9 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=yad --title="Offline Home Area" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 --button="gtk-ok" --text="You are now running in offline mode.\n\nPlease make sure you save your work in 'offline-home', otherwise you will lose it. Also note that you can now configure printers and network settings, but these settings will be lost upon reconnecting the system to the network"
+Name=Offline Home Folder - New User Prompt
+Icon=archive-insert

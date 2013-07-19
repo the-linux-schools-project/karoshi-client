@@ -56,24 +56,26 @@ fi
 ####################
 echo "Configuring pam_mount"
 rm -f /etc/security/pam_mount.conf.xml
-case "$DOMAINTYPE" in
-samba4)
-	[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
-	;;
-samba4_winbind)
-	[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
-	#Clear cache
-	find /var/cache/samba -mindepth 1 -delete
-	;;
-samba3)
-	[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml /etc/security/pam_mount.conf.xml
-	#Clear cache
-	find /var/cache/samba -mindepth 1 -delete
-	;;
-*)
-	echo "WARNING: Unrecognized domain type $DOMAINTYPE"
-	;;
-esac
+if ! karoshi-manage-flags get offline-mode >/dev/null; then
+	case "$DOMAINTYPE" in
+	samba4)
+		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
+		;;
+	samba4_winbind)
+		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
+		#Clear cache
+		find /var/cache/samba -mindepth 1 -delete
+		;;
+	samba3)
+		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml /etc/security/pam_mount.conf.xml
+		#Clear cache
+		find /var/cache/samba -mindepth 1 -delete
+		;;
+	*)
+		echo "WARNING: Unrecognized domain type $DOMAINTYPE"
+		;;
+	esac
+fi
 
 #################
 #Home areas
@@ -84,6 +86,18 @@ esac
 #Clear home areas
 echo "Clearing /home"
 find /home -mindepth 1 -xdev -delete
+
+#Restrict permissions on world writable folders
+mount --bind /home /home
+mount --bind /var /var
+mount --bind /tmp /tmp
+
+mount -o remount,nosuid /home
+mount -o remount,nosuid /var
+mount -o remount,nosuid,noexec,nodev /tmp
+
+#Create /var/lib/karoshi
+mkdir -p /var/lib/karoshi 
 
 ####################
 #Copy configuration
@@ -100,7 +114,7 @@ if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin-skel/ ]]; then
 elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel/ ]]; then
 	find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 else
-	echo "WARNING: No admin skel found on server - using default one"
+	karoshi-manage-flags get offline-mode >/dev/null || echo "WARNING: No admin skel found on server - using default one"
 	find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 fi
 
@@ -133,8 +147,8 @@ echo "Copying other files"
 [[ -f /tmp/netlogon/domain_information/static_arps ]] && arp -f /tmp/netlogon/domain_information/static_arps
 
 #Create GPG keyring for verifying server messages
-[ -e /opt/karoshi/keyring.gpg ] && rm -f /opt/karoshi/keyring.gpg
-if [ -f /tmp/netlogon/linuxclient/server-verify.key ]; then
+[[ -e /opt/karoshi/keyring.gpg ]] && rm -f /opt/karoshi/keyring.gpg
+if [[ -f /tmp/netlogon/linuxclient/server-verify.key ]]; then
 	gpg --batch --no-default-keyring --keyring /opt/karoshi/keyring.gpg --import /tmp/netlogon/linuxclient/server-verify.key
 fi
 
@@ -171,12 +185,12 @@ function do_xpi {
 [[ -d /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} ]] || mkdir -p /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6}
 [[ -d /opt/karoshi/thunderbird/extensions ]] || mkdir -p /opt/karoshi/thunderbird/extensions
 
+echo "Clearing current Thunderbird extensions"
+#Clear all extensions
+find /opt/karoshi/thunderbird/extensions -mindepth 1 -delete
+find /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} -maxdepth 1 -lname '/opt/karoshi/thunderbird/extensions/*' -delete
+
 if [[ -d /tmp/netlogon/client_settings/thunderbird/extensions ]]; then
-	echo "Clearing current Thunderbird extensions"
-	#Clear all extensions
-	find /opt/karoshi/thunderbird/extensions -mindepth 1 -delete
-	find /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} -maxdepth 1 -lname '/opt/karoshi/thunderbird/extensions/*' -delete
-	
 	#Global extensions
 	while read -r -d $'\0' xpi; do
 		echo "Found new global extension: $xpi"
@@ -358,13 +372,17 @@ iptables -P OUTPUT ACCEPT
 #Update desktop icons for groups
 ###########################
 echo "Updating desktop icons"
-[[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop-icons ]]; then
+	[[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
 	cp -rfT /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop-icons /opt/karoshi/desktop-icons
 elif [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons ]]; then
+	[[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
 	cp -rfT /tmp/netlogon/linuxclient/$LINUX_VERSION/desktop_icons /opt/karoshi/desktop-icons
 else
-	echo "WARNING: Could not find any desktop icons on server"
+	if ! karoshi-manage-flags get offline-mode >/dev/null; then
+		[[ -e /opt/karoshi/desktop-icons ]] && rm -rf /opt/karoshi/desktop-icons
+		echo "WARNING: Could not find any desktop icons on server"
+	fi
 fi
 
 if [[ -d /opt/karoshi/desktop-icons ]]; then
@@ -388,7 +406,7 @@ BrowseInterval 0" >> /etc/cups/cupsd.conf
 fi
 
 #Assign printers depending on the location
-if [[ $LOCATION ]]; then
+if [[ $LOCATION ]] && ! karoshi-manage-flags get offline-mode >/dev/null; then
 	#Remove all printers
 	while read -r printer _; do
 		if [[ `lpstat -v $printer | grep 'smb:\|ipp:'` ]]; then
@@ -508,6 +526,16 @@ for device in /dev/sd*; do
 		sed -i "/swap\|discard,noatime/!s@\(UUID=$device_uuid[[:blank:]]\+[^[:blank:]]\+[[:blank:]]\+[^[:blank:]]\+[[:blank:]]\+[^[:blank:]]\+\)@\1,discard,noatime@" /etc/fstab
 	fi
 done
+
+#Configure pam_group.so for offline users
+if karoshi-manage-flags get offline-mode >/dev/null; then
+	sed -i 's/^### Karoshi Hook ###$/### * Karoshi Hook * ###\
+*;*;*;Al0000-2400;lpadmin,netdev/' /etc/security/group.conf
+else
+	sed -i '/^### \* Karoshi Hook \* ###$/ { N; c\
+### Karoshi Hook ###
+}' /etc/security/group.conf
+fi
 
 #Write new variables to file
 updateVariables

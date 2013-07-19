@@ -73,9 +73,11 @@ if [[ $(id -u) -ge 1000 ]] && [[ $(id -u) -ne 65534 ]]; then
 	is_domain=true
 fi
 
-#Create file manager entries
+#Create required folders
 [[ ! -d ~/Desktop ]] && mkdir ~/Desktop
 [[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
+[[ ! -d ~/.config/autostart ]] && mkdir -p ~/.config/autostart
+[[ -d ~/.config/karoshi ]] || mkdir -p ~/.config/karoshi
 
 ######################
 #Domain/local users
@@ -85,35 +87,50 @@ if $is_domain; then
 	###############
 	#Domain user
 	###############
-
-	#Create home icon first so that it appears first on the desktop
-	if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
-		echo "Domain home area found"
-		create_entries "home" "$HOME/network/home" folder-home
-		
-		#Set default directory for terminal emulator and file manager to network/home
-		mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
-		cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
-		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory network/home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 	
-		cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
-		sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory network/home@' ~/.local/share/applications/exo-terminal-emulator.desktop
-		
-		#Create rednotebook link
-		[[ -d ~/network/home/.rednotebook ]] || mkdir ~/network/home/.rednotebook
-		[[ -d ~/.rednotebook ]] || ln -s network/home/.rednotebook ~/.rednotebook
-	else
-		echo "No domain home area found"
-		create_entries "Home" ~ folder-home
-	fi
-
-	#Create icons to other mounted network shares
-	for mountpath in `mount | grep "^[^ ]* on $HOME/network/[^ ]* type cifs" | cut -d' ' -f3 | sort`; do
-		mountname=`basename $mountpath`
-		if [[ $mountname != home ]]; then
-			create_entries "$mountname" "$mountpath" folder-publicshare
+	if karoshi-manage-flags get offline-mode >/dev/null; then
+		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
+			create_entries "Home" "$HOME/offline-home" folder-home
+			
+			alternate_home="offline-home"
+			
+			if [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
+				[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-home/new-offline-user.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-home/new-offline-user.desktop ~/.config/autostart/karoshi-new-offline-user.desktop
+				touch ~/.config/karoshi/offline-home-seen
+			fi
+		else
+			echo "WARNING: Unable to find offline home area" >&2
+			create_entries "Home" ~ folder-home
 		fi
-	done
+	else
+		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+			echo "Found offline home area while online"
+			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
+			create_entries "Offline Home" ~/offline-home folder-home
+			[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-home/online-merge.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-home/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
+			[[ -e ~/.config/karoshi/offline-home-seen ]] && rm -f ~/.config/karoshi/offline-home-seen
+		fi
+		
+		#Create home icon first so that it appears first on the desktop
+		if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
+			echo "Domain home area found"
+			create_entries "home" "$HOME/network/home" folder-home
+		
+			alternate_home="network/home"
+		else
+			echo "No domain home area found"
+			create_entries "Home" ~ folder-home
+		fi
+
+		#Create icons to other mounted network shares
+		for mountpath in `mount | grep "^[^ ]* on $HOME/network/[^ ]* type cifs" | cut -d' ' -f3 | sort`; do
+			mountname=`basename $mountpath`
+			if [[ $mountname != home ]]; then
+				create_entries "$mountname" "$mountpath" folder-publicshare
+			fi
+		done
+	fi
 	
 	#Add file manager entry to / if administrator
 	if $is_admin; then
@@ -129,43 +146,55 @@ if $is_domain; then
 	pri_group=`id -gn`
 	[[ -d /opt/karoshi/desktop-icons/$pri_group ]] && find /opt/karoshi/desktop-icons/$pri_group -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~/Desktop
 	
-	#Extract configuration
-	[[ -f ~/network/home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/network/home/.configuration.tar.gz
-	[[ -f ~/network/home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/network/home/.desktop-icons.tar.gz
+	if [[ $alternate_home ]]; then
+		#Set default directory for terminal emulator and file manager to $alternate_home
+		mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory $alternate_home"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+
+		cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
+		sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory $alternate_home@' ~/.local/share/applications/exo-terminal-emulator.desktop
+		
+		#Create rednotebook link
+		[[ -d ~/$alternate_home/.rednotebook ]] || mkdir ~/"$alternate_home"/.rednotebook
+		[[ -d ~/.rednotebook ]] || ln -sT "$alternate_home"/.rednotebook ~/.rednotebook
+		
+		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.configuration.tar.gz
+		[[ -f ~/$alternate_home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.desktop-icons.tar.gz
+		
+		#create user.js for default Firefox settings
+		if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
+			firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
+			if [[ $firefox_profile ]] && [[ -d ~/.mozilla/firefox/$firefox_profile ]]; then
+				echo "Found Firefox profile: $firefox_profile"
+				#Apply CA certificate
+				if [[ -f /opt/karoshi/cacert.pem ]]; then
+					echo "Installing cacert.pem for Firefox"
+					certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.mozilla/firefox/"$firefox_profile"
+				fi
 	
-	#create user.js for default Firefox settings
-	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
-		firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
-		if [[ $firefox_profile ]] && [[ -d ~/.mozilla/firefox/$firefox_profile ]]; then
-			echo "Found Firefox profile: $firefox_profile"
-			#Apply CA certificate
-			if [[ -f /opt/karoshi/cacert.pem ]]; then
-				echo "Installing cacert.pem for Firefox"
-				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.mozilla/firefox/"$firefox_profile"
-			fi
+				#Default download directory
+				echo "user_pref('browser.download.lastDir', '~/network/home/');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
 	
-			#Default download directory
-			echo "user_pref('browser.download.lastDir', '~/network/home/');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
-	
-			#Give clipboard capability to Moodle and other sites
-			if [[ -f /opt/karoshi/allow_clipboard_sites ]]; then
-				echo "user_pref('capability.policy.allowclipboard.sites', '` < /opt/karoshi/allow_clipboard_sites`');
+				#Give clipboard capability to Moodle and other sites
+				if [[ -f /opt/karoshi/allow_clipboard_sites ]]; then
+					echo "user_pref('capability.policy.allowclipboard.sites', '` < /opt/karoshi/allow_clipboard_sites`');
 user_pref('capability.policy.allowclipboard.Clipboard.cutcopy', 'allAccess');
 user_pref('capability.policy.allowclipboard.Clipboard.paste', 'allAccess');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-			fi
-	
-			#Remove updated messages and extension checking
-			firefox_version=`firefox --version | sed 's/^[^0-9]*//'`
-			echo "user_pref('browser.startup.homepage_override.mstone', '$firefox_version');
+				fi
+
+				#Remove updated messages and extension checking
+				firefox_version=`firefox --version | sed 's/^[^0-9]*//'`
+				echo "user_pref('browser.startup.homepage_override.mstone', '$firefox_version');
 user_pref('extensions.lastAppVersion', '$firefox_version');
 user_pref('extensions.lastPlatformVersion', '$firefox_version');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 
-			#Cache settings
-			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+				#Cache settings
+				echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 	
-			#Proxy server
-			if [[ $PROXYSERVER ]]; then
-				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
+				#Proxy server
+				if [[ $PROXYSERVER ]]; then
+					echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.http_port', 3128);
 user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.ssl_port', 3128);
@@ -178,41 +207,41 @@ user_pref('network.proxy.gopher_port', 3128);
 user_pref('network.proxy.type', 1);
 user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $PDC');
 user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-			else
-				#For no proxy, we want the homepage to be about:home
-				echo "user_pref('browser.startup.homepage', 'about:home');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-			fi
+				else
+					#For no proxy, we want the homepage to be about:home
+					echo "user_pref('browser.startup.homepage', 'about:home');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+				fi
 	
-			#Set up Kerberos
-			if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
-				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+				#Set up Kerberos
+				if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
+					echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+				fi
 			fi
 		fi
-	fi
 
-	#create user.js for default Thunderbird settings
-	if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
-		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
-		if [[ $thunderbird_profile ]] && [[ -d ~/.thunderbird/$thunderbird_profile ]]; then
-			echo "Found Thunderbird profile: $thunderbird_profile"
-			#Apply CA certificate
-			if [[ -f /opt/karoshi/cacert.pem ]]; then
-				echo "Installing cacert.pem for Thunderbird"
-				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
-			fi
+		#create user.js for default Thunderbird settings
+		if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
+			thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
+			if [[ $thunderbird_profile ]] && [[ -d ~/.thunderbird/$thunderbird_profile ]]; then
+				echo "Found Thunderbird profile: $thunderbird_profile"
+				#Apply CA certificate
+				if [[ -f /opt/karoshi/cacert.pem ]]; then
+					echo "Installing cacert.pem for Thunderbird"
+					certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
+				fi
 		
-			#Remove updated messages and extension checking
-			thunderbird_version=`thunderbird --version | sed 's/^[^0-9]*//'`
-			echo "user_pref('extensions.lastAppVersion', '$thunderbird_version');
+				#Remove updated messages and extension checking
+				thunderbird_version=`thunderbird --version | sed 's/^[^0-9]*//'`
+				echo "user_pref('extensions.lastAppVersion', '$thunderbird_version');
 user_pref('extensions.lastPlatformVersion', '$thunderbird_version');
 user_pref('mailnews.start_page_override.mstone', '$thunderbird_version');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 
-			#Cache settings
-			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.thunderbird/"$thunderbird_profile"/user.js
+				#Cache settings
+				echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 		
-			#Proxy server
-			if [[ $PROXYSERVER ]]; then
-				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
+				#Proxy server
+				if [[ $PROXYSERVER ]]; then
+					echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.http_port', 3128);
 user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.ssl_port', 3128);
@@ -224,18 +253,18 @@ user_pref('network.proxy.gopher', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.gopher_port', 3128);
 user_pref('network.proxy.type', 1);
 user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $PDC');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
-			fi
+				fi
 		
-			#Set up Kerberos
-			if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
-				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
-			fi
+				#Set up Kerberos
+				if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
+					echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
+				fi
 		
-			if [[ $MAILSERVER ]]; then
-				user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
-				echo "Using $user_fullname as real name for user email"
+				if [[ $MAILSERVER ]] || karoshi-manage-flags get offline-mode >/dev/null; then
+					user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
+					echo "Using $user_fullname as real name for user email"
 		
-				echo "user_pref('mail.identity.id1.useremail', '$USER@$DNSSUFFIX');
+					echo "user_pref('mail.identity.id1.useremail', '$USER@$DNSSUFFIX');
 user_pref('mail.identity.id1.valid', true);
 user_pref('mail.identity.id1.fullName', '$user_fullname');
 user_pref('mail.identity.id1.smtpServer', 'smtp1');
@@ -264,6 +293,7 @@ user_pref('mail.smtpserver.smtp1.port', 25);
 user_pref('mail.smtpserver.smtp1.try_ssl', 2);
 user_pref('mail.smtpserver.smtp1.username', '$USER');
 user_pref('mail.smtpservers', 'smtp1');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
+				fi
 			fi
 		fi
 	fi
@@ -285,7 +315,7 @@ else
 fi
 
 #Copy in admin-skel
-if $is_admin && [[ -d /opt/karoshi/admin-skel ]]; then
+if ( $is_admin || karoshi-manage-flags get offline-mode >/dev/null ) && [[ -d /opt/karoshi/admin-skel ]]; then
 	echo "Copying admin-skel into home area"
 	find /opt/karoshi/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~
 fi
