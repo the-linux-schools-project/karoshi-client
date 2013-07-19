@@ -480,34 +480,34 @@ then
 fi
 
 ##########################
-#Configure /opt/virtualbox
+#Configure /var/lib/karoshi/virtualbox
 ##########################
-mkdir -p /opt/virtualbox
-if ! grep -Eq '^[^[:space:]]+[[:space:]]+/opt/virtualbox[[:space:]]' /etc/fstab; then
+mkdir /var/lib/karoshi/virtualbox -m 0755
+if ! grep -Eq '^[^[:space:]]+[[:space:]]+/var/lib/karoshi/virtualbox[[:space:]]' /etc/fstab; then
 	#Detect any SATA or SCSI drives with no partitions
 	drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
 	if [[ $drive ]]; then
-		echo "Detected candidate drive for /opt/virtualbox: $drive"
+		echo "Detected candidate drive for /var/lib/karoshi/virtualbox: $drive"
 		#Make GPT partition table and single logical partition
 		parted -s "$drive" -- mktable gpt
 		parted -s -a optimal "$drive" -- mkpart logical 0% 100%
 		mkfs.ext4 "$drive"1
 		
 		#Copy data if required
-		if ! [[ $(find /opt/virtualbox -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
+		if ! [[ $(find /var/lib/karoshi/virtualbox -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
 			mkdir -p /tmp/karoshi-virtualbox
 			mount "$drive"1 /tmp/karoshi-virtualbox
-			find /opt/virtualbox -mindepth 1 -maxdepth 1 -print0 | xargs -r0 mv -t /tmp/karoshi-virtualbox
+			find /var/lib/karoshi/virtualbox -mindepth 1 -maxdepth 1 -print0 | xargs -r0 mv -t /tmp/karoshi-virtualbox
 			umount /tmp/karoshi-virtualbox
 			rmdir /tmp/karoshi-virtualbox
 		fi
 		
 		#Write to /etc/fstab
 		uuid=$(lsblk -no UUID "$drive"1)
-		echo "# karoshi: /opt/virtualbox" >> /etc/fstab
-		echo "UUID=$uuid	/opt/virtualbox	ext4	defaults	0	2" >> /etc/fstab
+		echo "# karoshi: /var/lib/karoshi/virtualbox" >> /etc/fstab
+		echo "UUID=$uuid	/var/lib/karoshi/virtualbox	ext4	defaults	0	2" >> /etc/fstab
 		
-		mount /opt/virtualbox
+		mount /var/lib/karoshi/virtualbox
 	fi
 fi
 
