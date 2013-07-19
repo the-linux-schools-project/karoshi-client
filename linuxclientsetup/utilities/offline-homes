@@ -56,6 +56,11 @@ if [[ ! -d $KAROSHI_BASE_DIR/$dir/flags ]]; then
 	mkdir "$KAROSHI_BASE_DIR"/"$dir"/flags -m 0700
 fi
 
+if ! [[ $user_uid -ge 1000 ]]; then
+	echo "User is not a domain user - exiting"
+	exit $PAM_IGNORE
+fi
+
 if karoshi-manage-flags get offline_mode >/dev/null; then
 	if [[ ! -d $KAROSHI_BASE_DIR/$dir/users/$PAM_USER ]]; then
 		echo "Creating offline home directory for $PAM_USER"
