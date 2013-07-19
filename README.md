@@ -6,7 +6,7 @@
 - **Website:** http://linuxgfx.co.uk/
 - **Documentation:** http://www.linuxgfx.co.uk/karoshi/documentation/wiki/
 - **Current stable version:** 2.0
-- **Current dev version:** 3.0_rc1
+- **Current dev version:** 3.0_rc2
 
 **ISO Syntax:** karoshi-client-&lt;version&gt;-&lt;arch&gt;.iso
 
