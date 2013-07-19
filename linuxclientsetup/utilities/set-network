@@ -37,6 +37,8 @@ if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
 	exit 1
 fi
 
+export DEBIAN_FRONTEND=noninteractive
+
 function isWireless {
 	[[ $1 =~ ^(wlan|wifi|ath)[[:digit:]]+ ]]
 	return $?
