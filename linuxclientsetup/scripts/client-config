@@ -94,7 +94,7 @@ mount --bind /tmp /tmp
 
 mount -o remount,nosuid /home
 mount -o remount,nosuid /var
-mount -o remount,nosuid,noexec,nodev /tmp
+mount -o remount,nosuid,nodev /tmp
 
 #Create /var/lib/karoshi
 mkdir -p /var/lib/karoshi 
