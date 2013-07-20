@@ -85,15 +85,4 @@ if [[ $folder_owner != $PAM_USER ]]; then
 	make_virtualbox_dir
 fi
 
-if ! [[ -e $user_home/.VirtualBox ]]; then
-	ln -sf "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"/users/"$PAM_USER" "$user_home"/.VirtualBox
-else
-	echo "'$user_home/.VirtualBox' already exists! Not creating symlink"
-fi
-if ! [[ -e $user_home/"VirtualBox VMs" ]]; then
-	ln -sf "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"/users/"$PAM_USER" "$user_home"/"VirtualBox VMs"
-else
-	echo "'$user_home/VirtualBox VMs' already exists! Not creating symlink"
-fi
-
 exit $PAM_SUCCESS

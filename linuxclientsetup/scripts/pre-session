@@ -169,6 +169,13 @@ if $is_domain; then
 		sed -i 's@^Exec=exo-open --launch TerminalEmulator.*@Exec=exo-open --launch TerminalEmulator --working-directory '"'$alternate_home'"'@' ~/.local/share/applications/exo-terminal-emulator.desktop
 	fi
 	
+	#Link Virtualbox directories
+	if [[ -d $KARSOHI_DATA/$KAROSHI_VIRTUALBOX/users/$USER ]]; then
+		echo "Detected external VirtualBox directory"
+		ln -sfT "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"/users/"$USER" ~/.VirtualBox
+		ln -sfT "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"/users/"$USER" ~/"VirtualBox VMs"
+	fi
+	
 	#create user.js for default Firefox settings
 	if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 		firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
