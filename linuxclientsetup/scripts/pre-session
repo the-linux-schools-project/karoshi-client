@@ -146,10 +146,10 @@ if $is_domain; then
 		#Set default directory for terminal emulator and file manager to $alternate_home
 		mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
 		cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
-		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)"@"exo-open --launch \1 --working-directory '"$alternate_home"'"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)[^"]*"@"exo-open --launch \1 --working-directory '"$alternate_home"'"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 
 		cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
-		sed -i 's@^Exec=exo-open --launch TerminalEmulator$@Exec=exo-open --launch TerminalEmulator --working-directory '"$alternate_home"'@' ~/.local/share/applications/exo-terminal-emulator.desktop
+		sed -i 's@^Exec=exo-open --launch TerminalEmulator.*@Exec=exo-open --launch TerminalEmulator --working-directory '"$alternate_home"'@' ~/.local/share/applications/exo-terminal-emulator.desktop
 		
 		#Create rednotebook link
 		[[ -d ~/$alternate_home/.rednotebook ]] || mkdir ~/"$alternate_home"/.rednotebook
