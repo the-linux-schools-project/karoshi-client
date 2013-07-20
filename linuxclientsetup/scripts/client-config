@@ -55,7 +55,7 @@ fi
 #Domain specific stuff
 ####################
 echo "Configuring pam_mount"
-rm -f /etc/security/pam_mount.conf.xml
+[[ -e /etc/security/pam_mount.conf.xml ]] && rm -f /etc/security/pam_mount.conf.xml
 if ! karoshi-manage-flags get offline_mode >/dev/null; then
 	case "$DOMAINTYPE" in
 	samba4)
@@ -75,6 +75,15 @@ if ! karoshi-manage-flags get offline_mode >/dev/null; then
 		echo "WARNING: Unrecognized domain type $DOMAINTYPE"
 		;;
 	esac
+fi
+if [[ ! -f /etc/security/pam_mount.conf.xml ]]; then
+	echo "WARNING: No pam_mount configuration file found"
+	cat > /etc/security/pam_mount.conf.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<pam_mount>
+
+</pam_mount>
+EOF
 fi
 
 #################
