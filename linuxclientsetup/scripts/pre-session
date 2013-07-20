@@ -79,8 +79,9 @@ fi
 [[ ! -d ~/.config/autostart ]] && mkdir -p ~/.config/autostart
 [[ -d ~/.config/karoshi ]] || mkdir -p ~/.config/karoshi
 
-#Clear Karoshi icons from desktop
+#Clear Karoshi icons from desktop and menu
 find ~/Desktop -name 'karoshi-*.desktop' -delete
+find ~/.local/share/applications -name 'karoshi-*.desktop' -delete
 
 ######################
 #Domain/local users
