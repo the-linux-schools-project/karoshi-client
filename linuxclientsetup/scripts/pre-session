@@ -73,6 +73,13 @@ if [[ $(id -u) -ge 1000 ]] && [[ $(id -u) -ne 65534 ]]; then
 	is_domain=true
 fi
 
+#Detect offline home area
+offline_home_exists=false
+if $is_domain && [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+	echo "Detected offline home area"
+	offline_home_exists=true
+fi
+
 #Create required folders
 [[ ! -d ~/Desktop ]] && mkdir ~/Desktop
 [[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
@@ -92,7 +99,7 @@ if $is_domain; then
 	###############
 	
 	if karoshi-manage-flags get offline_mode >/dev/null; then
-		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+		if $offline_home_exists; then
 			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
 			create_entries "Home" "$HOME/offline-home" folder-home
 			
@@ -102,7 +109,7 @@ if $is_domain; then
 			create_entries "Home" ~ folder-home
 		fi
 	else
-		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+		if $offline_home_exists; then
 			echo "Found offline home area while online"
 			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
 			create_entries "Offline Home" ~/offline-home folder-home
@@ -149,7 +156,7 @@ if $is_domain; then
 		
 		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.configuration.tar.gz
 		[[ -f ~/$alternate_home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.desktop-icons.tar.gz
-		if [[ $alternate_home != "offline-home" ]] && [[ -d ~/offline-home ]]; then
+		if [[ $alternate_home != "offline-home" ]] && $offline_home_exists; then
 			[[ -f ~/offline-home/.desktop-icons.tar.gz ]] && tar -xk -C ~ -f ~/offline-home/.desktop-icons.tar.gz
 		fi
 		
@@ -301,12 +308,12 @@ user_pref('mail.smtpservers', 'smtp1');" >> ~/.thunderbird/"$thunderbird_profile
 	export MOZ_CRASHREPORTER_DISABLE=1
 	
 	if karoshi-manage-flags get offline_mode >/dev/null; then
-		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]] && [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
+		if $offline_home_exists && [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
 			[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ~/.config/autostart/karoshi-new-offline-user.desktop
 			touch ~/.config/karoshi/offline-home-seen
 		fi
 	else
-		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+		if $offline_home_exists; then
 			[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
 			[[ -e ~/.config/karoshi/offline-home-seen ]] && rm -f ~/.config/karoshi/offline-home-seen
 			echo "delete" > "$KAROSHI_BASE_DIR"/offline-homes/flags/"$USER"
