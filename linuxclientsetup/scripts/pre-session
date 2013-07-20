@@ -97,11 +97,6 @@ if $is_domain; then
 			create_entries "Home" "$HOME/offline-home" folder-home
 			
 			alternate_home="offline-home"
-			
-			if [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
-				[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ~/.config/autostart/karoshi-new-offline-user.desktop
-				touch ~/.config/karoshi/offline-home-seen
-			fi
 		else
 			echo "WARNING: Unable to find offline home area" >&2
 			create_entries "Home" ~ folder-home
@@ -111,8 +106,6 @@ if $is_domain; then
 			echo "Found offline home area while online"
 			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
 			create_entries "Offline Home" ~/offline-home folder-home
-			[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
-			[[ -e ~/.config/karoshi/offline-home-seen ]] && rm -f ~/.config/karoshi/offline-home-seen
 		fi
 		
 		#Create home icon first so that it appears first on the desktop
@@ -303,6 +296,20 @@ user_pref('mail.smtpservers', 'smtp1');" >> ~/.thunderbird/"$thunderbird_profile
 	
 	#Disable Firefox crash reporter
 	export MOZ_CRASHREPORTER_DISABLE=1
+	
+	if karoshi-manage-flags get offline_mode >/dev/null; then
+		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]] && [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
+			[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ~/.config/autostart/karoshi-new-offline-user.desktop
+			touch ~/.config/karoshi/offline-home-seen
+		fi
+	else
+		if [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+			[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
+			[[ -e ~/.config/karoshi/offline-home-seen ]] && rm -f ~/.config/karoshi/offline-home-seen
+			echo "delete" > "$KAROSHI_BASE_DIR"/offline-homes/flags/"$USER"
+		fi
+	fi
+	
 else
 	###############
 	#Local user
