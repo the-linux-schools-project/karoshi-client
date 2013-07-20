@@ -145,8 +145,8 @@ if $is_domain; then
 	
 	if [[ $alternate_home ]]; then
 		#Create rednotebook link
-		[[ -d ~/$alternate_home/.rednotebook ]] || mkdir ~/"$alternate_home"/.rednotebook
-		[[ -d ~/.rednotebook ]] || ln -sT "$alternate_home"/.rednotebook ~/.rednotebook
+		[[ -d ~/$alternate_home/rednotebook ]] || mkdir ~/"$alternate_home"/rednotebook
+		[[ -d ~/.rednotebook ]] || ln -sT "$alternate_home"/rednotebook ~/.rednotebook
 		
 		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.configuration.tar.gz
 		[[ -f ~/$alternate_home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.desktop-icons.tar.gz
