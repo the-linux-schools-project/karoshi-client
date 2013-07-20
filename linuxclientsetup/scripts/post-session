@@ -46,13 +46,20 @@ if [[ $(id -u) -ge 1000 ]] && [[ $(id -u) -ne 65534 ]]; then
 	is_domain=true
 fi
 
+#Detect offline home area
+offline_home_exists=false
+if $is_domain && [[ -d "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ]]; then
+	echo "Detected offline home area"
+	offline_home_exists=true
+fi
+
 if $is_domain; then
 	###################
 	#Domain user
 	###################
 	
 	if karoshi-manage-flags get offline_mode >/dev/null; then
-		if [[ -d $KAROSHI_BASE_DIR/offline-homes/users/$USER ]]; then
+		if $offline_home_exists; then
 			echo "Using offline-home as alternate home"
 			alternate_home="offline-home"
 		fi
@@ -61,9 +68,9 @@ if $is_domain; then
 			echo "Using network/home as alternate home"
 			alternate_home="network/home"
 		fi
-		if [[ -d $KAROSHI_BASE_DIR/offline-homes/users/$USER ]]; then
+		if $offline_home_exists; then
 			echo "Setting offline home area to be removed"
-			echo "delete" > "$KAROSHI_BASE_DIR"/offline-homes/flags/"$USER"
+			echo "delete" > "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/flags/"$USER"
 		fi
 	fi
 	

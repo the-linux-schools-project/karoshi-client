@@ -477,34 +477,34 @@ then
 fi
 
 ##########################
-#Configure /var/lib/karoshi/virtualbox
+#Configure virtualbox drive
 ##########################
-[[ -d /var/lib/karoshi/virtualbox ]] || mkdir /var/lib/karoshi/virtualbox -m 0755
-if ! grep -Eq '^[^[:space:]]+[[:space:]]+/var/lib/karoshi/virtualbox[[:space:]]' /etc/fstab; then
+[[ -d $KAROSHI_DATA/$KAROSHI_VIRTUALBOX ]] || mkdir "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -m 0755
+if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:space:]]" /etc/fstab; then
 	#Detect any SATA or SCSI drives with no partitions
 	drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
 	if [[ $drive ]]; then
-		echo "Detected candidate drive for /var/lib/karoshi/virtualbox: $drive"
+		echo "Detected candidate drive for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $drive"
 		#Make GPT partition table and single logical partition
 		parted -s "$drive" -- mktable gpt
 		parted -s -a optimal "$drive" -- mkpart logical 0% 100%
 		mkfs.ext4 "$drive"1
 		
 		#Copy data if required
-		if ! [[ $(find /var/lib/karoshi/virtualbox -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
+		if ! [[ $(find "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
 			mkdir -p /tmp/karoshi-virtualbox
 			mount "$drive"1 /tmp/karoshi-virtualbox
-			find /var/lib/karoshi/virtualbox -mindepth 1 -maxdepth 1 -print0 | xargs -r0 mv -t /tmp/karoshi-virtualbox
+			find "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -mindepth 1 -maxdepth 1 -print0 | xargs -r0 mv -t /tmp/karoshi-virtualbox
 			umount /tmp/karoshi-virtualbox
 			rmdir /tmp/karoshi-virtualbox
 		fi
 		
 		#Write to /etc/fstab
 		uuid=$(lsblk -no UUID "$drive"1)
-		echo "# karoshi: /var/lib/karoshi/virtualbox" >> /etc/fstab
-		echo "UUID=$uuid	/var/lib/karoshi/virtualbox	ext4	defaults	0	2" >> /etc/fstab
+		echo "# karoshi: $KAROSHI_DATA/$KAROSHI_VIRTUALBOX" >> /etc/fstab
+		echo "UUID=$uuid	`sed 's/ /\\040/g' <<< "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"`	ext4	defaults	0	2" >> /etc/fstab
 		
-		mount /var/lib/karoshi/virtualbox
+		mount "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"
 	fi
 fi
 

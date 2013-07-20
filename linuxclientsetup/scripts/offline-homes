@@ -31,29 +31,34 @@ if ! getent passwd "$PAM_USER" >/dev/null; then
 	exit $PAM_USER_UNKNOWN
 fi
 
-dir="offline-homes"
+if [[ -f /opt/karoshi/paths ]]; then
+	source /opt/karoshi/paths
+else
+	source /opt/karoshi/linuxclientsetup/paths
+fi
+
 user_info=$(getent passwd "$PAM_USER")
 user_uid=$(cut -d":" -f3 <<< "$user_info")
 user_gid=$(cut -d":" -f4 <<< "$user_info")
 user_home=$(cut -d":" -f6 <<< "$user_info")
 
 #Check for required directories
-if [[ ! -d $KAROSHI_BASE_DIR ]]; then
-	echo "ERROR: Missing $KAROSHI_BASE_DIR" >&2
+if [[ ! -d $KAROSHI_DATA ]]; then
+	echo "ERROR: Missing $KAROSHI_DATA" >&2
 	exit $PAM_SYSTEM_ERR
 fi
-if [[ ! -d $KAROSHI_BASE_DIR/$dir ]]; then
-	echo "$KAROSHI_BASE_DIR/$dir did not exist - creating"
-	mkdir "$KAROSHI_BASE_DIR"/"$dir" -m 0755
+if [[ ! -d $KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES ]]; then
+	echo "$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES did not exist - creating"
+	mkdir "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES" -m 0755
 fi
 
-if [[ ! -d $KAROSHI_BASE_DIR/$dir/users ]]; then
-	echo "$KAROSHI_BASE_DIR/$dir/users did not exist - creating"
-	mkdir "$KAROSHI_BASE_DIR"/"$dir"/users -m 0755
+if [[ ! -d $KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users ]]; then
+	echo "$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users did not exist - creating"
+	mkdir "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users -m 0755
 fi
-if [[ ! -d $KAROSHI_BASE_DIR/$dir/flags ]]; then
-	echo "$KAROSHI_BASE_DIR/$dir/flags did not exist - creating"
-	mkdir "$KAROSHI_BASE_DIR"/"$dir"/flags -m 0711
+if [[ ! -d $KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/flags ]]; then
+	echo "$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/flags did not exist - creating"
+	mkdir "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags -m 0711
 fi
 
 if ! [[ $user_uid -ge 1000 ]]; then
@@ -62,19 +67,19 @@ if ! [[ $user_uid -ge 1000 ]]; then
 fi
 
 if karoshi-manage-flags get offline_mode >/dev/null; then
-	if [[ ! -d $KAROSHI_BASE_DIR/$dir/users/$PAM_USER ]]; then
+	if [[ ! -d $KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users/$PAM_USER ]]; then
 		echo "Creating offline home directory for $PAM_USER"
-		mkdir "$KAROSHI_BASE_DIR"/"$dir"/users/"$PAM_USER" -m 0700
-		chown $user_uid:$user_gid "$KAROSHI_BASE_DIR"/"$dir"/users/"$PAM_USER"
+		mkdir "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$PAM_USER" -m 0700
+		chown $user_uid:$user_gid "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$PAM_USER"
 	fi
-	touch "$KAROSHI_BASE_DIR"/"$dir"/flags/"$PAM_USER"
-	chown $user_uid:$user_gid "$KAROSHI_BASE_DIR"/"$dir"/flags/"$PAM_USER"
-	chmod 0600 "$KAROSHI_BASE_DIR"/"$dir"/flags/"$PAM_USER"
+	touch "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags/"$PAM_USER"
+	chown $user_uid:$user_gid "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags/"$PAM_USER"
+	chmod 0600 "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags/"$PAM_USER"
 else
-	if [[ -f $KAROSHI_BASE_DIR/$dir/flags/$PAM_USER ]] && [[ $(< "$KAROSHI_BASE_DIR"/"$dir"/flags/"$PAM_USER") == "delete" ]]; then
+	if [[ -f $KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/flags/$PAM_USER ]] && [[ $(< "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags/"$PAM_USER") == "delete" ]]; then
 		#Remove offline home directory
 		echo "Detected stale offline home directory - removing"
-		rm -rf "$KAROSHI_BASE_DIR"/"$dir"/users/"$PAM_USER"
-		rm -rf "$KAROSHI_BASE_DIR"/"$dir"/flags/"$PAM_USER"
+		rm -rf "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$PAM_USER"
+		rm -rf "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags/"$PAM_USER"
 	fi
 fi

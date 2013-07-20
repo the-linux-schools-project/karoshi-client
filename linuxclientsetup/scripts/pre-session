@@ -75,7 +75,7 @@ fi
 
 #Detect offline home area
 offline_home_exists=false
-if $is_domain && [[ -d "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ]]; then
+if $is_domain && [[ -d "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ]]; then
 	echo "Detected offline home area"
 	offline_home_exists=true
 fi
@@ -100,7 +100,7 @@ if $is_domain; then
 	
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists; then
-			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
+			ln -sfT "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
 			create_entries "Home" "$HOME/offline-home" folder-home
 			
 			alternate_home="offline-home"
@@ -111,7 +111,7 @@ if $is_domain; then
 	else
 		if $offline_home_exists; then
 			echo "Found offline home area while online"
-			ln -sfT "$KAROSHI_BASE_DIR"/offline-homes/users/"$USER" ~/offline-home
+			ln -sfT "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
 			create_entries "Offline Home" ~/offline-home folder-home
 		fi
 		
@@ -316,7 +316,6 @@ user_pref('mail.smtpservers', 'smtp1');" >> ~/.thunderbird/"$thunderbird_profile
 		if $offline_home_exists; then
 			[[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ]] && cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
 			[[ -e ~/.config/karoshi/offline-home-seen ]] && rm -f ~/.config/karoshi/offline-home-seen
-			echo "delete" > "$KAROSHI_BASE_DIR"/offline-homes/flags/"$USER"
 		fi
 	fi
 	

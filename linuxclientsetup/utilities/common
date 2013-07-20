@@ -46,6 +46,12 @@ else
 	source /opt/karoshi/linuxclientsetup/variables
 fi
 
+if [[ -f /opt/karoshi/paths ]]; then
+	source /opt/karoshi/paths
+else
+	source /opt/karoshi/linuxclientsetup/paths
+fi
+
 ipregex='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
 function info_alert {
