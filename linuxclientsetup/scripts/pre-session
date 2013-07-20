@@ -171,7 +171,7 @@ if $is_domain; then
 				fi
 	
 				#Default download directory
-				echo "user_pref('browser.download.lastDir', '~/network/home/');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
+				echo "user_pref('browser.download.lastDir', '~/$alternate_home');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
 	
 				#Give clipboard capability to Moodle and other sites
 				if [[ -f /opt/karoshi/allow_clipboard_sites ]]; then
