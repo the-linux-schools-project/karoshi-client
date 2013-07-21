@@ -98,12 +98,23 @@ if $is_domain; then
 	#Domain user
 	###############
 	
+	offline_home_escape=$(sed 's/ /%20/g' <<< ~/offline-home)
+	if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks && ! $offline_home_exists; then
+		sed -i "\@^file://$offline_home_escape @ d" ~/.gtk-bookmarks
+	fi
+	
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists; then
 			ln -sfT "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
 			create_entries "Home" "$HOME/offline-home" folder-home
 			
 			alternate_home="offline-home"
+			
+			if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
+				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Home@" ~/.gtk-bookmarks
+			else
+				echo "file://$offline_home_escape Home" >> ~/.gtk-bookmarks
+			fi
 		else
 			echo "WARNING: Unable to find offline home area" >&2
 			create_entries "Home" ~ folder-home
@@ -113,6 +124,12 @@ if $is_domain; then
 			echo "Found offline home area while online"
 			ln -sfT "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
 			create_entries "Offline Home" ~/offline-home folder-home
+			
+			if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
+				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Offline Home@" ~/.gtk-bookmarks
+			else
+				echo "file://$offline_home_escape Offline Home" >> ~/.gtk-bookmarks
+			fi
 		fi
 		
 		#Create home icon first so that it appears first on the desktop
