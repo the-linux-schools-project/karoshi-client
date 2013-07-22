@@ -46,6 +46,36 @@ function removeRedirection {
 
 trap removeRedirection EXIT
 
+#Usage
+function usage {
+	echo "Usage:" >&2
+	echo "	$0 [--release]" >&2
+	echo >&2
+	echo " Options:" >&2
+	echo "  --release		Create release version" >&2
+	echo "  --help			Show this help message" >&2
+	exit 1
+}
+
+#Options
+is_release=false
+while (( "$#" )); do
+	case "$1" in
+	--release)
+		is_release=true
+		;;
+	--help)
+		usage
+		;;
+	*)
+		echo "Unrecognized option $1" >&2
+		usage
+		;;
+	esac
+	
+	shift
+done
+
 ###################
 #Remastersys
 ###################
@@ -125,20 +155,49 @@ autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
 	trap clean_up SIGINT SIGTERM
 
 	#Determine ISO parameters
-	if [[ -f README.md ]]; then
-		iso_version=$(sed -n 's/.*\*\*Current dev version:\*\* \(.*\)/\1/p' README.md)
+	iso_version=git-$(date +%Y%m%d)
+	iso_website="http://linuxgfx.co.uk/"
+	if [[ -f README.md ]] && grep -q "\*\*Website:\*\* " README.md; then
 		iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
-	else
-		echo "WARNING: No README.md detected, using timestamp as version" >&2
-		iso_version=$(date +%s)
-		iso_website="http://linuxgfx.co.uk/"
 	fi
+	if $is_release; then
+		if [[ -f README.md ]]; then
+			iso_version=$(sed -n 's/.*\*\*Current stable version:\*\* \(.*\)/\1/p' README.md)
+		else
+			echo "WARNING: No README.md detected - using timestamp as version" >&2
+			iso_version=$(date +%Y.%m.%d)
+		fi
+	fi
+	
 	#Determine ISO architecture
 	iso_arch=$(uname -i)
 	[[ $iso_arch == x86_64 ]] && iso_arch=amd64
 
 	echo "ISO Label:   Karoshi Client $iso_version-$iso_arch" >&2
 	echo "ISO Website: $iso_website" >&2
+	
+	if $is_release; then
+		resolved=false
+		while ! $resolved; do
+			echo -n "Is this information correct [y/n]?: " >&2
+			read -r input
+			case "$input" in
+			y*)
+				echo "Proceeding with remaster" >&2
+				resolved=true
+				;;
+			n*)
+				echo "Aborting remaster" >&2
+				resolved=true
+				exit 1
+				;;
+			*)
+				echo "$input is not a valid option" >&2
+				echo "Choose from 'y' or 'n'" >&2
+				;;
+			esac
+		done
+	fi
 
 	#Configure remastersys
 	sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
