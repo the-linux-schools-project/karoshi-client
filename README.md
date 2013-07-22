@@ -14,16 +14,20 @@
 
 ## File list
 
-- **CHECKLIST.md** is a short guide for creating a remaster
+- **install.sh** is a script to perform a conversion from stock Ubuntu to Karoshi
+- **LICENCE** contains a copy of the AGPL v3
 - **README.md** is this file
 - **configuration/** contains the system configuration
+- **install/** contains files needed for an installation
 - **linuxclientsetup/** contains the main client-side scripts
 - **skel/** contains configuration files for the client, usually placed on the server
 - other files are assorted temporary configuration files
 
 ## Packages
 
-See **install/install-list** for a list of packages that are part of a Karoshi installation
+See **install/install-list** for a list of packages installed as part of a Karoshi installation
+
+See **install/rubygem-list** for a list of Ruby gems installed as part of a Karoshi installation
 
 See **install/remove-list** for a list of packages that are removed as part of a Karoshi installation
 
