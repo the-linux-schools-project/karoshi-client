@@ -498,8 +498,13 @@ fi
 ##########################
 [[ -d $KAROSHI_DATA/$KAROSHI_VIRTUALBOX ]] || mkdir "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -m 0755
 if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:space:]]" /etc/fstab; then
-	#Detect any SATA or SCSI drives with no partitions
-	drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
+	#Detect any SATA or SCSI drives with no valid partition table
+	drive=$(parted -lms 2>/dev/null | sed -n 's@Error: \(/dev/sd.\): unrecognised disk label@\1@p')
+	if ! [[ $drive ]]; then
+		#Detect any SATA or SCSI drives with no partitions
+		drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
+	fi
+	
 	if [[ $drive ]]; then
 		echo "Detected candidate drive for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $drive"
 		#Make GPT partition table and single logical partition
