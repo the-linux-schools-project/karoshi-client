@@ -176,7 +176,7 @@ sed -i "s@<property name=[\"']image-path[\"'] type=[\"']string[\"'] value=[\"'].
 pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
 pam-auth-update --package
 
-mkdir /var/lib/karoshi
+[[ -d /var/lib/karoshi ]] || mkdir /var/lib/karoshi
 
 ##################
 #Finish and restart
