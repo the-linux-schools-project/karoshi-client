@@ -32,8 +32,8 @@ function create_entries {
 	command="exo-open"
 	iconname="$1"
 	if [[ $sudo_open ]]; then
-		command="gksudo -- exo-open"
 		iconname="Admin $iconname"
+		command="gksudo -D '$iconname' -- exo-open"
 	fi
 	echo "Generating desktop and menu entry: $1"
 	#Desktop and Menu
