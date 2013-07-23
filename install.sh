@@ -203,7 +203,7 @@ autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
 	sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
 		   -e "s@^EXCLUDES=.*@EXCLUDES='/tmp /mnt'@" \
 		   -e "s@^LIVEUSER=.*@LIVEUSER='administrator'@" \
-		   -e "s@^LIVECDLABEL=.*@LIVECDLABEL='Karoshi Client $iso_version-$iso_arch'@" \
+		   -e "s@^LIVECDLABEL=.*@LIVECDLABEL='Karoshi Client $iso_version'@" \
 		   -e "s@^CUSTOMISO=.*@CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'@" \
 		   -e "s@^LIVECDURL=.*@LIVECDURL='$iso_website'@" \
 		   /etc/remastersys.conf
