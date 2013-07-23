@@ -1,6 +1,6 @@
 Name: Create persistent home folder in offline mode
 Default: yes
-Priority: 65
+Priority: 129
 Session-Type: Additional
 Session-Interactive-Only: yes
 Session:

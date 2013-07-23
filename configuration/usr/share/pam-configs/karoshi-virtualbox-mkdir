@@ -1,6 +1,6 @@
 Name: Create VirtualBox folder in separate location
 Default: yes
-Priority: 0
+Priority: 129
 Session-Type: Additional
 Session-Interactive-Only: yes
 Session:

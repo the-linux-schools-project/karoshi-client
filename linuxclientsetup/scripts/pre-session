@@ -41,7 +41,7 @@ function create_entries {
 Version=1.0
 Type=Application
 Terminal=false
-Exec=$command --launch FileManager $2
+Exec=$command --launch FileManager --working-directory $2
 Name=$iconname
 Icon=$3
 Categories=X-XFCE;X-Xfce-Toplevel;Karoshi;
@@ -75,7 +75,7 @@ fi
 
 #Detect offline home area
 offline_home_exists=false
-if $is_domain && [[ -d "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ]]; then
+if $is_domain && [[ $(mount | grep "on $HOME/offline-home") ]]; then
 	echo "Detected offline home area"
 	offline_home_exists=true
 fi
@@ -115,8 +115,6 @@ if $is_domain; then
 	
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists; then
-			ln -sfT "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
-			
 			alternate_home="offline-home"
 			
 			if $is_graphical; then
@@ -136,8 +134,6 @@ if $is_domain; then
 	else
 		if $offline_home_exists; then
 			echo "Found offline home area while online"
-			ln -sfT "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
-			
 			if $is_graphical; then
 				create_entries "Offline Home" ~/offline-home folder-home
 			
@@ -210,13 +206,6 @@ if $is_domain; then
 			cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
 			sed -i 's@^Exec=exo-open --launch TerminalEmulator.*@Exec=exo-open --launch TerminalEmulator --working-directory '"'$alternate_home'"'@' ~/.local/share/applications/exo-terminal-emulator.desktop
 		fi
-	fi
-	
-	#Link Virtualbox directories
-	if [[ -d $KAROSHI_DATA/$KAROSHI_VIRTUALBOX/users/$USER ]]; then
-		echo "Detected external VirtualBox directory"
-		ln -sfT "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"/users/"$USER" ~/.VirtualBox
-		ln -sfT "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"/users/"$USER" ~/"VirtualBox VMs"
 	fi
 	
 	#create user.js for default Firefox settings
