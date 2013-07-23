@@ -82,13 +82,15 @@ if [[ ! -f /etc/security/pam_mount.conf.xml ]]; then
 <?xml version="1.0" encoding="UTF-8"?>
 <pam_mount>
 
-<volume uid="1000-100000" path="$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users/%(USER)" mountpoint="~/offline-home" options="bind" />
-
 </pam_mount>
 EOF
 fi
 
-#Add VirtualBox pam_mount entry
+#Add offline home entry
+[[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "\@</pam_mount>@ i\\
+<volume uid='1000-100000' path='$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users/%(USER)' mountpoint='~/offline-home' options='bind' />" /etc/security/pam_mount.conf.xml
+
+#Add VirtualBox entry
 [[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "\@</pam_mount>@ i\\
 <volume uid='1000-100000' path='$KAROSHI_DATA/$KAROSHI_VIRTUALBOX/users/%(USER)' mountpoint='~/.VirtualBox' options='bind' />\\
 <volume uid='1000-100000' path='$KAROSHI_DATA/$KAROSHI_VIRTUALBOX/users/%(USER)' mountpoint='~/VirtualBox VMs' options='bind' />" /etc/security/pam_mount.conf.xml
