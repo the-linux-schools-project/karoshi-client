@@ -33,6 +33,9 @@ See **install/remove-list** for a list of packages that are removed as part of a
 
 ## Symlinks
 
-Some Karoshi utilities need to be symlinked into /usr/bin from their /opt/karoshi/linuxclientsetup/utilities location, to allow desktop icons to correctly reference them and be used system-wide.
+Some Karoshi utilities need to be symlinked into /usr/bin from their /opt/karoshi/linuxclientsetup/utilities location,
+to allow desktop icons to correctly reference them and be used system-wide. Also, background images are linked from
+/opt/karoshi/linuxclientsetup/images and /var/lib/karoshi/images to /usr/share/backgrounds using the update-alternatives
+system.
 
-See **install/link-list** for a list of files that are linked into various places
+See **install/alternatives-list** for a list of files that are linked into various places

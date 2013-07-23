@@ -566,13 +566,22 @@ chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
 #Copy LICENCE
 [[ -f LICENCE ]] && cp -f LICENCE /opt/karoshi/linuxclientsetup/LICENCE
 
-#Link Karoshi utilities
-if [[ -f install/link-list ]]; then
-	while read -r link_name _ link_to; do
-		if [[ -e $link_to ]] && [[ $link_name ]]; then
-			ln -sf "$link_to" "$link_name"
+#Reset existing alternatives
+while read -r alternative; do
+	alternative=$(basename "$alternative")
+	echo "Resetting existing alternative: $alternative"
+	while read -r alternative_file; do
+		update-alternatives --remove "$alternative" "$alternative_file"
+	done < <(update-alternatives --query "$alternative" | sed -n 's/^Alternative: //p')
+done < <(find /etc/alternatives -type l -name 'karoshi-*')
+
+#Create links with update-alternatives
+if [[ -f install/alternatives-list ]]; then
+	while read -r alternative_name link_name _ link_to; do
+		if [[ $link_name ]] && [[ $alternative_name ]] && [[ $alternative_name != \#* ]] && [[ -e $link_to ]]; then
+			update-alternatives --install "$link_name" "${alternative_name%:}" "$link_to" 20
 		fi
-	done < install/link-list
+	done < install/alternatives-list
 fi
 
 #####################

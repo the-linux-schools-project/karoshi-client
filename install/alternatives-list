@@ -1,0 +1,13 @@
+#Karoshi utilities
+karoshi-set-local-password:        /usr/bin/karoshi-set-local-password         -> /opt/karoshi/linuxclientsetup/utilities/set-local-password
+karoshi-set-location:              /usr/bin/karoshi-set-location               -> /opt/karoshi/linuxclientsetup/utilities/set-location
+karoshi-set-network:               /usr/bin/karoshi-set-network                -> /opt/karoshi/linuxclientsetup/utilities/set-network
+karoshi-setup:                     /usr/bin/karoshi-setup                      -> /opt/karoshi/linuxclientsetup/utilities/setup
+karoshi-manage-flags:              /usr/bin/karoshi-manage-flags               -> /opt/karoshi/linuxclientsetup/utilities/manage-flags
+karoshi-pam-wrapper:               /usr/bin/karoshi-pam-wrapper                -> /opt/karoshi/linuxclientsetup/utilities/pam-wrapper
+karoshi-generate-firewall-rules:   /usr/bin/karoshi-generate-firewall-rules    -> /opt/karoshi/linuxclientsetup/utilities/generate-firewall-rules
+karoshi-unset-network:             /usr/bin/karoshi-unset-network              -> /opt/karoshi/linuxclientsetup/utilities/unset-network
+
+#Images
+karoshi-login-background:          /usr/share/backgrounds/karoshi-login.png    -> /opt/karoshi/linuxclientsetup/images/login-background.png
+karoshi-background:                /usr/share/backgrounds/karoshi.png          -> /opt/karoshi/linuxclientsetup/images/background.png
