@@ -128,6 +128,7 @@ if $is_domain; then
 				else
 					echo "file://$offline_home_escape Home" >> ~/.gtk-bookmarks
 				fi
+			fi
 		else
 			echo "WARNING: Unable to find offline home area" >&2
 			$is_graphical && create_entries "Home" ~ folder-home
@@ -318,7 +319,7 @@ user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $P
 				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 			fi
 	
-			if [[ $MAILSERVER ]] || karoshi-manage-flags get offline_mode >/dev/null; then
+			if [[ $MAILSERVER ]]; then
 				user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
 				echo "Using $user_fullname as real name for user email"
 	
