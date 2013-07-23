@@ -103,3 +103,4 @@ virtualbox-guest-utils
 virtualbox-guest-x11
 libnss3-tools
 sssd
+ubuntu-extras-keyring
