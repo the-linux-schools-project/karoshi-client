@@ -75,7 +75,7 @@ fi
 
 #Detect offline home area
 offline_home_exists=false
-if $is_domain && [[ -d "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ]]; then
+if $is_domain && [[ -d "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ]]; then
 	echo "Detected offline home area"
 	offline_home_exists=true
 fi
@@ -105,7 +105,7 @@ if $is_domain; then
 	
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists; then
-			ln -sfT "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
+			ln -sfT "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
 			create_entries "Home" "$HOME/offline-home" folder-home
 			
 			alternate_home="offline-home"
@@ -122,7 +122,7 @@ if $is_domain; then
 	else
 		if $offline_home_exists; then
 			echo "Found offline home area while online"
-			ln -sfT "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
+			ln -sfT "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ~/offline-home
 			create_entries "Offline Home" ~/offline-home folder-home
 			
 			if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then

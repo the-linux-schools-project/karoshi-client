@@ -48,7 +48,7 @@ fi
 
 #Detect offline home area
 offline_home_exists=false
-if $is_domain && [[ -d "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ]]; then
+if $is_domain && [[ -d "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/users/"$USER" ]]; then
 	echo "Detected offline home area"
 	offline_home_exists=true
 fi
@@ -70,7 +70,7 @@ if $is_domain; then
 		fi
 		if $offline_home_exists; then
 			echo "Setting offline home area to be removed"
-			echo "delete" > "$KAROSHI_BASE_DIR"/"$KAROSHI_OFFLINE_HOMES"/flags/"$USER"
+			echo "delete" > "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags/"$USER"
 		fi
 	fi
 	
