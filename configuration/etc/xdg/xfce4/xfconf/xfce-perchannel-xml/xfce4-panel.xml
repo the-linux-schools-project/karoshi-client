@@ -103,6 +103,7 @@
       <property name="show-handle" type="bool" value="true"/>
       <property name="grouping" type="uint" value="0"/>
       <property name="show-wireframes" type="bool" value="false"/>
+      <property name="sort-order" type="uint" value="4"/>
     </property>
     <property name="plugin-10" type="string" value="showdesktop"/>
     <property name="plugin-11" type="string" value="separator">
