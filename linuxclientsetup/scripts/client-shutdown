@@ -22,6 +22,10 @@
 #Website: http://www.karoshi.org.uk
 
 function sendXNotifications {
+	minute_string="minutes"
+	if [[ $1 -eq 1 ]]; then
+		minute_string="minute"
+	fi
 	while read DISPLAY; do
 		export DISPLAY
 		if ! xhost; then
@@ -30,7 +34,7 @@ function sendXNotifications {
 			if ! xhost; then continue; fi #We STILL don't have any permission, so just ignore
 		fi
 		#At this point we should have permission to write to the display
-		notify-send -u critical "Scheduled Shutdown" "This system is going down in $1 minute/s\nMake sure to save your work!" -i /opt/karoshi/linuxclientsetup/images/smalllogo.xpm
+		notify-send -u critical "Scheduled Shutdown" "This system is going down in $1 $minute_string\nMake sure to save your work!" -i /opt/karoshi/linuxclientsetup/images/smalllogo.xpm
 		#Reset variables
 		unset DISPLAY
 		unset XAUTHORITY
@@ -40,9 +44,8 @@ function sendXNotifications {
 #start shutdown sequence
 shutdown -h +5 &
 
-#send 5 minute notification
-sendXNotifications 5
-#wait for 4 minutes
-sleep 240
-#send 1 minute notification
-sendXNotifications 1
+#send notifications every minute
+for time in {5..1}; do
+	sendXNotifications $time
+	sleep 60
+done
