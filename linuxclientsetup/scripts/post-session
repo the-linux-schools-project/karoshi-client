@@ -21,6 +21,8 @@
 #
 #Website: http://www.karoshi.org.uk
 
+source /opt/karoshi/linuxclientsetup/utilities/common
+
 function checkAndList {
 	if [[ -e ~/$1 ]]; then list=( "${list[@]}" "$1" ); fi
 }
