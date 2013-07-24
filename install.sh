@@ -538,13 +538,14 @@ Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
 fi
 
 #Remove auth modules from PAM to be added back in in setup
-pam-auth-update --package --remove winbind sss sss-password karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir
+pam-auth-update --package --remove winbind sss sss-password karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-remove-homedir
 echo "winbind
 sss
 sss-password
 karoshi-pre-session
 karoshi-post-session
-karoshi-virtualbox-mkdir" >> /var/lib/pam/seen
+karoshi-virtualbox-mkdir
+karoshi-remove-homedir" >> /var/lib/pam/seen
 
 #Correct permissions for PAM configuration
 find /usr/share/pam-configs -mindepth 1 -maxdepth 1 -execdir chmod 0644 {} +
