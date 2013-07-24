@@ -26,19 +26,35 @@ function sendXNotifications {
 	if [[ $1 -eq 1 ]]; then
 		minute_string="minute"
 	fi
-	while read DISPLAY; do
-		export DISPLAY
-		if ! xhost; then
-			#We don't have permission yet
-			export XAUTHORITY=`ps aux | grep -- ' -auth ' | grep -- " $DISPLAY" | sed 's/.*-auth \([^ ]*\).*/\1/'`
-			if ! xhost; then continue; fi #We STILL don't have any permission, so just ignore
+	
+	echo "Sending shutdown notification - $1 $minute_string"
+	
+	while read -r x_display; do
+		export DISPLAY=":${x_display##*/X}"
+		is_valid=false
+		environ_list=( $(find /proc -mindepth 1 -maxdepth 2 -name environ) )
+		for environ in "${environ_list[@]}"; do
+			if [[ -f "$environ" ]] && grep -qz "^DISPLAY=.*$DISPLAY\(\..*\)\?$" "$environ"; then
+				export XAUTHORITY="$(grep -z '^XAUTHORITY=.*' "$environ" | sed 's@^XAUTHORITY=@@')"
+				if ! [[ $XAUTHORITY ]]; then
+					export XAUTHORITY=$(getent passwd $(stat -c %U "$environ") | cut -d':' -f6)/.Xauthority
+				fi
+				if xhost &>/dev/null; then
+					is_valid=true
+					break
+				fi
+			fi
+		done
+		if $is_valid; then
+			echo "Found valid XAUTHORITY: $XAUTHORITY for $DISPLAY"
+			notify-send -u critical "Scheduled Shutdown" "This system is going down in $1 $minute_string\nMake sure to save your work!" -i /opt/karoshi/linuxclientsetup/images/smalllogo.xpm
+		else
+			echo "Unable to find XAUTHORITY for $DISPLAY"
 		fi
-		#At this point we should have permission to write to the display
-		notify-send -u critical "Scheduled Shutdown" "This system is going down in $1 $minute_string\nMake sure to save your work!" -i /opt/karoshi/linuxclientsetup/images/smalllogo.xpm
 		#Reset variables
 		unset DISPLAY
 		unset XAUTHORITY
-	done < <(grep -hz "^DISPLAY=" /proc/*/environ | tr \\0 \\n | sed 's/^DISPLAY=\([^\.]*\).*/\1/' | sort -u)
+	done < <(find /tmp/.X11-unix -type s)
 }
 
 #start shutdown sequence
