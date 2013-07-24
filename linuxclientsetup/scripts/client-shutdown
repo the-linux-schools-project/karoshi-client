@@ -62,6 +62,6 @@ shutdown -h +5 &
 
 #send notifications every minute
 for time in {5..1}; do
-	sendXNotifications $time
+	sendXNotifications $time &
 	sleep 60
 done
