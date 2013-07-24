@@ -32,6 +32,6 @@ if iptables -n --list karoshi-auto >/dev/null 2>&1; then
 			echo "WARNING: Unknown error auto-generating ACCEPTion" >&2
 			echo "Protocol: $protocol	Bind address: $bind_addr" >&2
 		fi
-	done < <(ss -4tuan sport != 127.0.0.1: and sport lt :1024 | tail -n +2)
+	done < <(ss -4tuan sport != 127.0.0.1: and sport lt :49152 | tail -n +2)
 fi
 
