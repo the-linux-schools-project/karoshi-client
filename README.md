@@ -5,8 +5,7 @@
 - **Maintainer:** Robin McCorkell &lt;rmccorkell@karoshi.org.uk&gt;
 - **Website:** http://linuxgfx.co.uk/
 - **Documentation:** http://www.linuxgfx.co.uk/karoshi/documentation/wiki/
-- **Current stable version:** 2.0
-- **Current dev version:** 3.0_rc2
+- **Current stable version:** 3.0
 
 **ISO Syntax:** karoshi-client-&lt;version&gt;-&lt;arch&gt;.iso
 
