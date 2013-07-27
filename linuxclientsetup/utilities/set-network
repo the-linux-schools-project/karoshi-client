@@ -390,13 +390,6 @@ getClientSettings
 
 echo 40 >&11
 
-#Automation steps
-if [[ -f /tmp/netlogon/domain_information/lockadministrator ]]; then
-	karoshi-manage-flags set passwordset
-	passwd -l administrator
-	passwd -l root
-fi
-
 karoshi-manage-flags set networkset
 
 #############
@@ -588,6 +581,13 @@ echo \#Finalising network configuration >&11
 
 #Set NTP settings
 sed -i "s/### KAROSHI HOOK ###/server $PDC.$DNSSUFFIX/" /etc/ntp.conf
+
+#Automation steps
+if [[ -f /tmp/netlogon/domain_information/lockadministrator ]]; then
+	karoshi-manage-flags set passwordset
+	passwd -l administrator
+	passwd -l root
+fi
 
 #Restart networking and finish
 echo 90 >&11
