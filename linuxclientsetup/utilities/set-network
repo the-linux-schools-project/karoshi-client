@@ -31,7 +31,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 #Make sure /tmp/netlogon isn't already mounted
-if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
+if [[ $(mount | grep "^[^ ]* on /tmp/netlogon type cifs") ]]; then
 	echo "ERROR: /tmp/netlogon is already mounted - aborting" >&2
 	info_alert "System Error" "/tmp/netlogon is already mounted"
 	exit 1
