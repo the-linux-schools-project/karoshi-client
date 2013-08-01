@@ -64,6 +64,19 @@ else
 	echo "Detected running in console"
 fi
 
+#Decrement login counter
+if [[ -f ~/.config/karoshi/login-count.karoshi-session ]]; then
+	count=$(< ~/.config/karoshi/login-count.karoshi-session)
+	echo "Current login count: $count"
+	(( --count ))
+	if [[ $count -lt 1 ]]; then
+		echo "No other sessions exist - resetting login counter"
+		rm -f ~/.config/karoshi/login-count.karoshi-session
+	else
+		echo $count > ~/.config/karoshi/login-count.karoshi-session
+	fi
+fi
+
 if $is_domain; then
 	###################
 	#Domain user
@@ -118,7 +131,7 @@ if $is_domain; then
 
 		#Create archive in ~/$alternate_home/.configuration.tar.gz
 		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && rm ~/"$alternate_home"/.configuration.tar.gz
-		[[ "${list[@]}" ]] && tar -cz --one-file-system --exclude='karoshi-*.desktop' -C ~ -f ~/"$alternate_home"/.configuration.tar.gz "${list[@]}"
+		[[ "${list[@]}" ]] && tar -cz --one-file-system --exclude='karoshi-*.desktop' --exclude='*.karoshi-session' -C ~ -f ~/"$alternate_home"/.configuration.tar.gz "${list[@]}"
 
 	
 		#Backup desktop files
