@@ -89,11 +89,22 @@ else
 	echo "Detected running in console"
 fi
 
+#Exit if already logged in and increment login counter
+if [[ -f ~/.config/karoshi/login-count.karoshi-session ]]; then
+	echo "User already logged in - exiting"
+	count=$(< ~/.config/karoshi/login-count.karoshi-session)
+	echo $(( count + 1 )) > ~/.config/karoshi/login-count.karoshi-session
+	exit 0
+fi
+
 #Create required folders
 [[ ! -d ~/Desktop ]] && mkdir ~/Desktop
 [[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
 [[ ! -d ~/.config/autostart ]] && mkdir -p ~/.config/autostart
 [[ -d ~/.config/karoshi ]] || mkdir -p ~/.config/karoshi
+
+#Initialize login counter
+echo 1 > ~/.config/karoshi/login-count.karoshi-session
 
 #Clear Karoshi icons from desktop, menu and autostart
 $is_graphical && find ~/Desktop ~/.local/share/applications ~/.config/autostart -name 'karoshi-*.desktop' -delete

@@ -103,6 +103,10 @@ if karoshi-manage-flags get domainset || karoshi-manage-flags get networkset; th
 	karoshi-unset-network || exit 9
 fi
 
+#Unlock root and administrator accounts
+passwd -u administrator
+passwd -u root
+
 #Clean up /opt/karoshi
 find /opt/karoshi -mindepth 1 -maxdepth 1 -not -name 'linuxclientsetup' -execdir rm -rf {} +
 
