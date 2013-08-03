@@ -80,11 +80,11 @@ if [[ -e /etc/init/karoshi-remount.conf ]]; then
 	rm -rf /etc/init/karoshi-remount.conf
 fi
 
-[[ -e $KAROSHI_DATA ]] && rm -rf "$KAROSHI_DATA"
-
 #Reset alternatives
 update-alternatives --remove karoshi-login-background "$KAROSHI_DATA"/images/login-background.png
 update-alternatives --remove karoshi-background "$KAROSHI_DATA"/images/background.png
+
+[[ -e $KAROSHI_DATA/images ]] && rm -rf "$KAROSHI_DATA"/images
 
 #Deconfigure Karoshi PAM modules
 pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
