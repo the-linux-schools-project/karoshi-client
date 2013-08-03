@@ -45,9 +45,9 @@ export DEBIAN_FRONTEND=noninteractive
 [[ -e /var/log/karoshi ]] && rm -rf /var/log/karoshi
 mkdir -p /var/log/karoshi
 
-touch /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,remove-homedir,setup}.log
-chown root:adm /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,remove-homedir,setup}.log
-chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,remove-homedir,setup}.log
+touch /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
+chown root:adm /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
+chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
 
 exec &>/var/log/karoshi/setup.log
 
@@ -87,13 +87,12 @@ update-alternatives --remove karoshi-login-background "$KAROSHI_DATA"/images/log
 update-alternatives --remove karoshi-background "$KAROSHI_DATA"/images/background.png
 
 #Deconfigure Karoshi PAM modules
-pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes karoshi-remove-homedir
+pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
 
 echo "karoshi-pre-session
 karoshi-post-session
 karoshi-virtualbox-mkdir
-karoshi-offline-homes
-karoshi-remove-homedir" >> /var/lib/pam/seen
+karoshi-offline-homes" >> /var/lib/pam/seen
 
 is_reconfigure=false
 
@@ -115,7 +114,6 @@ find /opt/karoshi -mindepth 1 -maxdepth 1 -not -name 'linuxclientsetup' -execdir
 > /var/log/karoshi/post-session.log
 > /var/log/karoshi/virtualbox-mkdir.log
 > /var/log/karoshi/offline-homes.log
-> /var/log/karoshi/remove-homedir.log
 find /var/log/upstart -name 'karoshi-*.log*' -delete
 
 ##################
@@ -170,7 +168,7 @@ find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
 cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
 
 #Configure Karoshi PAM modules
-pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes karoshi-remove-homedir
+pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
 pam-auth-update --package
 
 [[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
