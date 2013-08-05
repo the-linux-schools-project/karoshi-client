@@ -361,6 +361,11 @@ fi
 #Update APT
 apt-get update
 
+#Run custom commands
+if [[ -f install/pre-commands ]]; then
+	bash install/pre-commands
+fi
+
 echo "Preparation finished!" >&2
 
 ###################
@@ -769,6 +774,11 @@ exec 4<&-
 #Clean up /home
 echo "Cleaning up /home..." >&2
 find /home -mindepth 1 -delete
+
+#Run custom commands
+if [[ -f install/post-commands ]]; then
+	bash install/post-commands
+fi
 
 echo >&2
 echo "Installation of Karoshi Client complete - press Ctrl + C now to finish" >&2
