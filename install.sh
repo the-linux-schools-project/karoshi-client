@@ -366,6 +366,9 @@ if [[ -f install/pre-commands ]]; then
 	bash install/pre-commands
 fi
 
+#Create temporary FD for use later
+exec 33>&1
+
 echo "Preparation finished!" >&2
 
 ###################
@@ -378,7 +381,7 @@ export DEBIAN_FRONTEND=noninteractive
 if [[ -f install/install-list ]]; then
 	install_packages=( $(< install/install-list) )
 	#Run simulation of install - this should tell us if the packages are valid or not
-	invalid_packages=$(apt-get -s install ${install_packages[@]} 2> >(sed -n 's/^E: Unable to locate package //p') >/dev/null )
+	invalid_packages=$(apt-get -s install ${install_packages[@]} 2> >(tee >(sed -n 's/^E: Unable to locate package //p') >&33) >/dev/null )
 	err=$?
 	if [[ $err -eq 100 ]] && [[ $invalid_packages ]]; then
 		echo >&2
@@ -402,7 +405,7 @@ fi
 if [[ -f install/remove-list ]]; then
 	remove_packages=( $(< install/remove-list) )
 	#Run simulation of remove - this should tell us if the packages are valid or not
-	invalid_packages=$(apt-get -s remove ${remove_packages[@]} 2> >(sed -n 's/^E: Unable to locate package //p') >/dev/null )
+	invalid_packages=$(apt-get -s remove ${remove_packages[@]} 2> >(tee >(sed -n 's/^E: Unable to locate package //p') >&33) >/dev/null )
 	err=$?
 	if [[ $err -eq 100 ]] && [[ $invalid_packages ]]; then
 		echo >&2
