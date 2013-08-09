@@ -374,6 +374,13 @@ echo "Preparation finished!" >&2
 
 export DEBIAN_FRONTEND=noninteractive
 
+if [[ -f install/install-list ]]; then
+	install_packages=( $(< install/install-list) )
+fi
+if [[ -f install/remove-list ]]; then
+	remove_packages=( $(< install/remove-list) )
+fi
+
 #Configure DPKG holds to prevent packages to be removed from being installed
 apt-mark showhold | xargs -r apt-mark unhold
 if [[ $remove_packages ]]; then
@@ -381,7 +388,7 @@ if [[ $remove_packages ]]; then
 fi
 
 #Install packages
-if [[ -f install/install-list ]]; then
+if [[ $install_packages ]]; then
 	echo "Installing packages..." >&2
 	install_packages=( $(< install/install-list) )
 	apt-get -y --allow-unauthenticated install ${install_packages[@]}
@@ -400,7 +407,7 @@ apt-mark showhold | xargs -r apt-mark unhold
 set_network "$net_int" "$net_ip" "$net_gw"
 
 #Remove packages
-if [[ -f install/remove-list ]]; then
+if [[ $remove_packages ]]; then
 	echo "Removing packages..." >&2
 	remove_packages=( $(< install/remove-list) )
 	apt-get -y purge ${remove_packages[@]}
