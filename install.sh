@@ -366,9 +366,6 @@ if [[ -f install/pre-commands ]]; then
 	bash install/pre-commands
 fi
 
-#Create temporary FD for use later
-exec 33>&1
-
 echo "Preparation finished!" >&2
 
 ###################
@@ -377,54 +374,6 @@ echo "Preparation finished!" >&2
 
 export DEBIAN_FRONTEND=noninteractive
 
-#Remove packages from install list that do not exist
-if [[ -f install/install-list ]]; then
-	install_packages=( $(< install/install-list) )
-	#Run simulation of install - this should tell us if the packages are valid or not
-	invalid_packages=$(apt-get -s install ${install_packages[@]} 2> >(tee >(sed -n 's/^E: Unable to locate package //p') >&33) >&33 )
-	err=$?
-	if [[ $err -eq 100 ]] && [[ $invalid_packages ]]; then
-		echo >&2
-		echo "WARNING: Unable to locate some packages in the install list:" >&2
-		sed 's/^/         /' <<< "$invalid_packages" >&2
-		echo >&2
-		echo "         Press Enter to remove these packages from the install list" >&2
-		echo "         and proceed with the installation" >&2
-		read
-		while read -r pkg; do
-			install_packages=( $(sed "s/\<$pkg\>//" <<< "${install_packages[@]}") )
-		done <<< "$invalid_packages"
-	elif [[ $err -ne 0 ]]; then
-		echo >&2
-		echo "ERROR: Error calculating install list - error code from apt-get: $err" >&2
-		exit 2
-	fi
-fi
-
-#Remove packages from remove list that do not exist
-if [[ -f install/remove-list ]]; then
-	remove_packages=( $(< install/remove-list) )
-	#Run simulation of remove - this should tell us if the packages are valid or not
-	invalid_packages=$(apt-get -s remove ${remove_packages[@]} 2> >(tee >(sed -n 's/^E: Unable to locate package //p') >&33) >&33 )
-	err=$?
-	if [[ $err -eq 100 ]] && [[ $invalid_packages ]]; then
-		echo >&2
-		echo "WARNING: Unable to locate some packages in the remove list:" >&2
-		sed 's/^/         /' <<< "$invalid_packages" >&2
-		echo >&2
-		echo "         Press Enter to remove these packages from the remove list" >&2
-		echo "         and proceed with the installation" >&2
-		read
-		while read -r pkg; do
-			remove_packages=( $(sed "s/\<$pkg\>//" <<< "${remove_packages[@]}") )
-		done <<< "$invalid_packages"
-	elif [[ $err -ne 0 ]]; then
-		echo >&2
-		echo "ERROR: Error calculating remove list - error code from apt-get: $err" >&2
-		exit 2
-	fi
-fi
-
 #Configure DPKG holds to prevent packages to be removed from being installed
 apt-mark showhold | xargs -r apt-mark unhold
 if [[ $remove_packages ]]; then
@@ -432,8 +381,9 @@ if [[ $remove_packages ]]; then
 fi
 
 #Install packages
-if [[ $install_packages ]]; then
+if [[ -f install/install-list ]]; then
 	echo "Installing packages..." >&2
+	install_packages=( $(< install/install-list) )
 	apt-get -y --allow-unauthenticated install ${install_packages[@]}
 	err=$?
 	if [[ $err -ne 0 ]]; then
@@ -450,8 +400,9 @@ apt-mark showhold | xargs -r apt-mark unhold
 set_network "$net_int" "$net_ip" "$net_gw"
 
 #Remove packages
-if [[ $remove_packages ]]; then
+if [[ -f install/remove-list ]]; then
 	echo "Removing packages..." >&2
+	remove_packages=( $(< install/remove-list) )
 	apt-get -y purge ${remove_packages[@]}
 	err=$?
 	if [[ $err -ne 0 ]]; then
