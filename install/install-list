@@ -105,3 +105,6 @@ libnss3-tools
 sssd
 ubuntu-extras-keyring
 arduino
+xserver-xorg-video-ati-lts-raring
+xserver-xorg-video-nouveau-lts-raring
+xserver-xorg-video-intel-lts-raring
