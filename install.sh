@@ -390,7 +390,6 @@ fi
 #Install packages
 if [[ $install_packages ]]; then
 	echo "Installing packages..." >&2
-	install_packages=( $(< install/install-list) )
 	apt-get -y --allow-unauthenticated install ${install_packages[@]}
 	err=$?
 	if [[ $err -ne 0 ]]; then
@@ -409,7 +408,6 @@ set_network "$net_int" "$net_ip" "$net_gw"
 #Remove packages
 if [[ $remove_packages ]]; then
 	echo "Removing packages..." >&2
-	remove_packages=( $(< install/remove-list) )
 	apt-get -y purge ${remove_packages[@]}
 	err=$?
 	if [[ $err -ne 0 ]]; then
