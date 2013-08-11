@@ -103,5 +103,4 @@ libnss3-tools
 sssd
 ubuntu-extras-keyring
 arduino
-xorg-lts-raring
-mesa-lts-raring
+xserver-xorg-lts-raring
