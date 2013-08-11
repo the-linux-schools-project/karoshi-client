@@ -374,11 +374,13 @@ echo "Preparation finished!" >&2
 
 export DEBIAN_FRONTEND=noninteractive
 
-if [[ -f install/install-list ]]; then
-	install_packages=( $(< install/install-list) )
-fi
 if [[ -f install/remove-list ]]; then
-	remove_packages=( $(< install/remove-list) )
+	remove_packages=( )
+	while read -r pkg; do
+		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
+			remove_packages+=( "$pkg" )
+		fi
+	done < install/remove-list
 fi
 
 #Configure DPKG holds to prevent packages to be removed from being installed
@@ -388,14 +390,34 @@ if [[ $remove_packages ]]; then
 fi
 
 #Install packages
-if [[ $install_packages ]]; then
+if [[ -f install/install-list ]]; then
 	echo "Installing packages..." >&2
-	apt-get -y --allow-unauthenticated install ${install_packages[@]}
-	err=$?
-	if [[ $err -ne 0 ]]; then
-		echo >&2
-		echo "ERROR: Failed to install packages - error code from apt-get: $err" >&2
-		exit 2
+	install_packages=( )
+	while read -r pkg; do
+		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
+			install_packages+=( "$pkg" )
+		fi
+		if [[ $pkg == "#!install" ]]; then
+			if [[ $install_packages ]]; then
+				apt-get -y --allow-unauthenticated install ${install_packages[@]}
+				err=$?
+				if [[ $err -ne 0 ]]; then
+					echo >&2
+					echo "ERROR: Failed to install packages - error code from apt-get: $err" >&2
+					exit 2
+				fi
+			fi
+			install_packages=( )
+		fi
+	done < install/install-list
+	if [[ $install_packages ]]; then
+		apt-get -y --allow-unauthenticated install ${install_packages[@]}
+		err=$?
+		if [[ $err -ne 0 ]]; then
+			echo >&2
+			echo "ERROR: Failed to install packages - error code from apt-get: $err" >&2
+			exit 2
+		fi
 	fi
 fi
 
