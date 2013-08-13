@@ -358,8 +358,9 @@ if [[ -f install/apt-repositories ]]; then
 	done < install/apt-repositories
 fi
 
-#Update APT
+#Update and upgrade APT
 apt-get update
+apt-get -y install apt
 
 #Run custom commands
 if [[ -f install/pre-commands ]]; then
