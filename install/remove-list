@@ -3,7 +3,7 @@ avahi-daemon
 ntpdate
 mousepad
 nautilus
-^linux.*-generic$
+^linux.*-generic.*
 ^network-manager.*
 gnome-screenshot
 empathy

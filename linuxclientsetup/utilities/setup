@@ -59,6 +59,9 @@ ln -s /var/log/upstart/karoshi-remount.log /var/log/karoshi/remount.log
 #Allow root to connect to X even after hostname is changed (temporarily)
 xhost +si:localuser:root
 
+#Remove Ubiquity icon from administrator desktop
+find ~administrator/Desktop -name 'ubiquity*.desktop' -delete
+
 ##################
 #Deconfigure system
 ##################

@@ -1,3 +1,9 @@
+#Updated X stack and kernel
+xserver-xorg-lts-raring
+linux-lowlatency
+#!install
+
+#XFCE
 xfce4
 indicator-application-gtk2
 indicator-sound-gtk2
@@ -11,6 +17,8 @@ xubuntu-icon-theme
 thunar-archive-plugin
 thunar-media-tags-plugin
 catfish
+
+#General Applications
 lightdm
 lightdm-kde-greeter
 firefox
@@ -42,11 +50,13 @@ freemind
 ttf-dejavu
 ttf-mscorefonts-installer
 ttf-freefont
+
+#Multimedia
 dia
 blender
 gimp
 inkscape
-ardour
+ardour3
 audacity
 jackd2
 qjackctl
@@ -64,6 +74,8 @@ stopmotion
 gtk-recordmydesktop
 openshot
 vlc
+
+#Development
 codeblocks
 eclipse
 glade
@@ -78,6 +90,9 @@ libmpfr-dev
 libncurses5-dev
 default-jdk
 liblwjgl-java
+arduino
+
+#Utilities
 cifs-utils
 libpam-mount
 krb5-user
@@ -89,7 +104,6 @@ yad
 winbind
 nscd
 ubiquity-casper
-linux-lowlatency
 gnupg
 language-pack-en
 ldap-utils
@@ -99,9 +113,7 @@ ruby-dev
 xmlstarlet
 resolvconf
 iputils-arping
-virtualbox-guest-utils
-virtualbox-guest-x11
 libnss3-tools
 sssd
 ubuntu-extras-keyring
-arduino
+virtualbox-guest-utils
