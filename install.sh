@@ -362,6 +362,9 @@ fi
 apt-get update
 apt-get -y install apt
 
+#Clear all APT holds
+apt-mark showhold | xargs -r apt-mark unhold
+
 #Run custom commands
 if [[ -f install/pre-commands ]]; then
 	bash install/pre-commands
@@ -374,21 +377,6 @@ echo "Preparation finished!" >&2
 ###################
 
 export DEBIAN_FRONTEND=noninteractive
-
-if [[ -f install/remove-list ]]; then
-	remove_packages=( )
-	while read -r pkg; do
-		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
-			remove_packages+=( "$pkg" )
-		fi
-	done < install/remove-list
-fi
-
-#Configure DPKG holds to prevent packages to be removed from being installed
-apt-mark showhold | xargs -r apt-mark unhold
-if [[ $remove_packages ]]; then
-	apt-mark hold "${remove_packages[@]}"
-fi
 
 #Install packages
 if [[ -f install/install-list ]]; then
@@ -422,15 +410,18 @@ if [[ -f install/install-list ]]; then
 	fi
 fi
 
-#Unmark DPKG holds
-apt-mark showhold | xargs -r apt-mark unhold
-
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
 
 #Remove packages
-if [[ $remove_packages ]]; then
+if [[ -f install/remove-list ]]; then
 	echo "Removing packages..." >&2
+	remove_packages=( )
+	while read -r pkg; do
+		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
+			remove_packages+=( "$pkg" )
+		fi
+	done < install/remove-list
 	apt-get -y purge ${remove_packages[@]}
 	err=$?
 	if [[ $err -ne 0 ]]; then
