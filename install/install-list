@@ -1,6 +1,7 @@
 #Updated X stack and kernel
 xserver-xorg-lts-raring
 linux-lowlatency
+initramfs-tools
 #!install
 
 #XFCE
