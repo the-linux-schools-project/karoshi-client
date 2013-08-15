@@ -1,1 +1,1 @@
-dpkg-reconfigure virtualbox-dpkg
+dpkg-reconfigure virtualbox-dkms
