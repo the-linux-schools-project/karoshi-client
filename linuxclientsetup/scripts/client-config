@@ -503,37 +503,55 @@ fi
 ##########################
 #Configure virtualbox drive
 ##########################
+
+function configureVboxPartition {
+	#Copy data if required
+	if ! [[ $(find "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
+		mkdir -p /tmp/karoshi-virtualbox
+		mount "$1" /tmp/karoshi-virtualbox
+		find "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -mindepth 1 -maxdepth 1 -print0 | xargs -r0 mv -t /tmp/karoshi-virtualbox
+		umount /tmp/karoshi-virtualbox
+		rmdir /tmp/karoshi-virtualbox
+	fi
+
+	#Write to /etc/fstab
+	uuid=$(lsblk -no UUID "$1")
+	echo "# karoshi: $KAROSHI_DATA/$KAROSHI_VIRTUALBOX" >> /etc/fstab
+	echo "UUID=$uuid	`sed 's/ /\\040/g' <<< "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"`	ext4	defaults	0	2" >> /etc/fstab
+
+	mount "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"
+}
+
 [[ -d $KAROSHI_DATA/$KAROSHI_VIRTUALBOX ]] || mkdir "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -m 0755
 if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:space:]]" /etc/fstab; then
-	#Detect any SATA or SCSI drives with no valid partition table
-	drive=$(parted -lms 2>/dev/null | sed -n 's@Error: \(/dev/sd.\): unrecognised disk label@\1@p')
-	if ! [[ $drive ]]; then
-		#Detect any SATA or SCSI drives with no partitions
-		drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
-	fi
-	
-	if [[ $drive ]]; then
-		echo "Detected candidate drive for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $drive"
-		#Make GPT partition table and single logical partition
-		parted -s "$drive" -- mktable gpt
-		parted -s -a optimal "$drive" -- mkpart logical 0% 100%
-		mkfs.ext4 "$drive"1
-		
-		#Copy data if required
-		if ! [[ $(find "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
-			mkdir -p /tmp/karoshi-virtualbox
-			mount "$drive"1 /tmp/karoshi-virtualbox
-			find "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -mindepth 1 -maxdepth 1 -print0 | xargs -r0 mv -t /tmp/karoshi-virtualbox
-			umount /tmp/karoshi-virtualbox
-			rmdir /tmp/karoshi-virtualbox
+	vbox_set=false
+	#Detect any ext4 partition with a label of KAROSHI-VBOX
+	while read -r partition; do
+		if [[ $(df -T "$partition" 2>/dev/null | sed -n '2s/^[^[:space:]]*[[:space:]]*\([^[:space:]]*\)[[:space:]]*.*/\1/p') == "ext4" ]] && [[ $(e2label "$partition") == "KAROSHI-VBOX" ]]; then
+			echo "Found existing VirtualBox partition for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $partition"
+			configureVboxPartition "$partition"
+			vbox_set=true
+			break
 		fi
+	done < <(find /dev -maxdepth 1 -name sd??)
+	
+	if ! $vbox_set; then
+		#Detect any SATA or SCSI drives with no valid partition table
+		drive=$(parted -lms 2>/dev/null | sed -n 's@Error: \(/dev/sd.\): unrecognised disk label@\1@p')
+		#Detect any SATA or SCSI drives with no partitions
+		if ! [[ $drive ]]; then
+			drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
+		fi
+	
+		if [[ $drive ]]; then
+			echo "Detected candidate drive for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $drive"
+			#Make GPT partition table and single logical partition
+			parted -s "$drive" -- mktable gpt
+			parted -s -a optimal "$drive" -- mkpart logical 0% 100%
+			mkfs.ext4 -L "KAROSHI-VBOX" "$drive"1
 		
-		#Write to /etc/fstab
-		uuid=$(lsblk -no UUID "$drive"1)
-		echo "# karoshi: $KAROSHI_DATA/$KAROSHI_VIRTUALBOX" >> /etc/fstab
-		echo "UUID=$uuid	`sed 's/ /\\040/g' <<< "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"`	ext4	defaults	0	2" >> /etc/fstab
-		
-		mount "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"
+			configureVboxPartition "$drive"1
+		fi
 	fi
 fi
 
