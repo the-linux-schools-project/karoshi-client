@@ -1,0 +1,1 @@
+grep -q '^nfsv3$' /etc/initramfs-tools/modules || echo 'nfsv3' >> /etc/initramfs-tools/modules
