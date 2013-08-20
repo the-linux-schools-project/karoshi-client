@@ -378,6 +378,26 @@ echo "Preparation finished!" >&2
 
 export DEBIAN_FRONTEND=noninteractive
 
+#Configure holds
+if [[ -f install/hold-list ]]; then
+	echo "Holding back packages..." >&2
+	hold_packages=( )
+	while read -r pkg; do
+		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
+			hold_packages+=( "$pkg" )
+		fi
+	done < install/hold-list
+	if [[ $hold_packages ]]; then
+		apt-mark hold ${hold_packages[@]}
+		err=$?
+		if [[ $err -ne 0 ]]; then
+			echo >&2
+			echo "ERROR: Failed to hold packages - error code from apt-mark: $err" >&2
+			exit 2
+		fi
+	fi
+fi
+
 #Install packages
 if [[ -f install/install-list ]]; then
 	echo "Installing packages..." >&2
@@ -410,6 +430,9 @@ if [[ -f install/install-list ]]; then
 	fi
 fi
 
+#Reset holds
+apt-mark showhold | xargs -r apt-mark unhold
+
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
 
@@ -422,12 +445,14 @@ if [[ -f install/remove-list ]]; then
 			remove_packages+=( "$pkg" )
 		fi
 	done < install/remove-list
-	apt-get -y purge ${remove_packages[@]}
-	err=$?
-	if [[ $err -ne 0 ]]; then
-		echo >&2
-		echo "ERROR: Failed to remove packages - error code from apt-get: $err" >&2
-		exit 2
+	if [[ $remove_packages ]]; then
+		apt-get -y purge ${remove_packages[@]}
+		err=$?
+		if [[ $err -ne 0 ]]; then
+			echo >&2
+			echo "ERROR: Failed to remove packages - error code from apt-get: $err" >&2
+			exit 2
+		fi
 	fi
 fi
 
