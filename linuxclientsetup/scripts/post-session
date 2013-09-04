@@ -64,17 +64,10 @@ else
 	echo "Detected running in console"
 fi
 
-#Decrement login counter
-if [[ -f ~/.config/karoshi/login-count.karoshi-session ]]; then
-	count=$(< ~/.config/karoshi/login-count.karoshi-session)
-	echo "Current login count: $count"
-	(( --count ))
-	if [[ $count -lt 1 ]]; then
-		echo "No other sessions exist - resetting login counter"
-		rm -f ~/.config/karoshi/login-count.karoshi-session
-	else
-		echo $count > ~/.config/karoshi/login-count.karoshi-session
-	fi
+#Exit if still logged in
+if [[ $(pmvarrun -u "$(id -nu)" -o 0) -gt 1 ]]; then
+	echo "User still logged in - exiting"
+	exit 0
 fi
 
 if $is_domain; then
