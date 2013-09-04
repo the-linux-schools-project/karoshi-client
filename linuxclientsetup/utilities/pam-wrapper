@@ -114,11 +114,28 @@ if ! ( which "$command" >/dev/null || [[ -x $command ]] ); then
 	exit $PAM_SYSTEM_ERR
 fi
 
-#Needs to be root and running through PAM
-if [[ $EUID -ne 0 ]]; then
-	echo "ERROR: Must be run as root" >&2
-	exit $PAM_PERM_DENIED
+#Make sure the PAM_TYPE is correct
+if [[ $pam_event ]] && [[ $PAM_TYPE != $pam_event ]]; then
+	exit $PAM_IGNORE
 fi
+
+#Error if close_session without drop-privilages
+if [[ $PAM_TYPE == "close_session" ]]; then
+	if ! $drop_priv; then
+		echo "ERROR: Running as close_session, but drop-privilages was not specified" >&2
+		exit $PAM_SERVICE_ERR
+	fi
+	#We already are the correct user
+	drop_priv=false
+else
+	#If we aren't running as close_session we need to be root
+	if [[ $EUID -ne 0 ]]; then
+		echo "ERROR: Must be run as root" >&2
+		exit $PAM_PERM_DENIED
+	fi
+fi
+
+#Ensure we are running though PAM
 if [[ ! $PAM_USER ]]; then
 	echo "ERROR: Must be run through pam_exec.so" >&2
 	exit $PAM_CRED_UNAVAIL
@@ -127,11 +144,6 @@ fi
 #Fix relative path commands
 if ! which "$command" >/dev/null; then
 	command=./$command
-fi
-
-#Make sure the PAM_TYPE is correct
-if [[ $pam_event ]] && [[ $PAM_TYPE != $pam_event ]]; then
-	exit $PAM_IGNORE
 fi
 
 echo "$command for $PAM_USER"
