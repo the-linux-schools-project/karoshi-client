@@ -74,8 +74,7 @@ fi
 chown $strUserName $strTmpFile
 strPrintCommand="smbclient //$strServer/$strPrinter -k -E -U \"$strUserName\" -c \"print $strTmpFile\""
 echo "Print command used is: $strPrintCommand" >> $output
-`su -c "$strPrintCommand" $strUserName`
-intReturn=$?
+intReturn=$(su -c "$strPrintCommand >&2; echo $?" $strUserName 2>$output)
 echo "Return code from smbclient: $intReturn" >> $output
 
 # clean up
