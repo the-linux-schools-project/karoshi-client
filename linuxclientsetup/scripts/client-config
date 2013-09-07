@@ -24,6 +24,10 @@
 
 source /opt/karoshi/linuxclientsetup/utilities/common
 
+#Force update time from server
+echo "Setting time from $PDC.$DNSSUFFIX"
+net time set -S $PDC.$DNSSUFFIX
+
 ####################
 #Refresh client information
 ####################
