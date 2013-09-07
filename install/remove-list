@@ -20,3 +20,7 @@ indicator-session
 ttf-umefont
 update-manager
 software-center
+deja-dup
+jockey-common
+.*ubuntuone.*
+shotwell
