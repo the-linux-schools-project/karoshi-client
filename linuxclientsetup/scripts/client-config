@@ -521,7 +521,7 @@ function configureVboxPartition {
 	#Write to /etc/fstab
 	uuid=$(lsblk -no UUID "$1")
 	echo "# karoshi: $KAROSHI_DATA/$KAROSHI_VIRTUALBOX" >> /etc/fstab
-	echo "UUID=$uuid	`sed 's/ /\\040/g' <<< "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"`	ext4	defaults	0	2" >> /etc/fstab
+	echo "UUID=$uuid	`sed 's/ /\\040/g' <<< "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"`	ext4	defaults,nosuid	0	2" >> /etc/fstab
 
 	mount "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"
 }
