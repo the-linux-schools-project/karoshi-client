@@ -462,6 +462,10 @@ else
 	[[ -f /etc/cups/cupsd.conf ]] && sed -i 's/^DefaultPolicy .*/DefaultPolicy default/' /etc/cups/cupsd.conf
 fi
 
+#Fix any outdated PPD files
+cups-genppdupdate
+service cups restart
+
 ############################
 #Update client
 ############################
