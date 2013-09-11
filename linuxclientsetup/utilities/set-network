@@ -40,7 +40,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 
 function isWireless {
-	[[ $1 =~ ^(wlan|wifi|ath)[[:digit:]]+ ]]
+	[[ -d /sys/class/net/$1/phy80211 ]]
 	return $?
 }
 
@@ -87,7 +87,8 @@ function getClientSettings {
 								--field='SSID' --field='WPA2-PSK Key' \
 								--button='gtk-go-back:2' --button='gtk-cancel:1' --button='gtk-ok:0'
 								"$wifi_ssid" "$wifi_key"
-			if [[ $? -ne 0 ]]; then
+			yad_status=$?
+			if [[ $yad_status -eq 2 ]]; then
 				continue
 			fi
 			wifi_ssid=`cut -d"|" -f1 <<< "$DATA"`
@@ -167,11 +168,9 @@ network_ints=(`ifconfig -a | sed -n '/^[^[:blank:]]/s/^\(\w*\).*/\1/p' | grep -v
 for NETWORKINT in "${network_ints[@]}"; do
 	isWired $NETWORKINT && break
 done
-if laptop-detect; then
-	for wifi_network_int in "${network_ints[@]}"; do
-		isWireless $wifi_network_int && break
-	done
-fi
+for wifi_network_int in "${network_ints[@]}"; do
+	isWireless $wifi_network_int && break
+done
 
 ####################
 #Get network settings
@@ -201,7 +200,7 @@ ifdown --force $NETWORKINT
 #Clear leases to only get one lease in file
 > /var/lib/dhcp/dhclient.$NETWORKINT.leases
 echo \#Bringing up network interface >&11
-ifup $NETWORKINT
+timeout 5 ifup $NETWORKINT
 echo 10 >&11
 # flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
 if [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]] && ! karoshi-manage-flags get forcesetpdc; then dhcp=true; fi
@@ -237,8 +236,9 @@ while ! $pdc_set; do
 		getClientSettings
 		writeNetworkSettings
 		echo \#Bringing up network interface >&11
-		ifup $NETWORKINT
-		echo 5 >&11
+		timeout 5 ifup $NETWORKINT
+		echo 10 >&11
+
 		if $dhcp; then
 			#Continue to hit DHCP logic again
 			continue
@@ -370,14 +370,14 @@ function exitfunc {
 # get wireless information from server
 if isWireless $NETWORKINT && ( [[ -z $wifi_ssid ]] || [[ -z $wifi_key ]] ); then
 	echo \#Checking wireless network settings >&11
-	wifi_ssid=` < /tmp/netlogon/domain_information/wifi_ssid`
-	wifi_key=` < /tmp/netlogon/domain_information/wifi_key`
+	[[ -f /tmp/netlogon/domain_information/wifi_ssid ]] && wifi_ssid=` < /tmp/netlogon/domain_information/wifi_ssid`
+	[[ -f /tmp/netlogon/domain_information/wifi_key ]] && wifi_key=` < /tmp/netlogon/domain_information/wifi_key`
 	if [[ -z $wifi_ssid ]] || [[ -z $wifi_key ]]; then
 	#Couldn't find wireless information on server, but that's OK
 	# because we can just prompt the user for it
 		understandableYad --form --title 'Wireless Network Settings' \
 							--field='SSID' --field='WPA2-PSK Key' \
-							--button='gtk-cancel:1' --button='gtk-ok:0'\
+							--button='gtk-cancel:1' --button='gtk-ok:0' \
 							"$wifi_ssid" "$wifi_key"
 	fi
 	echo \#Setting network configuration >&11
