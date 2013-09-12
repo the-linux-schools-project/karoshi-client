@@ -6,4 +6,5 @@ timeout 10 while true; do
 		true
 		exit
 	fi
+	sleep 0.1
 done
