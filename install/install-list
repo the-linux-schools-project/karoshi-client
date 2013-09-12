@@ -92,6 +92,7 @@ libncurses5-dev
 default-jdk
 liblwjgl-java
 arduino
+screen
 
 #Utilities
 cifs-utils
