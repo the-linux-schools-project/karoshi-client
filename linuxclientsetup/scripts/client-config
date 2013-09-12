@@ -52,7 +52,7 @@ unset IFS
 ####################
 if [[ $PROXYSERVER ]]; then
 	echo "Configuring APT proxy"
-	echo "Acquire::http::Proxy \"http://$PROXYSERVER.$DNSSUFFIX:3142/apt-cacher/\";" > /etc/apt/apt.conf.d/01proxy
+	echo "Acquire::http::Proxy \"http://$PROXYSERVER.$DNSSUFFIX:8000/\";" > /etc/apt/apt.conf.d/01proxy
 fi
 
 ####################
