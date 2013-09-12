@@ -535,7 +535,7 @@ find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
 #Configure /etc/fstab for bind mounting certain directories
 if ! grep -q "^# karoshi: bind mounts" /etc/fstab; then
 	echo "Configuring /etc/fstab for bind mounts..." >&2
-	echo >> /etc/fstab << EOF
+	cat >> /etc/fstab << EOF
 # karoshi: bind mounts
 /tmp		/tmp		none	bind		0	0
 /home		/home		none	bind		0	0
