@@ -340,6 +340,7 @@ user_pref('mail.server.server1.storeContractID', '@mozilla.org/msgstore/berkeley
 user_pref('mail.server.server1.type', 'imap');
 user_pref('mail.server.server1.userName', '$USER');
 user_pref('mail.server.server1.using_subscription', false);
+user_pref('mail.server.server1.offline_download', false);
 
 user_pref('mail.smtpserver.smtp1.authMethod', 5);
 user_pref('mail.smtpserver.smtp1.hostname', 'mail.$DNSSUFFIX');
