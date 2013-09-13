@@ -543,6 +543,12 @@ if ! grep -q "^# karoshi: bind mounts" /etc/fstab; then
 EOF
 fi
 
+#Reset /etc/network/interfaces to defaults
+cat > /etc/network/interfaces << EOF
+auto lo
+iface lo inet loopback
+EOF
+
 echo "Adjusting PAM configuration..." >&2
 #Adjust libpam-mount to only run on interactive sessions
 pam-auth-update --package --remove libpam-mount
