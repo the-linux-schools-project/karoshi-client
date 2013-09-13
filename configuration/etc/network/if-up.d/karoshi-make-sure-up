@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Wait until the interface is *actually* up
-while true; do
+for i in {1..600}; do
 	if [[ $(< /sys/class/net/$IFACE/operstate) == "up" ]]; then
 		true
 		exit
