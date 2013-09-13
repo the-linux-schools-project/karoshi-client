@@ -85,7 +85,7 @@ function getClientSettings {
 		if isWireless $NETWORKINT; then
 			understandableYad --form --title 'Wireless Network Settings' --text 'Wireless interface detected' --wrap \
 								--field='SSID' --field='WPA2-PSK Key' \
-								--button='gtk-go-back:2' --button='gtk-cancel:1' --button='gtk-ok:0'
+								--button='gtk-go-back:2' --button='gtk-cancel:1' --button='gtk-ok:0' \
 								"$wifi_ssid" "$wifi_key"
 			yad_status=$?
 			if [[ $yad_status -eq 2 ]]; then
@@ -236,14 +236,14 @@ while ! $pdc_set; do
 		getClientSettings
 		writeNetworkSettings
 		echo \#Bringing up network interface >&11
-		timeout 5 ifup $NETWORKINT
+		timeout 20 ifup $NETWORKINT
 		echo 10 >&11
 
 		if $dhcp; then
 			#Continue to hit DHCP logic again
 			continue
 		fi
-		if ! arping -f -c 2 $GATEWAY; then
+		if ! arping -f -c 2 $GATEWAY -I $NETWORKINT; then
 			info_alert "Error" "Cannot arping gateway $GATEWAY"
 			continue
 		fi

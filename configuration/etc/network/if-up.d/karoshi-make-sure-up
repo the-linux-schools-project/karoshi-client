@@ -1,10 +1,11 @@
 #!/bin/bash
 
 #Wait until the interface is *actually* up
-timeout 10 while true; do
+while true; do
 	if [[ $(< /sys/class/net/$IFACE/operstate) == "up" ]]; then
 		true
 		exit
 	fi
 	sleep 0.1
 done
+false
