@@ -1,4 +1,5 @@
 unity
+notify-osd
 avahi-daemon
 ntpdate
 mousepad

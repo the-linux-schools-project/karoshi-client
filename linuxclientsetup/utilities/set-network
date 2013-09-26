@@ -317,6 +317,7 @@ echo $SERVERIP > /opt/karoshi/serverip
 ####################
 #Pull down server information
 ####################
+current_network_int=$NETWORKINT
 #Try the WiFi interface first, since we may be a laptop
 temp_network_int=$NETWORKINT
 if [[ $wifi_network_int ]]; then
@@ -401,10 +402,11 @@ function reconfigureNetwork {
 
 	#Do network configuration and remount netlogon
 	umount /tmp/netlogon
-	ifdown $NETWORKINT
+	ifdown $current_network_int
 	writeNetworkSettings
 	updateHostname
 	ifup $NETWORKINT
+	current_network_int=$NETWORKINT
 	mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
 }
 

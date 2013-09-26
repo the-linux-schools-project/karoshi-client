@@ -31,6 +31,7 @@ user_pref("browser.places.smartBookmarksVersion", 4);
 user_pref("browser.places.updateRecentTagsUri", false);
 user_pref("browser.rights.3.shown", true);
 user_pref("browser.search.selectedEngine", "Google");
+user_pref("browser.search.suggest.enabled", false);
 user_pref("browser.search.update", false);
 user_pref("browser.startup.homepage_override.buildID", "20120713224749");
 user_pref("browser.startup.homepage_override.mstone", "14.0.1");
