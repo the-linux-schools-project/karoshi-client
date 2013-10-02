@@ -222,13 +222,6 @@ if [[ -d /tmp/netlogon/client_settings/thunderbird/extensions ]]; then
 	fi
 fi
 
-##########################
-#Update the upstart scripts
-##########################
-echo "Updating Upstart scripts"
-[[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf ]] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-update.conf /etc/init
-[[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf ]] && cp -f /tmp/netlogon/linuxclient/$LINUX_VERSION/utilities/karoshi-idle-shutdown.conf /etc/init
-
 ###########################
 #Create cronjob to shut computer down
 ###########################
