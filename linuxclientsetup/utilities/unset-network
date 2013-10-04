@@ -61,46 +61,46 @@ samba3)
 	#Deconfigure PAM
 	pam-auth-update --package --remove winbind
 	echo "winbind" >> /var/lib/pam/seen
-	
+
 	#Deconfigure nsswitch.conf
 	nss_disable passwd winbind
 	nss_disable group winbind
 	nss_disable shadow winbind
-	
+
 	echo 20 >&11
-	
+
 	service winbind stop
 	;;
 samba4)
 	attemptAdsLeave
-	
+
 	#Deconfigure PAM
 	pam-auth-update --package --remove sss sss-password
 	echo "sss
 sss-password" >> /var/lib/pam/seen
-	
+
 	#Deconfigure nsswitch.conf
 	nss_disable passwd sss
 	nss_disable group sss
-	
+
 	echo 20 >&11
-	
+
 	service sssd stop
 	;;
 samba4_winbind)
 	attemptAdsLeave
-	
+
 	#Deconfigure PAM
 	pam-auth-update --package --remove winbind
 	echo "winbind" >> /var/lib/pam/seen
-	
+
 	#Deconfigure nsswitch.conf
 	nss_disable passwd winbind
 	nss_disable group winbind
 	nss_disable shadow winbind
-	
+
 	echo 20 >&11
-	
+
 	service winbind stop
 	;;
 esac

@@ -74,7 +74,7 @@ if $is_domain; then
 	###################
 	#Domain user
 	###################
-	
+
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists; then
 			echo "Using offline-home as alternate home"
@@ -90,13 +90,13 @@ if $is_domain; then
 			echo "delete" > "$KAROSHI_DATA"/"$KAROSHI_OFFLINE_HOMES"/flags/"$USER"
 		fi
 	fi
-	
+
 	#Clear Trash folder
 	[[ -d ~/.local/share/Trash ]] && rm -rf ~/.local/share/Trash
-	
+
 	#Remove Karoshi autostart files
 	$is_graphical && find ~/.config/autostart -name 'karoshi-*.desktop' -delete
-	
+
 	#Backup configuration
 	if [[ $alternate_home ]]; then
 		list=( )
@@ -126,7 +126,7 @@ if $is_domain; then
 		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && rm ~/"$alternate_home"/.configuration.tar.gz
 		[[ "${list[@]}" ]] && tar -cz --one-file-system --exclude='karoshi-*.desktop' --exclude='*.karoshi-session' -C ~ -f ~/"$alternate_home"/.configuration.tar.gz "${list[@]}"
 
-	
+
 		#Backup desktop files
 		if $is_graphical; then
 			list=( )

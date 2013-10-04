@@ -124,13 +124,13 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 			echo "	dns-nameservers 8.8.8.8 8.8.4.4" >> /etc/network/interfaces
 		fi
 	fi
-	
+
 	#If wireless
 	if isWireless $NETWORKINT; then
 		echo "	wpa-ssid $wifi_ssid
 	wpa-psk $wifi_key" >> /etc/network/interfaces
 	fi
-	
+
 	#Reconfigure DNS nameservers
 	resolvconf -u
 }
@@ -144,7 +144,7 @@ function updateHostname {
 	fi
 	echo "$CLIENT_NAME" > /etc/hostname
 	hostname "$CLIENT_NAME"
-	
+
 	if $dhcp; then
 		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
 		if grep "^127\.0\.1\.1" /etc/hosts; then
@@ -248,10 +248,10 @@ while ! $pdc_set; do
 			continue
 		fi
 	fi
-	
+
 	#Update hostname and /etc/hosts
 	updateHostname
-	
+
 	#At this point a network has been configured, so the flag is set
 	karoshi-manage-flags set networkset
 
@@ -262,7 +262,7 @@ while ! $pdc_set; do
 		echo 100 >&11
 		exit 0
 	}
-	
+
 	#Get PDC information
 	if ! [[ $SERVERIP ]]; then
 		understandableYad --form --title 'Network Settings' \
@@ -272,7 +272,7 @@ while ! $pdc_set; do
 		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
 		manual_pdc=true
 	fi
-	
+
 	echo \#Attempting to mount netlogon >&11
 	if mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix; then
 		#Only check for automatic network settings if this was not a manual setting
@@ -289,7 +289,7 @@ while ! $pdc_set; do
 			pdc_set=true
 		fi
 	else
-		$manual_pdc && info_alert "Error" "Invalid PDC" 
+		$manual_pdc && info_alert "Error" "Invalid PDC"
 		pdc_set=false
 		dhcp=false
 	fi
@@ -430,19 +430,19 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	[[ -z $DNSSUFFIX ]] && exitfunc 1
 	#Copy files and change variables
 	dns_domain_caps=`tr '[[:lower:]]' '[[:upper:]]' <<< "$DNSSUFFIX"`
-	
+
 	echo 55 >&11
 	reconfigureNetwork
-		
+
 	echo 60 >&11
 	echo \#Copying files >&11
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba4~' /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
-	
+
 	echo 65 >&11
 	echo \#Configuring Samba >&11
-	
+
 	#Samba information required for ksmb, regardless of winbind or not
 	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
 	[[ -z $samba_domain ]] && exitfunc 1
@@ -450,18 +450,18 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	#Configure smb.conf
 	sed -i "s/CHANGETHISDOMAIN/$DOMAIN/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/samba/smb.conf
-	
+
 	#Join domain
 	echo 70 >&11
 	echo \#Joining domain >&11
-	
+
 	function exitfunc {
 		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
 		umount /tmp/netlogon
 		echo 100 >&11
 		exit 1
 	}
-	
+
 	join_status=1
 	while [[ $join_status -ne 0 ]]; do
 		understandableYad --form --title='Domain Access' --wrap \
@@ -472,17 +472,17 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		net ads join -S $PDC -U $domain_username%$domain_password
 		join_status=$?
 	done
-	
+
 	echo 75 >&11
 	echo \#Finalising domain configuration >&11
-	
+
 	#Check if we are to use winbind instead of LDAP
 	if [[ -f /tmp/netlogon/domain_information/samba4_winbind ]]; then
 		DOMAINTYPE=samba4_winbind
-		
+
 		#Create folder for users
 		[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-		
+
 		#Update nsswitch.conf
 		nss_enable passwd winbind
 		nss_enable group winbind
@@ -502,7 +502,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/sssd/sssd.conf
 		sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/sssd/sssd.conf
 		chmod 0600 /etc/sssd/sssd.conf
-		
+
 		#Update nsswitch.conf
 		nss_enable passwd sss
 		nss_enable group sss
@@ -520,10 +520,10 @@ else
 	#Copy files and change variables
 	DOMAIN=`tr 'a-z' 'A-Z' <<< "$samba_domain"`
 	DOMAINTYPE=samba3
-	
+
 	echo 55 >&11
 	reconfigureNetwork
-	
+
 	echo 60 >&11
 	echo \#Copying files >&11
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
@@ -531,21 +531,21 @@ else
 	#Configure smb.conf
 	sed -i "s/CHANGETHISDOMAIN/$DOMAIN/g" /etc/samba/smb.conf
 	sed -i "s/CHANGETHISPDC/$PDC/g" /etc/samba/smb.conf
-	
+
 	#Create folder for users
 	[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-	
+
 	#Join domain
 	echo 70 >&11
 	echo \#Joining domain >&11
-	
+
 	function exitfunc {
 		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
 		umount /tmp/netlogon
 		echo 100 >&11
 		exit 1
 	}
-	
+
 	join_status=1
 	while [[ $join_status -ne 0 ]]; do
 		understandableYad --form --title='Domain Access' --wrap \
@@ -556,10 +556,10 @@ else
 		net rpc join -S $PDC -U $domain_username%$domain_password
 		join_status=$?
 	done
-	
+
 	echo 75 >&11
 	echo \#Finalising domain configuration >&11
-	
+
 	#Update nsswitch.conf
 	nss_enable passwd winbind
 	nss_enable group winbind

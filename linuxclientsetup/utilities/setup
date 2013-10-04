@@ -26,7 +26,7 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 #Exit this script if running live.
 if [[ `mount | grep -c -w /cow` -gt 0 ]]
 then
-	exit 
+	exit
 fi
 
 if [[ $EUID -ne 0 ]]; then
