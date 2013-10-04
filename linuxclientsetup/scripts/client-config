@@ -265,7 +265,7 @@ iptables -A LOGREJECT -j REJECT
 #Create Karoshi chains
 iptables -N karoshi-local #Local rules
 iptables -N karoshi-domain #Domain rules
-iptables -N karoshi-auto #Auto-generated rules
+#iptables -N karoshi-auto #Auto-generated rules
 
 #Add rules to INPUT chain
 iptables -A INPUT -i lo -j ACCEPT #Allow all traffic on lo
@@ -273,7 +273,7 @@ iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT #Allow es
 [[ -e /tmp/netlogon/client_settings/firewall/no_ping ]] || iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT #Permit pings
 iptables -A INPUT -j karoshi-local
 iptables -A INPUT -j karoshi-domain
-iptables -A INPUT -j karoshi-auto
+#iptables -A INPUT -j karoshi-auto
 [[ -e /tmp/netlogon/client_settings/firewall/drop_deny ]] || iptables -A INPUT -j REJECT #Reject all other packets
 
 #Firewall rule processing
@@ -363,9 +363,9 @@ function process_rules {
 [[ -f /tmp/netlogon/client_settings/firewall/rules ]] && process_rules /tmp/netlogon/client_settings/firewall/rules karoshi-domain
 [[ -f /opt/karoshi/firewall_rules ]] && process_rules /opt/karoshi/firewall_rules karoshi-local
 
-#Generate auto rules
-echo "Performing auto-generation of firewall rules"
-karoshi-generate-firewall-rules
+##Generate auto rules
+#echo "Performing auto-generation of firewall rules"
+#karoshi-generate-firewall-rules
 
 #Set default policies - done last to prevent connection dropouts
 iptables -P INPUT DROP
