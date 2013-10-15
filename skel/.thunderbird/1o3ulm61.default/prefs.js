@@ -35,7 +35,7 @@ user_pref("mail.accountmanager.defaultaccount", "account1");
 user_pref("mail.accountmanager.localfoldersserver", "server1");
 user_pref("mail.append_preconfig_smtpservers.version", 2);
 user_pref("mail.attachment.store.version", 1);
-user.pref("mail.biff.alert.show_subject", false);
+user_pref("mail.biff.alert.show_subject", false);
 user_pref("mail.biff.alert.show_preview", false);
 user_pref("mail.biff.play_sound", false);
 user_pref("mail.folder.views.version", 1);
