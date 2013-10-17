@@ -419,8 +419,8 @@ if [[ $LOCATION ]] && [[ -f /tmp/netlogon/printers.txt ]]; then
 		echo $default_printer > /var/lib/karoshi/printing/list
 		for (( i = 3; i < printer_count + 3; ++i )); do
 			printer=`cut -d, -f$i <<< "$all_printers"`
+			echo "Marking printer $printer to be configured"
 			if [[ $printer != $default_printer ]]; then
-				echo "Marking printer $printer to be configured"
 				echo $printer >> /var/lib/karoshi/printing/list
 			fi
 			#Copy PPD
