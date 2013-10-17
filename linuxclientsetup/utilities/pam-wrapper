@@ -99,7 +99,7 @@ while (( "$#" )); do
 			;;
 		esac
 	fi
-	
+
 	shift
 done
 

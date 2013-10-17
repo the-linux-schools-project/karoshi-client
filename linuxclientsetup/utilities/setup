@@ -26,7 +26,7 @@ source /opt/karoshi/linuxclientsetup/utilities/common
 #Exit this script if running live.
 if [[ `mount | grep -c -w /cow` -gt 0 ]]
 then
-	exit 
+	exit
 fi
 
 if [[ $EUID -ne 0 ]]; then
@@ -55,6 +55,7 @@ exec &>/var/log/karoshi/setup.log
 ln -s /var/log/upstart/karoshi-update.log /var/log/karoshi/update.log
 ln -s /var/log/upstart/karoshi-multicast.log /var/log/karoshi/multicast.log
 ln -s /var/log/upstart/karoshi-remount.log /var/log/karoshi/remount.log
+ln -s /var/log/upstart/karoshi-cups.log /var/log/karoshi/cups.log
 
 #Allow root to connect to X even after hostname is changed (temporarily)
 xhost +si:localuser:root
@@ -81,6 +82,15 @@ fi
 if [[ -e /etc/init/karoshi-remount.conf ]]; then
 	stop karoshi-remount
 	rm -rf /etc/init/karoshi-remount.conf
+fi
+if [[ -e /etc/init.d/cups-sysv ]]; then
+	service cups-sysv stop
+	rm -rf /etc/init.d/cups-sysv
+	rm -f /etc/init/cups.override
+fi
+if [[ -e /etc/init/karoshi-cups.conf ]]; then
+	stop karoshi-cups
+	rm -rf /etc/init/karoshi-cups.conf
 fi
 
 #Reset alternatives
@@ -160,8 +170,13 @@ fi
 #Install Karoshi files
 ##################
 
-cp -f /opt/karoshi/linuxclientsetup/utilities/karoshi-{update,idle-shutdown,multicast,remount}.conf /etc/init
-chmod 644 /etc/init/karoshi-{update,idle-shutdown,multicast,remount}.conf
+find /opt/karoshi/linuxclientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /etc/init {} +
+cp /opt/karoshi/linuxclientsetup/utilities/cups-sysv.initd /etc/init.d/cups-sysv
+find /etc/init -name "karoshi-*.conf" -execdir chmod 644 {} +
+chmod 755 /etc/init.d/cups-sysv
+
+#Prevent CUPS Upstart script
+echo 'manual' > /etc/init/cups.override
 
 [[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
 cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi

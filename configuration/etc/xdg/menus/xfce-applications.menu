@@ -90,7 +90,7 @@
 			<Category>Office</Category>
 		</Include>
 	</Menu>
-	
+
 	<Menu>
 		<Name>Other</Name>
 		<Directory>xfce-other.directory</Directory>

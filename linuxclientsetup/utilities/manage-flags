@@ -81,7 +81,7 @@ elif [[ $# -eq 0 ]]; then
 
 	while $running; do
 		command=(  )
-		
+
 		# check flags and create command
 		for flag in "${!flags[@]}"; do
 			checkFlag $flag
@@ -92,7 +92,7 @@ elif [[ $# -eq 0 ]]; then
 				  --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
 				  --form "${command[@]}"`
 		yadstatus=$?
-		
+
 		[[ $yadstatus -eq 1 ]] && exit 2
 		[[ $yadstatus -ne 2 ]] && running=false
 	done
