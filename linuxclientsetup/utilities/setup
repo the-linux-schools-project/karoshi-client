@@ -83,6 +83,11 @@ if [[ -e /etc/init/karoshi-remount.conf ]]; then
 	stop karoshi-remount
 	rm -rf /etc/init/karoshi-remount.conf
 fi
+if [[ -e /etc/init.d/cups-sysv ]]; then
+	service cups-sysv stop
+	rm -rf /etc/init.d/cups-sysv
+	rm -f /etc/init/cups.override
+fi
 if [[ -e /etc/init/karoshi-cups.conf ]]; then
 	stop karoshi-cups
 	rm -rf /etc/init/karoshi-cups.conf
@@ -166,7 +171,12 @@ fi
 ##################
 
 find /opt/karoshi/linuxclientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /etc/init {} +
+cp /opt/karoshi/linuxclientsetup/utilities/cups-sysv.initd /etc/init.d/cups-sysv
 find /etc/init -name "karoshi-*.conf" -execdir chmod 644 {} +
+chmod 755 /etc/init.d/cups-sysv
+
+#Prevent CUPS Upstart script
+echo 'manual' > /etc/init/cups.override
 
 [[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
 cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
