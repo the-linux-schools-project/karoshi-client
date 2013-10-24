@@ -200,7 +200,7 @@ ifdown --force $NETWORKINT
 #Clear leases to only get one lease in file
 > /var/lib/dhcp/dhclient.$NETWORKINT.leases
 echo \#Bringing up network interface >&11
-timeout 5 ifup $NETWORKINT
+timeout 20 ifup $NETWORKINT
 echo 10 >&11
 # flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
 if [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]] && ! karoshi-manage-flags get forcesetpdc; then dhcp=true; fi
