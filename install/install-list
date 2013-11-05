@@ -120,3 +120,5 @@ sssd
 ubuntu-extras-keyring
 virtualbox-guest-utils
 wpasupplicant
+ssh
+
