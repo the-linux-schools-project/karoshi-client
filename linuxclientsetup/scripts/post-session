@@ -55,15 +55,6 @@ if $is_domain && [[ $(mount | grep "on $HOME/offline-home") ]]; then
 	offline_home_exists=true
 fi
 
-#Detect running graphically
-is_graphical=false
-if [[ $PAM_SERVICE == "lightdm" ]]; then
-	echo "Detected running graphically"
-	is_graphical=true
-else
-	echo "Detected running in console"
-fi
-
 #Exit if still logged in
 if [[ $(pmvarrun -u "$(id -nu)" -o 0) -gt 1 ]]; then
 	echo "User still logged in - exiting"
@@ -95,7 +86,7 @@ if $is_domain; then
 	[[ -d ~/.local/share/Trash ]] && rm -rf ~/.local/share/Trash
 
 	#Remove Karoshi autostart files
-	$is_graphical && find ~/.config/autostart -name 'karoshi-*.desktop' -delete
+	find ~/.config/autostart -name 'karoshi-*.desktop' -delete
 
 	#Backup configuration
 	if [[ $alternate_home ]]; then
@@ -128,15 +119,12 @@ if $is_domain; then
 
 
 		#Backup desktop files
-		if $is_graphical; then
-			list=( )
-			while read -d $'\0' -r file ; do
-				checkAndList "${file##~/}"
-			done < <(find ~/Desktop -mindepth 1 -maxdepth 1 -not -name "karoshi-*.desktop" -and -size -1024c -print0)
-
-			#Create archive in ~/$alternate_home/.desktop-icons.tar.gz
-			[[ -f ~/$alternate_home/.desktop-icons.tar.gz ]] && rm ~/"$alternate_home"/.desktop-icons.tar.gz
-			[[ "${list[@]}" ]] && tar -cz --one-file-system -C ~ -f ~/"$alternate_home"/.desktop-icons.tar.gz "${list[@]}"
-		fi
+		list=( )
+		while read -d $'\0' -r file ; do
+			checkAndList "${file##~/}"
+		done < <(find ~/Desktop -mindepth 1 -maxdepth 1 -not -name "karoshi-*.desktop" -and -size -1024c -print0)
+		#Create archive in ~/$alternate_home/.desktop-icons.tar.gz
+		[[ -f ~/$alternate_home/.desktop-icons.tar.gz ]] && rm ~/"$alternate_home"/.desktop-icons.tar.gz
+		[[ "${list[@]}" ]] && tar -cz --one-file-system -C ~ -f ~/"$alternate_home"/.desktop-icons.tar.gz "${list[@]}"
 	fi
 fi

@@ -80,15 +80,6 @@ if $is_domain && [[ $(mount | grep "on $HOME/offline-home") ]]; then
 	offline_home_exists=true
 fi
 
-#Detect running graphically
-is_graphical=false
-if [[ $PAM_SERVICE == "lightdm" ]]; then
-	echo "Detected running graphically"
-	is_graphical=true
-else
-	echo "Detected running in console"
-fi
-
 #Exit if already logged in
 if [[ $(pmvarrun -u "$(id -nu)" -o 0) -gt 1 ]]; then
 	echo "User already logged in - exiting"
@@ -102,7 +93,7 @@ fi
 [[ -d ~/.config/karoshi ]] || mkdir -p ~/.config/karoshi
 
 #Clear Karoshi icons from desktop, menu and autostart
-$is_graphical && find ~/Desktop ~/.local/share/applications ~/.config/autostart -name 'karoshi-*.desktop' -delete
+find ~/Desktop ~/.local/share/applications ~/.config/autostart -name 'karoshi-*.desktop' -delete
 
 ######################
 #Domain/local users
@@ -115,7 +106,7 @@ if $is_domain; then
 
 	offline_home_escape=$(sed 's/ /%20/g' <<< ~/offline-home)
 	#Delete references to offline-home in .gtk-bookmarks
-	if $is_graphical && [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks && ! $offline_home_exists; then
+	if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks && ! $offline_home_exists; then
 		sed -i "\@^file://$offline_home_escape @ d" ~/.gtk-bookmarks
 	fi
 
@@ -123,71 +114,65 @@ if $is_domain; then
 		if $offline_home_exists; then
 			alternate_home="offline-home"
 
-			if $is_graphical; then
-				create_entries "Home" "$HOME/offline-home" folder-home
+			create_entries "Home" "$HOME/offline-home" folder-home
 
-				#Add shortcut to offline-home in .gtk-bookmarks
-				if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
-					sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Home@" ~/.gtk-bookmarks
-				else
-					echo "file://$offline_home_escape Home" >> ~/.gtk-bookmarks
-				fi
+			#Add shortcut to offline-home in .gtk-bookmarks
+			if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
+				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Home@" ~/.gtk-bookmarks
+			else
+				echo "file://$offline_home_escape Home" >> ~/.gtk-bookmarks
 			fi
 		else
 			echo "WARNING: Unable to find offline home area" >&2
-			$is_graphical && create_entries "Home" ~ folder-home
+			create_entries "Home" ~ folder-home
 		fi
 	else
 		if $offline_home_exists; then
 			echo "Found offline home area while online"
-			if $is_graphical; then
-				create_entries "Offline Home" ~/offline-home folder-home
+			create_entries "Offline Home" ~/offline-home folder-home
 
-				if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
-					sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Offline Home@" ~/.gtk-bookmarks
-				else
-					echo "file://$offline_home_escape Offline Home" >> ~/.gtk-bookmarks
-				fi
+			if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
+				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Offline Home@" ~/.gtk-bookmarks
+			else
+				echo "file://$offline_home_escape Offline Home" >> ~/.gtk-bookmarks
 			fi
 		fi
 
 		#Create home icon first so that it appears first on the desktop
 		if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
 			echo "Domain home area found"
-			$is_graphical && create_entries "home" "$HOME/network/home" folder-home
+			create_entries "home" "$HOME/network/home" folder-home
 
 			alternate_home="network/home"
 		else
 			echo "No domain home area found"
-			$is_graphical && create_entries "Home" ~ folder-home
+			create_entries "Home" ~ folder-home
 		fi
 
 		#Create icons to other mounted network shares
-		if $is_graphical; then
-			for mountpath in `mount | grep "^[^ ]* on $HOME/network/[^ ]* type cifs" | cut -d' ' -f3 | sort`; do
-				mountname=`basename $mountpath`
-				if [[ $mountname != home ]]; then
-					create_entries "$mountname" "$mountpath" folder-publicshare
-				fi
-			done
-		fi
+		for mountpath in `mount | grep "^[^ ]* on $HOME/network/[^ ]* type cifs" | cut -d' ' -f3 | sort`; do
+			mountname=`basename $mountpath`
+			if [[ $mountname != home ]]; then
+				create_entries "$mountname" "$mountpath" folder-publicshare
+			fi
+		done
 	fi
 
 	#Add file manager entry to / if administrator
-	if $is_admin && $is_graphical; then
+	if $is_admin; then
 		sudo_open=true
 		create_entries "File Manager" / folder-system
 		unset sudo_open
 	fi
 
 	#Copy in default icons
-	if $is_graphical && [[ -d /opt/karoshi/desktop-icons/all ]]; then
+	if [[ -d /opt/karoshi/desktop-icons/all ]]; then
 		find /opt/karoshi/desktop-icons/all -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~/Desktop
 	fi
 
 	#Copy in extra icons for groups
 	pri_group=`id -gn`
-	if $is_graphical && [[ -d /opt/karoshi/desktop-icons/$pri_group ]]; then
+	if [[ -d /opt/karoshi/desktop-icons/$pri_group ]]; then
 		find /opt/karoshi/desktop-icons/$pri_group -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~/Desktop
 	fi
 
@@ -198,22 +183,20 @@ if $is_domain; then
 
 		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.configuration.tar.gz
 
-		if $is_graphical; then
-			[[ -f ~/$alternate_home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.desktop-icons.tar.gz
-			if [[ $alternate_home != "offline-home" ]] && $offline_home_exists; then
-				[[ -f ~/offline-home/.desktop-icons.tar.gz ]] && tar -xk -C ~ -f ~/offline-home/.desktop-icons.tar.gz
-			fi
-
-			#Set default directory for terminal emulator and file manager to $alternate_home
-			[[ -d ~/.config/xfce4/xfconf/xfce-perchannel-xml ]] || mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
-			cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
-			sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)[^"]*"@"exo-open --launch \1 --working-directory '"'$alternate_home'"'"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-
-			cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
-			sed -i 's@^Exec=exo-open --launch TerminalEmulator.*@Exec=exo-open --launch TerminalEmulator --working-directory '"'$alternate_home'"'@' ~/.local/share/applications/exo-terminal-emulator.desktop
+		[[ -f ~/$alternate_home/.desktop-icons.tar.gz ]] && tar -x -C ~ -f ~/"$alternate_home"/.desktop-icons.tar.gz
+		if [[ $alternate_home != "offline-home" ]] && $offline_home_exists; then
+			[[ -f ~/offline-home/.desktop-icons.tar.gz ]] && tar -xk -C ~ -f ~/offline-home/.desktop-icons.tar.gz
 		fi
+
+		#Set default directory for terminal emulator and file manager to $alternate_home
+		[[ -d ~/.config/xfce4/xfconf/xfce-perchannel-xml ]] || mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml
+		sed -i 's@"exo-open --launch \(TerminalEmulator\|FileManager\)[^"]*"@"exo-open --launch \1 --working-directory '"'$alternate_home'"'"@' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+
+		cp -n /usr/share/applications/exo-terminal-emulator.desktop ~/.local/share/applications
+		sed -i 's@^Exec=exo-open --launch TerminalEmulator.*@Exec=exo-open --launch TerminalEmulator --working-directory '"'$alternate_home'"'@' ~/.local/share/applications/exo-terminal-emulator.desktop
 	fi
-	
+
 	#Clear any sessions
 	[[ -e ~/.cache/sessions ]] && rm -rf ~/.cache/sessions
 	mkdir -p ~/.cache/sessions
@@ -438,14 +421,14 @@ EOF
 
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists && [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
-			if $is_graphical && [[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ]]; then
+			if [[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ]]; then
 				cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ~/.config/autostart/karoshi-new-offline-user.desktop
 			fi
 			touch ~/.config/karoshi/offline-home-seen
 		fi
 	else
 		if $offline_home_exists; then
-			if $is_graphical && [[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ]]; then
+			if [[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ]]; then
 				cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
 			fi
 			[[ -e ~/.config/karoshi/offline-home-seen ]] && rm -f ~/.config/karoshi/offline-home-seen
@@ -455,10 +438,10 @@ else
 	###############
 	#Local user
 	###############
-	$is_graphical && create_entries "Home" ~ folder-home
+	create_entries "Home" ~ folder-home
 
 	#Add file manager entry to / if administrator
-	if $is_admin && $is_graphical; then
+	if $is_admin; then
 		sudo_open=true
 		create_entries "File Manager" / folder-system
 		unset sudo_open
@@ -476,4 +459,4 @@ if ! $is_admin && karoshi-manage-flags get offline_mode >/dev/null && $is_domain
 fi
 
 #Set permissions on icons
-$is_graphical && find ~/Desktop -name '*.desktop' -print0 | xargs -r0 chmod 0700
+find ~/Desktop -name '*.desktop' -print0 | xargs -r0 chmod 0700
