@@ -52,5 +52,5 @@ Host *
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no
 
-Host *.CHANGETHISREALM
+Host *.CHANGETHISDNS
 	GSSAPIDelegateCredentials yes

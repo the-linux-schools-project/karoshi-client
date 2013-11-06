@@ -439,6 +439,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba4~' /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
+	sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/ssh/ssh_config
 
 	echo 65 >&11
 	echo \#Configuring Samba >&11
