@@ -16,6 +16,9 @@
 # list of available options, their meanings and defaults, please see the
 # ssh_config(5) man page.
 
+Host *.CHANGETHISDNS
+	GSSAPIDelegateCredentials yes
+
 Host *
 #   ForwardAgent no
 #   ForwardX11 no
@@ -52,5 +55,3 @@ Host *
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no
 
-Host *.CHANGETHISDNS
-	GSSAPIDelegateCredentials yes
