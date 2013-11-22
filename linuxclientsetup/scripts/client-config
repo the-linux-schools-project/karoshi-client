@@ -169,6 +169,12 @@ if [[ -f /tmp/netlogon/linuxclient/server-verify.key ]]; then
 	gpg --batch --no-default-keyring --keyring /opt/karoshi/keyring.gpg --import /tmp/netlogon/linuxclient/server-verify.key
 fi
 
+#Get list of available user web folder servers
+[[ -e /opt/karoshi/user_web_servers ]] && rm -f /opt/karoshi/user_web_servers
+if [[ -f /tmp/netlogon/domain_information/user_web_servers ]]; then
+	cp /tmp/netlogon/domain_information/user_web_servers /opt/karoshi
+fi
+
 #######################
 #Thunderbird extensions
 #######################
