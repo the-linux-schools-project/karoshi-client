@@ -64,6 +64,7 @@ Type=Link
 Name=$name
 Icon=$icon
 URL=$location
+EOF
 }
 
 #####################
@@ -163,7 +164,7 @@ if $is_domain; then
 			server=$(mount | sed -n "s@^//\([^.]*\).$DNSSUFFIX/$USER on $HOME/network/home type cifs.*@\1@p")
 			if [[ -f /opt/karoshi/user_web_servers ]] && grep -q "^$server\$" /opt/karoshi/user_web_servers &&
 			  [[ -d ~/network/home/public_html ]] && getfacl ~/network/home/public_html | grep -q '^user:www-data:r-x$'; then
-				create_link "Your Web Folder" "http://$server.$DNSSUFFIX/~$USER/" web-browser
+				create_link "Web Hosting" "http://$server.$DNSSUFFIX/~$USER/" emblem-web
 			fi
 
 			alternate_home="network/home"
