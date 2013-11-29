@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=Printer Settings
+Comment=Configure printers on the local system
+Type=Link
+URL=http://localhost:631/
+Icon=printer
+Categories=Settings;X-XFCE-HardwareSettings;X-XFCE-SettingsDialog;
