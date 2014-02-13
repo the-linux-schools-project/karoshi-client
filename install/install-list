@@ -90,6 +90,7 @@ libgmp-dev
 libmpfr-dev
 libncurses5-dev
 default-jdk
+icedtea-plugin
 liblwjgl-java
 arduino
 screen
