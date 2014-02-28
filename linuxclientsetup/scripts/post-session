@@ -121,15 +121,24 @@ if $is_domain; then
 		temp_dir=$(mktemp -d)
 		[[ -f ~/$alternate_home/.config/all.tar.gz ]] && tar -x -C "$temp_dir" -f ~/"$alternate_home"/.config/all.tar.gz
 		if [[ $firefox_profile ]]; then
-			mkdir -p "$temp_dir"/firefox
-			cp ~/.mozilla/firefox/"$firefox_profile"/places.sqlite "$temp_dir"/firefox
+			[[ -d $temp_dir/firefox ]] || mkdir -p "$temp_dir"/firefox
+			[[ -f $temp_dir/firefox/places.sqlite ]] && rm -f "$temp_dir"/firefox/places.sqlite
+			if [[ -f ~/.mozilla/firefox/$firefox_profile/places.sqlite ]]; then
+				cp -ft "$temp_dir"/firefox ~/.mozilla/firefox/"$firefox_profile"/places.sqlite
+			fi
 		fi
 		if [[ $thunderbird_profile ]]; then
-			mkdir -p "$temp_dir"/thunderbird
-			cp ~/.thunderbird/"$thunderbird_profile"/places.sqlite "$temp_dir"/thunderbird
+			[[ -d $temp_dir/thunderbird ]] || mkdir -p "$temp_dir"/thunderbird
+			[[ -f $temp_dir/thunderbird/places.sqlite ]] && rm -f "$temp_dir"/thunderbird/places.sqlite
+			if [[ -f ~/.thunderbird/$thunderbird_profile/places.sqlite ]]; then
+				cp -ft "$temp_dir"/thunderbird ~/.thunderbird/"$thunderbird_profile"/places.sqlite
+			fi
 		fi
 
-		tar -cz --one-file-system -C "$temp_dir" -f ~/"$alternate_home"/.config/all.tar.gz .
+		(
+			cd "$temp_dir"
+			tar -cz --one-file-system -f ~/"$alternate_home"/.config/all.tar.gz *
+		)
 
  		#DEPRECATED: Used for existing configurations
 		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && rm -f ~/"$alternate_home"/.configuration.tar.gz
