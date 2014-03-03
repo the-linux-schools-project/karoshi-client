@@ -4,4 +4,4 @@ Priority: 132
 Session-Type: Additional
 Session-Interactive-Only: yes
 Session:
-	optional	pam_mkhomedir.so
+	optional	pam_mkhomedir.so umask=0077

@@ -200,7 +200,7 @@ ifdown --force $NETWORKINT
 #Clear leases to only get one lease in file
 > /var/lib/dhcp/dhclient.$NETWORKINT.leases
 echo \#Bringing up network interface >&11
-timeout 5 ifup $NETWORKINT
+timeout 20 ifup $NETWORKINT
 echo 10 >&11
 # flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
 if [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]] && ! karoshi-manage-flags get forcesetpdc; then dhcp=true; fi
@@ -439,6 +439,7 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
 	cp -rfbS '.karoshi-samba4~' /opt/karoshi/linuxclientsetup/config-files/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
+	sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/ssh/ssh_config
 
 	echo 65 >&11
 	echo \#Configuring Samba >&11
