@@ -48,6 +48,15 @@ if [[ $(id -u) -ge 1000 ]] && [[ $(id -u) -ne 65534 ]]; then
 	is_domain=true
 fi
 
+#Detect a staff user
+is_staff=false
+for grp in $(groups); do
+	if [[ $grp == "staff" ]]; then
+		is_staff=true
+		break
+	fi
+done
+
 #Detect offline home area
 offline_home_exists=false
 if $is_domain && [[ $(mount | grep "on $HOME/offline-home") ]]; then
