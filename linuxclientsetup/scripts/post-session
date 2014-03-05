@@ -140,6 +140,7 @@ if $is_domain; then
 			cd "$temp_dir"
 			tar -cz --one-file-system -f ~/"$alternate_home"/.config/all.tar.gz *
 		)
+		rm -rf "$temp_dir"
 
  		#DEPRECATED: Used for existing configurations
 		[[ -f ~/$alternate_home/.configuration.tar.gz ]] && rm -f ~/"$alternate_home"/.configuration.tar.gz
