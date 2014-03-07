@@ -125,8 +125,10 @@ if [[ $PAM_TYPE == "close_session" ]]; then
 		echo "ERROR: Running as close_session, but drop-privilages was not specified" >&2
 		exit $PAM_SERVICE_ERR
 	fi
-	#We already are the correct user
-	drop_priv=false
+	if [[ $EUID -ne 0 ]]; then
+		#We already are the correct user
+		drop_priv=false
+	fi
 else
 	#If we aren't running as close_session we need to be root
 	if [[ $EUID -ne 0 ]]; then
