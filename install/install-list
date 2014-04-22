@@ -1,9 +1,3 @@
-#Updated X stack and kernel
-xserver-xorg-lts-raring
-linux-lowlatency
-initramfs-tools
-#!install
-
 #XFCE
 xfce4
 indicator-application-gtk2
@@ -29,7 +23,6 @@ xul-ext-lightning
 file-roller
 wine
 filezilla
-krdc
 wireshark
 virtualbox
 geogebra
@@ -45,7 +38,6 @@ rednotebook
 gedit
 gedit-plugins
 scribus
-kompozer
 planner
 freemind
 ttf-dejavu
@@ -57,7 +49,7 @@ dia
 blender
 gimp
 inkscape
-ardour3
+ardour
 audacity
 jackd2
 qjackctl
@@ -83,17 +75,11 @@ glade
 netbeans
 g++
 git
-libboost1.48-all-dev
-libglew1.6-dev
-libsfml-dev
-libgmp-dev
-libmpfr-dev
-libncurses5-dev
 default-jdk
 icedtea-plugin
 liblwjgl-java
 arduino
-screen
+tmux
 
 #Utilities
 cifs-utils
@@ -111,15 +97,13 @@ gnupg
 language-pack-en
 ldap-utils
 synaptic
-rubygems
-ruby-dev
 xmlstarlet
 resolvconf
 iputils-arping
 libnss3-tools
 sssd
-ubuntu-extras-keyring
 virtualbox-guest-utils
+virtualbox-guest-x11
 wpasupplicant
 ssh
 
