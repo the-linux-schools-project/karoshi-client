@@ -301,7 +301,7 @@ user_pref('network.proxy.socks_port', 3128);
 user_pref('network.proxy.gopher', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.gopher_port', 3128);
 user_pref('network.proxy.type', 1);
-user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $PDC');
+user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC');
 user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			else
 				#For no proxy, we want the homepage to be about:home
@@ -348,7 +348,7 @@ user_pref('network.proxy.socks_port', 3128);
 user_pref('network.proxy.gopher', '$PROXYSERVER.$DNSSUFFIX');
 user_pref('network.proxy.gopher_port', 3128);
 user_pref('network.proxy.type', 1);
-user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, $DNSSUFFIX, $PDC');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
+user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 			fi
 
 			#Set up Kerberos
@@ -475,9 +475,9 @@ EOF
 	export MOZ_CRASHREPORTER_DISABLE=1
 
 	#xscreensaver extend timeout for staff
-	if $is_staff; then
-		[[ -f ~/.xscreensaver ]] && sed -i 's/\(timeout:[[:space:]]*\).*/\10:20:00/' ~/.xscreensaver
-	fi
+	#if $is_staff; then
+	#	[[ -f ~/.xscreensaver ]] && sed -i 's/\(timeout:[[:space:]]*\).*/\10:20:00/' ~/.xscreensaver
+	#fi
 
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists && [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
