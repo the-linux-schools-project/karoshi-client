@@ -2,10 +2,10 @@
 # Written by xscreensaver-demo 5.15 for administrator on Tue Jul  3 18:53:55 2012.
 # http://www.jwz.org/xscreensaver/
 
-timeout:	0:04:00
+timeout:	0:01:00
 cycle:		0:10:00
-lock:		True
-lockTimeout:	0:01:00
+lock:		False
+lockTimeout:	0:00:00
 passwdTimeout:	0:00:30
 visualID:	default
 installColormap:    True
@@ -34,7 +34,7 @@ grabVideoFrames:    False
 chooseRandomImages: False
 imageDirectory:	
 
-mode:		blank
+mode:		off
 selected:	141
 
 textMode:	url
