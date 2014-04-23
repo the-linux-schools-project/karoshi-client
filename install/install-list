@@ -106,4 +106,5 @@ virtualbox-guest-utils
 virtualbox-guest-x11
 wpasupplicant
 ssh
+gksu
 

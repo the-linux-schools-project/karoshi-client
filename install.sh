@@ -354,7 +354,7 @@ fi
 #Add new APT repositories
 if [[ -f install/apt-repositories ]]; then
 	while read -r apt_repo; do
-		add-apt-repository "$apt_repo"
+		add-apt-repository -y "$apt_repo"
 	done < install/apt-repositories
 fi
 
