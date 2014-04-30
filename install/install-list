@@ -16,7 +16,7 @@ catfish
 
 #General Applications
 lightdm
-lightdm-kde-greeter
+lightdm-gtk-greeter
 firefox
 flashplugin-installer
 thunderbird
