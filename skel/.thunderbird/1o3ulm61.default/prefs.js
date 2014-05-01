@@ -53,6 +53,6 @@ user_pref("mailnews.tags.version", 2);
 user_pref("mailnews.default_sort_type", 18);
 user_pref("mailnews.default_sort_order", 2);
 user_pref("network.cookie.prefsMigrated", true);
-user_pref("toolkit.telemetry.prompted", true);
+user_pref("toolkit.telemetry.prompted", 2);
 user_pref("xpinstall.whitelist.add", "");
 user_pref("xpinstall.whitelist.add.36", "");
