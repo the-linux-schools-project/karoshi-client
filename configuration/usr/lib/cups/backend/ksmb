@@ -74,7 +74,11 @@ fi
 chown $strUserName $strTmpFile
 strPrintCommand="smbclient //$strServer/$strPrinter -k -E -U \"$strUserName\" -c \"print $strTmpFile\""
 echo "Print command used is: $strPrintCommand" >> $output
-intReturn=$(su -c "$strPrintCommand >&2; echo $?" $strUserName 2>$output)
+intReturn=$(su $strUserName 2>>$output -c "
+	# unset PASSWD_FD to avoid smbclient trying to read password from stdin
+	unset PASSWD_FD
+	$strPrintCommand >&2
+	echo $?")
 echo "Return code from smbclient: $intReturn" >> $output
 
 # clean up
