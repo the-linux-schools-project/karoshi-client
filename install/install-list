@@ -105,6 +105,7 @@ libnss3-tools
 sssd
 virtualbox-guest-utils
 virtualbox-guest-x11
+xserver-xorg-video-all
 wpasupplicant
 ssh
 gksu
