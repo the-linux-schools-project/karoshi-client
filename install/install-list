@@ -109,4 +109,5 @@ xserver-xorg-video-all
 wpasupplicant
 ssh
 gksu
+zsh
 
