@@ -92,7 +92,6 @@ xautolock
 remastersys-gui
 yad
 winbind
-nscd
 ubiquity-casper
 gnupg
 language-pack-en
