@@ -21,17 +21,139 @@
 #
 #Website: http://www.karoshi.org.uk
 
-#Generate auto rules for running services on privilaged ports
-if iptables -n --list karoshi-auto >/dev/null 2>&1; then
-	iptables -F karoshi-auto
-	while read -r protocol _ _ _ bind_addr _; do
-		port=${bind_addr##*:}
-		if ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ) && [[ $port =~ ^[0-9]*$ ]]; then
-			iptables -A karoshi-auto -p "$protocol" --dport "$port" -j ACCEPT
-		else
-			echo "WARNING: Unknown error auto-generating ACCEPTion" >&2
-			echo "Protocol: $protocol	Bind address: $bind_addr" >&2
+#Add iptables template
+iptables-restore < /opt/karoshi/linuxclientsetup/config-files/firewall/iptables.rules
+
+deny_target="DROP"
+
+if ! karoshi-manage-flags get firewall_no_ping >/dev/null; then
+	iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+fi
+if ! karoshi-manage-flags get firewall_drop_deny >/dev/null; then
+	iptables -A INPUT -j REJECT
+	deny_target="REJECT"
+fi
+
+function process_rules {
+	# $1 = file to process
+	# $2 = iptables chain
+	[[ $1 ]] || return
+	if ! [[ -f $1 ]]; then
+		echo "ERROR: Firewall rule processing: rule file $1 does not exist" >&2
+		return
+	fi
+	[[ $2 ]] || return
+	if ! iptables -n --list "$2" >/dev/null; then
+		echo "ERROR: Firewall rule processing: chain $2 does not exist" >&2
+		return
+	fi
+
+	(( line_no = 0 ))
+	while read -r action protocol port source; do
+		(( ++line_no ))
+		if [[ $action ]] && [[ $action != \#* ]]; then
+			rule=( )
+
+			#Protocol
+			case "$protocol" in
+			all|any)
+				;;
+			*)
+				if getent protocols "$protocol" >/dev/null; then
+					rule+=( -p "$protocol" )
+				else
+					echo "$1:$line_no: Invalid protocol - $protocol" >&2
+					continue
+				fi
+				;;
+			esac
+
+			#Port
+			case "$port" in
+			-)
+				if [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]]; then
+					echo "$1:$line_no: Port required for TCP or UDP" >&2
+					continue
+				fi
+				;;
+			all|any)
+				;;
+			*:*)
+				if ! ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ); then
+					echo "$1:$line_no: Port option requires TCP or UDP" >&2
+					continue
+				fi
+				port1=${port%%:*}
+				port2=${port#*:}
+				if (( port1 > 0 && port1 < 65536 )) && (( port2 > 0 && port2 < 65536 )); then
+					rule+=( --dport $port )
+				else
+					echo "$1:$line_no: Invalid port range $port" >&2
+				fi
+				;;
+			*)
+				if ! ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ); then
+					echo "$1:$line_no: Port option requires TCP or UDP" >&2
+					continue
+				fi
+				if getent services "$port" >/dev/null || ( (( port > 0 && port < 65536 )) ); then
+					rule+=( --dport $port )
+				else
+					echo "$1:$line_no: Invalid port $port" >&2
+					continue
+				fi
+				;;
+			esac
+
+			#Source
+			case "$source" in
+			any|all|"")
+				;;
+			*)
+				rule+=( --source "$source" )
+				;;
+			esac
+
+			#Action
+			case "$action" in
+			allow)
+				rule+=( -j ACCEPT )
+				;;
+			deny)
+				rule+=( -j "$deny_target" )
+				;;
+			*)
+				echo "$1:$line_no: Invalid action $action" >&2
+				continue
+				;;
+			esac
+
+			#Commit rule
+			iptables -A "$2" "${rule[@]}"
 		fi
-	done < <(ss -4tuan sport != 127.0.0.1: and sport lt :49152 | tail -n +2)
+	done < "$1"
+}
+
+if [[ -f /var/lib/karoshi/firewall/domain_rules ]]; then
+	process_rules /var/lib/karoshi/firewall/domain_rules karoshi-domain
+fi
+if [[ -f /var/lib/karoshi/firewall/local_rules ]]; then
+	process_rules /var/lib/karoshi/firewall/local_rules karoshi-local
+fi
+
+if ! karoshi-manage-flags get firewall_no_auto >/dev/null; then
+	#Generate auto rules for running services on privilaged ports
+	if iptables -n --list karoshi-auto >/dev/null 2>&1; then
+		iptables -F karoshi-auto
+		while read -r protocol _ _ _ bind_addr _; do
+			port=${bind_addr##*:}
+			if ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ) && [[ $port =~ ^[0-9]*$ ]]; then
+				iptables -A karoshi-auto -p "$protocol" --dport "$port" -j ACCEPT
+			else
+				echo "WARNING: Unknown error auto-generating ACCEPTion" >&2
+				echo "Protocol: $protocol	Bind address: $bind_addr" >&2
+			fi
+		done < <(ss -4tuan sport != 127.0.0.1: and sport lt :49152 | tail -n +2)
+	fi
 fi
 

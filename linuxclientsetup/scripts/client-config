@@ -257,132 +257,36 @@ fi
 #Configure firewall
 ###########################
 echo "Configuring firewall"
-#Reset firewall to defaults
-iptables -P INPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -P OUTPUT ACCEPT
-iptables -F
-iptables -X
 
-#Create and configure log deny chains
-iptables -N LOGDROP
-iptables -N LOGREJECT
+if [[ ! -d /var/lib/karoshi/firewall ]]; then
+	mkdir /var/lib/karoshi/firewall
+fi
 
-iptables -A LOGDROP -j LOG
-iptables -A LOGREJECT -j LOG
+#Copy in rules
+if [[ -f /var/lib/karoshi/firewall/domain_rules ]]; then
+	rm -f /var/lib/karoshi/firewall/domain_rules
+fi
+if [[ -f /tmp/netlogon/client_settings/firewall/rules ]]; then
+	cp /tmp/netlogon/client_settings/firewall/rules /var/lib/karoshi/firewall/domain_rules
+fi
 
-iptables -A LOGDROP -j DROP
-iptables -A LOGREJECT -j REJECT
+#Legacy local rules support
+if [[ -f /opt/karoshi/firewall_rules ]]; then
+	mv /opt/karoshi/firewall_rules /var/lib/karoshi/firewall/local_rules
+fi
 
-#Create Karoshi chains
-iptables -N karoshi-local #Local rules
-iptables -N karoshi-domain #Domain rules
-#iptables -N karoshi-auto #Auto-generated rules
+#Firewall settings
+karoshi-manage-flags unset firewall_no_ping
+karoshi-manage-flags unset firewall_drop_deny
 
-#Add rules to INPUT chain
-iptables -A INPUT -i lo -j ACCEPT #Allow all traffic on lo
-iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT #Allow established connections
-[[ -e /tmp/netlogon/client_settings/firewall/no_ping ]] || iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT #Permit pings
-iptables -A INPUT -j karoshi-local
-iptables -A INPUT -j karoshi-domain
-#iptables -A INPUT -j karoshi-auto
-[[ -e /tmp/netlogon/client_settings/firewall/drop_deny ]] || iptables -A INPUT -j REJECT #Reject all other packets
+if [[ -f /tmp/netlogon/client_settings/firewall/no_ping ]]; then
+	karoshi-manage-flags set firewall_no_ping
+fi
+if [[ -f /tmp/netlogon/client_settings/firewall/drop_deny ]]; then
+	karoshi-manage-flags set firewall_drop_deny
+fi
 
-#Firewall rule processing
-deny_target="LOGREJECT"
-[[ -e /tmp/netlogon/client_settings/firewall/drop_deny ]] && deny_target="LOGDROP"
-function process_rules {
-	# $1 = file to process
-	# $2 = iptables chain
-	[[ $1 ]] || return
-	if ! [[ -f $1 ]]; then
-		echo "ERROR: Firewall rule processing: rule file $1 does not exist" >&2
-		return
-	fi
-	[[ $2 ]] || return
-	if ! iptables -n --list "$2" >/dev/null; then
-		echo "ERROR: Firewall rule processing: chain $2 does not exist" >&2
-		return
-	fi
-
-	(( line_no = 0 ))
-	while read -r action protocol port source; do
-		(( ++line_no ))
-		if [[ $action ]] && [[ $action != \#* ]]; then
-			rule=( )
-
-			#Protocol
-			case "$protocol" in
-			all|any)
-				;;
-			*)
-				if getent protocols "$protocol" >/dev/null; then
-					rule+=( -p "$protocol" )
-				else
-					echo "$1:$line_no: Invalid protocol - $protocol" >&2
-					continue
-				fi
-				;;
-			esac
-
-			#Port
-			case "$port" in
-			all|any)
-				;;
-			*)
-				if getent services "$port" >/dev/null || ( [[ $port -gt 0 ]] && [[ $port -lt 65535 ]] ); then
-					if ! ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ); then
-						echo "$1:$line_no: Port option requires TCP or UDP protocol" >&2
-						continue
-					fi
-					rule+=( --dport $port )
-				else
-					echo "$1:$line_no: Invalid port - $port" >&2
-					continue
-				fi
-				;;
-			esac
-
-			#Source
-			case "$source" in
-			any|all|"")
-				;;
-			*)
-				rule+=( --source "$source" )
-				;;
-			esac
-
-			#Action
-			case "$action" in
-			allow)
-				rule+=( -j ACCEPT )
-				;;
-			deny)
-				rule+=( -j "$deny_target" )
-				;;
-			*)
-				echo "$1:$line_no: Invalid action - $action" >&2
-				continue
-				;;
-			esac
-
-			#Commit rule
-			iptables -A "$2" "${rule[@]}"
-		fi
-	done < "$1"
-}
-
-[[ -f /tmp/netlogon/client_settings/firewall/rules ]] && process_rules /tmp/netlogon/client_settings/firewall/rules karoshi-domain
-[[ -f /opt/karoshi/firewall_rules ]] && process_rules /opt/karoshi/firewall_rules karoshi-local
-
-##Generate auto rules
-#echo "Performing auto-generation of firewall rules"
-#karoshi-generate-firewall-rules
-
-#Set default policies - done last to prevent connection dropouts
-iptables -P INPUT DROP
-iptables -P FORWARD DROP
-iptables -P OUTPUT ACCEPT
+karoshi-generate-firewall-rules
 
 ###########################
 #Update acceptable_use
