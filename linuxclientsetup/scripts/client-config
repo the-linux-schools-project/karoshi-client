@@ -44,7 +44,7 @@ IFS=$'\n'
 [[ -f /tmp/netlogon/domain_information/proxy_server ]] && read -r -d $'\0' PROXYSERVER _ < /tmp/netlogon/domain_information/proxy_server
 [[ -f /tmp/netlogon/domain_information/clientshutdowntime ]] && read -r -d $'\0' CLIENTSHUTDOWNTIME _ < /tmp/netlogon/domain_information/clientshutdowntime
 [[ -f /tmp/netlogon/domain_information/idletime ]] && read -r -d $'\0' IDLESHUTDOWNTIME _ < /tmp/netlogon/domain_information/idletime
-[[ -f /tmp/netlogon/domain_information/mail_server ]] && MAILSERVER=true
+[[ -f /tmp/netlogon/domain_information/mail_server ]] && read -r -d $'\0' MAILSERVER _ < /tmp/netlogon/domain_information/mail_server
 unset IFS
 
 ####################
@@ -185,17 +185,18 @@ fi
 #Thunderbird extensions
 #######################
 
-function do_xpi {
-	xpi_name=$(basename "$1")
-	xpi_name=${xpi_name%.xpi}
+#{3550f703-e582-4d05-9a08-453d09bdfdc6} is the app-id for Thunderbird
+thunderbird_extensionsdir = /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6}
 
-	if [[ -z $xpi_name ]]; then
-		echo "Warning: Something bad happened" >&2
-		return
+function do_xpi_raw {
+	xpi_name=$1
+	xpi_dir=$2
+
+	if [[ ! -d $xpi_dir ]]; then
+		return 1
 	fi
 
-	mkdir /opt/karoshi/thunderbird/extensions/"$xpi_name"
-	unzip -q "$1" -d /opt/karoshi/thunderbird/extensions/"$xpi_name"
+	cp -rT "$xpi_dir" /opt/karoshi/thunderbird/extensions/"$xpi_name"
 
 	xpi_id=$(xmlstarlet sel -N rdf=http://www.w3.org/1999/02/22-rdf-syntax-ns# -N em=http://www.mozilla.org/2004/em-rdf# \
 				-t -m "//rdf:Description[@about='urn:mozilla:install-manifest']" -i "em:id" -v "em:id" --else -v "@em:id" \
@@ -207,24 +208,56 @@ function do_xpi {
 	fi
 
 	#Install extension
-	ln -Ts /opt/karoshi/thunderbird/extensions/"$xpi_name" /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6}/"$xpi_id"
+	ln -Ts /opt/karoshi/thunderbird/extensions/"$xpi_name" "$thunderbird_extensionsdir"/"$xpi_id"
 }
 
-#{3550f703-e582-4d05-9a08-453d09bdfdc6} is the app-id for Thunderbird
-[[ -d /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} ]] || mkdir -p /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6}
-[[ -d /opt/karoshi/thunderbird/extensions ]] || mkdir -p /opt/karoshi/thunderbird/extensions
+function do_xpi {
+	xpi_name=$(basename "$1")
+	xpi_name=${xpi_name%.xpi}
 
-echo "Clearing current Thunderbird extensions"
-#Clear all extensions
-find /opt/karoshi/thunderbird/extensions -mindepth 1 -delete
-find /usr/lib/mozilla/extensions/{3550f703-e582-4d05-9a08-453d09bdfdc6} -maxdepth 1 -lname '/opt/karoshi/thunderbird/extensions/*' -delete
+	if [[ -z $xpi_name ]]; then
+		echo "Warning: Something bad happened" >&2
+		return
+	fi
 
-if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/thunderbird/extensions ]]; then
-	#Global extensions
-	while read -r -d $'\0' xpi; do
-		echo "Found new extension: $xpi"
-		do_xpi "$xpi"
-	done < <(find /tmp/netlogon/linuxclient/$LINUX_VERSION/thunderbird/extensions -maxdepth 1 -mindepth 1 -name '*.xpi' -print0)
+	temp_dir=$(mktemp -d)
+
+	unzip -q "$1" -d "$temp_dir"
+	do_xpi_raw "$xpi_name" "$temp_dir"
+
+	rm -rf "$temp_dir"
+}
+
+if [[ $MAILSERVER ]]; then
+	[[ -d $thunderbird_extensionsdir ]] || mkdir -p "$thunderbird_extensionsdir"
+	[[ -d /opt/karoshi/thunderbird/extensions ]] || mkdir -p /opt/karoshi/thunderbird/extensions
+
+	echo "Clearing current Thunderbird extensions"
+	#Clear all extensions
+	find /opt/karoshi/thunderbird/extensions -mindepth 1 -delete
+	find "$thunderbird_extensionsdir" -maxdepth 1 -lname '/opt/karoshi/thunderbird/extensions/*' -delete
+
+	timezone=$(< /etc/timezone)
+	mailserver_alias=$(< /tmp/netlogon/domain_information/aliases/"$MAILSERVER")
+
+	#Install SOGo
+	do_xpi_raw sogo-connector /opt/karoshi/linuxclientsetup/config-files/thunderbird/sogo-connector
+	do_xpi_raw sogo-integrator /opt/karoshi/linuxcliensetup/config-files/thunderbird/sogo-integrator
+	if [[ -d /opt/karoshi/thunderbird/extensions/sogo-integrator ]]; then
+		sed -i "s@CHANGETHISTIMEZONE@$timezone@" \
+			/opt/karoshi/thunderbird/extensions/sogo-integrator/defaults/preferences/site.js
+		sed -i "s@CHANGETHISSOGO@$mailserver_alias.$DNSSUFFIX@" \
+			/opt/karoshi/thunderbird/extensions/sogo-integrator/chrome/content/extensions.rdf
+	fi
+	#Install Firetray
+	do_xpi_raw firetray /opt/karoshi/linuxclientsetup/config-files/thunderbird/firetray
+
+	if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/thunderbird/extensions ]]; then
+		while read -r -d $'\0' xpi; do
+			echo "Found new extension: $xpi"
+			do_xpi "$xpi"
+		done < <(find /tmp/netlogon/linuxclient/$LINUX_VERSION/thunderbird/extensions -maxdepth 1 -mindepth 1 -name '*.xpi' -print0)
+	fi
 fi
 
 ###########################
