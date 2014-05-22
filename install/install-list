@@ -13,6 +13,7 @@ xubuntu-icon-theme
 thunar-archive-plugin
 thunar-media-tags-plugin
 catfish
+appmenu-gtk
 
 #General Applications
 lightdm
