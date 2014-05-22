@@ -12,13 +12,12 @@
         <value type="int" value="101"/>
         <value type="int" value="2"/>
         <value type="int" value="3"/>
-        <value type="int" value="4"/>
         <value type="int" value="102"/>
-        <value type="int" value="5"/>
+        <value type="int" value="4"/>
         <value type="int" value="103"/>
-        <value type="int" value="6"/>
+        <value type="int" value="5"/>
         <value type="int" value="104"/>
-        <value type="int" value="7"/>
+        <value type="int" value="6"/>
       </property>
       <property name="background-style" type="uint" value="0"/>
       <property name="horizontal" type="bool" value="true"/>
@@ -39,8 +38,8 @@
       <property name="leave-opacity" type="uint" value="100"/>
       <property name="position-locked" type="bool" value="true"/>
       <property name="plugin-ids" type="array">
+        <value type="int" value="7"/>
         <value type="int" value="8"/>
-        <value type="int" value="9"/>
       </property>
     </property>
   </property>
@@ -62,18 +61,14 @@
       </property>
     </property>
     <property name="plugin-3" type="string" value="indicator"/>
-    <property name="plugin-4" type="string" value="mixer">
-      <property name="command" type="string" value="xfce4-mixer"/>
-      <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
-    </property>
-    <property name="plugin-5" type="string" value="datetime"/>
-    <property name="plugin-6" type="string" value="pager">
+    <property name="plugin-4" type="string" value="datetime"/>
+    <property name="plugin-5" type="string" value="pager">
       <property name="rows" type="uint" value="1"/>
       <property name="show-names" type="bool" value="false"/>
       <property name="workspace-scrolling" type="bool" value="true"/>
       <property name="miniature-view" type="bool" value="true"/>
     </property>
-    <property name="plugin-7" type="string" value="actions">
+    <property name="plugin-6" type="string" value="actions">
       <property name="items" type="array">
         <value type="string" value="+lock-screen"/>
         <value type="string" value="-switch-user"/>
@@ -90,8 +85,8 @@
       <property name="appearance" type="uint" value="1"/>
       <property name="invert-orientation" type="bool" value="false"/>
     </property>
-    <property name="plugin-8" type="string" value="showdesktop"/>
-    <property name="plugin-9" type="string" value="tasklist">
+    <property name="plugin-7" type="string" value="showdesktop"/>
+    <property name="plugin-8" type="string" value="tasklist">
       <property name="flat-buttons" type="bool" value="false"/>
       <property name="show-handle" type="bool" value="true"/>
       <property name="grouping" type="uint" value="0"/>
