@@ -107,7 +107,7 @@ virtualbox-guest-utils
 virtualbox-guest-x11
 xserver-xorg-video-all
 wpasupplicant
-ssh
+ssh-krb5
 gksu
 zsh
 
