@@ -136,7 +136,7 @@ function do_remastersys {
 
 	#Link karoshi-setup
 	[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
-	ln -sf ~administrator/Desktop/karoshi-setup.desktop ~administrator/.config/autostart/
+	ln -sf /usr/share/applications/karoshi-setup.desktop ~administrator/.config/autostart/
 	chown -R administrator:administrator ~administrator
 
 	#Administrator autologin
