@@ -4,6 +4,6 @@ Encoding=UTF-8
 Version=1.0
 Type=Application
 Terminal=false
-Exec=yad --title="Offline Home Area Merge" --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 --button="gtk-ok" --text="You are now connected to the network.\n\nPlease move any work that you want to keep from 'Offline Home' to your network home area. Logging out will remove the offline home area."
+Exec=yad --title="Offline Home Area Merge" --image=karoshi-logo --window-icon=karoshi-logo --width=400 --button="gtk-ok" --text="You are now connected to the network.\n\nPlease move any work that you want to keep from 'Offline Home' to your network home area. Logging out will remove the offline home area."
 Name=Offline Home Folder - Online Merge
 Icon=archive-insert-directory

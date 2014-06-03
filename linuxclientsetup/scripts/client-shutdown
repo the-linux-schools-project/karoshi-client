@@ -47,7 +47,7 @@ function sendXNotifications {
 		done
 		if $is_valid; then
 			echo "Found valid XAUTHORITY: $XAUTHORITY for $DISPLAY"
-			notify-send -u critical "Scheduled Shutdown" "This system is going down in $1 $minute_string\nMake sure to save your work!" -i /opt/karoshi/linuxclientsetup/images/smalllogo.xpm
+			notify-send -u critical "Scheduled Shutdown" "This system is going down in $1 $minute_string\nMake sure to save your work!" -i karoshi-logo
 		else
 			echo "Unable to find XAUTHORITY for $DISPLAY"
 		fi

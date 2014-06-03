@@ -88,7 +88,7 @@ elif [[ $# -eq 0 ]]; then
 			command+=( "--field=${flagsCanonical[$flag]}:CHK" "${flags[$flag]}" )
 		done
 
-		data=`yad --image="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --window-icon="/opt/karoshi/linuxclientsetup/images/smalllogo.xpm" --width=400 \
+		data=`yad --image=karoshi-logo --window-icon=karoshi-logo --width=400 \
 				  --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
 				  --form "${command[@]}"`
 		yadstatus=$?
