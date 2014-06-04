@@ -193,6 +193,7 @@ function do_xpi_raw {
 	xpi_dir=$2
 
 	if [[ ! -d $xpi_dir ]]; then
+		echo "Error: No such directory $xpi_dir" >&2
 		return 1
 	fi
 
@@ -242,7 +243,7 @@ if [[ $MAILSERVER ]]; then
 
 	#Install SOGo
 	do_xpi_raw sogo-connector /opt/karoshi/linuxclientsetup/config-files/thunderbird/sogo-connector
-	do_xpi_raw sogo-integrator /opt/karoshi/linuxcliensetup/config-files/thunderbird/sogo-integrator
+	do_xpi_raw sogo-integrator /opt/karoshi/linuxclientsetup/config-files/thunderbird/sogo-integrator
 	if [[ -d /opt/karoshi/thunderbird/extensions/sogo-integrator ]]; then
 		sed -i "s@CHANGETHISTIMEZONE@$timezone@" \
 			/opt/karoshi/thunderbird/extensions/sogo-integrator/defaults/preferences/site.js
