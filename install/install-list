@@ -85,6 +85,7 @@ arduino
 tmux
 
 #Utilities
+cups
 cifs-utils
 libpam-mount
 krb5-user
