@@ -414,7 +414,7 @@ else
 	#Add file manager entry to / if administrator
 	if $is_admin; then
 		sudo_open=true
-		create_entries "File Manager" / folder-system
+		create_entries "File Manager" / system-file-manager
 		unset sudo_open
 	fi
 fi
