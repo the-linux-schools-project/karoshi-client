@@ -86,6 +86,8 @@ tmux
 
 #Utilities
 cups
+printer-driver-all
+openprinting-ppds
 cifs-utils
 libpam-mount
 krb5-user
