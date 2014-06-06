@@ -10,8 +10,4 @@
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -j karoshi-local
 -A INPUT -j karoshi-domain
--A LOGDROP -j LOG
--A LOGDROP -j DROP
--A LOGREJECT -j LOG
--A LOGREJECT -j REJECT --reject-with icmp-port-unreachable
 COMMIT
