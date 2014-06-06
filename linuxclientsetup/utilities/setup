@@ -179,6 +179,9 @@ cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
 pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
 pam-auth-update --package
 
+#Recreate SSH host keys
+dpkg-reconfigure openssh-server
+
 [[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
 
 ##################
