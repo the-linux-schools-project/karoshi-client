@@ -141,19 +141,3 @@ if [[ -f /var/lib/karoshi/firewall/local_rules ]]; then
 	process_rules /var/lib/karoshi/firewall/local_rules karoshi-local
 fi
 
-if ! karoshi-manage-flags get firewall_no_auto >/dev/null; then
-	#Generate auto rules for running services on privilaged ports
-	if iptables -n --list karoshi-auto >/dev/null 2>&1; then
-		iptables -F karoshi-auto
-		while read -r protocol _ _ _ bind_addr _; do
-			port=${bind_addr##*:}
-			if ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ) && [[ $port =~ ^[0-9]*$ ]]; then
-				iptables -A karoshi-auto -p "$protocol" --dport "$port" -j ACCEPT
-			else
-				echo "WARNING: Unknown error auto-generating ACCEPTion" >&2
-				echo "Protocol: $protocol	Bind address: $bind_addr" >&2
-			fi
-		done < <(ss -4tuan sport != 127.0.0.1: and sport lt :49152 | tail -n +2)
-	fi
-fi
-
