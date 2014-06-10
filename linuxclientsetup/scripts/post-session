@@ -38,6 +38,7 @@ config_exclude=(
 	.dbus
 	.VirtualBox
 	.goutputstream-*
+	.wine
 )
 
 function checkAndList {
