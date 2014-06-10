@@ -85,6 +85,7 @@ if [[ ! -f /etc/security/pam_mount.conf.xml ]]; then
 	cat > /etc/security/pam_mount.conf.xml << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <pam_mount>
+<debug enable="0" />
 
 </pam_mount>
 EOF
