@@ -135,7 +135,7 @@ if $is_domain; then
 		list=( )
 		#Populate list with all hidden folders, with some exceptions
 		for dir in ~/.*; do
-			checkAndListConfig "${file##~/}"
+			checkAndListConfig "${dir##~/}"
 		done
 
 		while read -d $'\0' -r file ; do
