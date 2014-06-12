@@ -265,7 +265,7 @@ fi
 ###########################
 #Create cronjob to shut computer down
 ###########################
-if [[ $CLIENTSHUTDOWNTIME ]]; then
+if [[ $CLIENTSHUTDOWNTIME ]] && ! karoshi-manage-flags get no_shutdown >/dev/null; then
 	echo "Setting auto shutdown time to $CLIENTSHUTDOWNTIME"
 	hours=`cut -d: -f1 <<< "$CLIENTSHUTDOWNTIME"`
 	minutes=`cut -d: -f2 <<< "$CLIENTSHUTDOWNTIME"`
