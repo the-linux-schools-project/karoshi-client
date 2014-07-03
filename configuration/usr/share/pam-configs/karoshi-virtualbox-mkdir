@@ -4,4 +4,4 @@ Priority: 129
 Session-Type: Additional
 Session-Interactive-Only: yes
 Session:
-	optional	pam_exec.so log=/var/log/karoshi/virtualbox-mkdir.log seteuid quiet /usr/bin/karoshi-pam-wrapper --event=open_session /opt/karoshi/scripts/virtualbox-mkdir
+	optional	pam_exec2.so log=/var/log/karoshi/virtualbox-mkdir.log type=open_session once /opt/karoshi/scripts/virtualbox-mkdir

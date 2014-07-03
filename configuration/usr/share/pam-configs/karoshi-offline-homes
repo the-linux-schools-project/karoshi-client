@@ -4,4 +4,4 @@ Priority: 129
 Session-Type: Additional
 Session-Interactive-Only: yes
 Session:
-	optional	pam_exec.so log=/var/log/karoshi/offline-homes.log seteuid quiet /usr/bin/karoshi-pam-wrapper --event=open_session /opt/karoshi/scripts/offline-homes
+	optional	pam_exec2.so log=/var/log/karoshi/offline-homes.log type=open_session once /opt/karoshi/scripts/offline-homes

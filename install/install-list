@@ -115,4 +115,5 @@ ssh-krb5
 gksu
 zsh
 gvfs-backends
+pam-exec2
 
