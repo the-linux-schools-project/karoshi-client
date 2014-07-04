@@ -187,7 +187,7 @@ dpkg-reconfigure openssh-server
 #Install default firewall rules
 if ! [[ -e $KAROSHI_DATA/firewall/local_rules ]]; then
 	mkdir -p "$KAROSHI_DATA"/firewall
-	cp -t "$KAROSHI_DATA"/firewall /opt/karoshi/linuxclientsetup/firewall/local_rules
+	cp -t "$KAROSHI_DATA"/firewall /opt/karoshi/linuxclientsetup/config-files/firewall/local_rules
 fi
 
 ##################

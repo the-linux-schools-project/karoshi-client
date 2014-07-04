@@ -572,9 +572,6 @@ else
 	service winbind restart
 fi
 
-#Refresh nscd
-nscd -i passwd
-nscd -i group
 ####################
 #End of domain setup
 ####################
