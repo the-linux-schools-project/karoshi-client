@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
+#Copyright (C) 2013, 2014 Robin McCorkell
 #Original Copyright (C) 2010 Paul Sharrad
 
 #This file is part of Karoshi Client.
@@ -512,7 +512,8 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 		pam-auth-update --package --remove sss sss-password
 		pam-auth-update --package
 		#Restart sssd
-		restart sssd
+		stop sssd
+		start sssd
 	fi
 else
 	#Using a Samba3 domain
