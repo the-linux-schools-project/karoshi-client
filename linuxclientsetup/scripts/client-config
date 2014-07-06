@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
+#Copyright (C) 2013, 2014 Robin McCorkell
 #Original Copyright (C) 2006  Paul Sharrad
 
 #This file is part of Karoshi Client.
@@ -446,7 +446,7 @@ if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:spa
 	vbox_set=false
 	#Detect any ext4 partition with a label of KAROSHI-VBOX
 	while read -r partition; do
-		if [[ $(e2label "$partition") == "KAROSHI-VBOX" ]]; then
+		if [[ $(e2label "$partition" 2>/dev/null) == "KAROSHI-VBOX" ]]; then
 			echo "Found existing VirtualBox partition for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $partition"
 			configureVboxPartition "$partition"
 			vbox_set=true
