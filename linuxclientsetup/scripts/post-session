@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
+#Copyright (C) 2013, 2014 Robin McCorkell
 
 #This file is part of Karoshi Client.
 #
@@ -90,12 +90,6 @@ if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 fi
 if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
 	thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
-fi
-
-#Exit if still logged in
-if [[ $(pmvarrun -u "$(id -nu)" -o 0) -gt 1 ]]; then
-	echo "User still logged in - exiting"
-	exit 0
 fi
 
 #Remove Karoshi desktop icons
