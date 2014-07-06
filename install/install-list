@@ -14,6 +14,7 @@ thunar-archive-plugin
 thunar-media-tags-plugin
 catfish
 appmenu-gtk
+gnome-calculator
 
 #General Applications
 lightdm

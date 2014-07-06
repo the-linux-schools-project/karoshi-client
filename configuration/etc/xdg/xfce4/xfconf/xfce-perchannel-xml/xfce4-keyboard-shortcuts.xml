@@ -25,7 +25,7 @@
       <property name="&lt;Super&gt;v" type="string" value="virtualbox"/>
       <property name="&lt;Super&gt;o" type="string" value="libreoffice"/>
       <property name="&lt;Super&gt;g" type="string" value="gimp"/>
-      <property name="&lt;Super&gt;c" type="string" value="gcalctool"/>
+      <property name="&lt;Super&gt;c" type="string" value="gnome-calculator"/>
       <property name="&lt;Super&gt;r" type="string" value="xfce4-appfinder"/>
       <property name="&lt;Super&gt;e" type="string" value="gedit"/>
     </property>
