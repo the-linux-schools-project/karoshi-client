@@ -500,5 +500,9 @@ else
 }' /etc/security/group.conf
 fi
 
+# Prevent access to xfce4-desktop-settings for non-itadmin users
+chown root:itadmin /usr/bin/xfce4-desktop-settings
+chmod 754 /usr/bin/xfce4-desktop-settings
+
 #Write new variables to file
 updateVariables
