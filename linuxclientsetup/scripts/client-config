@@ -490,16 +490,6 @@ for device in /dev/sd*; do
 	fi
 done
 
-#Configure pam_group.so for offline users
-if karoshi-manage-flags get offline_mode >/dev/null; then
-	sed -i 's/^### Karoshi Hook ###$/### * Karoshi Hook * ###\
-*;*;*;Al0000-2400;lpadmin,netdev/' /etc/security/group.conf
-else
-	sed -i '/^### \* Karoshi Hook \* ###$/ { N; c\
-### Karoshi Hook ###
-}' /etc/security/group.conf
-fi
-
 # Prevent access to xfce4-desktop-settings for non-itadmin users
 chown root:itadmin /usr/bin/xfce4-desktop-settings
 chmod 754 /usr/bin/xfce4-desktop-settings
