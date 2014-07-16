@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
+#Copyright (C) 2013-2014 Robin McCorkell
 
 #This file is part of Karoshi Client.
 #
@@ -145,14 +145,13 @@ echo 60 >&11
 echo \#Resetting hostname >&11
 
 #Deconfigure hostname
-echo "ubuntu" > /etc/hostname
-hostname "ubuntu"
+hostnamectl set-hostname "karoshi"
 
 sed -i "/##STATIC##/{ N; d; }" /etc/hosts
 if grep "^127\.0\.1\.1" /etc/hosts; then
-	sed -i "s/^127\.0\.1\.1.*/127.0.1.1 ubuntu/" /etc/hosts
+	sed -i "s/^127\.0\.1\.1.*/127.0.1.1 karoshi/" /etc/hosts
 else
-	echo "127.0.1.1	ubuntu" >> /etc/hosts
+	echo "127.0.1.1	karoshi" >> /etc/hosts
 fi
 
 #Deconfigure all network interfaces

@@ -138,12 +138,13 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 function updateHostname {
 	[[ -z $CLIENT_NAME ]] && return
 	if [[ $DNSSUFFIX ]]; then
+		hostname=$CLIENT_NAME.$DNSSUFFIX
 		hosts_line="$CLIENT_NAME.$DNSSUFFIX $CLIENT_NAME"
 	else
+		hostname=$CLIENT_NAME
 		hosts_line="$CLIENT_NAME"
 	fi
-	echo "$CLIENT_NAME" > /etc/hostname
-	hostname "$CLIENT_NAME"
+	hostnamectl set-hostname "$hostname"
 
 	if $dhcp; then
 		sed -i "/##STATIC##/{ N; d; }" /etc/hosts
