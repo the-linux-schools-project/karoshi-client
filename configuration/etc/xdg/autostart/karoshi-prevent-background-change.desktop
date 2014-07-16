@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Karoshi background change prevention
+Comment=Prevent XFCE background modification
+OnlyShowIn=XFCE;
+Exec=karoshi-prevent-background-change
