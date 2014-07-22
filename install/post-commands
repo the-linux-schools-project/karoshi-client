@@ -1,3 +1,3 @@
 sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
 update-grub
-echo "AllowGroups itadmin" >> /etc/ssh/sshd_config
+echo "AllowGroups itadmin root" >> /etc/ssh/sshd_config
