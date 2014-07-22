@@ -22,6 +22,7 @@
 #Website: http://www.karoshi.org.uk
 
 source /opt/karoshi/linuxclientsetup/utilities/common
+source /opt/karoshi/linuxclientsetup/utilities/pam-common
 
 #function create_entries
 #	$1 is mount name
@@ -342,7 +343,7 @@ user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, 192.168.0.0/16
 			fi
 
 			if [[ $MAILSERVER ]]; then
-				user_fullname=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
+				user_fullname=${GECOS%%,*}
 				echo "Using $user_fullname as real name for user email"
 
 				echo "user_pref('mail.identity.id1.useremail', '$USER@$DNSSUFFIX');

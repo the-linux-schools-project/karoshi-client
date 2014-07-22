@@ -22,6 +22,7 @@
 #Website: http://www.karoshi.org.uk
 
 source /opt/karoshi/linuxclientsetup/utilities/common
+source /opt/karoshi/linuxclientsetup/utilities/pam-common
 
 config_exclude=(
 	.
