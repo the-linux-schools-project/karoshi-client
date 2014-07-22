@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
+#Copyright (C) 2013, 2014 Robin McCorkell
 
 #This file is part of Karoshi Client.
 #
@@ -31,8 +31,24 @@ if [[ ! -d $flagsDir ]]; then
 	fi
 fi
 
-declare -A flags=( [networkset]=false [domainset]=false [passwordset]=false [nokaroshi]=false [forcesetpdc]=false [no_idle_shutdown]=false [no_multicast]=false [offline_mode]=false )
-declare -A flagsCanonical=( [networkset]="Network Set" [domainset]="Domain Set" [passwordset]="Password Set" [nokaroshi]="No Karoshi" [forcesetpdc]="Force Set PDC" [no_idle_shutdown]="No Idle Shutdown" [no_multicast]="Disable Multicast Messages" [offline_mode]="Offline Mode" )
+declare -A flags=(
+	[networkset]=false
+	[domainset]=false
+	[passwordset]=false
+	[nokaroshi]=false
+	[forcesetpdc]=false
+	[no_idle_shutdown]=false
+	[no_shutdown]=false
+)
+declare -A flagsCanonical=(
+	[networkset]="Network Set"
+	[domainset]="Domain Set"
+	[passwordset]="Password Set"
+	[nokaroshi]="No Karoshi"
+	[forcesetpdc]="Force Set PDC"
+	[no_idle_shutdown]="No Idle Shutdown"
+	[no_shutdown]="No Timed Shutdown"
+)
 
 function checkFlag {
 	if [[ -f $flagsDir/$1 ]]; then flags[$1]=true; else flags[$1]=false; fi
