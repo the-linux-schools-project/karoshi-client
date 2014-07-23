@@ -26,12 +26,16 @@ read
 while read -r _set property; do
 	case "$property" in
 	/backdrop/*/image-style)
-		xfconf-query -c xfce4-desktop -p "$property" -s 3
-		read
+		prev_value=$(xfconf-query -c xfce4-desktop -p "$property")
+		if [[ $prev_value != 3 ]]; then
+			xfconf-query -c xfce4-desktop -p "$property" -s 3
+		fi
 		;;
 	/backdrop/*/last-image|/backdrop/*/image-path)
-		xfconf-query -c xfce4-desktop -p "$property" -s /usr/share/backgrounds/karoshi.png
-		read
+		prev_value=$(xfconf-query -c xfce4-desktop -p "$property")
+		if [[ $prev_value != /usr/share/backgrounds/karoshi.png ]]; then
+			xfconf-query -c xfce4-desktop -p "$property" -s /usr/share/backgrounds/karoshi.png
+		fi
 		;;
 	esac
 done
