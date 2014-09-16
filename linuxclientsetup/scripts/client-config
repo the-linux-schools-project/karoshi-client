@@ -390,34 +390,6 @@ else
 	karoshi-manage-flags unset system_upgrade
 fi
 
-############################
-#Install and remove software
-############################
-#Only run if flag file is present
-if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/enable_software_install ]]
-then
-	#Install software
-	if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/install_list ]]
-	then
-		#Only run apt-get update if it has not already run
-		! $apt_updated && apt-get update
-		install_list=`sed 's/ //g' /tmp/netlogon/linuxclient/$LINUX_VERSION/install_list`
-		if [[ $install_list ]]; then
-			apt-get -y install --no-upgrade $install_list
-		fi
-	fi
-
-	#Remove software
-	if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/remove_list ]]
-	then
-		remove_list=`sed 's/ //g' /tmp/netlogon/linuxclient/$LINUX_VERSION/remove_list`
-		if [[ $remove_list ]]; then
-			echo "Removing Software"
-			apt-get -y remove $remove_list
-		fi
-	fi
-fi
-
 ##########################
 #Configure virtualbox drive
 ##########################
