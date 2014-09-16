@@ -385,10 +385,9 @@ apt_updated=false
 #Only run if flag file is present
 if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/enable_updates ]]
 then
-	echo "Updating Software"
-	apt-get update
-	apt_updated=true
-	apt-get -y upgrade
+	karoshi-manage-flags set system_upgrade
+else
+	karoshi-manage-flags unset system_upgrade
 fi
 
 ############################
