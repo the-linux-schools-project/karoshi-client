@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#Copyright (C) 2014 Paul Sharrad
+
 #This file is part of Karoshi Client.
 #
 #Karoshi Client is free software: you can redistribute it and/or modify
@@ -16,24 +18,22 @@
 #along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
 
 while read -r line; do
-	if [[ $line == changed:* ]]; then
+	if [[ $line == MediaAvailable:*false ]]; then
 		unset device
-		has_media=0
+		unset media
+		#Remove any desktop icons for the device
+		[ -f ~/Desktop/karoshi-$filename.desktop ] && rm -f ~/Desktop/karoshi-$filename.desktop
 	fi
-	if [[ $line == device-file:* ]]; then
-		device=${line##device-file:* }
-	fi
-	if [[ $line == has\ media:* ]]; then
-		line=${line%% (*}
-		has_media=${line##has media:* }
-	fi
-	if [[ $line == "" ]]; then
-		if [[ $device ]]; then
-			filename=${device//\//-}
-			filename=${filename#-}
-			if (( has_media == 1 )); then
-				if dd if=$device count=2048 2>/dev/null | grep -q VIDEO_TS; then
-					cat > ~/Desktop/karoshi-$filename.desktop << EOF
+
+	[[ $line == *Symlinks:* ]] && device=${line##*Symlinks:* }
+
+	[[ $line == MediaAvailable:*true ]] && media=yes
+
+
+	if [[ $media = yes ]] && [[ $device ]]; then
+		if dd if=$device count=2048 2>/dev/null | grep -q VIDEO_TS; then
+			#Create Desktop icon
+			cat > ~/Desktop/karoshi-$filename.desktop << EOF
 [Desktop Entry]
 Version=1.0
 Type=Application
@@ -43,13 +43,7 @@ Icon=vlc
 Terminal=false
 StartupNotify=false
 EOF
-					chmod +x ~/Desktop/karoshi-$filename.desktop
-				fi
-			else
-				if [[ -f ~/Desktop/karoshi-$filename.desktop ]]; then
-					rm -f ~/Desktop/karoshi-$filename.desktop
-				fi
-			fi
+			chmod 0755 ~/Desktop/karoshi-$filename.desktop
 		fi
 	fi
-done < <(udisks --monitor-detail)
+done < <(udisksctl monitor)
