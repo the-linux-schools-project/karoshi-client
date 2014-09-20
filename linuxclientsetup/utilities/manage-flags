@@ -21,6 +21,7 @@
 #
 #Website: http://www.karoshi.org.uk
 
+declare -A flags
 flagsDir="/var/lib/karoshi/flags"
 
 if [[ ! -d $flagsDir ]]; then
@@ -30,25 +31,6 @@ if [[ ! -d $flagsDir ]]; then
 		exit 255
 	fi
 fi
-
-declare -A flags=(
-	[networkset]=false
-	[domainset]=false
-	[passwordset]=false
-	[nokaroshi]=false
-	[forcesetpdc]=false
-	[no_idle_shutdown]=false
-	[no_shutdown]=false
-)
-declare -A flagsCanonical=(
-	[networkset]="Network Set"
-	[domainset]="Domain Set"
-	[passwordset]="Password Set"
-	[nokaroshi]="No Karoshi"
-	[forcesetpdc]="Force Set PDC"
-	[no_idle_shutdown]="No Idle Shutdown"
-	[no_shutdown]="No Timed Shutdown"
-)
 
 function checkFlag {
 	if [[ -f $flagsDir/$1 ]]; then flags[$1]=true; else flags[$1]=false; fi
@@ -87,39 +69,6 @@ if [[ $# -eq 2 ]]; then
 		printHelp
 		;;
 	esac
-elif [[ $# -eq 0 ]]; then
-	#Interactive mode
-	running=true
-	if ! which yad >/dev/null; then
-		echo "Error: yad is not installed" >&2
-		exit 255
-	fi
-
-	while $running; do
-		command=(  )
-
-		# check flags and create command
-		for flag in "${!flags[@]}"; do
-			checkFlag $flag
-			command+=( "--field=${flagsCanonical[$flag]}:CHK" "${flags[$flag]}" )
-		done
-
-		data=`yad --image=karoshi-logo --window-icon=karoshi-logo --width=400 \
-				  --title="Karoshi Flag Configuration" --button="gtk-ok" --button="gtk-cancel" --button="gtk-revert-to-saved" \
-				  --form "${command[@]}"`
-		yadstatus=$?
-
-		[[ $yadstatus -eq 1 ]] && exit 2
-		[[ $yadstatus -ne 2 ]] && running=false
-	done
-
-	# decypher DATA and set flags
-	counter=1
-	for flag in "${!flags[@]}"; do
-		flags[$flag]=`cut -d"|" -f$counter <<< "$data" | tr '[:upper:]' '[:lower:]'`
-		setFlag $flag
-		(( ++counter ))
-	done
 else
 	printHelp
 fi
