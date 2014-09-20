@@ -445,7 +445,6 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	echo 65 >&11
 	echo \#Configuring Samba >&11
 
-	#Samba information required for ksmb, regardless of winbind or not
 	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
 	[[ -z $samba_domain ]] && exitfunc 1
 	DOMAIN=`tr '[[:lower:]]' '[[:upper:]]' <<< "$samba_domain"`
@@ -478,100 +477,32 @@ if [[ -f /tmp/netlogon/domain_information/samba4 ]]; then
 	echo 75 >&11
 	echo \#Finalising domain configuration >&11
 
-	#Check if we are to use winbind instead of LDAP
-	if [[ -f /tmp/netlogon/domain_information/samba4_winbind ]]; then
-		DOMAINTYPE=samba4_winbind
-
-		#Create folder for users
-		[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-
-		#Update nsswitch.conf
-		nss_enable passwd winbind
-		nss_enable group winbind
-		nss_enable shadow winbind
-		#Update PAM
-		pam-auth-update --package --remove winbind
-		pam-auth-update --package
-		#Restart winbind
-		service winbind restart
-	else
-		DOMAINTYPE=samba4
-		domain_sid=` < /tmp/netlogon/domain_information/domain_sid`
-		ldap_base=` < /tmp/netlogon/domain_information/ldap_base`
-		[[ -z $domain_sid ]] && exitfunc 1
-		#Configure sssd.conf
-		sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/sssd/sssd.conf
-		sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/sssd/sssd.conf
-		sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/sssd/sssd.conf
-		chmod 0600 /etc/sssd/sssd.conf
-
-		#Update nsswitch.conf
-		nss_enable passwd sss
-		nss_enable group sss
-		#Update PAM - bit of a hack, removes the 'seen' entry of the pam
-		# module, causing it to be reconfigured into pam.d
-		pam-auth-update --package --remove sss sss-password
-		pam-auth-update --package
-		#Restart sssd
-		stop sssd
-		start sssd
-	fi
-else
-	#Using a Samba3 domain
-	samba_domain=` < /tmp/netlogon/domain_information/domain_name`
-	[[ -z $samba_domain ]] && exitfunc 1
-	#Copy files and change variables
-	DOMAIN=`tr 'a-z' 'A-Z' <<< "$samba_domain"`
-	DOMAINTYPE=samba3
-
-	echo 55 >&11
-	reconfigureNetwork
-
-	echo 60 >&11
-	echo \#Copying files >&11
-	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
-	cp -rfbS '.karoshi-samba3~' /opt/karoshi/linuxclientsetup/config-files/samba3/* /
-	#Configure smb.conf
-	sed -i "s/CHANGETHISDOMAIN/$DOMAIN/g" /etc/samba/smb.conf
-	sed -i "s/CHANGETHISPDC/$PDC/g" /etc/samba/smb.conf
-
-	#Create folder for users
-	[[ ! -d /home/$DOMAIN ]] && mkdir /home/$DOMAIN
-
-	#Join domain
-	echo 70 >&11
-	echo \#Joining domain >&11
-
-	function exitfunc {
-		info_alert "Error" "Not joining domain - system may be in an inconsistent state"
-		umount /tmp/netlogon
-		echo 100 >&11
-		exit 1
-	}
-
-	join_status=1
-	while [[ $join_status -ne 0 ]]; do
-		understandableYad --form --title='Domain Access' --wrap \
-							--text 'Enter in a username and password to join the domain' --field='Username' --field='Password':H \
-							--button='gtk-cancel:1' --button='gtk-ok:0'
-		domain_username=`cut -d"|" -f1 <<< "$DATA"`
-		domain_password=`cut -d"|" -f2 <<< "$DATA"`
-		net rpc join -S $PDC -U $domain_username%$domain_password
-		join_status=$?
-	done
-
-	echo 75 >&11
-	echo \#Finalising domain configuration >&11
+	DOMAINTYPE=samba4
+	domain_sid=` < /tmp/netlogon/domain_information/domain_sid`
+	ldap_base=` < /tmp/netlogon/domain_information/ldap_base`
+	[[ -z $domain_sid ]] && exitfunc 1
+	#Configure sssd.conf
+	sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/sssd/sssd.conf
+	sed -i "s/CHANGETHISLDAPBASE/$ldap_base/g" /etc/sssd/sssd.conf
+	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/sssd/sssd.conf
+	chmod 0600 /etc/sssd/sssd.conf
 
 	#Update nsswitch.conf
-	nss_enable passwd winbind
-	nss_enable group winbind
-	nss_enable shadow winbind
-	#Update PAM - see above for rationale
-	pam-auth-update --package --remove winbind
+	nss_enable passwd sss
+	nss_enable group sss
+	#Update PAM - bit of a hack, removes the 'seen' entry of the pam
+	# module, causing it to be reconfigured into pam.d
+	pam-auth-update --package --remove sss sss-password
 	pam-auth-update --package
-	#Restart winbind
-	service winbind restart
+	#Restart sssd
+	stop sssd
+	start sssd
+else
+	#Using a Samba3 domain
+	info_alert "Error" "This version of Karoshi Client requires Karoshi Server version 9.0 or above"
+	umount /tmp/netlogon
+	echo 100 >&11
+	exit 1
 fi
 
 ####################

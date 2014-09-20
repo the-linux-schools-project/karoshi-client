@@ -57,20 +57,6 @@ function attemptAdsLeave {
 
 #Deconfigure domain
 case "$DOMAINTYPE" in
-samba3)
-	#Deconfigure PAM
-	pam-auth-update --package --remove winbind
-	echo "winbind" >> /var/lib/pam/seen
-
-	#Deconfigure nsswitch.conf
-	nss_disable passwd winbind
-	nss_disable group winbind
-	nss_disable shadow winbind
-
-	echo 20 >&11
-
-	service winbind stop
-	;;
 samba4)
 	attemptAdsLeave
 
@@ -87,21 +73,10 @@ sss-password" >> /var/lib/pam/seen
 
 	service sssd stop
 	;;
-samba4_winbind)
-	attemptAdsLeave
-
-	#Deconfigure PAM
-	pam-auth-update --package --remove winbind
-	echo "winbind" >> /var/lib/pam/seen
-
-	#Deconfigure nsswitch.conf
-	nss_disable passwd winbind
-	nss_disable group winbind
-	nss_disable shadow winbind
-
-	echo 20 >&11
-
-	service winbind stop
+*)
+	info_alert "Error" "Invalid domain type"
+	echo 100 >&11
+	exit 1
 	;;
 esac
 
@@ -128,10 +103,7 @@ echo 40 >&11
 echo \#Reverting specific configuration files >&11
 
 case "$DOMAINTYPE" in
-samba3)
-	revert_backup "samba3"
-	;;
-samba4|samba4_winbind)
+samba4)
 	revert_backup "samba4"
 	;;
 esac

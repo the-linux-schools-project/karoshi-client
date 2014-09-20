@@ -295,9 +295,7 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 			fi
 
 			#Set up Kerberos
-			if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
-				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-			fi
+			echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 		fi
 	fi
 
@@ -338,9 +336,7 @@ user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, 192.168.0.0/16
 			fi
 
 			#Set up Kerberos
-			if [[ $DOMAINTYPE == samba4 ]] || [[ $DOMAINTYPE == samba4_winbind ]]; then
-				echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
-			fi
+			echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 
 			if [[ $MAILSERVER ]]; then
 				user_fullname=${GECOS%%,*}

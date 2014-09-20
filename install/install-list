@@ -94,12 +94,10 @@ openprinting-ppds
 cifs-utils
 libpam-mount
 krb5-user
-libpam-winbind
 ntp
 xautolock
 remastersys-gui
 yad
-winbind
 ubiquity-casper
 gnupg
 language-pack-en

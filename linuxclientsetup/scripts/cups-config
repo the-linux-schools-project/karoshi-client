@@ -47,11 +47,7 @@ if [[ $LOCATION ]] && [[ $PRINTSERVER ]] && [[ -f /var/lib/karoshi/printing/list
 		read -r defaultPrinter _ <<< "$printerList"
 		while read -r printer _; do
 			echo "Adding printer $printer"
-			if [[ $DOMAINTYPE == samba3 ]]; then
-				lpadmin -p $printer -v smb://$PRINTSERVER.$DNSSUFFIX/$printer -L "$LOCATION" -D "$printer" -E
-			else
-				lpadmin -p $printer -v ksmb://$PRINTSERVER.$DNSSUFFIX/$printer -L "$LOCATION" -D "$printer" -E
-			fi
+			lpadmin -p $printer -v ksmb://$PRINTSERVER.$DNSSUFFIX/$printer -L "$LOCATION" -D "$printer" -E
 			#Copy PPD
 			[[ -f /var/lib/karoshi/printing/$printer.ppd ]] && lpadmin -p $printer -P /var/lib/karoshi/printing/$printer.ppd
 		done <<< "$printerList"

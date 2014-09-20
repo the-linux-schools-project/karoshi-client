@@ -65,16 +65,6 @@ if ! karoshi-manage-flags get offline_mode >/dev/null; then
 	samba4)
 		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
 		;;
-	samba4_winbind)
-		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
-		#Clear cache
-		find /var/cache/samba -mindepth 1 -delete
-		;;
-	samba3)
-		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml /etc/security/pam_mount.conf.xml
-		#Clear cache
-		find /var/cache/samba -mindepth 1 -delete
-		;;
 	*)
 		echo "WARNING: Unrecognized domain type $DOMAINTYPE"
 		;;
