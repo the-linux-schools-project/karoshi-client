@@ -35,6 +35,14 @@ chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
 chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
 chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
 
+#Install l10n
+for po in "$source_dir"/l10n/*.po; do
+	lang=${po##*/}
+	lang=${lang%%.po}
+	mkdir -p /usr/share/locale/"$lang"/LC_MESSAGES
+	msgfmt --check -o /usr/share/locale/"$lang"/LC_MESSAGES/karoshi-client.mo "$po"
+done
+
 #Copy LICENCE
 if [[ -f "$source_dir"/LICENCE ]]; then
 	cp -ft /opt/karoshi/ "$source_dir"/LICENCE

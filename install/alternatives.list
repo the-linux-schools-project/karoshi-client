@@ -9,6 +9,7 @@ karoshi-setup:                     /usr/bin/karoshi-setup                      -
 karoshi-manage-flags:              /usr/bin/karoshi-manage-flags               -> /opt/karoshi/linuxclientsetup/utilities/manage-flags
 karoshi-generate-firewall-rules:   /usr/bin/karoshi-generate-firewall-rules    -> /opt/karoshi/linuxclientsetup/utilities/generate-firewall-rules
 karoshi-unset-network:             /usr/bin/karoshi-unset-network              -> /opt/karoshi/linuxclientsetup/utilities/unset-network
+karoshi-offline-homes:             /usr/bin/karoshi-offline-homes              -> /opt/karoshi/linuxclientsetup/utilities/offline-homes
 
 #Images
 karoshi-login-background:          /usr/share/backgrounds/karoshi-login.png    -> /opt/karoshi/linuxclientsetup/images/login-background.png

@@ -63,7 +63,7 @@ function progress_info {
 }
 
 function exitfunc {
-	info_alert "Configuration" "Configuration cancelled"
+	info_alert $"Karoshi Setup" $"Configuration cancelled"
 	exit $1
 }
 
@@ -76,7 +76,7 @@ function persistantYad {
 			exitfunc 1
 		fi
 		[[ $yad_status -eq 0 ]] && break
-		info_alert "Warning" "You must complete the form"
+		info_alert $"Karoshi Setup" $"You must complete the form"
 	done
 	return $yad_status
 }
@@ -105,3 +105,8 @@ DNSSUFFIX=$DNSSUFFIX
 CLIENTSHUTDOWNTIME=$CLIENTSHUTDOWNTIME
 IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/variables
 }
+
+function l10n_init {
+	TEXTDOMAIN=karoshi-client
+}
+l10n_init

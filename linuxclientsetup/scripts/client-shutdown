@@ -21,10 +21,12 @@
 #
 #Website: http://www.karoshi.org.uk
 
+source /opt/karoshi/linuxclientsetup/utilities/common
+
 function sendXNotifications {
-	minute_string="minutes"
+	minute_string=$"minutes"
 	if [[ $1 -eq 1 ]]; then
-		minute_string="minute"
+		minute_string=$"minute"
 	fi
 
 	echo "Sending shutdown notification - $1 $minute_string"
@@ -47,7 +49,7 @@ function sendXNotifications {
 		done
 		if $is_valid; then
 			echo "Found valid XAUTHORITY: $XAUTHORITY for $DISPLAY"
-			notify-send -u critical "Scheduled Shutdown" "This system is going down in $1 $minute_string\nMake sure to save your work!" -i karoshi-logo
+			notify-send -u critical $"Karoshi Scheduled Shutdown" $"This system is going down in $1 $minute_string"$'\n'$"Make sure to save your work!" -i karoshi-logo
 		else
 			echo "Unable to find XAUTHORITY for $DISPLAY"
 		fi
