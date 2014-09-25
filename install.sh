@@ -49,20 +49,20 @@ trap removeRedirection EXIT
 #Usage
 function usage {
 	echo "Usage:" >&2
-	echo "	$0 [--release]" >&2
+	echo "	$0 [--release <version>]" >&2
 	echo >&2
 	echo " Options:" >&2
-	echo "  --release		Create release version" >&2
-	echo "  --help			Show this help message" >&2
+	echo "  --release <version> Create release version" >&2
+	echo "  --help              Show this help message" >&2
 	exit 1
 }
 
 #Options
-is_release=false
 while (( "$#" )); do
 	case "$1" in
 	--release)
-		is_release=true
+		shift
+		release=$1
 		;;
 	--help)
 		usage
@@ -72,7 +72,6 @@ while (( "$#" )); do
 		usage
 		;;
 	esac
-	
 	shift
 done
 
@@ -84,7 +83,7 @@ function do_remastersys {
 		echo "ERROR: No remastersys detected" >&2
 		exit 5
 	fi
-	
+
 	#Require restart if kernel has changed
 	if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
 		echo >&2
@@ -122,7 +121,7 @@ function do_remastersys {
 			esac
 		done
 	fi
-		
+
 	cp "$remastersys_path" "$remastersys_path".orig
 	#Remove silly LIVEUSER logic
 	sed -i '/LIVEUSER="`who -u | grep -v root | cut -d " " -f1| uniq`"/ {
@@ -143,7 +142,7 @@ function do_remastersys {
 	cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.orig
 	echo "autologin-user=administrator
 autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
-	
+
 	function clean_up {
 		echo "Cleaning up..." >&2
 		mv "$remastersys_path".orig "$remastersys_path"
@@ -151,32 +150,24 @@ autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
 		#Stop Auto logon
 		mv /etc/lightdm/lightdm.conf.orig /etc/lightdm/lightdm.conf
 	}
-	
+
 	trap clean_up SIGINT SIGTERM
 
 	#Determine ISO parameters
-	iso_version=git-$(date +%Y%m%d)
+	iso_version=${release:-git-$(date +%Y%m%d)}
 	iso_website="http://linuxgfx.co.uk/"
 	if [[ -f README.md ]] && grep -q "\*\*Website:\*\* " README.md; then
 		iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
 	fi
-	if $is_release; then
-		if [[ -f README.md ]]; then
-			iso_version=$(sed -n 's/.*\*\*Current stable version:\*\* \(.*\)/\1/p' README.md)
-		else
-			echo "WARNING: No README.md detected - using timestamp as version" >&2
-			iso_version=$(date +%Y.%m.%d)
-		fi
-	fi
-	
+
 	#Determine ISO architecture
 	iso_arch=$(uname -i)
 	[[ $iso_arch == x86_64 ]] && iso_arch=amd64
 
 	echo "ISO Label:   Karoshi Client $iso_version-$iso_arch" >&2
 	echo "ISO Website: $iso_website" >&2
-	
-	if $is_release; then
+
+	if [[ $release ]]; then
 		resolved=false
 		while ! $resolved; do
 			echo -n "Is this information correct [y/n]?: " >&2
@@ -332,7 +323,7 @@ function set_network {
 	ip addr flush dev "$1"
 	ip addr add "$2" dev "$1"
 	ip route add default via "$3"
-	
+
 	#Set up resolv.conf for reliable DNS
 	echo "nameserver 8.8.8.8
 nameserver 8.8.4.4" > /etc/resolv.conf
