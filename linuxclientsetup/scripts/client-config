@@ -266,6 +266,10 @@ if [[ $MAILSERVER ]]; then
 fi
 
 # Firefox
+#Install Zotero
+do_xpi_raw zotero-main /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-main firefox
+do_xpi_raw zotero-libreplug /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-libreplug firefox
+
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions ]]; then
 	while read -r -d $'\0' xpi; do
 		echo "Found new extension: $xpi"
