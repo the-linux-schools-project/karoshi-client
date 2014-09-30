@@ -269,6 +269,8 @@ fi
 #Install Zotero
 do_xpi zotero-4.0.22 /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-main firefox
 do_xpi Zotero-LibreOffice-Plugin-3.5.9 /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-libreplug firefox
+#Install Omnibar
+do_xpi omnibar /opt/karoshi/linuxclientsetup/config-files/firefox/omnibar firefox
 
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions ]]; then
 	while read -r -d $'\0' xpi; do
