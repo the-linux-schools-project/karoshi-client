@@ -255,7 +255,7 @@ if [[ $MAILSERVER ]]; then
 			/opt/karoshi/mozilla/extensions/sogo-integrator/chrome/content/extensions.rdf
 	fi
 	#Install Firetray
-	do_xpi_raw firetray /opt/karoshi/linuxclientsetup/config-files/thunderbird/firetray thunderbird
+	do_xpi firetray /opt/karoshi/linuxclientsetup/config-files/thunderbird/firetray thunderbird
 
 	if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/thunderbird/extensions ]]; then
 		while read -r -d $'\0' xpi; do
