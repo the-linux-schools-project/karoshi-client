@@ -255,7 +255,7 @@ if [[ $MAILSERVER ]]; then
 			/opt/karoshi/mozilla/extensions/sogo-integrator/chrome/content/extensions.rdf
 	fi
 	#Install Firetray
-	do_xpi_raw firetray /opt/karoshi/linuxclientsetup/config-files/thunderbird/firetray thunderbird
+	do_xpi firetray /opt/karoshi/linuxclientsetup/config-files/thunderbird/firetray thunderbird
 
 	if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/thunderbird/extensions ]]; then
 		while read -r -d $'\0' xpi; do
@@ -267,8 +267,10 @@ fi
 
 # Firefox
 #Install Zotero
-do_xpi_raw zotero-main /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-main firefox
-do_xpi_raw zotero-libreplug /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-libreplug firefox
+do_xpi zotero-4.0.22 /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-main firefox
+do_xpi Zotero-LibreOffice-Plugin-3.5.9 /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-libreplug firefox
+#Install Omnibar
+do_xpi omnibar /opt/karoshi/linuxclientsetup/config-files/firefox/omnibar firefox
 
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions ]]; then
 	while read -r -d $'\0' xpi; do
