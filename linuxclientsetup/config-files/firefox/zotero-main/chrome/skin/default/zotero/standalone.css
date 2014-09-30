@@ -1,8 +1,0 @@
-.standalone-no-display {
-	display: none;
-}
-
-#main-window {
-	min-width: 915px;
-	min-height: 300px;
-}
