@@ -112,6 +112,7 @@ fi
 [[ ! -d ~/Desktop ]] && mkdir ~/Desktop
 [[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
 [[ ! -d ~/.config/autostart ]] && mkdir -p ~/.config/autostart
+[[ -d ~/network/home/.zotero ]] || mkdir -p ~/network/home/.zotero
 [[ -d ~/.config/karoshi ]] || mkdir -p ~/.config/karoshi
 
 #Clear Karoshi icons from desktop, menu and autostart
@@ -270,6 +271,17 @@ user_pref('capability.policy.allowclipboard.Clipboard.paste', 'allAccess');" >> 
 			echo "user_pref('browser.startup.homepage_override.mstone', '$firefox_version');
 user_pref('extensions.lastAppVersion', '$firefox_version');
 user_pref('extensions.lastPlatformVersion', '$firefox_version');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+
+			#Add Zotero settings
+			if [[ $alternate_home ]]; then
+				echo "user_pref('extensions.zotero.dataDir', '~/$alternate_home/.zotero');
+user_pref('extensions.zotero.useDataDir', true);
+user_pref('extensions.zotero.firstRun2', false);
+user_pref('extensions.zotero.firstRunGuidanceShown.toolbarButton', false);
+user_pref('extensions.zotero.integration.useClassicAddCitationDialog', true);
+user_pref('extensions.zoteroOpenOfficeIntegration.installed', true);
+user_pref('extensions.zoteroOpenOfficeIntegration.unopkgPaths', '{\"/usr/bin/unopkg\":true,\"/usr/lib/libreoffice/program/unopkg\":true,\"undefined\":false}');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+			fi
 
 			#Cache settings
 			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
