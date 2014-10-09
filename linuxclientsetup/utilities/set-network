@@ -218,9 +218,15 @@ while ! $pdc_set; do
 	}
 	if $dhcp && [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]]; then
 	#If we have a DHCP lease
-		SERVERIP=`sed -n 's/.*option domain-name-servers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
-		NETMASK=`sed -n 's/.*option subnet-mask *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
-		GATEWAY=`sed -n 's/.*option routers *\([0-9.]*\).*/\1/p' /var/lib/dhcp/dhclient.$NETWORKINT.leases`
+		SERVERIP=$(sed -n '/option domain-name-servers / {
+			s/.*option domain-name-servers *\([0-9.]*\).*/\1/p; q
+			}' /var/lib/dhcp/dhclient.$NETWORKINT.leases)
+		NETMASK=$(sed -n '/option subnet-mask / {
+			s/.*option subnet-mask *\([0-9.]*\).*/\1/p; q
+			}' /var/lib/dhcp/dhclient.$NETWORKINT.leases)
+		GATEWAY=$(sed -n '/option routers / {
+			s/.*option routers *\([0-9.]*\).*/\1/p; q
+			}' /var/lib/dhcp/dhclient.$NETWORKINT.leases)
 	elif $dhcp; then
 	#If we wanted a DHCP lease
 		info_alert "Error" "Did not get DHCP lease"
