@@ -458,6 +458,24 @@ if ! apt-get -y --allow-unauthenticated dist-upgrade; then
 	exit 2
 fi
 
+#Remove old kernels
+current_kernel=$(readlink -f /vmlinuz)
+current_kernel=${current_kernel##*/vmlinuz-}
+toremove=( )
+for kernel in /boot/vmlinuz-*; do
+	kernel=${kernel##*/vmlinuz-}
+	if [[ $kernel != "$current_kernel" ]]; then
+		toremove+=(
+			linux-image-"$kernel"
+			linux-headers-"$kernel"
+			linux-image-extra-"$kernel"
+		)
+	fi
+done
+if [[ $toremove ]]; then
+	apt-get -y purge "${toremove[@]}"
+fi
+
 #Reset network settings in case a package clobbered it
 set_network "$net_int" "$net_ip" "$net_gw"
 
