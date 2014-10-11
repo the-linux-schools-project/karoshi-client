@@ -414,6 +414,13 @@ function reconfigureNetwork {
 	updateHostname
 	ifup $NETWORKINT
 	current_network_int=$NETWORKINT
+
+	#Wait for the network to actually be up
+	for i in {1..15}; do
+		if ping -c 1 $SERVERIP; then break; fi
+		sleep 1
+	done
+
 	mount.cifs //$SERVERIP/netlogon /tmp/netlogon -o guest,nounix
 }
 
