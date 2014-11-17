@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [[ -z $source_dir ]] || [[ -z $work_dir ]]; then
+	echo "Must be sourced from install.sh" >&2
+	exit 1
+fi
+
+#Remove PAM modules modified in configuration
+while read -r -d $'\0' file; do
+	config=$(basename "$file")
+	if [[ -f /usr/share/pam-configs/$config ]]; then
+		pam-auth-update --package --remove "$config"
+		echo "$config" >> /var/lib/pam/seen
+	fi
+done < <(find "$source_dir"/configuration/usr/share/pam-configs -mindepth 1 -print0)

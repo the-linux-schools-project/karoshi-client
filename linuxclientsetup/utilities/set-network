@@ -50,7 +50,10 @@ function isWired {
 }
 
 function getMac {
-	ifconfig $1 | sed -n 's/.*HWaddr \(..\):\(..\):\(..\):\(..\):\(..\):\(..\).*/\U\1\2\3\4\5\6/p'
+	local addr=$(< /sys/class/net/$1/address)
+	addr=${addr//:/}
+	addr=${addr^^}
+	echo "$addr"
 }
 
 function getClientSettings {
@@ -164,7 +167,13 @@ function updateHostname {
 ####################
 #Detect network interface(s)
 ####################
-network_ints=(`ifconfig -a | sed -n '/^[^[:blank:]]/s/^\(\w*\).*/\1/p' | grep -v ^lo\$`)
+network_ints=( )
+for int in /sys/class/net/*; do
+	int=${int##*/}
+	if [[ $int != lo ]]; then
+		network_ints+=( "$int" )
+	fi
+done
 
 for NETWORKINT in "${network_ints[@]}"; do
 	isWired $NETWORKINT && break
@@ -531,7 +540,7 @@ sed -i "s/### KAROSHI HOOK ###/server $PDC.$DNSSUFFIX/" /etc/ntp.conf
 #Automation steps
 if [[ -f /tmp/netlogon/domain_information/lockadministrator ]]; then
 	karoshi-manage-flags set passwordset
-	passwd -l administrator
+	passwd -l karoshi
 	passwd -l root
 fi
 

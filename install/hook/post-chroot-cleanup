@@ -1,0 +1,11 @@
+##!/bin/bash
+
+if [[ -z $source_dir ]] || [[ -z $work_dir ]]; then
+	echo "Must be sourced from install.sh" >&2
+	exit 1
+fi
+
+#resolvconf symlink
+if [[ -d $root/run/resolvconf ]]; then
+	ln -sfT ../run/resolvconf/resolv.conf "$root"/etc/resolv.conf
+fi

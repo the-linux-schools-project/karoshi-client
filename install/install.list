@@ -25,7 +25,6 @@ flashplugin-installer
 thunderbird
 xul-ext-lightning
 file-roller
-wine
 filezilla
 wireshark
 zenmap
@@ -34,12 +33,9 @@ geogebra
 stellarium
 kcolorchooser
 libreoffice
-libreoffice-l10n-en-gb
-libreoffice-help-en-gb
-myspell-en-gb
-mythes-en-us
+libreoffice-mysql-connector
+libreoffice-lightproof-en
 wbritish
-rednotebook
 gedit
 gedit-plugins
 scribus
@@ -73,6 +69,7 @@ stopmotion
 gtk-recordmydesktop
 openshot
 vlc
+brasero
 
 #Development
 codeblocks
@@ -96,16 +93,19 @@ libpam-mount
 krb5-user
 ntp
 xautolock
-remastersys-gui
 yad
-ubiquity-casper
 gnupg
-language-pack-en
 ldap-utils
 synaptic
 xmlstarlet
 resolvconf
+iputils-ping
+iputils-tracepath
 iputils-arping
+net-tools
+mtr-tiny
+netcat-openbsd
+isc-dhcp-client
 libnss3-tools
 sssd
 virtualbox-guest-utils
@@ -117,4 +117,13 @@ gksu
 zsh
 gvfs-backends
 pam-exec2
+wine1.7
+plymouth-x11
+rsyslog
 
+#!install
+
+#Separate to prevent installation of gnome-settings-daemon
+feh
+ubiquity-frontend-gtk
+#!install

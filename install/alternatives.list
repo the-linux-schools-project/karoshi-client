@@ -1,3 +1,6 @@
+#Format:
+# [alternative name]: [link name] -> [file]
+
 #Karoshi utilities
 karoshi-set-local-password:        /usr/bin/karoshi-set-local-password         -> /opt/karoshi/linuxclientsetup/utilities/set-local-password
 karoshi-set-location:              /usr/bin/karoshi-set-location               -> /opt/karoshi/linuxclientsetup/utilities/set-location
@@ -11,6 +14,7 @@ karoshi-unset-network:             /usr/bin/karoshi-unset-network              -
 karoshi-login-background:          /usr/share/backgrounds/karoshi-login.png    -> /opt/karoshi/linuxclientsetup/images/login-background.png
 karoshi-background:                /usr/share/backgrounds/karoshi.png          -> /opt/karoshi/linuxclientsetup/images/background.png
 karoshi-background-nologo:         /usr/share/backgrounds/karoshi-nologo.png   -> /opt/karoshi/linuxclientsetup/images/background-nologo.png
+installer-background:              /usr/share/backgrounds/installer.png        -> /usr/share/backgrounds/karoshi-nologo.png
 
 #GRUB
 grub-background:                   /boot/grub/background.png                   -> /opt/karoshi/linuxclientsetup/images/boot-menu.png

@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if [[ -z $source_dir ]] || [[ -z $work_dir ]]; then
+	echo "Must be sourced from install.sh" >&2
+	exit 1
+fi
+
+#Adjust libpam-mount to only run on interactive sessions
+pam-auth-update --package --remove libpam-mount
+if ! grep -q 'Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount; then
+	dpkg-divert --local --add /usr/share/pam-configs/libpam-mount
+	sed -i '/Session-Type:/ a\
+Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
+fi
+
+#Remove auth modules from PAM to be added back in in setup
+pam_remove=( sss sss-password karoshi-pre-session karoshi-post-session
+	karoshi-virtualbox-mkdir karoshi-offline-homes )
+pam-auth-update --package --remove "${pam_remove[@]}"
+for pam_mod in "${pam_remove[@]}"; do
+	echo "$pam_mod" >> /var/lib/pam/seen
+done
+
+#Correct permissions for PAM configuration
+find /usr/share/pam-configs -mindepth 1 -maxdepth 1 -execdir chmod 0644 {} +
+
+#Reconfigure PAM
+pam-auth-update --package
+
+#Install linuxclientsetup
+mkdir -p /opt/karoshi
+cp -rft /opt/karoshi "$source_dir"/linuxclientsetup
+
+chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
+chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
+chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
+
+#Copy LICENCE
+if [[ -f "$source_dir"/LICENCE ]]; then
+	cp -ft /opt/karoshi/ "$source_dir"/LICENCE
+fi
+
+#Users and groups
+if ! getent passwd karoshi >/dev/null; then
+	useradd -d /opt/karoshi-admin -mUr -s /bin/bash \
+		-G adm,cdrom,sudo,dip,plugdev,lpadmin karoshi
+	# Set password to `karoshi`
+	passwd_crypt=$(openssl passwd -crypt "karoshi")
+	sed -i /etc/shadow \
+	    -e "s/^karoshi:[^:]*/karoshi:$passwd_crypt/" \
+	    -e "s/^root:[^:]*/root:$passwd_crypt/"
+fi
+
+cp -rft /opt/karoshi-admin "$source_dir"/linuxclientsetup/admin-skel/*
+
+#Configure karoshi-setup autostart
+mkdir -p ~karoshi/.config/autostart
+ln -sft ~karoshi/.config/autostart/ /usr/share/applications/karoshi-setup.desktop
+
+chown -R karoshi: /opt/karoshi-admin
