@@ -194,6 +194,8 @@ function do_xpi_raw {
 		fi
 
 		cp -rT "$xpi_dir" /opt/karoshi/mozilla/extensions/"$xpi_name"
+		chown -R root: /opt/karoshi/mozilla/extensions/"$xpi_name"
+		chmod -R u=rwX,g=rX,o=rX /opt/karoshi/mozilla/extensions/"$xpi_name"
 	fi
 
 	xpi_id=$(xmlstarlet sel -N rdf=http://www.w3.org/1999/02/22-rdf-syntax-ns# -N em=http://www.mozilla.org/2004/em-rdf# \
