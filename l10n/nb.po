@@ -13,29 +13,29 @@ msgstr ""
 "Language-Team: none\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: linuxclientsetup/scripts/client-shutdown:27
 msgid "minutes"
-msgstr ""
+msgstr "minutter"
 
 #: linuxclientsetup/scripts/client-shutdown:29
 msgid "minute"
-msgstr ""
+msgstr "minutt"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Karoshi Scheduled Shutdown"
-msgstr ""
+msgstr "Karoshi Planlagt Shutdown"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "This system is going down in $1 $minute_string"
-msgstr ""
+msgstr "Dette systemet går ned i $1 $minute_string"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Make sure to save your work!"
-msgstr ""
+msgstr "Sørg for å lagre arbeidet ditt!"
 
 #: linuxclientsetup/scripts/pre-session:139
 #: linuxclientsetup/scripts/pre-session:143
@@ -44,27 +44,27 @@ msgstr ""
 #: linuxclientsetup/scripts/pre-session:176
 #: linuxclientsetup/scripts/pre-session:412
 msgid "Home"
-msgstr ""
+msgstr "hjem"
 
 #: linuxclientsetup/scripts/pre-session:154
 #: linuxclientsetup/scripts/pre-session:157
 #: linuxclientsetup/scripts/pre-session:159
 msgid "Offline Home"
-msgstr ""
+msgstr "offline Hjem"
 
 #: linuxclientsetup/scripts/pre-session:170
 msgid "Web Hosting"
-msgstr ""
+msgstr "web Hosting"
 
 #: linuxclientsetup/scripts/pre-session:190
 #: linuxclientsetup/scripts/pre-session:416
 msgid "Admin File Manager"
-msgstr ""
+msgstr "Admin File Manager"
 
 #: linuxclientsetup/utilities/common:66 linuxclientsetup/utilities/common:79
 #: linuxclientsetup/utilities/setup:34
 msgid "Karoshi Setup"
-msgstr ""
+msgstr "Karoshi Setup"
 
 #: linuxclientsetup/utilities/common:66
 #: linuxclientsetup/utilities/set-network:204
@@ -73,83 +73,83 @@ msgstr ""
 #: linuxclientsetup/utilities/set-network:383
 #: linuxclientsetup/utilities/set-network:553
 msgid "Configuration cancelled"
-msgstr ""
+msgstr "konfigurasjon avbestilling"
 
 #: linuxclientsetup/utilities/common:79
 msgid "You must complete the form"
-msgstr ""
+msgstr "Du må fylle ut skjemaet"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:44
 msgid "Rule file $1 does not exist"
-msgstr ""
+msgstr "Regel fil $1 ikke eksisterer"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:49
 msgid "iptables chain $2 does not exist"
-msgstr ""
+msgstr "iptables kjeden $2 ikke eksisterer"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:67
 #, sh-format
 msgid "Invalid protocol $protocol"
-msgstr ""
+msgstr "Ugyldig protokoll $protocol"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:77
 msgid "Port required for TCP or UDP"
-msgstr ""
+msgstr "Port kreves for TCP eller UDP"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:85
 #: linuxclientsetup/utilities/generate-firewall-rules:98
 msgid "Port option requires TCP or UDP"
-msgstr ""
+msgstr "Port alternativet krever TCP eller UDP"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:93
 #, sh-format
 msgid "Invalid port range $port"
-msgstr ""
+msgstr "Ugyldig portområde $port"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:104
 #, sh-format
 msgid "Invalid port $port"
-msgstr ""
+msgstr "Ugyldig port $port"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:128
 #, sh-format
 msgid "Invalid action $action"
-msgstr ""
+msgstr "Ugyldig handling $action"
 
 #: linuxclientsetup/utilities/manage-flags:31
 #, sh-format
 msgid "Could not create $flagsDir"
-msgstr ""
+msgstr "Kunne ikke opprette $flagsDir"
 
 #: linuxclientsetup/utilities/manage-flags:49
 msgid "Usage:"
-msgstr ""
+msgstr "bruk:"
 
 #: linuxclientsetup/utilities/manage-flags:50
 msgid "flag"
-msgstr ""
+msgstr "flagg"
 
 #: linuxclientsetup/utilities/offline-homes:27
 #: linuxclientsetup/utilities/offline-homes:32
 msgid "Offline Home Area"
-msgstr ""
+msgstr "Offline Home-området"
 
 #: linuxclientsetup/utilities/offline-homes:28
 msgid "You are now running in offline mode"
-msgstr ""
+msgstr "Du kjører nå i offline -modus"
 
 #: linuxclientsetup/utilities/offline-homes:28
 #, sh-format
 msgid "Make sure you save your work in $offline_dir"
-msgstr ""
+msgstr "Kontroller at du lagre arbeidet ditt i $offline_dir"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "You are now connected to the network"
-msgstr ""
+msgstr "Du er nå koblet til nettverket"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "Logging out will remove your offline home area"
-msgstr ""
+msgstr "Logge ut vil fjerne offline hjemmeområde"
 
 #: linuxclientsetup/utilities/set-local-password:24
 #: linuxclientsetup/utilities/set-local-password:25
@@ -159,7 +159,7 @@ msgstr ""
 #: linuxclientsetup/utilities/unset-network:27
 #: linuxclientsetup/utilities/unset-network:28
 msgid "This script must be run as root"
-msgstr ""
+msgstr "Dette skriptet må kjøres som root"
 
 #: linuxclientsetup/utilities/set-local-password:25
 #: linuxclientsetup/utilities/set-local-password:30
@@ -167,59 +167,59 @@ msgstr ""
 #: linuxclientsetup/utilities/set-local-password:45
 #: linuxclientsetup/utilities/set-local-password:54
 msgid "Karoshi Change Password"
-msgstr ""
+msgstr "Karoshi Endre passord"
 
 #: linuxclientsetup/utilities/set-local-password:30
 msgid "Password not set, original still active"
-msgstr ""
+msgstr "Passord ikke satt, original fortsatt aktiv"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #, sh-format
 msgid "Change password for $username and root"
-msgstr ""
+msgstr "Endre passord for $username og rot"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Password"
-msgstr ""
+msgstr "passord"
 
 #: linuxclientsetup/utilities/set-local-password:39
 msgid "Confirm"
-msgstr ""
+msgstr "bekrefte"
 
 #: linuxclientsetup/utilities/set-local-password:45
 msgid "The passwords did not match"
-msgstr ""
+msgstr "Passordene samsvarte ikke med"
 
 #: linuxclientsetup/utilities/set-local-password:54
 #, sh-format
 msgid "Password changed for $username and root"
-msgstr ""
+msgstr "Passord endret for $username og rot"
 
 #: linuxclientsetup/utilities/set-location:26
 #: linuxclientsetup/utilities/set-location:37
 #: linuxclientsetup/utilities/set-location:45
 #: linuxclientsetup/utilities/set-location:52
 msgid "Karoshi Set Location"
-msgstr ""
+msgstr "Karoshi Føde"
 
 #: linuxclientsetup/utilities/set-location:26
 msgid "Unable to contact Primary Domain Controller"
-msgstr ""
+msgstr "Kan ikke kontakte Primary Domain Controller"
 
 #: linuxclientsetup/utilities/set-location:37
 msgid "No locations have been created"
-msgstr ""
+msgstr "Ingen steder har blitt opprettet"
 
 #: linuxclientsetup/utilities/set-location:47
 msgid "Choose the location of this computer"
-msgstr ""
+msgstr "Velg plasseringen av denne datamaskinen"
 
 #: linuxclientsetup/utilities/set-location:52
 #, sh-format
 msgid "$HOSTNAME set to location $LOCATION"
-msgstr ""
+msgstr "$HOSTNAME satt til plassering $LOCATION"
 
 #: linuxclientsetup/utilities/set-network:31
 #: linuxclientsetup/utilities/set-network:38
@@ -246,243 +246,246 @@ msgstr ""
 #: linuxclientsetup/utilities/set-network:526
 #: linuxclientsetup/utilities/set-network:553
 msgid "Karoshi Set Network"
-msgstr ""
+msgstr "Karoshi Set Network"
 
 #: linuxclientsetup/utilities/set-network:37
 #: linuxclientsetup/utilities/set-network:38
 #, sh-format
 msgid "$netlogon_mount is already mounted"
-msgstr ""
+msgstr "$netlogon_mount er allerede montert"
 
 #: linuxclientsetup/utilities/set-network:62
 msgid "Asking for network settings"
-msgstr ""
+msgstr "Ber om nettverksinnstillinger"
 
 #: linuxclientsetup/utilities/set-network:71
 msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
-msgstr ""
+msgstr "IP-adresse, nettmaske og gateway ikke nødvendig hvis DHCP er valgt"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Hostname"
-msgstr ""
+msgstr "vertsnavn"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Network Interface"
-msgstr ""
+msgstr "Network Interface"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "IP Address"
-msgstr ""
+msgstr "IP-adresse"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Netmask"
-msgstr ""
+msgstr "netmask"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Gateway"
-msgstr ""
+msgstr "Gateway"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: linuxclientsetup/utilities/set-network:82
 msgid "You must enter a client name and network interface"
-msgstr ""
+msgstr "Du må angi en klient navn og nettverksgrensesnitt"
 
 #: linuxclientsetup/utilities/set-network:86
 msgid "You must enter a valid IP address, netmask and gateway, or choose DHCP"
 msgstr ""
+"Du må oppgi en gyldig IP-adresse, nettmaske og gateway, eller velge DHCP"
 
 #: linuxclientsetup/utilities/set-network:91
 msgid "Wireless device configuration"
-msgstr ""
+msgstr "Konfigurasjon trådløs enhet"
 
 #: linuxclientsetup/utilities/set-network:92
 #: linuxclientsetup/utilities/set-network:398
 msgid "SSID"
-msgstr ""
+msgstr "SSID"
 
 #: linuxclientsetup/utilities/set-network:92
 #: linuxclientsetup/utilities/set-network:398
 msgid "WPA2-PSK Key"
-msgstr ""
+msgstr "WPA2 - PSK Key"
 
 #: linuxclientsetup/utilities/set-network:102
 msgid "You must enter an SSID and key"
-msgstr ""
+msgstr "Du må angi en SSID og nøkkel"
 
 #: linuxclientsetup/utilities/set-network:201
 msgid "Karoshi Client Setup: Network Configuration"
-msgstr ""
+msgstr "Karoshi Client oppsett: Network Configuration"
 
 #: linuxclientsetup/utilities/set-network:210
 #: linuxclientsetup/utilities/set-network:250
 msgid "Bringing down network interface"
-msgstr ""
+msgstr "Å få ned nettverksgrensesnitt"
 
 #: linuxclientsetup/utilities/set-network:214
 #: linuxclientsetup/utilities/set-network:256
 msgid "Bringing up network interface"
-msgstr ""
+msgstr "Bringe opp nettverksgrensesnitt"
 
 #: linuxclientsetup/utilities/set-network:243
 msgid "Did not get DHCP lease"
-msgstr ""
+msgstr "Fikk ikke DHCP lease"
 
 #: linuxclientsetup/utilities/set-network:265
 #, sh-format
 msgid "Cannot contact gateway $GATEWAY"
-msgstr ""
+msgstr "Kan ikke kontakte gateway $GATEWAY"
 
 #: linuxclientsetup/utilities/set-network:278
 msgid "Not configuring for Karoshi Server"
-msgstr ""
+msgstr "Ikke konfigurere for Karoshi Server"
 
 #: linuxclientsetup/utilities/set-network:287
 msgid "Primary Domain Controller IP Address"
-msgstr ""
+msgstr "Primary Domain Controller IP-adresse"
 
 #: linuxclientsetup/utilities/set-network:288
 msgid "Skip"
-msgstr ""
+msgstr "Hopp"
 
 #: linuxclientsetup/utilities/set-network:294
 msgid "Attempting automatic configuration"
-msgstr ""
+msgstr "Forsøk automatisk konfigurering"
 
 #: linuxclientsetup/utilities/set-network:310
 msgid "Invalid PDC"
-msgstr ""
+msgstr "ugyldig PDC"
 
 #: linuxclientsetup/utilities/set-network:317
 #: linuxclientsetup/utilities/set-network:402
 #: linuxclientsetup/utilities/set-network:419
 msgid "Setting network configuration"
-msgstr ""
+msgstr "Konfigurasjonsinnstillinger nettverk"
 
 #: linuxclientsetup/utilities/set-network:372
 #: linuxclientsetup/utilities/set-network:443
 msgid "Cannot find domain information on server"
-msgstr ""
+msgstr "Kan ikke finne domeneinformasjon på serveren"
 
 #: linuxclientsetup/utilities/set-network:391
 msgid "Checking wireless network settings"
-msgstr ""
+msgstr "Kontrollere innstillinger for trådløst nettverk"
 
 #: linuxclientsetup/utilities/set-network:450
 msgid "Performing domain setup"
-msgstr ""
+msgstr "Utføre domeneoppsett"
 
 #: linuxclientsetup/utilities/set-network:463
 msgid "Copying files"
-msgstr ""
+msgstr "kopiering av filer"
 
 #: linuxclientsetup/utilities/set-network:470
 msgid "Configuring services"
-msgstr ""
+msgstr "konfigurering av tjenester"
 
 #: linuxclientsetup/utilities/set-network:481
 msgid "Joining domain"
-msgstr ""
+msgstr "bli med domene"
 
 #: linuxclientsetup/utilities/set-network:484
 msgid "Domain configuration cancelled"
-msgstr ""
+msgstr "Domain konfigurasjon avbestilling"
 
 #: linuxclientsetup/utilities/set-network:493
 msgid "Enter credentials to join the domain"
-msgstr ""
+msgstr "Angi legitimasjon for å bli med i domenet"
 
 #: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Username"
-msgstr ""
+msgstr "brukernavn"
 
 #: linuxclientsetup/utilities/set-network:502
 msgid "Finalising domain configuration"
-msgstr ""
+msgstr "Avslutningen domenekonfigurasjon"
 
 #: linuxclientsetup/utilities/set-network:526
 msgid ""
 "This version of Karoshi Client requires Karoshi Server version 9.0 or above"
 msgstr ""
+"Denne versjonen av Karoshi Client krever Karoshi Server versjon 9.0 eller "
+"nyere"
 
 #: linuxclientsetup/utilities/set-network:537
 msgid "Finalising network configuration"
-msgstr ""
+msgstr "Konfigurasjon Avslutningen nettverk"
 
 #: linuxclientsetup/utilities/setup:155
 msgid "Setting capabilities for dumpcap using Linux Capabilities failed."
-msgstr ""
+msgstr "Innstillingsmuligheterfor dumpcap bruker Linux Evnene sviktet."
 
 #: linuxclientsetup/utilities/setup:156
 msgid "Falling back to setting set-user-id bit."
-msgstr ""
+msgstr "Faller tilbake til å sette set- bruker- id bit."
 
 #: linuxclientsetup/utilities/unset-network:28
 #: linuxclientsetup/utilities/unset-network:37
 #: linuxclientsetup/utilities/unset-network:48
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Karoshi Unset Network"
-msgstr ""
+msgstr "Karoshi Unset Network"
 
 #: linuxclientsetup/utilities/unset-network:37
 msgid "Karoshi Client Setup: Network Deconfiguration"
-msgstr ""
+msgstr "Karoshi Client oppsett: Nettverk Deconfiguration"
 
 #: linuxclientsetup/utilities/unset-network:39
 msgid "Deconfiguring domain settings"
-msgstr ""
+msgstr "Deconfiguring domeneinnstillinger"
 
 #: linuxclientsetup/utilities/unset-network:43
 msgid "Machine not joined to the domain"
-msgstr ""
+msgstr "Maskinen ikke knyttet til domenet"
 
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Enter credentials to leave the domain"
-msgstr ""
+msgstr "Angi legitimasjon for å forlate domenet"
 
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Invalid domain type"
-msgstr ""
+msgstr "Ugyldig domenetypen"
 
 #: linuxclientsetup/utilities/unset-network:103
 msgid "Reverting configuration files"
-msgstr ""
+msgstr "Skifter konfigurasjonsfiler"
 
 #: linuxclientsetup/utilities/unset-network:116
 msgid "Resetting hostname"
-msgstr ""
+msgstr "Nullstilling vertsnavn"
 
 #: linuxclientsetup/utilities/unset-network:130
 msgid "Bringing down old network interface"
-msgstr ""
+msgstr "Bringe ned gamle nettverksgrensesnitt"
 
 #: linuxclientsetup/utilities/unset-network:133
 msgid "Resetting network interface configuration"
-msgstr ""
+msgstr "Tilbakestille nettverksgrensesnitt konfigurasjon"
 
 #: linuxclientsetup/utilities/unset-network:139
 msgid "Resetting DNS information"
-msgstr ""
+msgstr "Nullstilling DNS-informasjon"
 
 #: l10n/tmp/karoshi-change-admin-password.desktop.h:1
 msgid "Change Administrator Password"
-msgstr ""
+msgstr "Endre passord"
 
 #: l10n/tmp/karoshi-printing.desktop.h:1
 msgid "Printer Settings"
-msgstr ""
+msgstr "Skriverinnstillinger"
 
 #: l10n/tmp/karoshi-printing.desktop.h:2
 msgid "Configure printers on the local system"
-msgstr ""
+msgstr "Konfigurere skrivere på det lokale systemet"
 
 #: l10n/tmp/karoshi-set-location.desktop.h:1
 msgid "Set Karoshi Client Location"
-msgstr ""
+msgstr "Satt Karoshi Client Beliggenhet"
 
 #: l10n/tmp/karoshi-setup.desktop.h:1
 msgid "Setup Karoshi Client"
-msgstr ""
+msgstr "Oppsett Karoshi Client"

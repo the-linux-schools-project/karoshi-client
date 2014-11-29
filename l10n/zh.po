@@ -13,28 +13,28 @@ msgstr ""
 "Language-Team: none\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: linuxclientsetup/scripts/client-shutdown:27
 msgid "minutes"
-msgstr ""
+msgstr "分钟"
 
 #: linuxclientsetup/scripts/client-shutdown:29
 msgid "minute"
-msgstr ""
+msgstr "分钟"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Karoshi Scheduled Shutdown"
-msgstr ""
+msgstr "过劳死计划关闭"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "This system is going down in $1 $minute_string"
-msgstr ""
+msgstr "该系统正在下降的$1 $minute_string"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Make sure to save your work!"
-msgstr ""
+msgstr "请务必保存您的工作！"
 
 #: linuxclientsetup/scripts/pre-session:139
 #: linuxclientsetup/scripts/pre-session:143
@@ -43,27 +43,27 @@ msgstr ""
 #: linuxclientsetup/scripts/pre-session:176
 #: linuxclientsetup/scripts/pre-session:412
 msgid "Home"
-msgstr ""
+msgstr "家"
 
 #: linuxclientsetup/scripts/pre-session:154
 #: linuxclientsetup/scripts/pre-session:157
 #: linuxclientsetup/scripts/pre-session:159
 msgid "Offline Home"
-msgstr ""
+msgstr "离线主页"
 
 #: linuxclientsetup/scripts/pre-session:170
 msgid "Web Hosting"
-msgstr ""
+msgstr "虚拟主机"
 
 #: linuxclientsetup/scripts/pre-session:190
 #: linuxclientsetup/scripts/pre-session:416
 msgid "Admin File Manager"
-msgstr ""
+msgstr "管理员文件管理器"
 
 #: linuxclientsetup/utilities/common:66 linuxclientsetup/utilities/common:79
 #: linuxclientsetup/utilities/setup:34
 msgid "Karoshi Setup"
-msgstr ""
+msgstr "过劳死设置"
 
 #: linuxclientsetup/utilities/common:66
 #: linuxclientsetup/utilities/set-network:204
@@ -72,83 +72,83 @@ msgstr ""
 #: linuxclientsetup/utilities/set-network:383
 #: linuxclientsetup/utilities/set-network:553
 msgid "Configuration cancelled"
-msgstr ""
+msgstr "配置取消"
 
 #: linuxclientsetup/utilities/common:79
 msgid "You must complete the form"
-msgstr ""
+msgstr "您必须填写表格"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:44
 msgid "Rule file $1 does not exist"
-msgstr ""
+msgstr "规则文件$1不存在"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:49
 msgid "iptables chain $2 does not exist"
-msgstr ""
+msgstr "iptables的链$2不存在"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:67
 #, sh-format
 msgid "Invalid protocol $protocol"
-msgstr ""
+msgstr "无效的协议$protocol"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:77
 msgid "Port required for TCP or UDP"
-msgstr ""
+msgstr "所需的TCP或UDP端口"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:85
 #: linuxclientsetup/utilities/generate-firewall-rules:98
 msgid "Port option requires TCP or UDP"
-msgstr ""
+msgstr "端口选项需要TCP或UDP"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:93
 #, sh-format
 msgid "Invalid port range $port"
-msgstr ""
+msgstr "无效的端口范围$port"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:104
 #, sh-format
 msgid "Invalid port $port"
-msgstr ""
+msgstr "无效的端口$port"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:128
 #, sh-format
 msgid "Invalid action $action"
-msgstr ""
+msgstr "无效的诉讼$action"
 
 #: linuxclientsetup/utilities/manage-flags:31
 #, sh-format
 msgid "Could not create $flagsDir"
-msgstr ""
+msgstr "无法创建$flagsDir"
 
 #: linuxclientsetup/utilities/manage-flags:49
 msgid "Usage:"
-msgstr ""
+msgstr "用法："
 
 #: linuxclientsetup/utilities/manage-flags:50
 msgid "flag"
-msgstr ""
+msgstr "旗"
 
 #: linuxclientsetup/utilities/offline-homes:27
 #: linuxclientsetup/utilities/offline-homes:32
 msgid "Offline Home Area"
-msgstr ""
+msgstr "离线主页区"
 
 #: linuxclientsetup/utilities/offline-homes:28
 msgid "You are now running in offline mode"
-msgstr ""
+msgstr "你现在在离线模式下运行"
 
 #: linuxclientsetup/utilities/offline-homes:28
 #, sh-format
 msgid "Make sure you save your work in $offline_dir"
-msgstr ""
+msgstr "请确保您保存您的工作中$offline_dir"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "You are now connected to the network"
-msgstr ""
+msgstr "你现在连接到网络"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "Logging out will remove your offline home area"
-msgstr ""
+msgstr "注销将删除脱机家区"
 
 #: linuxclientsetup/utilities/set-local-password:24
 #: linuxclientsetup/utilities/set-local-password:25
@@ -158,7 +158,7 @@ msgstr ""
 #: linuxclientsetup/utilities/unset-network:27
 #: linuxclientsetup/utilities/unset-network:28
 msgid "This script must be run as root"
-msgstr ""
+msgstr "该脚本必须以root身份运行"
 
 #: linuxclientsetup/utilities/set-local-password:25
 #: linuxclientsetup/utilities/set-local-password:30
@@ -166,59 +166,59 @@ msgstr ""
 #: linuxclientsetup/utilities/set-local-password:45
 #: linuxclientsetup/utilities/set-local-password:54
 msgid "Karoshi Change Password"
-msgstr ""
+msgstr "过劳死更改密码"
 
 #: linuxclientsetup/utilities/set-local-password:30
 msgid "Password not set, original still active"
-msgstr ""
+msgstr "密码不能设置，原来仍然活跃"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #, sh-format
 msgid "Change password for $username and root"
-msgstr ""
+msgstr "更改密码$username和根"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Password"
-msgstr ""
+msgstr "密码"
 
 #: linuxclientsetup/utilities/set-local-password:39
 msgid "Confirm"
-msgstr ""
+msgstr "确认"
 
 #: linuxclientsetup/utilities/set-local-password:45
 msgid "The passwords did not match"
-msgstr ""
+msgstr "密码不匹配"
 
 #: linuxclientsetup/utilities/set-local-password:54
 #, sh-format
 msgid "Password changed for $username and root"
-msgstr ""
+msgstr "密码已更改为$username和根"
 
 #: linuxclientsetup/utilities/set-location:26
 #: linuxclientsetup/utilities/set-location:37
 #: linuxclientsetup/utilities/set-location:45
 #: linuxclientsetup/utilities/set-location:52
 msgid "Karoshi Set Location"
-msgstr ""
+msgstr "过劳死设置位置"
 
 #: linuxclientsetup/utilities/set-location:26
 msgid "Unable to contact Primary Domain Controller"
-msgstr ""
+msgstr "无法联系主域控制器"
 
 #: linuxclientsetup/utilities/set-location:37
 msgid "No locations have been created"
-msgstr ""
+msgstr "已创建无位置"
 
 #: linuxclientsetup/utilities/set-location:47
 msgid "Choose the location of this computer"
-msgstr ""
+msgstr "选择这台电脑的位置"
 
 #: linuxclientsetup/utilities/set-location:52
 #, sh-format
 msgid "$HOSTNAME set to location $LOCATION"
-msgstr ""
+msgstr "$HOSTNAME设置位置$LOCATION"
 
 #: linuxclientsetup/utilities/set-network:31
 #: linuxclientsetup/utilities/set-network:38
@@ -245,243 +245,243 @@ msgstr ""
 #: linuxclientsetup/utilities/set-network:526
 #: linuxclientsetup/utilities/set-network:553
 msgid "Karoshi Set Network"
-msgstr ""
+msgstr "过劳死设置网络"
 
 #: linuxclientsetup/utilities/set-network:37
 #: linuxclientsetup/utilities/set-network:38
 #, sh-format
 msgid "$netlogon_mount is already mounted"
-msgstr ""
+msgstr "$netlogon_mount已安装"
 
 #: linuxclientsetup/utilities/set-network:62
 msgid "Asking for network settings"
-msgstr ""
+msgstr "要求网络设置"
 
 #: linuxclientsetup/utilities/set-network:71
 msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
-msgstr ""
+msgstr "IP地址，如果选择DHCP不需要子网掩码和网关"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Hostname"
-msgstr ""
+msgstr "主机名"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Network Interface"
-msgstr ""
+msgstr "网络接口"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "IP Address"
-msgstr ""
+msgstr "IP地址"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Netmask"
-msgstr ""
+msgstr "子网掩码"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Gateway"
-msgstr ""
+msgstr "网关"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: linuxclientsetup/utilities/set-network:82
 msgid "You must enter a client name and network interface"
-msgstr ""
+msgstr "您必须输入客户名称和网络接口"
 
 #: linuxclientsetup/utilities/set-network:86
 msgid "You must enter a valid IP address, netmask and gateway, or choose DHCP"
-msgstr ""
+msgstr "您必须输入一个有效的IP地址，子网掩码和网关，或选择DHCP"
 
 #: linuxclientsetup/utilities/set-network:91
 msgid "Wireless device configuration"
-msgstr ""
+msgstr "无线设备配置"
 
 #: linuxclientsetup/utilities/set-network:92
 #: linuxclientsetup/utilities/set-network:398
 msgid "SSID"
-msgstr ""
+msgstr "SSID"
 
 #: linuxclientsetup/utilities/set-network:92
 #: linuxclientsetup/utilities/set-network:398
 msgid "WPA2-PSK Key"
-msgstr ""
+msgstr "WPA2 -PSK关键"
 
 #: linuxclientsetup/utilities/set-network:102
 msgid "You must enter an SSID and key"
-msgstr ""
+msgstr "您必须输入SSID和关键"
 
 #: linuxclientsetup/utilities/set-network:201
 msgid "Karoshi Client Setup: Network Configuration"
-msgstr ""
+msgstr "过劳死客户端安装：网络配置"
 
 #: linuxclientsetup/utilities/set-network:210
 #: linuxclientsetup/utilities/set-network:250
 msgid "Bringing down network interface"
-msgstr ""
+msgstr "打倒网络接口"
 
 #: linuxclientsetup/utilities/set-network:214
 #: linuxclientsetup/utilities/set-network:256
 msgid "Bringing up network interface"
-msgstr ""
+msgstr "造就了网络接口"
 
 #: linuxclientsetup/utilities/set-network:243
 msgid "Did not get DHCP lease"
-msgstr ""
+msgstr "没有得到DHCP租约"
 
 #: linuxclientsetup/utilities/set-network:265
 #, sh-format
 msgid "Cannot contact gateway $GATEWAY"
-msgstr ""
+msgstr "无法联系网关$GATEWAY"
 
 #: linuxclientsetup/utilities/set-network:278
 msgid "Not configuring for Karoshi Server"
-msgstr ""
+msgstr "没有配置为过劳死服务器"
 
 #: linuxclientsetup/utilities/set-network:287
 msgid "Primary Domain Controller IP Address"
-msgstr ""
+msgstr "主域控制器的IP地址"
 
 #: linuxclientsetup/utilities/set-network:288
 msgid "Skip"
-msgstr ""
+msgstr "跳跃"
 
 #: linuxclientsetup/utilities/set-network:294
 msgid "Attempting automatic configuration"
-msgstr ""
+msgstr "尝试自动配置"
 
 #: linuxclientsetup/utilities/set-network:310
 msgid "Invalid PDC"
-msgstr ""
+msgstr "PDC无效"
 
 #: linuxclientsetup/utilities/set-network:317
 #: linuxclientsetup/utilities/set-network:402
 #: linuxclientsetup/utilities/set-network:419
 msgid "Setting network configuration"
-msgstr ""
+msgstr "设置网络配置"
 
 #: linuxclientsetup/utilities/set-network:372
 #: linuxclientsetup/utilities/set-network:443
 msgid "Cannot find domain information on server"
-msgstr ""
+msgstr "无法找到服务器域信息"
 
 #: linuxclientsetup/utilities/set-network:391
 msgid "Checking wireless network settings"
-msgstr ""
+msgstr "检查无线网络设置"
 
 #: linuxclientsetup/utilities/set-network:450
 msgid "Performing domain setup"
-msgstr ""
+msgstr "执行域设置"
 
 #: linuxclientsetup/utilities/set-network:463
 msgid "Copying files"
-msgstr ""
+msgstr "复制文件"
 
 #: linuxclientsetup/utilities/set-network:470
 msgid "Configuring services"
-msgstr ""
+msgstr "配置服务"
 
 #: linuxclientsetup/utilities/set-network:481
 msgid "Joining domain"
-msgstr ""
+msgstr "加入域"
 
 #: linuxclientsetup/utilities/set-network:484
 msgid "Domain configuration cancelled"
-msgstr ""
+msgstr "域配置取消"
 
 #: linuxclientsetup/utilities/set-network:493
 msgid "Enter credentials to join the domain"
-msgstr ""
+msgstr "输入凭据以加入域"
 
 #: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Username"
-msgstr ""
+msgstr "用户名"
 
 #: linuxclientsetup/utilities/set-network:502
 msgid "Finalising domain configuration"
-msgstr ""
+msgstr "定型化域配置"
 
 #: linuxclientsetup/utilities/set-network:526
 msgid ""
 "This version of Karoshi Client requires Karoshi Server version 9.0 or above"
-msgstr ""
+msgstr "这个版本过劳死客户的需要过劳死Server版本9.0或以上"
 
 #: linuxclientsetup/utilities/set-network:537
 msgid "Finalising network configuration"
-msgstr ""
+msgstr "定型化的网络配置"
 
 #: linuxclientsetup/utilities/setup:155
 msgid "Setting capabilities for dumpcap using Linux Capabilities failed."
-msgstr ""
+msgstr "使用Linux的功能dumpcap设置功能失败。"
 
 #: linuxclientsetup/utilities/setup:156
 msgid "Falling back to setting set-user-id bit."
-msgstr ""
+msgstr "回落至设置设置用户ID位。"
 
 #: linuxclientsetup/utilities/unset-network:28
 #: linuxclientsetup/utilities/unset-network:37
 #: linuxclientsetup/utilities/unset-network:48
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Karoshi Unset Network"
-msgstr ""
+msgstr "过劳死未设置网络"
 
 #: linuxclientsetup/utilities/unset-network:37
 msgid "Karoshi Client Setup: Network Deconfiguration"
-msgstr ""
+msgstr "过劳死客户端安装：解除配置网络"
 
 #: linuxclientsetup/utilities/unset-network:39
 msgid "Deconfiguring domain settings"
-msgstr ""
+msgstr "解除配置域设置"
 
 #: linuxclientsetup/utilities/unset-network:43
 msgid "Machine not joined to the domain"
-msgstr ""
+msgstr "该机没有加入到域"
 
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Enter credentials to leave the domain"
-msgstr ""
+msgstr "输入凭据离开域"
 
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Invalid domain type"
-msgstr ""
+msgstr "无效域类型"
 
 #: linuxclientsetup/utilities/unset-network:103
 msgid "Reverting configuration files"
-msgstr ""
+msgstr "恢复配置文件"
 
 #: linuxclientsetup/utilities/unset-network:116
 msgid "Resetting hostname"
-msgstr ""
+msgstr "重置主机"
 
 #: linuxclientsetup/utilities/unset-network:130
 msgid "Bringing down old network interface"
-msgstr ""
+msgstr "打倒旧网络接口"
 
 #: linuxclientsetup/utilities/unset-network:133
 msgid "Resetting network interface configuration"
-msgstr ""
+msgstr "重置网络接口配置"
 
 #: linuxclientsetup/utilities/unset-network:139
 msgid "Resetting DNS information"
-msgstr ""
+msgstr "重置DNS信息"
 
 #: l10n/tmp/karoshi-change-admin-password.desktop.h:1
 msgid "Change Administrator Password"
-msgstr ""
+msgstr "更改管理员密码"
 
 #: l10n/tmp/karoshi-printing.desktop.h:1
 msgid "Printer Settings"
-msgstr ""
+msgstr "打印机设置"
 
 #: l10n/tmp/karoshi-printing.desktop.h:2
 msgid "Configure printers on the local system"
-msgstr ""
+msgstr "在本地系统上配置的打印机"
 
 #: l10n/tmp/karoshi-set-location.desktop.h:1
 msgid "Set Karoshi Client Location"
-msgstr ""
+msgstr "设置过劳死Client位置"
 
 #: l10n/tmp/karoshi-setup.desktop.h:1
 msgid "Setup Karoshi Client"
-msgstr ""
+msgstr "设置过劳死客户端"

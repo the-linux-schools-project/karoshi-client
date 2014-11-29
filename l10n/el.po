@@ -13,29 +13,29 @@ msgstr ""
 "Language-Team: none\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: linuxclientsetup/scripts/client-shutdown:27
 msgid "minutes"
-msgstr ""
+msgstr "πρακτικά"
 
 #: linuxclientsetup/scripts/client-shutdown:29
 msgid "minute"
-msgstr ""
+msgstr "λεπτό"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Karoshi Scheduled Shutdown"
-msgstr ""
+msgstr "Karoshi Προγραμματισμένη Τερματισμός"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "This system is going down in $1 $minute_string"
-msgstr ""
+msgstr "Αυτό το σύστημα θα τερματιστεί σε $1 $minute_string"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Make sure to save your work!"
-msgstr ""
+msgstr "Φροντίστε να αποθηκεύσετε την εργασία σας!"
 
 #: linuxclientsetup/scripts/pre-session:139
 #: linuxclientsetup/scripts/pre-session:143
@@ -44,27 +44,27 @@ msgstr ""
 #: linuxclientsetup/scripts/pre-session:176
 #: linuxclientsetup/scripts/pre-session:412
 msgid "Home"
-msgstr ""
+msgstr "σπίτι"
 
 #: linuxclientsetup/scripts/pre-session:154
 #: linuxclientsetup/scripts/pre-session:157
 #: linuxclientsetup/scripts/pre-session:159
 msgid "Offline Home"
-msgstr ""
+msgstr "Αποσυνδεδεμένος Αρχική"
 
 #: linuxclientsetup/scripts/pre-session:170
 msgid "Web Hosting"
-msgstr ""
+msgstr "Web Hosting"
 
 #: linuxclientsetup/scripts/pre-session:190
 #: linuxclientsetup/scripts/pre-session:416
 msgid "Admin File Manager"
-msgstr ""
+msgstr "Διαχειριστής Διαχειριστής Αρχείων"
 
 #: linuxclientsetup/utilities/common:66 linuxclientsetup/utilities/common:79
 #: linuxclientsetup/utilities/setup:34
 msgid "Karoshi Setup"
-msgstr ""
+msgstr "Ρύθμιση Karoshi"
 
 #: linuxclientsetup/utilities/common:66
 #: linuxclientsetup/utilities/set-network:204
@@ -73,83 +73,84 @@ msgstr ""
 #: linuxclientsetup/utilities/set-network:383
 #: linuxclientsetup/utilities/set-network:553
 msgid "Configuration cancelled"
-msgstr ""
+msgstr "Διαμόρφωση ακυρώθηκε"
 
 #: linuxclientsetup/utilities/common:79
 msgid "You must complete the form"
-msgstr ""
+msgstr "Θα πρέπει να συμπληρώσετε τη φόρμα"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:44
 msgid "Rule file $1 does not exist"
-msgstr ""
+msgstr "Αρχείο Κανόνας $1 δεν υπάρχει"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:49
 msgid "iptables chain $2 does not exist"
-msgstr ""
+msgstr "iptables $2 αλυσίδα δεν υπάρχει"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:67
 #, sh-format
 msgid "Invalid protocol $protocol"
-msgstr ""
+msgstr "Άκυρη $protocol πρωτόκολλο"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:77
 msgid "Port required for TCP or UDP"
-msgstr ""
+msgstr "Λιμένα που απαιτούνται για TCP ή UDP"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:85
 #: linuxclientsetup/utilities/generate-firewall-rules:98
 msgid "Port option requires TCP or UDP"
-msgstr ""
+msgstr "Λιμάνι επιλογή απαιτεί το πρωτόκολλο TCP ή UDP"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:93
 #, sh-format
 msgid "Invalid port range $port"
-msgstr ""
+msgstr "$port έγκυρο εύρος θύρας"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:104
 #, sh-format
 msgid "Invalid port $port"
-msgstr ""
+msgstr "Άκυρη θύρα $port"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:128
 #, sh-format
 msgid "Invalid action $action"
-msgstr ""
+msgstr "Άκυρη $action δράση"
 
 #: linuxclientsetup/utilities/manage-flags:31
 #, sh-format
 msgid "Could not create $flagsDir"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η δημιουργία $flagsDir"
 
 #: linuxclientsetup/utilities/manage-flags:49
 msgid "Usage:"
-msgstr ""
+msgstr "Χρήση:"
 
 #: linuxclientsetup/utilities/manage-flags:50
 msgid "flag"
-msgstr ""
+msgstr "σημαία"
 
 #: linuxclientsetup/utilities/offline-homes:27
 #: linuxclientsetup/utilities/offline-homes:32
 msgid "Offline Home Area"
-msgstr ""
+msgstr "Αποσυνδεδεμένος Αρχική Περιοχή"
 
 #: linuxclientsetup/utilities/offline-homes:28
 msgid "You are now running in offline mode"
-msgstr ""
+msgstr "Είστε τώρα τρέχει σε κατάσταση offline"
 
 #: linuxclientsetup/utilities/offline-homes:28
 #, sh-format
 msgid "Make sure you save your work in $offline_dir"
 msgstr ""
+"Βεβαιωθείτε ότι μπορείτε να αποθηκεύσετε την εργασία σας σε $offline_dir"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "You are now connected to the network"
-msgstr ""
+msgstr "Είστε πλέον συνδεδεμένοι με το δίκτυο"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "Logging out will remove your offline home area"
-msgstr ""
+msgstr "Αποσύνδεση θα αφαιρέσει offline περιοχή σπίτι σας"
 
 #: linuxclientsetup/utilities/set-local-password:24
 #: linuxclientsetup/utilities/set-local-password:25
@@ -159,7 +160,7 @@ msgstr ""
 #: linuxclientsetup/utilities/unset-network:27
 #: linuxclientsetup/utilities/unset-network:28
 msgid "This script must be run as root"
-msgstr ""
+msgstr "Αυτό το σενάριο θα πρέπει να εκτελούνται ως root"
 
 #: linuxclientsetup/utilities/set-local-password:25
 #: linuxclientsetup/utilities/set-local-password:30
@@ -167,59 +168,59 @@ msgstr ""
 #: linuxclientsetup/utilities/set-local-password:45
 #: linuxclientsetup/utilities/set-local-password:54
 msgid "Karoshi Change Password"
-msgstr ""
+msgstr "Karoshi Αλλαγή κωδικού πρόσβασης"
 
 #: linuxclientsetup/utilities/set-local-password:30
 msgid "Password not set, original still active"
-msgstr ""
+msgstr "Κωδικός πρόσβασης δεν έχει οριστεί, πρωτότυπο ακόμα ενεργή"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #, sh-format
 msgid "Change password for $username and root"
-msgstr ""
+msgstr "Αλλαγή κωδικού πρόσβασης για $username και ρίζας"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Password"
-msgstr ""
+msgstr "Κωδικός"
 
 #: linuxclientsetup/utilities/set-local-password:39
 msgid "Confirm"
-msgstr ""
+msgstr "επιβεβαιώνω"
 
 #: linuxclientsetup/utilities/set-local-password:45
 msgid "The passwords did not match"
-msgstr ""
+msgstr "Οι κωδικοί πρόσβασης δεν ταιριάζουν"
 
 #: linuxclientsetup/utilities/set-local-password:54
 #, sh-format
 msgid "Password changed for $username and root"
-msgstr ""
+msgstr "Ο κωδικός σας άλλαξε για $username και ρίζας"
 
 #: linuxclientsetup/utilities/set-location:26
 #: linuxclientsetup/utilities/set-location:37
 #: linuxclientsetup/utilities/set-location:45
 #: linuxclientsetup/utilities/set-location:52
 msgid "Karoshi Set Location"
-msgstr ""
+msgstr "Karoshi Σετ Τοποθεσία"
 
 #: linuxclientsetup/utilities/set-location:26
 msgid "Unable to contact Primary Domain Controller"
-msgstr ""
+msgstr "Ανίκανος να επικοινωνήσετε Δημοτικό ελεγκτή τομέα"
 
 #: linuxclientsetup/utilities/set-location:37
 msgid "No locations have been created"
-msgstr ""
+msgstr "Δεν έχουν δημιουργηθεί θέσεις"
 
 #: linuxclientsetup/utilities/set-location:47
 msgid "Choose the location of this computer"
-msgstr ""
+msgstr "Επιλέξτε την τοποθεσία αυτού του υπολογιστή"
 
 #: linuxclientsetup/utilities/set-location:52
 #, sh-format
 msgid "$HOSTNAME set to location $LOCATION"
-msgstr ""
+msgstr "$HOSTNAME που να $LOCATION τοποθεσία"
 
 #: linuxclientsetup/utilities/set-network:31
 #: linuxclientsetup/utilities/set-network:38
@@ -246,243 +247,249 @@ msgstr ""
 #: linuxclientsetup/utilities/set-network:526
 #: linuxclientsetup/utilities/set-network:553
 msgid "Karoshi Set Network"
-msgstr ""
+msgstr "Karoshi Σετ Δίκτυο"
 
 #: linuxclientsetup/utilities/set-network:37
 #: linuxclientsetup/utilities/set-network:38
 #, sh-format
 msgid "$netlogon_mount is already mounted"
-msgstr ""
+msgstr "$netlogon_mount έχει ήδη τοποθετηθεί"
 
 #: linuxclientsetup/utilities/set-network:62
 msgid "Asking for network settings"
-msgstr ""
+msgstr "Ζητώντας για τις ρυθμίσεις δικτύου"
 
 #: linuxclientsetup/utilities/set-network:71
 msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
 msgstr ""
+"Η διεύθυνση IP, τη μάσκα και την πύλη δεν απαιτούνται αν έχει επιλεγεί το "
+"DHCP"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Hostname"
-msgstr ""
+msgstr "Όνομα κεντρικού υπολογιστή"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Network Interface"
-msgstr ""
+msgstr "Διασύνδεση δικτύου"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "IP Address"
-msgstr ""
+msgstr "Διεύθυνση IP"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Netmask"
-msgstr ""
+msgstr "Μάσκα δικτύου"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "Gateway"
-msgstr ""
+msgstr "Πύλη"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: linuxclientsetup/utilities/set-network:82
 msgid "You must enter a client name and network interface"
-msgstr ""
+msgstr "Πρέπει να εισάγετε ένα όνομα πελάτη και διασύνδεσης δικτύου"
 
 #: linuxclientsetup/utilities/set-network:86
 msgid "You must enter a valid IP address, netmask and gateway, or choose DHCP"
 msgstr ""
+"Πρέπει να εισάγετε μια έγκυρη διεύθυνση IP, τη μάσκα και την πύλη, ή να "
+"επιλέξετε DHCP"
 
 #: linuxclientsetup/utilities/set-network:91
 msgid "Wireless device configuration"
-msgstr ""
+msgstr "Διαμόρφωση ασύρματης συσκευής"
 
 #: linuxclientsetup/utilities/set-network:92
 #: linuxclientsetup/utilities/set-network:398
 msgid "SSID"
-msgstr ""
+msgstr "SSID"
 
 #: linuxclientsetup/utilities/set-network:92
 #: linuxclientsetup/utilities/set-network:398
 msgid "WPA2-PSK Key"
-msgstr ""
+msgstr "WPA2 - PSK κλειδιά"
 
 #: linuxclientsetup/utilities/set-network:102
 msgid "You must enter an SSID and key"
-msgstr ""
+msgstr "Θα πρέπει να εισάγετε ένα SSID και το κλειδί"
 
 #: linuxclientsetup/utilities/set-network:201
 msgid "Karoshi Client Setup: Network Configuration"
-msgstr ""
+msgstr "Karoshi Ρύθμιση Πελάτης: Ρύθμιση δικτύου"
 
 #: linuxclientsetup/utilities/set-network:210
 #: linuxclientsetup/utilities/set-network:250
 msgid "Bringing down network interface"
-msgstr ""
+msgstr "Φέρνοντας κάτω διασύνδεσης δικτύου"
 
 #: linuxclientsetup/utilities/set-network:214
 #: linuxclientsetup/utilities/set-network:256
 msgid "Bringing up network interface"
-msgstr ""
+msgstr "Η ανατροφή των διασύνδεσης δικτύου"
 
 #: linuxclientsetup/utilities/set-network:243
 msgid "Did not get DHCP lease"
-msgstr ""
+msgstr "Μήπως δεν πάρει μίσθωσης DHCP"
 
 #: linuxclientsetup/utilities/set-network:265
 #, sh-format
 msgid "Cannot contact gateway $GATEWAY"
-msgstr ""
+msgstr "Δεν είναι δυνατή η επικοινωνία πύλη $GATEWAY"
 
 #: linuxclientsetup/utilities/set-network:278
 msgid "Not configuring for Karoshi Server"
-msgstr ""
+msgstr "Δεν ρύθμιση για Karoshi διακομιστή"
 
 #: linuxclientsetup/utilities/set-network:287
 msgid "Primary Domain Controller IP Address"
-msgstr ""
+msgstr "Πρωτοβάθμια πεδίο Domain Controller IP Address"
 
 #: linuxclientsetup/utilities/set-network:288
 msgid "Skip"
-msgstr ""
+msgstr "Μεταφορά"
 
 #: linuxclientsetup/utilities/set-network:294
 msgid "Attempting automatic configuration"
-msgstr ""
+msgstr "Η προσπάθεια αυτόματης ρύθμισης παραμέτρων"
 
 #: linuxclientsetup/utilities/set-network:310
 msgid "Invalid PDC"
-msgstr ""
+msgstr "Άκυρη PDC"
 
 #: linuxclientsetup/utilities/set-network:317
 #: linuxclientsetup/utilities/set-network:402
 #: linuxclientsetup/utilities/set-network:419
 msgid "Setting network configuration"
-msgstr ""
+msgstr "Διαμόρφωση του δικτύου Ρύθμιση"
 
 #: linuxclientsetup/utilities/set-network:372
 #: linuxclientsetup/utilities/set-network:443
 msgid "Cannot find domain information on server"
-msgstr ""
+msgstr "Δεν μπορείτε να βρείτε πληροφορίες σχετικά με τον τομέα του server"
 
 #: linuxclientsetup/utilities/set-network:391
 msgid "Checking wireless network settings"
-msgstr ""
+msgstr "Έλεγχος των ρυθμίσεων του ασύρματου δικτύου"
 
 #: linuxclientsetup/utilities/set-network:450
 msgid "Performing domain setup"
-msgstr ""
+msgstr "Εκτέλεση εγκατάστασης τομέα"
 
 #: linuxclientsetup/utilities/set-network:463
 msgid "Copying files"
-msgstr ""
+msgstr "Αντιγραφή αρχείων"
 
 #: linuxclientsetup/utilities/set-network:470
 msgid "Configuring services"
-msgstr ""
+msgstr "Ρύθμιση υπηρεσιών"
 
 #: linuxclientsetup/utilities/set-network:481
 msgid "Joining domain"
-msgstr ""
+msgstr "Ενώνουμε τομέα"
 
 #: linuxclientsetup/utilities/set-network:484
 msgid "Domain configuration cancelled"
-msgstr ""
+msgstr "Διαμόρφωση Τομέα ακυρώθηκε"
 
 #: linuxclientsetup/utilities/set-network:493
 msgid "Enter credentials to join the domain"
-msgstr ""
+msgstr "Εισάγετε τα στοιχεία για να συνδέσει τον τομέα"
 
 #: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Username"
-msgstr ""
+msgstr "Όνομα Χρήστη"
 
 #: linuxclientsetup/utilities/set-network:502
 msgid "Finalising domain configuration"
-msgstr ""
+msgstr "Οριστικοποίηση διαμόρφωση χώρου"
 
 #: linuxclientsetup/utilities/set-network:526
 msgid ""
 "This version of Karoshi Client requires Karoshi Server version 9.0 or above"
 msgstr ""
+"Αυτή η έκδοση του Karoshi πελάτη απαιτεί Karoshi Server έκδοση 9.0 ή παραπάνω"
 
 #: linuxclientsetup/utilities/set-network:537
 msgid "Finalising network configuration"
-msgstr ""
+msgstr "Οριστικοποίηση διαμόρφωση του δικτύου"
 
 #: linuxclientsetup/utilities/setup:155
 msgid "Setting capabilities for dumpcap using Linux Capabilities failed."
 msgstr ""
+"Ρύθμιση δυνατότητες για dumpcap τη χρήση των δυνατοτήτων του Linux απέτυχε."
 
 #: linuxclientsetup/utilities/setup:156
 msgid "Falling back to setting set-user-id bit."
-msgstr ""
+msgstr "Πτώση πίσω στη ρύθμιση bit set - user-id."
 
 #: linuxclientsetup/utilities/unset-network:28
 #: linuxclientsetup/utilities/unset-network:37
 #: linuxclientsetup/utilities/unset-network:48
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Karoshi Unset Network"
-msgstr ""
+msgstr "Karoshi Απενεργοποίηση Δίκτυο"
 
 #: linuxclientsetup/utilities/unset-network:37
 msgid "Karoshi Client Setup: Network Deconfiguration"
-msgstr ""
+msgstr "Karoshi Ρύθμιση Πελάτης: Δίκτυο απορρύθμιση"
 
 #: linuxclientsetup/utilities/unset-network:39
 msgid "Deconfiguring domain settings"
-msgstr ""
+msgstr "Deconfiguring ρυθμίσεις τομέα"
 
 #: linuxclientsetup/utilities/unset-network:43
 msgid "Machine not joined to the domain"
-msgstr ""
+msgstr "Η μηχανή δεν συνδέεται στον τομέα"
 
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Enter credentials to leave the domain"
-msgstr ""
+msgstr "Εισάγετε τα στοιχεία του να αποχωρήσει από την περιοχή"
 
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Invalid domain type"
-msgstr ""
+msgstr "Μη έγκυρος τύπος τομέα"
 
 #: linuxclientsetup/utilities/unset-network:103
 msgid "Reverting configuration files"
-msgstr ""
+msgstr "Επαναφορά αρχείων διαμόρφωσης"
 
 #: linuxclientsetup/utilities/unset-network:116
 msgid "Resetting hostname"
-msgstr ""
+msgstr "Επαναφορά όνομα"
 
 #: linuxclientsetup/utilities/unset-network:130
 msgid "Bringing down old network interface"
-msgstr ""
+msgstr "Φέρνοντας τον παλιό διασύνδεσης δικτύου"
 
 #: linuxclientsetup/utilities/unset-network:133
 msgid "Resetting network interface configuration"
-msgstr ""
+msgstr "Επαναφορά ρυθμίσεων διασύνδεσης δικτύου"
 
 #: linuxclientsetup/utilities/unset-network:139
 msgid "Resetting DNS information"
-msgstr ""
+msgstr "Επαναφορά πληροφορίες DNS"
 
 #: l10n/tmp/karoshi-change-admin-password.desktop.h:1
 msgid "Change Administrator Password"
-msgstr ""
+msgstr "Αλλαγή κωδικού πρόσβασης διαχειριστή"
 
 #: l10n/tmp/karoshi-printing.desktop.h:1
 msgid "Printer Settings"
-msgstr ""
+msgstr "Ρυθμίσεις εκτυπωτή"
 
 #: l10n/tmp/karoshi-printing.desktop.h:2
 msgid "Configure printers on the local system"
-msgstr ""
+msgstr "Διαμορφώστε εκτυπωτές στο τοπικό σύστημα"
 
 #: l10n/tmp/karoshi-set-location.desktop.h:1
 msgid "Set Karoshi Client Location"
-msgstr ""
+msgstr "Ορισμός Karoshi πελάτη Τοποθεσία"
 
 #: l10n/tmp/karoshi-setup.desktop.h:1
 msgid "Setup Karoshi Client"
-msgstr ""
+msgstr "Ρύθμιση Karoshi πελάτη"
