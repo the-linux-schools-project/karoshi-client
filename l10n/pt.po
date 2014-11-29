@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: karoshi-client 4.2\n"
 "Report-Msgid-Bugs-To: rmccorkell@karoshi.org.uk\n"
-"POT-Creation-Date: 2014-11-29 00:44+0000\n"
+"POT-Creation-Date: 2014-11-29 15:42+0000\n"
 "PO-Revision-Date: 2014-11-29 00:44+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -67,11 +67,11 @@ msgid "Karoshi Setup"
 msgstr ""
 
 #: linuxclientsetup/utilities/common:66
-#: linuxclientsetup/utilities/set-network:195
-#: linuxclientsetup/utilities/set-network:217
-#: linuxclientsetup/utilities/set-network:318
-#: linuxclientsetup/utilities/set-network:374
-#: linuxclientsetup/utilities/set-network:544
+#: linuxclientsetup/utilities/set-network:204
+#: linuxclientsetup/utilities/set-network:226
+#: linuxclientsetup/utilities/set-network:327
+#: linuxclientsetup/utilities/set-network:383
+#: linuxclientsetup/utilities/set-network:553
 msgid "Configuration cancelled"
 msgstr ""
 
@@ -179,7 +179,7 @@ msgid "Change password for $username and root"
 msgstr ""
 
 #: linuxclientsetup/utilities/set-local-password:39
-#: linuxclientsetup/utilities/set-network:484
+#: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Password"
 msgstr ""
@@ -223,28 +223,28 @@ msgstr ""
 
 #: linuxclientsetup/utilities/set-network:31
 #: linuxclientsetup/utilities/set-network:38
-#: linuxclientsetup/utilities/set-network:68
-#: linuxclientsetup/utilities/set-network:79
-#: linuxclientsetup/utilities/set-network:83
-#: linuxclientsetup/utilities/set-network:88
-#: linuxclientsetup/utilities/set-network:99
-#: linuxclientsetup/utilities/set-network:192
-#: linuxclientsetup/utilities/set-network:195
-#: linuxclientsetup/utilities/set-network:217
-#: linuxclientsetup/utilities/set-network:234
-#: linuxclientsetup/utilities/set-network:256
-#: linuxclientsetup/utilities/set-network:269
-#: linuxclientsetup/utilities/set-network:277
-#: linuxclientsetup/utilities/set-network:301
-#: linuxclientsetup/utilities/set-network:318
-#: linuxclientsetup/utilities/set-network:363
-#: linuxclientsetup/utilities/set-network:374
-#: linuxclientsetup/utilities/set-network:388
-#: linuxclientsetup/utilities/set-network:434
-#: linuxclientsetup/utilities/set-network:475
-#: linuxclientsetup/utilities/set-network:483
-#: linuxclientsetup/utilities/set-network:517
-#: linuxclientsetup/utilities/set-network:544
+#: linuxclientsetup/utilities/set-network:71
+#: linuxclientsetup/utilities/set-network:82
+#: linuxclientsetup/utilities/set-network:86
+#: linuxclientsetup/utilities/set-network:91
+#: linuxclientsetup/utilities/set-network:102
+#: linuxclientsetup/utilities/set-network:201
+#: linuxclientsetup/utilities/set-network:204
+#: linuxclientsetup/utilities/set-network:226
+#: linuxclientsetup/utilities/set-network:243
+#: linuxclientsetup/utilities/set-network:265
+#: linuxclientsetup/utilities/set-network:278
+#: linuxclientsetup/utilities/set-network:286
+#: linuxclientsetup/utilities/set-network:310
+#: linuxclientsetup/utilities/set-network:327
+#: linuxclientsetup/utilities/set-network:372
+#: linuxclientsetup/utilities/set-network:383
+#: linuxclientsetup/utilities/set-network:397
+#: linuxclientsetup/utilities/set-network:443
+#: linuxclientsetup/utilities/set-network:484
+#: linuxclientsetup/utilities/set-network:492
+#: linuxclientsetup/utilities/set-network:526
+#: linuxclientsetup/utilities/set-network:553
 msgid "Karoshi Set Network"
 msgstr ""
 
@@ -254,161 +254,161 @@ msgstr ""
 msgid "$netlogon_mount is already mounted"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:59
+#: linuxclientsetup/utilities/set-network:62
 msgid "Asking for network settings"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:68
+#: linuxclientsetup/utilities/set-network:71
 msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:69
+#: linuxclientsetup/utilities/set-network:72
 msgid "Hostname"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:69
+#: linuxclientsetup/utilities/set-network:72
 msgid "Network Interface"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:69
+#: linuxclientsetup/utilities/set-network:72
 msgid "IP Address"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:69
+#: linuxclientsetup/utilities/set-network:72
 msgid "Netmask"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:69
+#: linuxclientsetup/utilities/set-network:72
 msgid "Gateway"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:69
+#: linuxclientsetup/utilities/set-network:72
 msgid "DHCP"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:79
+#: linuxclientsetup/utilities/set-network:82
 msgid "You must enter a client name and network interface"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:83
+#: linuxclientsetup/utilities/set-network:86
 msgid "You must enter a valid IP address, netmask and gateway, or choose DHCP"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:88
+#: linuxclientsetup/utilities/set-network:91
 msgid "Wireless device configuration"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:89
-#: linuxclientsetup/utilities/set-network:389
+#: linuxclientsetup/utilities/set-network:92
+#: linuxclientsetup/utilities/set-network:398
 msgid "SSID"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:89
-#: linuxclientsetup/utilities/set-network:389
+#: linuxclientsetup/utilities/set-network:92
+#: linuxclientsetup/utilities/set-network:398
 msgid "WPA2-PSK Key"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:99
+#: linuxclientsetup/utilities/set-network:102
 msgid "You must enter an SSID and key"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:192
+#: linuxclientsetup/utilities/set-network:201
 msgid "Karoshi Client Setup: Network Configuration"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:201
-#: linuxclientsetup/utilities/set-network:241
+#: linuxclientsetup/utilities/set-network:210
+#: linuxclientsetup/utilities/set-network:250
 msgid "Bringing down network interface"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:205
-#: linuxclientsetup/utilities/set-network:247
+#: linuxclientsetup/utilities/set-network:214
+#: linuxclientsetup/utilities/set-network:256
 msgid "Bringing up network interface"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:234
+#: linuxclientsetup/utilities/set-network:243
 msgid "Did not get DHCP lease"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:256
+#: linuxclientsetup/utilities/set-network:265
 #, sh-format
 msgid "Cannot contact gateway $GATEWAY"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:269
+#: linuxclientsetup/utilities/set-network:278
 msgid "Not configuring for Karoshi Server"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:278
+#: linuxclientsetup/utilities/set-network:287
 msgid "Primary Domain Controller IP Address"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:279
+#: linuxclientsetup/utilities/set-network:288
 msgid "Skip"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:285
+#: linuxclientsetup/utilities/set-network:294
 msgid "Attempting automatic configuration"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:301
+#: linuxclientsetup/utilities/set-network:310
 msgid "Invalid PDC"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:308
-#: linuxclientsetup/utilities/set-network:393
-#: linuxclientsetup/utilities/set-network:410
+#: linuxclientsetup/utilities/set-network:317
+#: linuxclientsetup/utilities/set-network:402
+#: linuxclientsetup/utilities/set-network:419
 msgid "Setting network configuration"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:363
-#: linuxclientsetup/utilities/set-network:434
+#: linuxclientsetup/utilities/set-network:372
+#: linuxclientsetup/utilities/set-network:443
 msgid "Cannot find domain information on server"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:382
+#: linuxclientsetup/utilities/set-network:391
 msgid "Checking wireless network settings"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:441
+#: linuxclientsetup/utilities/set-network:450
 msgid "Performing domain setup"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:454
+#: linuxclientsetup/utilities/set-network:463
 msgid "Copying files"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:461
+#: linuxclientsetup/utilities/set-network:470
 msgid "Configuring services"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:472
+#: linuxclientsetup/utilities/set-network:481
 msgid "Joining domain"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:475
+#: linuxclientsetup/utilities/set-network:484
 msgid "Domain configuration cancelled"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:484
+#: linuxclientsetup/utilities/set-network:493
 msgid "Enter credentials to join the domain"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:484
+#: linuxclientsetup/utilities/set-network:493
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Username"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/set-network:502
 msgid "Finalising domain configuration"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:517
+#: linuxclientsetup/utilities/set-network:526
 msgid ""
 "This version of Karoshi Client requires Karoshi Server version 9.0 or above"
 msgstr ""
 
-#: linuxclientsetup/utilities/set-network:528
+#: linuxclientsetup/utilities/set-network:537
 msgid "Finalising network configuration"
 msgstr ""
 
@@ -465,4 +465,24 @@ msgstr ""
 
 #: linuxclientsetup/utilities/unset-network:139
 msgid "Resetting DNS information"
+msgstr ""
+
+#: l10n/tmp/karoshi-change-admin-password.desktop.h:1
+msgid "Change Administrator Password"
+msgstr ""
+
+#: l10n/tmp/karoshi-printing.desktop.h:1
+msgid "Printer Settings"
+msgstr ""
+
+#: l10n/tmp/karoshi-printing.desktop.h:2
+msgid "Configure printers on the local system"
+msgstr ""
+
+#: l10n/tmp/karoshi-set-location.desktop.h:1
+msgid "Set Karoshi Client Location"
+msgstr ""
+
+#: l10n/tmp/karoshi-setup.desktop.h:1
+msgid "Setup Karoshi Client"
 msgstr ""

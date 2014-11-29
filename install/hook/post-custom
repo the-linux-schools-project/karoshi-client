@@ -43,6 +43,17 @@ for po in "$source_dir"/l10n/*.po; do
 	msgfmt --check -o /usr/share/locale/"$lang"/LC_MESSAGES/karoshi-client.mo "$po"
 done
 
+#Merge translations to .desktop files
+function desktop-translate {
+	local desktop_in
+	for desktop_in in "$@"; do
+		intltool-merge --desktop-style "$source_dir"/l10n "$desktop_in" "${desktop_in%.*}"
+	done
+}
+
+desktop-translate /usr/share/applications/karoshi-*.desktop.in
+rm -f /usr/share/applications/karoshi-*.desktop.in
+
 #Copy LICENCE
 if [[ -f "$source_dir"/LICENCE ]]; then
 	cp -ft /opt/karoshi/ "$source_dir"/LICENCE

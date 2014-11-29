@@ -60,7 +60,8 @@ function hook {
 # - apt-opt        Add apt option for installation
 # - apt-stop       Stop package installation
 # - post-apt       Post package installation
-# - custom-install Custom installation
+# - pre-custom     Pre custom installation
+# - post-custom    Post custom installation
 
 #Usage
 function usage {
@@ -414,12 +415,12 @@ case "$stage" in
 	hook post-apt
 
 	#Copy in new configuration (overwrite)
+	hook pre-custom
 	cp -rft / "$source_dir"/configuration/*
+	hook post-custom
 
 	#Correct permissions for sudoers.d files
 	find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
-
-	hook custom-install
 
 	#Create links with update-alternatives
 	if [[ -f "$source_dir"/install/alternatives.list ]]; then

@@ -15,14 +15,29 @@ msginit_args=(
 )
 msgmerge_args=(
 )
+intltool_extract_args=(
+)
 
 podir=l10n
 pot=$podir/karoshi-client.pot
+intltool_extract_tmp=$podir/tmp
+mkdir "$intltool_extract_tmp"
+
+# Process .desktop.template files
+source l10n/desktop.sh.conf
+for file in "${desktop_files[@]}"; do
+	filename=${file##*/}
+	#sed 's/^\(Name\|GenericName\|Comment\)/_\1/' "$file" > "$intltool_extract_tmp"/"$filename"
+	cp "$file".in "$intltool_extract_tmp"/"$filename"
+	intltool-extract --update --type=gettext/ini "${intltool_extract_args[@]}" \
+		"$intltool_extract_tmp"/"$filename"
+done
 
 # Generate .pot
 if [[ ! -e "$pot" ]] ||
   ( read -p "$pot already exists, overwrite? y/[n]: " response && [[ $response == y* ]] ); then
 	xgettext -L shell -o "$pot" "${xgettext_args[@]}" "${files[@]}" 2>/dev/null
+	xgettext -kN_:1 --join-existing -o "$pot" "${xgettext_args[@]}" "$intltool_extract_tmp"/*.h
 	read -p "Edit $pot if necessary, then press Enter to continue"
 fi
 
@@ -35,3 +50,5 @@ for lang in "${languages[@]}"; do
 		msginit --locale="$lang" --input="$pot" --output="$podir"/"$lang".po "${msginit_args[@]}"
 	fi
 done
+
+rm -rf "$intltool_extract_tmp"

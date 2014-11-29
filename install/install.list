@@ -121,6 +121,8 @@ wine1.7
 plymouth-x11
 rsyslog
 
+intltool
+
 #!install
 
 #Separate to prevent installation of gnome-settings-daemon
