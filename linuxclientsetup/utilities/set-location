@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
+#Copyright (C) 2013,2014 Robin McCorkell
 #Original Copyright (C) 2010  Paul Sharrad
 
 #This file is part of Karoshi Client.
@@ -18,16 +18,12 @@
 #You should have received a copy of the GNU Affero General Public License
 #along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
 
-#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
-#
-#Website: http://www.karoshi.org.uk
-
 source /opt/karoshi/linuxclientsetup/utilities/common
 
 #Connect to netlogon
 [[ ! -d /tmp/netlogon ]] && mkdir /tmp/netlogon
 if ! mount.cifs //$PDC.$DNSSUFFIX/netlogon /tmp/netlogon -o guest 1>/dev/null; then
-	info_alert "Error" "Unable to contact PDC"
+	info_alert $"Karoshi Set Location" $"Unable to contact Primary Domain Controller"
 	exitfunc 1
 fi
 
@@ -38,7 +34,7 @@ function exitfunc {
 
 #Check that room list exists
 if [[ ! -f /tmp/netlogon/locations.txt ]]; then
-	info_alert "Error" "No locations have been created on the PDC"
+	info_alert $"Karoshi Set Location" $"No locations have been created"
 	exitfunc 1
 fi
 
@@ -46,13 +42,13 @@ fi
 #Choose room
 #######################
 selection=` < /tmp/netlogon/locations.txt`
-understandableYad --wrap --image-on-top --entry --title 'Client Location' \
+understandableYad --wrap --image-on-top --entry --title $"Karoshi Set Location" \
 					--button='gtk-cancel:1' --button='gtk-ok:0' \
-					--text 'Choose the location of this computer' \
+					--text $"Choose the location of this computer" \
 					$selection
 LOCATION=$DATA
 
 #Completed message
-info_alert "Information" "`hostname` set to location $LOCATION"
+info_alert $"Karoshi Set Location" $"$HOSTNAME set to location $LOCATION"
 
 updateVariables

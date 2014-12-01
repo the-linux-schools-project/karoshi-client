@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
+#Copyright (C) 2013,2014 Robin McCorkell
 
 #This file is part of Karoshi Client.
 #
@@ -30,8 +30,8 @@ then
 fi
 
 if [[ $EUID -ne 0 ]]; then
-	echo "ERROR: Must be running as effective root" >&2
-	info_alert "Privilage Error" "This script must be run as root"
+	echo $"This script must be run as root" >&2
+	info_alert $"Karoshi Setup" $"This script must be run as root"
 	exit 1
 fi
 
@@ -61,7 +61,7 @@ ln -s /var/log/upstart/karoshi-cups.log /var/log/karoshi/cups.log
 xhost +si:localuser:root
 
 #Remove Ubiquity icon from administrator desktop
-find ~administrator/Desktop -name 'ubiquity*.desktop' -delete
+find ~karoshi/Desktop -name 'ubiquity*.desktop' -delete
 
 ##################
 #Deconfigure system
@@ -111,7 +111,7 @@ if karoshi-manage-flags get domainset || karoshi-manage-flags get networkset; th
 fi
 
 #Unlock root and administrator accounts
-passwd -u administrator
+passwd -u karoshi
 passwd -u root
 
 #Clean up /opt/karoshi
@@ -152,8 +152,8 @@ if [[ -e /usr/bin/dumpcap ]]; then
 	if which setcap > /dev/null ; then
 		chmod u=rwx,g=rx,o=r /usr/bin/dumpcap
 		if ! setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap; then
-			echo "Setting capabilities for dumpcap using Linux Capabilities failed."
-			echo "Falling back to setting set-user-id bit."
+			echo $"Setting capabilities for dumpcap using Linux Capabilities failed."
+			echo $"Falling back to setting set-user-id bit."
 			chmod u=rwxs,g=rx,o=r /usr/bin/dumpcap
 		fi
 	else
@@ -182,6 +182,11 @@ pam-auth-update --package
 #Recreate SSH host keys
 dpkg-reconfigure openssh-server
 
+#Configure sshd to allow only root and itadmin users
+if ! grep -q '^AllowGroups' /etc/ssh/sshd_config; then
+	echo "AllowGroups root itadmin" >> /etc/ssh/sshd_config
+fi
+
 [[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
 
 #Install default firewall rules
@@ -196,7 +201,7 @@ fi
 #Stop Auto logon
 sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 #Stop running this script on administrator login
-[[ -f ~administrator/.config/autostart/karoshi-setup.desktop ]] && rm -f ~administrator/.config/autostart/karoshi-setup.desktop
+[[ -f ~karoshi/.config/autostart/karoshi-setup.desktop ]] && rm -f ~karoshi/.config/autostart/karoshi-setup.desktop
 
 shutdown -r now
 exit

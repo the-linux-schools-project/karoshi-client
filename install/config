@@ -1,0 +1,3 @@
+# install.sh configuration file
+ISO_TITLE_BASE="Karoshi Client"
+URL="http://linuxschools.com/"

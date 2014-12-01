@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#Copyright (C) 2014 Robin McCorkell
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+offline_dir=offline-home
+
+case "$1" in
+new-user)
+	yad --image=karoshi-logo --window-icon=karoshi-logo --width=400 --button=gtk-ok \
+		--title=$"Offline Home Area" \
+		--text=$"You are now running in offline mode"$'\n\n'$"Make sure you save your work in $offline_dir"
+	;;
+online)
+	yad --image=karoshi-logo --window-icon=karoshi-logo --width=400 --button=gtk-ok \
+		--title=$"Offline Home Area" \
+		--text=$"You are now connected to the network"$'\n\n'$"Logging out will remove your offline home area"
+	;;
+esac

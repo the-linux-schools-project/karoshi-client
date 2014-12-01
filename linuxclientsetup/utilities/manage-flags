@@ -21,13 +21,14 @@
 #
 #Website: http://www.karoshi.org.uk
 
+source /opt/karoshi/linuxclientsetup/utilities/common
+
 declare -A flags
 flagsDir="/var/lib/karoshi/flags"
 
 if [[ ! -d $flagsDir ]]; then
-	echo "Warning: flagsDir $flagsDir did not exist" >&2
 	if ! mkdir -p "$flagsDir"; then
-		echo "Error: Could not create flagsDir $flagsDir!" >&2
+		echo $"Could not create $flagsDir" >&2
 		exit 255
 	fi
 fi
@@ -45,8 +46,8 @@ function setFlag {
 	fi
 }
 function printHelp {
-	echo "Usage:" >&2
-	echo "	$0 <get|set|unset> <flag>" >&2
+	echo $"Usage:" >&2
+	echo "	$0 <get|set|unset> "$"flag" >&2
 	exit 255
 }
 

@@ -1,0 +1,487 @@
+# Arabic translations for karoshi-client package.
+# Copyright (C) 2014 The Linux Schools Project
+# This file is distributed under the same license as the karoshi-client package.
+# Automatically generated, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: karoshi-client 4.2\n"
+"Report-Msgid-Bugs-To: rmccorkell@karoshi.org.uk\n"
+"POT-Creation-Date: 2014-11-29 15:42+0000\n"
+"PO-Revision-Date: 2014-11-29 00:44+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: linuxclientsetup/scripts/client-shutdown:27
+msgid "minutes"
+msgstr "دقائق"
+
+#: linuxclientsetup/scripts/client-shutdown:29
+msgid "minute"
+msgstr "دقيقة"
+
+#: linuxclientsetup/scripts/client-shutdown:52
+msgid "Karoshi Scheduled Shutdown"
+msgstr "كاروشي إيقاف المقرر"
+
+#: linuxclientsetup/scripts/client-shutdown:52
+msgid "This system is going down in $1 $minute_string"
+msgstr "هذا النظام تتراجع في $1 $minute_string"
+
+#: linuxclientsetup/scripts/client-shutdown:52
+msgid "Make sure to save your work!"
+msgstr "تأكد من حفظ العمل الخاص بك!"
+
+#: linuxclientsetup/scripts/pre-session:139
+#: linuxclientsetup/scripts/pre-session:143
+#: linuxclientsetup/scripts/pre-session:145
+#: linuxclientsetup/scripts/pre-session:149
+#: linuxclientsetup/scripts/pre-session:176
+#: linuxclientsetup/scripts/pre-session:412
+msgid "Home"
+msgstr "منزل"
+
+#: linuxclientsetup/scripts/pre-session:154
+#: linuxclientsetup/scripts/pre-session:157
+#: linuxclientsetup/scripts/pre-session:159
+msgid "Offline Home"
+msgstr "حاليا الرئيسية"
+
+#: linuxclientsetup/scripts/pre-session:170
+msgid "Web Hosting"
+msgstr "استضافة المواقع"
+
+#: linuxclientsetup/scripts/pre-session:190
+#: linuxclientsetup/scripts/pre-session:416
+msgid "Admin File Manager"
+msgstr "مشرف إدارة الملفات"
+
+#: linuxclientsetup/utilities/common:66 linuxclientsetup/utilities/common:79
+#: linuxclientsetup/utilities/setup:34
+msgid "Karoshi Setup"
+msgstr "إعداد كاروشي"
+
+#: linuxclientsetup/utilities/common:66
+#: linuxclientsetup/utilities/set-network:204
+#: linuxclientsetup/utilities/set-network:226
+#: linuxclientsetup/utilities/set-network:327
+#: linuxclientsetup/utilities/set-network:383
+#: linuxclientsetup/utilities/set-network:553
+msgid "Configuration cancelled"
+msgstr "التكوين إلغاء"
+
+#: linuxclientsetup/utilities/common:79
+msgid "You must complete the form"
+msgstr "يجب ملء استمارة"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:44
+msgid "Rule file $1 does not exist"
+msgstr "لا وجود ملف القاعدة $1"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:49
+msgid "iptables chain $2 does not exist"
+msgstr "غير موجود إيبتبلس سلسلة $2"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:67
+#, sh-format
+msgid "Invalid protocol $protocol"
+msgstr "$protocol بروتوكول غير صالح"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:77
+msgid "Port required for TCP or UDP"
+msgstr "ميناء اللازمة ل TCP أو UDP"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:85
+#: linuxclientsetup/utilities/generate-firewall-rules:98
+msgid "Port option requires TCP or UDP"
+msgstr "يتطلب خيار منفذ TCP أو UDP"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:93
+#, sh-format
+msgid "Invalid port range $port"
+msgstr "منفذ غير صالح مجموعة $port"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:104
+#, sh-format
+msgid "Invalid port $port"
+msgstr "$port منفذ غير صالح"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:128
+#, sh-format
+msgid "Invalid action $action"
+msgstr "$action عمل غير صالح"
+
+#: linuxclientsetup/utilities/manage-flags:31
+#, sh-format
+msgid "Could not create $flagsDir"
+msgstr "تعذر إنشاء $flagsDir"
+
+#: linuxclientsetup/utilities/manage-flags:49
+msgid "Usage:"
+msgstr "الاستعمال:"
+
+#: linuxclientsetup/utilities/manage-flags:50
+msgid "flag"
+msgstr "علم"
+
+#: linuxclientsetup/utilities/offline-homes:27
+#: linuxclientsetup/utilities/offline-homes:32
+msgid "Offline Home Area"
+msgstr "حاليا الرئيسية المساحة"
+
+#: linuxclientsetup/utilities/offline-homes:28
+msgid "You are now running in offline mode"
+msgstr "كنت تشغل الآن في وضع دون اتصال"
+
+#: linuxclientsetup/utilities/offline-homes:28
+#, sh-format
+msgid "Make sure you save your work in $offline_dir"
+msgstr "تأكد من حفظ العمل في $offline_dir"
+
+#: linuxclientsetup/utilities/offline-homes:33
+msgid "You are now connected to the network"
+msgstr "أنت الآن على اتصال بالشبكة"
+
+#: linuxclientsetup/utilities/offline-homes:33
+msgid "Logging out will remove your offline home area"
+msgstr "و تسجيل الخروج إزالة منطقة المنزل دون اتصال"
+
+#: linuxclientsetup/utilities/set-local-password:24
+#: linuxclientsetup/utilities/set-local-password:25
+#: linuxclientsetup/utilities/set-network:30
+#: linuxclientsetup/utilities/set-network:31
+#: linuxclientsetup/utilities/setup:33 linuxclientsetup/utilities/setup:34
+#: linuxclientsetup/utilities/unset-network:27
+#: linuxclientsetup/utilities/unset-network:28
+msgid "This script must be run as root"
+msgstr "يجب تشغيل هذا البرنامج النصي كجذر"
+
+#: linuxclientsetup/utilities/set-local-password:25
+#: linuxclientsetup/utilities/set-local-password:30
+#: linuxclientsetup/utilities/set-local-password:39
+#: linuxclientsetup/utilities/set-local-password:45
+#: linuxclientsetup/utilities/set-local-password:54
+msgid "Karoshi Change Password"
+msgstr "كاروشي تغيير كلمة المرور"
+
+#: linuxclientsetup/utilities/set-local-password:30
+msgid "Password not set, original still active"
+msgstr "كلمة المرور لم تحدد ، الأصلي لا تزال نشطة"
+
+#: linuxclientsetup/utilities/set-local-password:39
+#, sh-format
+msgid "Change password for $username and root"
+msgstr "تغيير كلمة المرور ل $username و الجذر"
+
+#: linuxclientsetup/utilities/set-local-password:39
+#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/unset-network:49
+msgid "Password"
+msgstr "كلمة المرور"
+
+#: linuxclientsetup/utilities/set-local-password:39
+msgid "Confirm"
+msgstr "أكد"
+
+#: linuxclientsetup/utilities/set-local-password:45
+msgid "The passwords did not match"
+msgstr "وقال إن كلمات السر لا تتطابق"
+
+#: linuxclientsetup/utilities/set-local-password:54
+#, sh-format
+msgid "Password changed for $username and root"
+msgstr "تغيير كلمة المرور ل $username و الجذر"
+
+#: linuxclientsetup/utilities/set-location:26
+#: linuxclientsetup/utilities/set-location:37
+#: linuxclientsetup/utilities/set-location:45
+#: linuxclientsetup/utilities/set-location:52
+msgid "Karoshi Set Location"
+msgstr "كاروشي مجموعة الموقع"
+
+#: linuxclientsetup/utilities/set-location:26
+msgid "Unable to contact Primary Domain Controller"
+msgstr "غير قادر على الاتصال وحدة تحكم المجال الأساسية"
+
+#: linuxclientsetup/utilities/set-location:37
+msgid "No locations have been created"
+msgstr "تم إنشاء أي مواقع"
+
+#: linuxclientsetup/utilities/set-location:47
+msgid "Choose the location of this computer"
+msgstr "اختيار موقع هذا الكمبيوتر"
+
+#: linuxclientsetup/utilities/set-location:52
+#, sh-format
+msgid "$HOSTNAME set to location $LOCATION"
+msgstr "ضبط $HOSTNAME إلى موقع $LOCATION"
+
+#: linuxclientsetup/utilities/set-network:31
+#: linuxclientsetup/utilities/set-network:38
+#: linuxclientsetup/utilities/set-network:71
+#: linuxclientsetup/utilities/set-network:82
+#: linuxclientsetup/utilities/set-network:86
+#: linuxclientsetup/utilities/set-network:91
+#: linuxclientsetup/utilities/set-network:102
+#: linuxclientsetup/utilities/set-network:201
+#: linuxclientsetup/utilities/set-network:204
+#: linuxclientsetup/utilities/set-network:226
+#: linuxclientsetup/utilities/set-network:243
+#: linuxclientsetup/utilities/set-network:265
+#: linuxclientsetup/utilities/set-network:278
+#: linuxclientsetup/utilities/set-network:286
+#: linuxclientsetup/utilities/set-network:310
+#: linuxclientsetup/utilities/set-network:327
+#: linuxclientsetup/utilities/set-network:372
+#: linuxclientsetup/utilities/set-network:383
+#: linuxclientsetup/utilities/set-network:397
+#: linuxclientsetup/utilities/set-network:443
+#: linuxclientsetup/utilities/set-network:484
+#: linuxclientsetup/utilities/set-network:492
+#: linuxclientsetup/utilities/set-network:526
+#: linuxclientsetup/utilities/set-network:553
+msgid "Karoshi Set Network"
+msgstr "كاروشي شبكة مجموعة"
+
+#: linuxclientsetup/utilities/set-network:37
+#: linuxclientsetup/utilities/set-network:38
+#, sh-format
+msgid "$netlogon_mount is already mounted"
+msgstr "هي التي شنت $netlogon_mount بالفعل"
+
+#: linuxclientsetup/utilities/set-network:62
+msgid "Asking for network settings"
+msgstr "يسأل عن إعدادات الشبكة"
+
+#: linuxclientsetup/utilities/set-network:71
+msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
+msgstr "عنوان IP ، لا يطلب قناع الشبكة و العبارة إذا تم تحديد DHCP"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Hostname"
+msgstr "اسم المضيف"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Network Interface"
+msgstr "واجهة الشبكة"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "IP Address"
+msgstr "IP عنوان"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Netmask"
+msgstr "قناع الشبكة"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Gateway"
+msgstr "بوابة"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "DHCP"
+msgstr "DHCP"
+
+#: linuxclientsetup/utilities/set-network:82
+msgid "You must enter a client name and network interface"
+msgstr "يجب إدخال اسم العميل و اجهة الشبكة"
+
+#: linuxclientsetup/utilities/set-network:86
+msgid "You must enter a valid IP address, netmask and gateway, or choose DHCP"
+msgstr "يجب إدخال عنوان IP صالح ، قناع الشبكة و العبارة، أو اختيار DHCP"
+
+#: linuxclientsetup/utilities/set-network:91
+msgid "Wireless device configuration"
+msgstr "تكوين جهاز لاسلكي"
+
+#: linuxclientsetup/utilities/set-network:92
+#: linuxclientsetup/utilities/set-network:398
+msgid "SSID"
+msgstr "SSID"
+
+#: linuxclientsetup/utilities/set-network:92
+#: linuxclientsetup/utilities/set-network:398
+msgid "WPA2-PSK Key"
+msgstr "WPA2 -PSK مفتاح"
+
+#: linuxclientsetup/utilities/set-network:102
+msgid "You must enter an SSID and key"
+msgstr "يجب عليك إدخال SSID و مفتاح"
+
+#: linuxclientsetup/utilities/set-network:201
+msgid "Karoshi Client Setup: Network Configuration"
+msgstr "إعداد عميل كاروشي: تكوين الشبكة"
+
+#: linuxclientsetup/utilities/set-network:210
+#: linuxclientsetup/utilities/set-network:250
+msgid "Bringing down network interface"
+msgstr "إسقاط واجهة الشبكة"
+
+#: linuxclientsetup/utilities/set-network:214
+#: linuxclientsetup/utilities/set-network:256
+msgid "Bringing up network interface"
+msgstr "تنشئة واجهة الشبكة"
+
+#: linuxclientsetup/utilities/set-network:243
+msgid "Did not get DHCP lease"
+msgstr "لم تحصل التأجير DHCP"
+
+#: linuxclientsetup/utilities/set-network:265
+#, sh-format
+msgid "Cannot contact gateway $GATEWAY"
+msgstr "لا يمكن الاتصال بوابة $GATEWAY"
+
+#: linuxclientsetup/utilities/set-network:278
+msgid "Not configuring for Karoshi Server"
+msgstr "لا تكوين ل خادم كاروشي"
+
+#: linuxclientsetup/utilities/set-network:287
+msgid "Primary Domain Controller IP Address"
+msgstr "حدة تحكم المجال الأساسية IP عنوان"
+
+#: linuxclientsetup/utilities/set-network:288
+msgid "Skip"
+msgstr "تخطى"
+
+#: linuxclientsetup/utilities/set-network:294
+msgid "Attempting automatic configuration"
+msgstr "محاولة التكوين التلقائي"
+
+#: linuxclientsetup/utilities/set-network:310
+msgid "Invalid PDC"
+msgstr "PDC غير صالح"
+
+#: linuxclientsetup/utilities/set-network:317
+#: linuxclientsetup/utilities/set-network:402
+#: linuxclientsetup/utilities/set-network:419
+msgid "Setting network configuration"
+msgstr "إعداد تكوين شبكة"
+
+#: linuxclientsetup/utilities/set-network:372
+#: linuxclientsetup/utilities/set-network:443
+msgid "Cannot find domain information on server"
+msgstr "لا يمكن العثور على معلومات المجال على الخادم"
+
+#: linuxclientsetup/utilities/set-network:391
+msgid "Checking wireless network settings"
+msgstr "التحقق من إعدادات الشبكة اللاسلكية"
+
+#: linuxclientsetup/utilities/set-network:450
+msgid "Performing domain setup"
+msgstr "أداء الإعداد للنطاق"
+
+#: linuxclientsetup/utilities/set-network:463
+msgid "Copying files"
+msgstr "نسخ الملفات"
+
+#: linuxclientsetup/utilities/set-network:470
+msgid "Configuring services"
+msgstr "خدمات تكوين"
+
+#: linuxclientsetup/utilities/set-network:481
+msgid "Joining domain"
+msgstr "مجال الانضمام"
+
+#: linuxclientsetup/utilities/set-network:484
+msgid "Domain configuration cancelled"
+msgstr "تكوين المجال إلغاء"
+
+#: linuxclientsetup/utilities/set-network:493
+msgid "Enter credentials to join the domain"
+msgstr "إدخال بيانات الاعتماد الانضمام إلى المجال"
+
+#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/unset-network:49
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: linuxclientsetup/utilities/set-network:502
+msgid "Finalising domain configuration"
+msgstr "تكوين المجال Finalising"
+
+#: linuxclientsetup/utilities/set-network:526
+msgid ""
+"This version of Karoshi Client requires Karoshi Server version 9.0 or above"
+msgstr "هذا الإصدار من العميل كاروشي يتطلب كاروشي Server الإصدار 9.0 أو أعلى"
+
+#: linuxclientsetup/utilities/set-network:537
+msgid "Finalising network configuration"
+msgstr "تكوين شبكة Finalising"
+
+#: linuxclientsetup/utilities/setup:155
+msgid "Setting capabilities for dumpcap using Linux Capabilities failed."
+msgstr "فشلت وضع قدرات ل dumpcap باستخدام قدرات لينكس."
+
+#: linuxclientsetup/utilities/setup:156
+msgid "Falling back to setting set-user-id bit."
+msgstr "يتراجع إلى وضع قليلا مجموعة المستخدم معرف."
+
+#: linuxclientsetup/utilities/unset-network:28
+#: linuxclientsetup/utilities/unset-network:37
+#: linuxclientsetup/utilities/unset-network:48
+#: linuxclientsetup/utilities/unset-network:77
+msgid "Karoshi Unset Network"
+msgstr "كاروشي إلغاء تعيين الشبكة"
+
+#: linuxclientsetup/utilities/unset-network:37
+msgid "Karoshi Client Setup: Network Deconfiguration"
+msgstr "إعداد عميل كاروشي: شبكة Deconfiguration"
+
+#: linuxclientsetup/utilities/unset-network:39
+msgid "Deconfiguring domain settings"
+msgstr "Deconfiguring إعدادات المجال"
+
+#: linuxclientsetup/utilities/unset-network:43
+msgid "Machine not joined to the domain"
+msgstr "الجهاز لم تنضم إلى المجال"
+
+#: linuxclientsetup/utilities/unset-network:49
+msgid "Enter credentials to leave the domain"
+msgstr "إدخال بيانات الاعتماد ل ترك المجال"
+
+#: linuxclientsetup/utilities/unset-network:77
+msgid "Invalid domain type"
+msgstr "نوع المجال غير صالح"
+
+#: linuxclientsetup/utilities/unset-network:103
+msgid "Reverting configuration files"
+msgstr "بالعودة ملفات التكوين"
+
+#: linuxclientsetup/utilities/unset-network:116
+msgid "Resetting hostname"
+msgstr "إعادة المضيف"
+
+#: linuxclientsetup/utilities/unset-network:130
+msgid "Bringing down old network interface"
+msgstr "اسقاط اجهة الشبكة القديمة"
+
+#: linuxclientsetup/utilities/unset-network:133
+msgid "Resetting network interface configuration"
+msgstr "إعادة شبكة تكوين الواجهة"
+
+#: linuxclientsetup/utilities/unset-network:139
+msgid "Resetting DNS information"
+msgstr "معلومات DNS إعادة"
+
+#: l10n/tmp/karoshi-change-admin-password.desktop.h:1
+msgid "Change Administrator Password"
+msgstr "تغيير كلمة مرور المسؤول"
+
+#: l10n/tmp/karoshi-printing.desktop.h:1
+msgid "Printer Settings"
+msgstr "إعدادات الطابعة"
+
+#: l10n/tmp/karoshi-printing.desktop.h:2
+msgid "Configure printers on the local system"
+msgstr "تكوين الطابعات على النظام المحلي"
+
+#: l10n/tmp/karoshi-set-location.desktop.h:1
+msgid "Set Karoshi Client Location"
+msgstr "تعيين كاروشي العميل الموقع"
+
+#: l10n/tmp/karoshi-setup.desktop.h:1
+msgid "Setup Karoshi Client"
+msgstr "إعداد عميل كاروشي"

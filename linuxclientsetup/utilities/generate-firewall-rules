@@ -21,6 +21,8 @@
 #
 #Website: http://www.karoshi.org.uk
 
+source /opt/karoshi/linuxclientsetup/utilities/common
+
 #Add iptables template
 iptables-restore < /opt/karoshi/linuxclientsetup/config-files/firewall/iptables.rules
 
@@ -39,12 +41,12 @@ function process_rules {
 	# $2 = iptables chain
 	[[ $1 ]] || return
 	if ! [[ -f $1 ]]; then
-		echo "ERROR: Firewall rule processing: rule file $1 does not exist" >&2
+		echo $"Rule file $1 does not exist" >&2
 		return
 	fi
 	[[ $2 ]] || return
 	if ! iptables -n --list "$2" >/dev/null; then
-		echo "ERROR: Firewall rule processing: chain $2 does not exist" >&2
+		echo $"iptables chain $2 does not exist" >&2
 		return
 	fi
 
@@ -62,7 +64,7 @@ function process_rules {
 				if getent protocols "$protocol" >/dev/null; then
 					rule+=( -p "$protocol" )
 				else
-					echo "$1:$line_no: Invalid protocol - $protocol" >&2
+					echo "$1:$line_no:" $"Invalid protocol $protocol" >&2
 					continue
 				fi
 				;;
@@ -72,7 +74,7 @@ function process_rules {
 			case "$port" in
 			-)
 				if [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]]; then
-					echo "$1:$line_no: Port required for TCP or UDP" >&2
+					echo "$1:$line_no:" $"Port required for TCP or UDP" >&2
 					continue
 				fi
 				;;
@@ -80,7 +82,7 @@ function process_rules {
 				;;
 			*:*)
 				if ! ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ); then
-					echo "$1:$line_no: Port option requires TCP or UDP" >&2
+					echo "$1:$line_no:" $"Port option requires TCP or UDP" >&2
 					continue
 				fi
 				port1=${port%%:*}
@@ -88,18 +90,18 @@ function process_rules {
 				if (( port1 > 0 && port1 < 65536 )) && (( port2 > 0 && port2 < 65536 )); then
 					rule+=( --dport $port )
 				else
-					echo "$1:$line_no: Invalid port range $port" >&2
+					echo "$1:$line_no:" $"Invalid port range $port" >&2
 				fi
 				;;
 			*)
 				if ! ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ); then
-					echo "$1:$line_no: Port option requires TCP or UDP" >&2
+					echo "$1:$line_no:" $"Port option requires TCP or UDP" >&2
 					continue
 				fi
 				if getent services "$port" >/dev/null || ( (( port > 0 && port < 65536 )) ); then
 					rule+=( --dport $port )
 				else
-					echo "$1:$line_no: Invalid port $port" >&2
+					echo "$1:$line_no:" $"Invalid port $port" >&2
 					continue
 				fi
 				;;
@@ -123,7 +125,7 @@ function process_rules {
 				rule+=( -j "$deny_target" )
 				;;
 			*)
-				echo "$1:$line_no: Invalid action $action" >&2
+				echo "$1:$line_no:" $"Invalid action $action" >&2
 				continue
 				;;
 			esac

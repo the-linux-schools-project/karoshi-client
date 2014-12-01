@@ -24,8 +24,8 @@
 source /opt/karoshi/linuxclientsetup/utilities/common
 
 if [[ $EUID -ne 0 ]]; then
-	echo "ERROR: Must be running as effective root" >&2
-	info_alert "Privilage Error" "This script must be run as root"
+	echo $"This script must be run as root" >&2
+	info_alert $"Karoshi Unset Network" $"This script must be run as root"
 	exit 1
 fi
 
@@ -34,19 +34,19 @@ export DEBIAN_FRONTEND=noninteractive
 #Get nsswitch functions
 source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
 
-exec 11> >(progress_info "Karoshi Setup" "Karoshi Client Setup: Network Deconfiguration")
+exec 11> >(progress_info $"Karoshi Unset Network" $"Karoshi Client Setup: Network Deconfiguration")
 echo 10 >&11
-echo \#Deconfiguring domain settings >&11
+echo \#$"Deconfiguring domain settings" >&11
 
 function attemptAdsLeave {
 	if ! net ads testjoin -k; then
-		echo "WARNING: Was not joined to domain in the first place!" >&2
+		echo $"Machine not joined to the domain" >&2
 		return
 	fi
 	leave_status=1
 	while [[ $leave_status -ne 0 ]]; do
-		understandableYad --form --title='Domain Access' --wrap \
-							--text 'Enter in a username and password to leave the domain' --field='Username' --field='Password':H \
+		understandableYad --form --title=$"Karoshi Unset Network" --wrap \
+							--text $"Enter credentials to leave the domain" --field=$"Username" --field=$"Password":H \
 							--button='gtk-cancel:1' --button='gtk-ok:0'
 		domain_username=`cut -d"|" -f1 <<< "$DATA"`
 		domain_password=`cut -d"|" -f2 <<< "$DATA"`
@@ -74,7 +74,7 @@ sss-password" >> /var/lib/pam/seen
 	service sssd stop
 	;;
 *)
-	info_alert "Error" "Invalid domain type"
+	info_alert $"Karoshi Unset Network" $"Invalid domain type"
 	echo 100 >&11
 	exit 1
 	;;
@@ -100,7 +100,7 @@ function revert_backup {
 }
 
 echo 40 >&11
-echo \#Reverting specific configuration files >&11
+echo \#$"Reverting configuration files" >&11
 
 case "$DOMAINTYPE" in
 samba4)
@@ -109,12 +109,11 @@ samba4)
 esac
 
 echo 50 >&11
-echo \#Reverting common configuration files >&11
 
 revert_backup "common"
 
 echo 60 >&11
-echo \#Resetting hostname >&11
+echo \#$"Resetting hostname" >&11
 
 #Deconfigure hostname
 hostnamectl set-hostname "karoshi"
@@ -128,16 +127,16 @@ fi
 
 #Deconfigure all network interfaces
 echo 70 >&11
-echo \#Bringing down old network interface >&11
+echo \#$"Bringing down old network interface" >&11
 ifdown --force $NETWORKINT
 echo 80 >&11
-echo \#Resetting network interface configuration >&11
+echo \#$"Resetting network interface configuration" >&11
 echo "auto lo
 iface lo inet loopback" > /etc/network/interfaces
 
 #Reset DNS information
 echo 90 >&11
-echo \#Resetting DNS information >&11
+echo \#$"Resetting DNS information" >&11
 resolvconf -u
 
 echo 100 >&11

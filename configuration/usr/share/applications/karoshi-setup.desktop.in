@@ -4,6 +4,6 @@ Version=1.0
 Type=Application
 Terminal=false
 Exec=gksudo -D 'Karoshi Setup' karoshi-setup
-Name=Setup Karoshi Client
+_Name=Setup Karoshi Client
 Icon=karoshi-logo
 Categories=Settings;X-XFCE-SystemSettings;X-XFCE-SettingsDialog;

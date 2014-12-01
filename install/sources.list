@@ -1,0 +1,63 @@
+#!release trusty
+
+#############################################################
+################### OFFICIAL UBUNTU REPOS ###################
+#############################################################
+
+###### Ubuntu Main Repos
+deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+
+###### Ubuntu Update Repos
+deb http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+
+###### Ubuntu Extras Repo
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3E5C1192
+deb http://extras.ubuntu.com/ubuntu trusty main
+
+##############################################################
+##################### UNOFFICIAL  REPOS ######################
+##############################################################
+
+###### 3rd Party Binary Repos
+
+#### Gimp PPA - https://launchpad.net/~otto-kesselgulasch/+archive/gimp
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 614C4B38
+deb http://ppa.launchpad.net/otto-kesselgulasch/gimp/ubuntu trusty main
+deb-src http://ppa.launchpad.net/otto-kesselgulasch/gimp/ubuntu trusty main
+
+#### LibreOffice PPA - http://www.documentfoundation.org/download/
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1378B444
+deb http://ppa.launchpad.net/libreoffice/ppa/ubuntu trusty main
+deb-src http://ppa.launchpad.net/libreoffice/ppa/ubuntu trusty main
+
+#### MariaDB - https://mariadb.org
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0xcbcb082a1bb943db
+deb http://mirrors.coreix.net/mariadb/repo/10.1/ubuntu trusty main
+deb-src http://mirrors.coreix.net/mariadb/repo/10.1/ubuntu trusty main
+
+#### VirtualBox - http://www.virtualbox.org
+#!cmd wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | apt-key add -
+deb http://download.virtualbox.org/virtualbox/debian trusty contrib
+
+#### WebUpd8 PPA - http://www.webupd8.org/
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
+deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
+deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
+
+#### Wine PPA - https://launchpad.net/~ubuntu-wine/+archive/ppa/
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
+deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
+deb-src http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
+
+#### Xenopathic PPA - https://launchpad.net/~xenopathic/+archive/ppa/
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
+deb http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main
+deb-src http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main

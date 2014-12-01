@@ -1,0 +1,494 @@
+# French translations for karoshi-client package.
+# Copyright (C) 2014 The Linux Schools Project
+# This file is distributed under the same license as the karoshi-client package.
+# Automatically generated, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: karoshi-client 4.2\n"
+"Report-Msgid-Bugs-To: rmccorkell@karoshi.org.uk\n"
+"POT-Creation-Date: 2014-11-29 15:42+0000\n"
+"PO-Revision-Date: 2014-11-29 00:44+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: linuxclientsetup/scripts/client-shutdown:27
+msgid "minutes"
+msgstr "procès-verbal"
+
+#: linuxclientsetup/scripts/client-shutdown:29
+msgid "minute"
+msgstr "minute"
+
+#: linuxclientsetup/scripts/client-shutdown:52
+msgid "Karoshi Scheduled Shutdown"
+msgstr "Karoshi arrêt programmé"
+
+#: linuxclientsetup/scripts/client-shutdown:52
+msgid "This system is going down in $1 $minute_string"
+msgstr "Ce système va dans $1 $minute_string"
+
+#: linuxclientsetup/scripts/client-shutdown:52
+msgid "Make sure to save your work!"
+msgstr "Assurez-vous de sauvegarder votre travail!"
+
+#: linuxclientsetup/scripts/pre-session:139
+#: linuxclientsetup/scripts/pre-session:143
+#: linuxclientsetup/scripts/pre-session:145
+#: linuxclientsetup/scripts/pre-session:149
+#: linuxclientsetup/scripts/pre-session:176
+#: linuxclientsetup/scripts/pre-session:412
+msgid "Home"
+msgstr "maison"
+
+#: linuxclientsetup/scripts/pre-session:154
+#: linuxclientsetup/scripts/pre-session:157
+#: linuxclientsetup/scripts/pre-session:159
+msgid "Offline Home"
+msgstr "Hors ligne Accueil"
+
+#: linuxclientsetup/scripts/pre-session:170
+msgid "Web Hosting"
+msgstr "Hébergement Web"
+
+#: linuxclientsetup/scripts/pre-session:190
+#: linuxclientsetup/scripts/pre-session:416
+msgid "Admin File Manager"
+msgstr "Administrateur Gestionnaire de fichiers"
+
+#: linuxclientsetup/utilities/common:66 linuxclientsetup/utilities/common:79
+#: linuxclientsetup/utilities/setup:34
+msgid "Karoshi Setup"
+msgstr "Karoshi Setup"
+
+#: linuxclientsetup/utilities/common:66
+#: linuxclientsetup/utilities/set-network:204
+#: linuxclientsetup/utilities/set-network:226
+#: linuxclientsetup/utilities/set-network:327
+#: linuxclientsetup/utilities/set-network:383
+#: linuxclientsetup/utilities/set-network:553
+msgid "Configuration cancelled"
+msgstr "Configuration annulée"
+
+#: linuxclientsetup/utilities/common:79
+msgid "You must complete the form"
+msgstr "Vous devez remplir le formulaire"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:44
+msgid "Rule file $1 does not exist"
+msgstr "Fichier ne existe pas de règle $1"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:49
+msgid "iptables chain $2 does not exist"
+msgstr "ne existe pas iptables chaîne $2"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:67
+#, sh-format
+msgid "Invalid protocol $protocol"
+msgstr "Invalid protocole $protocol"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:77
+msgid "Port required for TCP or UDP"
+msgstr "Port obligatoire pour TCP ou UDP"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:85
+#: linuxclientsetup/utilities/generate-firewall-rules:98
+msgid "Port option requires TCP or UDP"
+msgstr "L'option Port nécessite TCP ou UDP"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:93
+#, sh-format
+msgid "Invalid port range $port"
+msgstr "La plage de ports valide $port"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:104
+#, sh-format
+msgid "Invalid port $port"
+msgstr "Invalid $port de port"
+
+#: linuxclientsetup/utilities/generate-firewall-rules:128
+#, sh-format
+msgid "Invalid action $action"
+msgstr "Invalid $action d'action"
+
+#: linuxclientsetup/utilities/manage-flags:31
+#, sh-format
+msgid "Could not create $flagsDir"
+msgstr "Impossible de créer $flagsDir"
+
+#: linuxclientsetup/utilities/manage-flags:49
+msgid "Usage:"
+msgstr "utilisation:"
+
+#: linuxclientsetup/utilities/manage-flags:50
+msgid "flag"
+msgstr "drapeau"
+
+#: linuxclientsetup/utilities/offline-homes:27
+#: linuxclientsetup/utilities/offline-homes:32
+msgid "Offline Home Area"
+msgstr "Hors ligne Accueil Zone"
+
+#: linuxclientsetup/utilities/offline-homes:28
+msgid "You are now running in offline mode"
+msgstr "Vous êtes maintenant en mode déconnecté"
+
+#: linuxclientsetup/utilities/offline-homes:28
+#, sh-format
+msgid "Make sure you save your work in $offline_dir"
+msgstr "Assurez-vous d' enregistrer votre travail dans $offline_dir"
+
+#: linuxclientsetup/utilities/offline-homes:33
+msgid "You are now connected to the network"
+msgstr "Vous êtes maintenant connecté au réseau"
+
+#: linuxclientsetup/utilities/offline-homes:33
+msgid "Logging out will remove your offline home area"
+msgstr "Déconnexion va supprimer votre déconnecté région d'origine"
+
+#: linuxclientsetup/utilities/set-local-password:24
+#: linuxclientsetup/utilities/set-local-password:25
+#: linuxclientsetup/utilities/set-network:30
+#: linuxclientsetup/utilities/set-network:31
+#: linuxclientsetup/utilities/setup:33 linuxclientsetup/utilities/setup:34
+#: linuxclientsetup/utilities/unset-network:27
+#: linuxclientsetup/utilities/unset-network:28
+msgid "This script must be run as root"
+msgstr "Ce script doit être exécuté en tant que root"
+
+#: linuxclientsetup/utilities/set-local-password:25
+#: linuxclientsetup/utilities/set-local-password:30
+#: linuxclientsetup/utilities/set-local-password:39
+#: linuxclientsetup/utilities/set-local-password:45
+#: linuxclientsetup/utilities/set-local-password:54
+msgid "Karoshi Change Password"
+msgstr "Karoshi Changer mot de passe"
+
+#: linuxclientsetup/utilities/set-local-password:30
+msgid "Password not set, original still active"
+msgstr "Mot de passe pas réglé, original toujours actif"
+
+#: linuxclientsetup/utilities/set-local-password:39
+#, sh-format
+msgid "Change password for $username and root"
+msgstr "Changer mot de passe pour $username et la racine"
+
+#: linuxclientsetup/utilities/set-local-password:39
+#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/unset-network:49
+msgid "Password"
+msgstr "mot de passe"
+
+#: linuxclientsetup/utilities/set-local-password:39
+msgid "Confirm"
+msgstr "confirmer"
+
+#: linuxclientsetup/utilities/set-local-password:45
+msgid "The passwords did not match"
+msgstr "Les mots de passe ne correspondent pas"
+
+#: linuxclientsetup/utilities/set-local-password:54
+#, sh-format
+msgid "Password changed for $username and root"
+msgstr "Mot de passe changé pour $username et la racine"
+
+#: linuxclientsetup/utilities/set-location:26
+#: linuxclientsetup/utilities/set-location:37
+#: linuxclientsetup/utilities/set-location:45
+#: linuxclientsetup/utilities/set-location:52
+msgid "Karoshi Set Location"
+msgstr "Karoshi Set Location"
+
+#: linuxclientsetup/utilities/set-location:26
+msgid "Unable to contact Primary Domain Controller"
+msgstr "Impossible de contacter le contrôleur de domaine principal"
+
+#: linuxclientsetup/utilities/set-location:37
+msgid "No locations have been created"
+msgstr "Aucun emplacement n'a été créé"
+
+#: linuxclientsetup/utilities/set-location:47
+msgid "Choose the location of this computer"
+msgstr "Choisissez l'emplacement de cet ordinateur"
+
+#: linuxclientsetup/utilities/set-location:52
+#, sh-format
+msgid "$HOSTNAME set to location $LOCATION"
+msgstr "$HOSTNAME mis à l'emplacement $LOCATION"
+
+#: linuxclientsetup/utilities/set-network:31
+#: linuxclientsetup/utilities/set-network:38
+#: linuxclientsetup/utilities/set-network:71
+#: linuxclientsetup/utilities/set-network:82
+#: linuxclientsetup/utilities/set-network:86
+#: linuxclientsetup/utilities/set-network:91
+#: linuxclientsetup/utilities/set-network:102
+#: linuxclientsetup/utilities/set-network:201
+#: linuxclientsetup/utilities/set-network:204
+#: linuxclientsetup/utilities/set-network:226
+#: linuxclientsetup/utilities/set-network:243
+#: linuxclientsetup/utilities/set-network:265
+#: linuxclientsetup/utilities/set-network:278
+#: linuxclientsetup/utilities/set-network:286
+#: linuxclientsetup/utilities/set-network:310
+#: linuxclientsetup/utilities/set-network:327
+#: linuxclientsetup/utilities/set-network:372
+#: linuxclientsetup/utilities/set-network:383
+#: linuxclientsetup/utilities/set-network:397
+#: linuxclientsetup/utilities/set-network:443
+#: linuxclientsetup/utilities/set-network:484
+#: linuxclientsetup/utilities/set-network:492
+#: linuxclientsetup/utilities/set-network:526
+#: linuxclientsetup/utilities/set-network:553
+msgid "Karoshi Set Network"
+msgstr "Karoshi Set Réseau"
+
+#: linuxclientsetup/utilities/set-network:37
+#: linuxclientsetup/utilities/set-network:38
+#, sh-format
+msgid "$netlogon_mount is already mounted"
+msgstr "$netlogon_mount est déjà monté"
+
+#: linuxclientsetup/utilities/set-network:62
+msgid "Asking for network settings"
+msgstr "Demander de paramètres réseau"
+
+#: linuxclientsetup/utilities/set-network:71
+msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
+msgstr ""
+"Adresse IP, masque de sous réseau et la passerelle ne sont pas nécessaires "
+"si le DHCP est sélectionné"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Hostname"
+msgstr "Nom d'hôte"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Network Interface"
+msgstr "Interface réseau"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "IP Address"
+msgstr "Adresse IP"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Netmask"
+msgstr "netmask"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "Gateway"
+msgstr "porte"
+
+#: linuxclientsetup/utilities/set-network:72
+msgid "DHCP"
+msgstr "DHCP"
+
+#: linuxclientsetup/utilities/set-network:82
+msgid "You must enter a client name and network interface"
+msgstr "Vous devez entrer un nom de client et interface réseau"
+
+#: linuxclientsetup/utilities/set-network:86
+msgid "You must enter a valid IP address, netmask and gateway, or choose DHCP"
+msgstr ""
+"Vous devez entrer une adresse IP valide, masque de réseau et la passerelle, "
+"ou choisissez DHCP"
+
+#: linuxclientsetup/utilities/set-network:91
+msgid "Wireless device configuration"
+msgstr "Configuration de l'appareil sans fil"
+
+#: linuxclientsetup/utilities/set-network:92
+#: linuxclientsetup/utilities/set-network:398
+msgid "SSID"
+msgstr "SSID"
+
+#: linuxclientsetup/utilities/set-network:92
+#: linuxclientsetup/utilities/set-network:398
+msgid "WPA2-PSK Key"
+msgstr "WPA2-PSK Clé"
+
+#: linuxclientsetup/utilities/set-network:102
+msgid "You must enter an SSID and key"
+msgstr "Vous devez entrer un SSID et la clé"
+
+#: linuxclientsetup/utilities/set-network:201
+msgid "Karoshi Client Setup: Network Configuration"
+msgstr "Client Setup Karoshi: Configuration Réseau"
+
+#: linuxclientsetup/utilities/set-network:210
+#: linuxclientsetup/utilities/set-network:250
+msgid "Bringing down network interface"
+msgstr "Faire tomber interface réseau"
+
+#: linuxclientsetup/utilities/set-network:214
+#: linuxclientsetup/utilities/set-network:256
+msgid "Bringing up network interface"
+msgstr "Bringing up interface réseau"
+
+#: linuxclientsetup/utilities/set-network:243
+msgid "Did not get DHCP lease"
+msgstr "N'a pas obtenu le bail DHCP"
+
+#: linuxclientsetup/utilities/set-network:265
+#, sh-format
+msgid "Cannot contact gateway $GATEWAY"
+msgstr "Impossible de contacter passerelle $GATEWAY"
+
+#: linuxclientsetup/utilities/set-network:278
+msgid "Not configuring for Karoshi Server"
+msgstr "Non configuration pour Karoshi serveur"
+
+#: linuxclientsetup/utilities/set-network:287
+msgid "Primary Domain Controller IP Address"
+msgstr "Adresse IP du contrôleur de domaine principal"
+
+#: linuxclientsetup/utilities/set-network:288
+msgid "Skip"
+msgstr "sauter"
+
+#: linuxclientsetup/utilities/set-network:294
+msgid "Attempting automatic configuration"
+msgstr "Tentative configuration automatique"
+
+#: linuxclientsetup/utilities/set-network:310
+msgid "Invalid PDC"
+msgstr "Invalid PDC"
+
+#: linuxclientsetup/utilities/set-network:317
+#: linuxclientsetup/utilities/set-network:402
+#: linuxclientsetup/utilities/set-network:419
+msgid "Setting network configuration"
+msgstr "Configuration du réseau de réglage"
+
+#: linuxclientsetup/utilities/set-network:372
+#: linuxclientsetup/utilities/set-network:443
+msgid "Cannot find domain information on server"
+msgstr "Vous ne trouvez pas l'information du domaine sur le serveur"
+
+#: linuxclientsetup/utilities/set-network:391
+msgid "Checking wireless network settings"
+msgstr "Vérification des paramètres de réseau sans fil"
+
+#: linuxclientsetup/utilities/set-network:450
+msgid "Performing domain setup"
+msgstr "Procéder à la configuration de domaine"
+
+#: linuxclientsetup/utilities/set-network:463
+msgid "Copying files"
+msgstr "Copie de fichiers"
+
+#: linuxclientsetup/utilities/set-network:470
+msgid "Configuring services"
+msgstr "Configuration de services"
+
+#: linuxclientsetup/utilities/set-network:481
+msgid "Joining domain"
+msgstr "rejoindre domaine"
+
+#: linuxclientsetup/utilities/set-network:484
+msgid "Domain configuration cancelled"
+msgstr "Configuration de domaine annulé"
+
+#: linuxclientsetup/utilities/set-network:493
+msgid "Enter credentials to join the domain"
+msgstr "Entrez les informations d'identification pour rejoindre le domaine"
+
+#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/unset-network:49
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: linuxclientsetup/utilities/set-network:502
+msgid "Finalising domain configuration"
+msgstr "Configuration de domaine Finalisation"
+
+#: linuxclientsetup/utilities/set-network:526
+msgid ""
+"This version of Karoshi Client requires Karoshi Server version 9.0 or above"
+msgstr ""
+"Cette version de Karoshi client nécessite la version Karoshi Server 9.0 ou "
+"supérieur"
+
+#: linuxclientsetup/utilities/set-network:537
+msgid "Finalising network configuration"
+msgstr "Configuration réseau finalisation"
+
+#: linuxclientsetup/utilities/setup:155
+msgid "Setting capabilities for dumpcap using Linux Capabilities failed."
+msgstr "Capacités de réglage pour dumpcap utilisant capacités Linux échoué."
+
+#: linuxclientsetup/utilities/setup:156
+msgid "Falling back to setting set-user-id bit."
+msgstr "De retomber à le bit set-user -id."
+
+#: linuxclientsetup/utilities/unset-network:28
+#: linuxclientsetup/utilities/unset-network:37
+#: linuxclientsetup/utilities/unset-network:48
+#: linuxclientsetup/utilities/unset-network:77
+msgid "Karoshi Unset Network"
+msgstr "Karoshi Unset Réseau"
+
+#: linuxclientsetup/utilities/unset-network:37
+msgid "Karoshi Client Setup: Network Deconfiguration"
+msgstr "Client Setup Karoshi: Déconfiguration Réseau"
+
+#: linuxclientsetup/utilities/unset-network:39
+msgid "Deconfiguring domain settings"
+msgstr "Déconfiguration paramètres de domaine"
+
+#: linuxclientsetup/utilities/unset-network:43
+msgid "Machine not joined to the domain"
+msgstr "Machine ne est pas joint au domaine"
+
+#: linuxclientsetup/utilities/unset-network:49
+msgid "Enter credentials to leave the domain"
+msgstr "Entrez les informations d'identification pour quitter le domaine"
+
+#: linuxclientsetup/utilities/unset-network:77
+msgid "Invalid domain type"
+msgstr "Invalid type de domaine"
+
+#: linuxclientsetup/utilities/unset-network:103
+msgid "Reverting configuration files"
+msgstr "Revenant fichiers de configuration"
+
+#: linuxclientsetup/utilities/unset-network:116
+msgid "Resetting hostname"
+msgstr "hostname Réinitialisation"
+
+#: linuxclientsetup/utilities/unset-network:130
+msgid "Bringing down old network interface"
+msgstr "Faire tomber interface réseau ancienne"
+
+#: linuxclientsetup/utilities/unset-network:133
+msgid "Resetting network interface configuration"
+msgstr "Configuration de l'interface réseau Réinitialisation"
+
+#: linuxclientsetup/utilities/unset-network:139
+msgid "Resetting DNS information"
+msgstr "Informations DNS Réinitialisation"
+
+#: l10n/tmp/karoshi-change-admin-password.desktop.h:1
+msgid "Change Administrator Password"
+msgstr "Changer mot de passe administrateur"
+
+#: l10n/tmp/karoshi-printing.desktop.h:1
+msgid "Printer Settings"
+msgstr "Paramètres de l'imprimante"
+
+#: l10n/tmp/karoshi-printing.desktop.h:2
+msgid "Configure printers on the local system"
+msgstr "Configurer les imprimantes sur le système local"
+
+#: l10n/tmp/karoshi-set-location.desktop.h:1
+msgid "Set Karoshi Client Location"
+msgstr "Réglez Karoshi client Localisation"
+
+#: l10n/tmp/karoshi-setup.desktop.h:1
+msgid "Setup Karoshi Client"
+msgstr "Configuration Karoshi client"

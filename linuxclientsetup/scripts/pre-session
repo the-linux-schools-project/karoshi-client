@@ -33,7 +33,6 @@ function create_entries {
 	command="exo-open"
 	iconname="$1"
 	if [[ $sudo_open ]]; then
-		iconname="Admin $iconname"
 		command="gksudo -D '$iconname' -- exo-open"
 	fi
 	echo "Generating desktop and menu entry: $1"
@@ -137,27 +136,27 @@ if $is_domain; then
 		if $offline_home_exists; then
 			alternate_home="offline-home"
 
-			create_entries "Home" "$HOME/offline-home" folder-home
+			create_entries $"Home" "$HOME/offline-home" folder-home
 
 			#Add shortcut to offline-home in .gtk-bookmarks
 			if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
-				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Home@" ~/.gtk-bookmarks
+				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape "$"Home""@" ~/.gtk-bookmarks
 			else
-				echo "file://$offline_home_escape Home" >> ~/.gtk-bookmarks
+				echo "file://$offline_home_escape "$"Home" >> ~/.gtk-bookmarks
 			fi
 		else
 			echo "WARNING: Unable to find offline home area" >&2
-			create_entries "Home" ~ folder-home
+			create_entries $"Home" ~ folder-home
 		fi
 	else
 		if $offline_home_exists; then
 			echo "Found offline home area while online"
-			create_entries "Offline Home" ~/offline-home folder-home
+			create_entries $"Offline Home" ~/offline-home folder-home
 
 			if [[ -f ~/.gtk-bookmarks ]] && grep -q "^file://$offline_home_escape " ~/.gtk-bookmarks; then
-				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape Offline Home@" ~/.gtk-bookmarks
+				sed -i "s@^file://$offline_home_escape .*@file://$offline_home_escape "$"Offline Home""@" ~/.gtk-bookmarks
 			else
-				echo "file://$offline_home_escape Offline Home" >> ~/.gtk-bookmarks
+				echo "file://$offline_home_escape "$"Offline Home" >> ~/.gtk-bookmarks
 			fi
 		fi
 
@@ -168,13 +167,13 @@ if $is_domain; then
 			server=$(mount | sed -n "s@^//\([^.]*\).$DNSSUFFIX/$USER on $HOME/network/home type cifs.*@\1@p")
 			if [[ -f /opt/karoshi/user_web_servers ]] && grep -q "^$server\$" /opt/karoshi/user_web_servers &&
 			  [[ -d ~/network/home/public_html ]] && getfacl ~/network/home/public_html | grep -q '^user:www-data:r-x$'; then
-				create_link "Web Hosting" "http://$server.$DNSSUFFIX/~$USER/" emblem-web
+				create_link $"Web Hosting" "http://$server.$DNSSUFFIX/~$USER/" emblem-web
 			fi
 
 			alternate_home="network/home"
 		else
 			echo "No domain home area found"
-			create_entries "Home" ~ folder-home
+			create_entries $"Home" ~ folder-home
 		fi
 
 		#Create icons to other mounted network shares
@@ -188,9 +187,7 @@ if $is_domain; then
 
 	#Add file manager entry to / if administrator
 	if $is_admin; then
-		sudo_open=true
-		create_entries "File Manager" / system-file-manager
-		unset sudo_open
+		sudo_open=true create_entries $"Admin File Manager" / system-file-manager
 	fi
 
 	#Copy in default icons
@@ -412,13 +409,11 @@ else
 	###############
 	#Local user
 	###############
-	create_entries "Home" ~ folder-home
+	create_entries $"Home" ~ folder-home
 
 	#Add file manager entry to / if administrator
 	if $is_admin; then
-		sudo_open=true
-		create_entries "File Manager" / system-file-manager
-		unset sudo_open
+		sudo_open=true create_entries $"Admin File Manager" / system-file-manager
 	fi
 fi
 

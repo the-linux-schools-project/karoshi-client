@@ -1,800 +1,449 @@
 #!/bin/bash
 
-#Copyright (C) 2013 Robin McCorkell
-#This program is free software; you can redistribute it and/or
-#modify it under the terms of the GNU General Public License
-#as published by the Free Software Foundation; either version 2
-#of the License, or (at your option) any later version.
+#Copyright (C) 2013,2014 Robin McCorkell
+
+#This file is part of Karoshi Client.
 #
-#This program is distributed in the hope that it will be useful,
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+#GNU Affero General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
-#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
-#
-#Website: http://www.karoshi.org.uk
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
 
-###################
-# !!! WARNING !!! #
-###################
+source_dir=${BASH_SOURCE[0]}
+source_dir=${source_dir%/*}
 
-#This script WILL permanently modify your system, trashing
-#configuration files and installing/removing packages. Use
-#at your own risk!
+if [[ ! -f $source_dir/install/cleanup.sh ]]; then
+	echo "Unable to find required source files" >&2
+	exit 1
+fi
+source "$source_dir"/install/cleanup.sh
+source "$source_dir"/install/config
 
-#Logging
-[[ -e /tmp/karoshi-install.log ]] && rm -rf /tmp/karoshi-install.log
-touch /tmp/karoshi-install.log
-chmod 0644 /tmp/karoshi-install.log
-
-mkfifo /tmp/karoshi-install.fifo.$$
-tee /tmp/karoshi-install.log < /tmp/karoshi-install.fifo.$$ &
-log_wait_pid=$!
-exec &>/tmp/karoshi-install.fifo.$$
-
-function removeRedirection {
-	exec 1>&-
-	exec 2>&-
-	wait $log_wait_pid
-	rm /tmp/karoshi-install.fifo.$$
+#Hooks
+function hook {
+	if [[ $1 ]] && [[ -f $source_dir/install/hook/$1 ]]; then
+		source "$source_dir"/install/hook/"$1"
+	fi
 }
 
-trap removeRedirection EXIT
+#All hooks:
+# - usage     Print usage
+# - opt-parse Option parsing
+
+#First stage hooks:
+# - pre-fakechroot
+# - post-fakechroot
+
+#Second stage hooks:
+# - pre-debootstrap
+# - post-debootstrap
+# - pre-chroot
+# - post-chroot
+# - post-chroot-cleanup
+# - pre-mksquashfs
+# - post-mksquashfs
+# - pre-iso
+# - post-iso
+
+#Third stage hooks:
+# - ppa-cmd        PPA command
+# - pre-apt        Pre installation
+# - apt-install    Install packages
+# - apt-opt        Add apt option for installation
+# - apt-stop       Stop package installation
+# - post-apt       Post package installation
+# - pre-custom     Pre custom installation
+# - post-custom    Post custom installation
 
 #Usage
 function usage {
 	echo "Usage:" >&2
-	echo "	$0 [--release <version>]" >&2
+	echo "	$0 [options] --dir=<directory>" >&2
 	echo >&2
 	echo " Options:" >&2
-	echo "  --release <version> Create release version" >&2
-	echo "  --help              Show this help message" >&2
-	exit 1
+	echo "  --arch=<arch>        Architecture [i386|amd64]" >&2
+	echo "  --dir=<directory>    Location of work directory" >&2
+	echo "  --release=<version>  Create release version" >&2
+	echo "  --apt-proxy=<proxy>  Define apt proxy (http://server:port)" >&2
+	echo "  --help               Show this help message" >&2
+	hook usage
 }
 
 #Options
+stage=1
+apt_proxy=$http_proxy
 while (( "$#" )); do
 	case "$1" in
-	--release)
-		shift
-		release=$1
+	--arch=*)
+		arch=${1##--arch=}
+		;;
+	--dir=*)
+		work_dir=${1##--dir=}
+		;;
+	--release=*)
+		release=${1##--release=}
+		;;
+	--apt-proxy=*)
+		apt_proxy=${1##--apt-proxy=}
 		;;
 	--help)
 		usage
+		exit 1
+		;;
+	--second-stage)
+		stage=2
+		;;
+	--third-stage)
+		stage=3
 		;;
 	*)
-		echo "Unrecognized option $1" >&2
-		usage
+		if ! hook opt-parse "$1"; then
+			echo "Unrecognized option $1" >&2
+			exit 254
+		fi
 		;;
 	esac
 	shift
 done
 
-###################
-#Remastersys
-###################
-function do_remastersys {
-	if ! which remastersys; then
-		echo "ERROR: No remastersys detected" >&2
-		exit 5
-	fi
-
-	#Require restart if kernel has changed
-	if [[ $(basename "$(readlink -f /vmlinuz)") != vmlinuz-$(uname -r) ]]; then
-		echo >&2
-		echo "The kernel has been updated" >&2
-		echo "Please restart the machine, then run this installation script again to" >&2
-		echo "perform a remaster" >&2
-		exit 100
-	fi
-	
-	#Modify remastersys with several tweaks
-	echo "Performing remastersys tweaks..." >&2
-	remastersys_path=$(which remastersys)
-	#Check sha1sum of remastersys script
-	if [[ $(sha1sum "$remastersys_path") != "d47d49de9a594b4e703a476f87ec5e311e63ce9a  $remastersys_path" ]]; then
-		echo "WARNING: $remastersys_path is a different version to the one this" >&2
-		echo "         install script was designed for" >&2
-		resolved=false
-		while ! $resolved; do
-			echo -n "Do you want to continue and make the tweaks [y/n]? [n]: " >&2
-			read -r input
-			case "$input" in
-			y*)
-				echo "Proceeding with tweaks" >&2
-				resolved=true
-				;;
-			n*|"")
-				echo "Aborting remaster" >&2
-				resolved=true
-				exit 1
-				;;
-			*)
-				echo "$input is not a valid option" >&2
-				echo "Choose from 'y' or 'n'" >&2
-				;;
-			esac
-		done
-	fi
-
-	cp "$remastersys_path" "$remastersys_path".orig
-	#Remove silly LIVEUSER logic
-	sed -i '/LIVEUSER="`who -u | grep -v root | cut -d " " -f1| uniq`"/ {
-		N
-		N
-		N
-		c
-	}' "$remastersys_path"
-	#Use proper logic for removing Ubiquity icon from desktop
-	sed -i 's@\([[:space:]]*\)rm -rf /home/\*/Desktop/ubiquity\*\.desktop &> /dev/null@\1find "$LIVEHOME"/Desktop -name "ubiquity*.desktop" -delete \&> /dev/null@' "$remastersys_path"
-
-	#Link karoshi-setup
-	[[ -d ~administrator/.config/autostart/ ]] || mkdir -p ~administrator/.config/autostart/
-	ln -sf /usr/share/applications/karoshi-setup.desktop ~administrator/.config/autostart/
-	chown -R administrator:administrator ~administrator
-
-	#Administrator autologin
-	cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.orig
-	echo "autologin-user=administrator
-autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
-
-	function clean_up {
-		echo "Cleaning up..." >&2
-		mv "$remastersys_path".orig "$remastersys_path"
-		rm -f ~administrator/.config/autostart/karoshi-setup.desktop
-		#Stop Auto logon
-		mv /etc/lightdm/lightdm.conf.orig /etc/lightdm/lightdm.conf
-	}
-
-	trap clean_up SIGINT SIGTERM
-
-	#Determine ISO parameters
-	iso_version=${release:-git-$(date +%Y%m%d)}
-	iso_website="http://linuxgfx.co.uk/"
-	if [[ -f README.md ]] && grep -q "\*\*Website:\*\* " README.md; then
-		iso_website=$(sed -n 's/.*\*\*Website:\*\* \(.*\)/\1/p' README.md)
-	fi
-
-	#Determine ISO architecture
-	iso_arch=$(uname -i)
-	[[ $iso_arch == x86_64 ]] && iso_arch=amd64
-
-	echo "ISO Label:   Karoshi Client $iso_version-$iso_arch" >&2
-	echo "ISO Website: $iso_website" >&2
-
-	if [[ $release ]]; then
-		resolved=false
-		while ! $resolved; do
-			echo -n "Is this information correct [y/n]?: " >&2
-			read -r input
-			case "$input" in
-			y*)
-				echo "Proceeding with remaster" >&2
-				resolved=true
-				;;
-			n*)
-				echo "Aborting remaster" >&2
-				resolved=true
-				exit 1
-				;;
-			*)
-				echo "$input is not a valid option" >&2
-				echo "Choose from 'y' or 'n'" >&2
-				;;
-			esac
-		done
-	fi
-
-	#Configure remastersys
-	sed -i -e "s@^WORKDIR=.*@WORKDIR='/tmp'@" \
-		   -e "s@^EXCLUDES=.*@EXCLUDES='/tmp /mnt'@" \
-		   -e "s@^LIVEUSER=.*@LIVEUSER='administrator'@" \
-		   -e "s@^LIVECDLABEL=.*@LIVECDLABEL='Karoshi Client $iso_version'@" \
-		   -e "s@^CUSTOMISO=.*@CUSTOMISO='karoshi-client-$iso_version-$iso_arch.iso'@" \
-		   -e "s@^LIVECDURL=.*@LIVECDURL='$iso_website'@" \
-		   /etc/remastersys.conf
-
-	#Configure isolinux to use automatic-ubiquity
-	sed -i "s@only-ubiquity@automatic-ubiquity@" /etc/remastersys/isolinux/isolinux.cfg.vesamenu
-
-	#Configure boot menu image
-	if [[ -e install/splash.png ]]; then
-		echo "Found custom splash.png" >&2
-		[[ -e /etc/remastersys/isolinux/splash.png ]] && rm -f /etc/remastersys/isolinux/splash.png
-		cp install/splash.png /etc/remastersys/isolinux/splash.png
-	fi
-	#Configure preseed
-	if [[ -e install/preseed.cfg ]]; then
-		echo "Found custom preseed.cfg" >&2
-		[[ -e /etc/remastersys/preseed/custom.seed ]] && rm -f /etc/remastersys/preseed/custom.seed
-		cp install/preseed.cfg /etc/remastersys/preseed/custom.seed
-	fi
-
-	#Start creating the remaster
-	if ! remastersys clean; then
-		echo "WARNING: Error in cleaning remastersys working directory (/tmp/remastersys)" >&2
-		echo "         Resolve manually, then press Enter to continue" >&2
-		read
-	fi
-	echo "Beginning remaster..." >&2
-	if ! remastersys backup; then
-		echo "ERROR: remastersys backup failed" >&2
-	else
-		echo >&2
-		echo "Remaster complete!" >&2
-		echo "ISO Location: /tmp/remastersys" >&2
-		echo "ISO Filename: karoshi-client-$iso_version-$iso_arch.iso" >&2
-		echo "ISO Checksum: karoshi-client-$iso_version-$iso_arch.iso.md5" >&2
-		echo >&2
-	fi
-
-	clean_up
+function apt-get {
+	http_proxy="$apt_proxy" command apt-get "$@" </dev/null
 }
 
-###################
-#Configuration checks
-###################
-
-echo "Performing configuration checks..." >&2
-
-#Check if running as root (duh)
-if [[ $EUID -ne 0 ]]; then
-	echo >&2
-	echo "ERROR: Not running as root" >&2
-	exit 1
+if [[ -z $work_dir ]]; then
+	echo "You must set a work directory with --dir" >&2
+	exit 254
+fi
+if [[ ! -d $work_dir ]]; then
+	echo "$work_dir does not exist" >&2
+	exit 252
 fi
 
-#Check for internet connection
-if ! ping -w 1 -c 1 8.8.8.8; then
-	echo >&2
-	echo "ERROR: No direct internet connection" >&2
-	exit 1
+#Absolutify work_dir
+if [[ $work_dir != /work ]]; then
+	work_dir=$(readlink -f "$work_dir")
 fi
 
-#Check for required packages
-if ! (which apt-get); then
-	echo >&2
-	echo "ERROR: Missing apt-get - is this Ubuntu?" >&2
-	exit 1
-fi
+case "$stage" in
+1)
+	##############################
+	# First stage - initialization
+	##############################
+	if ! which fakeroot fakechroot > /dev/null; then
+		echo "This script requires fakeroot and fakechroot to be installed" >&2
+		exit 252
+	fi
+	if ! which mksquashfs mkisofs > /dev/null || [[ ! -f /usr/lib/syslinux/isolinux.bin ]]; then
+		echo "This script requires syslinux, squashfs-tools and genisoimage to be installed" >&2
+		exit 252
+	fi
+	if ! which debootstrap > /dev/null; then
+		echo "Unable to find debootstrap" >&2
+		echo "Download and install .deb for $ubuntu_release from" \
+			"http://packages.ubuntu.com/search?keywords=debootstrap&searchon=names&suite=all&section=all" >&2
+		exit 252
+	fi
 
-#Check if logged in as user with home in /home
-if [[ ~ =~ ^/home ]]; then
-	echo >&2
-	echo "ERROR: Current user has home area in /home" >&2
-	echo "       Switch to different user to allow home directories to be moved correctly" >&2
-	exit 1
-fi
+	source_dir=$(readlink -f "$source_dir")
 
-#Change directory to the script's location
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+	: ${release:=git-$(cd "$source_dir" && git rev-parse --short HEAD)}
+	: ${arch:=$(dpkg --print-architecture)}
 
-#Make sure our files are here
-if ! ( [[ -d configuration ]] && [[ -d linuxclientsetup ]] && [[ -d install ]] ); then
-	echo "ERROR: Missing files required for installation - aborting" >&2
-	exit 1
-fi
-
-#Check if administrator user already exists and /opt/karoshi already exists
-skip_install=false
-if getent passwd administrator >/dev/null && [[ -d /opt/karoshi ]] && [[ ~administrator == "/opt/administrator" ]]; then
-	echo "You seem to have already installed Karoshi" >&2
-	resolved=false
-	while ! $resolved; do
-		echo -n "Do you want to skip directly to the remaster [y/n]? [n]: " >&2
-		read -r input
-		case "$input" in
-		y*)
-			echo "Skipping directly to remaster" >&2
-			resolved=true
-			skip_install=true
-			;;
-		n*|"")
-			echo "Continuing with normal installation" >&2
-			resolved=true
-			;;
-		*)
-			echo "$input is not a valid option" >&2
-			echo "Choose from 'y' or 'n'" >&2
-			;;
-		esac
+	#Prepare fakechroot
+	declare -A cmd_subst=(
+		[/usr/bin/chfn]="$source_dir"/install/chfn.fakechroot
+		[/usr/bin/ldd]="$source_dir"/install/ldd.fakechroot
+	)
+	for cmd in "${!cmd_subst[@]}"; do
+		FAKECHROOT_CMD_SUBST+=":$cmd=${cmd_subst[$cmd]}"
 	done
-fi
+	export FAKECHROOT_CMD_SUBST=${FAKECHROOT_CMD_SUBST#:}
 
-###################
-#Pre-installation configuration
-###################
-
-echo "Preparing environment..." >&2
-echo "Warning: Do not interrupt the procedure or your system may be in" >&2
-echo "         an inconsistent state" >&2
-
-function set_network {
-	# $1 = network interface
-	# $2 = IP address/netmask
-	# $3 = gateway
-	( [[ $1 ]] && [[ $2 ]] && [[ $3 ]] ) || return
-	ip link set "$1" up
-	ip addr flush dev "$1"
-	ip addr add "$2" dev "$1"
-	ip route add default via "$3"
-
-	#Set up resolv.conf for reliable DNS
-	echo "nameserver 8.8.8.8
-nameserver 8.8.4.4" > /etc/resolv.conf
-}
-
-#Save current network settings
-net_int=$(ip route | sed -n 's/^default .*dev \([^ ]*\).*/\1/p')
-net_ip=$(ip addr show eth0 | sed -n 's/^[[:space:]]*inet \([^ ]*\).*/\1/p')
-net_gw=$(ip route | sed -n 's/^default .*via \([^ ]*\).*/\1/p')
-
-set_network "$net_int" "$net_ip" "$net_gw"
-
-if $skip_install; then
-	echo "Preparation finished!" >&2
-	do_remastersys
-	exit 0
-fi
-
-#Add new APT repositories
-if [[ -f install/apt-repositories ]]; then
-	while read -r apt_repo; do
-		add-apt-repository -y "$apt_repo"
-	done < install/apt-repositories
-fi
-
-#Update and upgrade APT
-apt-get update
-apt-get -y install apt
-
-#Clear all APT holds
-apt-mark showhold | xargs -r apt-mark unhold
-
-#Run custom commands
-if [[ -f install/pre-commands ]]; then
-	bash install/pre-commands
-fi
-
-echo "Preparation finished!" >&2
-
-###################
-#Package installation/removal
-###################
-
-export DEBIAN_FRONTEND=noninteractive
-
-#Configure holds
-if [[ -f install/hold-list ]]; then
-	echo "Holding back packages..." >&2
-	hold_packages=( )
-	while read -r pkg; do
-		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
-			hold_packages+=( "$pkg" )
-		fi
-	done < install/hold-list
-	if [[ $hold_packages ]]; then
-		apt-mark hold ${hold_packages[@]}
-		err=$?
-		if [[ $err -ne 0 ]]; then
-			echo >&2
-			echo "ERROR: Failed to hold packages - error code from apt-mark: $err" >&2
-			exit 2
-		fi
+	fakeroot_args=( -s "$work_dir"/fakeroot.save )
+	if [[ -f "$work_dir"/fakeroot.save ]]; then
+		fakeroot_args+=( -i "$work_dir"/fakeroot.save )
 	fi
-fi
 
-#Install packages
-if [[ -f install/install-list ]]; then
-	echo "Installing packages..." >&2
-	install_packages=( )
-	while read -r pkg; do
-		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
-			install_packages+=( "$pkg" )
+	hook pre-fakechroot
+
+	fakechroot -e debootstrap -- fakeroot "${fakeroot_args[@]}" -- \
+		"$source_dir"/install.sh --second-stage --dir="$work_dir" \
+			--arch="$arch" --release="$release" --apt-proxy="$apt_proxy"
+
+	hook post-fakechroot
+	;;
+2)
+	####################################
+	# Second stage - fakechroot fakeroot
+	####################################
+	mkdir -p "$work_dir"/image/{casper,isolinux,install}
+	root=$work_dir/chroot
+
+	if [[ ! -d "$root" ]]; then
+		mkdir "$root"
+
+		hook pre-debootstrap
+
+		#debootstrap
+		ubuntu_release=$(sed -n 's/^#!release //p' "$source_dir"/install/sources.list)
+		http_proxy="$apt_proxy" debootstrap --variant=fakechroot \
+			--include=wget --arch="$arch" "$ubuntu_release" "$root"
+
+		#debootstrap workarounds
+		if [[ -L "$root"/dev ]]; then
+			rm -f "$root"/{dev,proc}
+			mkdir "$root"/{dev,proc}
 		fi
-		if [[ $pkg == "#!install" ]]; then
-			if [[ $install_packages ]]; then
-				apt-get -y --allow-unauthenticated install ${install_packages[@]}
-				err=$?
-				if [[ $err -ne 0 ]]; then
-					echo >&2
-					echo "ERROR: Failed to install packages - error code from apt-get: $err" >&2
-					exit 2
-				fi
+		function remove_debootstrap_diversion {
+			if [[ -f $root$1.REAL ]]; then
+				rm -f "$root""$1"
+				mv -f "$root""$1".REAL "$root""$1"
+				sed -i "\@^$1\$@,/^fakechroot\$/d" "$root"/var/lib/dpkg/diversions
 			fi
-			install_packages=( )
+		}
+		remove_debootstrap_diversion /sbin/ldconfig
+		remove_debootstrap_diversion /usr/bin/ldd
+
+		hook post-debootstrap
+	fi
+
+	#Fix symlinks
+	while read -r symlink; do
+		link_dest=$(readlink -f "$symlink")
+		if [[ $link_dest != $root/* ]]; then
+			echo "Fixing symlink $symlink -> $link_dest" >&2
+			rm -f "$symlink"
+			ln -sfT "${root}${link_dest}" "$symlink"
 		fi
-	done < install/install-list
-	if [[ $install_packages ]]; then
-		apt-get -y --allow-unauthenticated install ${install_packages[@]}
-		err=$?
-		if [[ $err -ne 0 ]]; then
-			echo >&2
-			echo "ERROR: Failed to install packages - error code from apt-get: $err" >&2
-			exit 2
-		fi
+	done < <(find "$root" -lname /'*')
+
+	#Create links and copy required files
+	ln -sfT "$source_dir" "$root"/source
+	ln -sfT "$work_dir" "$root"/work
+	cp -ft "$root"/etc /etc/resolv.conf "$source_dir"/install/hosts
+	cleanup_file_add "$root"/{source,work,etc/resolv.conf}
+
+	hook pre-chroot
+
+	chroot "$root" /source/install.sh --third-stage \
+		--dir=/work --arch="$arch" --release="$release" --apt-proxy="$apt_proxy"
+
+	hook post-chroot
+
+	cleanup
+
+	hook post-chroot-cleanup
+
+	#Fix symlinks
+	while read -r symlink; do
+		link_dest=$(readlink -f "$symlink")
+		echo "Fixing symlink $symlink -> $link_dest" >&2
+		rm -f "$symlink"
+		ln -sfT "${link_dest##"$root"}" "$symlink"
+	done < <(find "$root" -lname "$root"/'*')
+
+	#Configure isolinux
+	cp -ft "$work_dir"/image/isolinux /usr/lib/syslinux/{isolinux.bin,vesamenu.c32}
+	if [[ -f /boot/memtest86+.bin ]]; then
+		cp -f /boot/memtest86+.bin "$work_dir"/image/install/memtest
 	fi
-fi
 
-#Reset holds
-apt-mark showhold | xargs -r apt-mark unhold
-
-#Reset network settings in case a package clobbered it
-set_network "$net_int" "$net_ip" "$net_gw"
-
-#Remove packages
-if [[ -f install/remove-list ]]; then
-	echo "Removing packages..." >&2
-	remove_packages=( )
-	while read -r pkg; do
-		if [[ $pkg != \#* ]] && [[ $pkg ]]; then
-			remove_packages+=( "$pkg" )
-		fi
-	done < install/remove-list
-	if [[ $remove_packages ]]; then
-		apt-get -y purge ${remove_packages[@]}
-		err=$?
-		if [[ $err -ne 0 ]]; then
-			echo >&2
-			echo "ERROR: Failed to remove packages - error code from apt-get: $err" >&2
-			exit 2
-		fi
+	cp -ft "$work_dir"/image/isolinux "$source_dir"/install/isolinux.cfg
+	cp -ft "$work_dir"/image "$source_dir"/install/README.diskdefines
+	cp -ft "$work_dir"/image/casper "$source_dir"/install/preseed.cfg
+	sed -i -e "s/@VERSION@/$release/g" -e "s/@ARCH@/$arch/g" \
+		"$work_dir"/image/{isolinux/isolinux.cfg,README.diskdefines}
+	if which convert >/dev/null; then
+		convert "$source_dir"/install/splash.png -resize 640x480^ -crop 640x480+0+0 \
+			"$work_dir"/image/isolinux/splash.png
+	else
+		cp -ft "$work_dir"/image/isolinux "$source_dir"/install/splash.png
 	fi
-fi
 
-#Reset network settings in case a package clobbered it
-set_network "$net_int" "$net_ip" "$net_gw"
-
-#Update everything
-echo "Updating packages..." >&2
-if ! apt-get -y --allow-unauthenticated dist-upgrade; then
-	echo >&2
-	echo "ERROR: Failed to update packages" >&2
-	exit 2
-fi
-
-#Remove old kernels
-current_kernel=$(readlink -f /vmlinuz)
-current_kernel=${current_kernel##*/vmlinuz-}
-toremove=( )
-for kernel in /boot/vmlinuz-*; do
-	kernel=${kernel##*/vmlinuz-}
-	if [[ $kernel != "$current_kernel" ]]; then
-		toremove+=(
-			linux-image-"$kernel"
-			linux-headers-"$kernel"
-			linux-image-extra-"$kernel"
-		)
+	#Create filesystem.squashfs
+	if [[ -f $work_dir/image/casper/filesystem.squashfs ]]; then
+		rm -f "$work_dir"/image/casper/filesystem.squashfs
 	fi
-done
-if [[ $toremove ]]; then
-	apt-get -y purge "${toremove[@]}"
-fi
 
-#Reset network settings in case a package clobbered it
-set_network "$net_int" "$net_ip" "$net_gw"
+	hook pre-mksquashfs
 
-#Clean up unneeded packages
-echo "Autoremoving unneeded packages..." >&2
-if ! apt-get -y autoremove; then
-	echo >&2
-	echo "ERROR: Failed to autoremove packages" >&2
-	exit 2
-fi
+	mksquashfs "$root" "$work_dir"/image/casper/filesystem.squashfs \
+		-no-recovery -always-use-fragments -b 1M -no-duplicates -e boot/grub
+	printf $(du -sx --block-size=1 "$root" | cut -f1) > "$work_dir"/image/casper/filesystem.size
 
-#Reset network settings in case a package clobbered it
-set_network "$net_int" "$net_ip" "$net_gw"
+	hook post-mksquashfs
 
-###########################
-#Non-essential installation
-###########################
+	#Set Ubuntu metadata
+	echo -n > "$work_dir"/image/ubuntu
+	mkdir -p "$work_dir"/image/.disk
+	echo -n > "$work_dir"/image/.disk/base_installable
+	echo "full_cd/single" > "$work_dir"/image/.disk/cd_type
+	echo "$ISO_TITLE_BASE $release" > "$work_dir"/image/.disk/info
+	echo "$URL" > "$work_dir"/image/.disk/release_notes_url
 
-#Install rubygems
-if which gem && [[ -f install/rubygem-list ]]; then
-	gems=( $(< install/rubygem-list) )
-	if ! gem install ${gems[@]}; then
-		echo >&2
-		echo "ERROR: Failed to install rubygems" >&2
-		echo "       Press Enter to continue" >&2
-		read
+	#Create md5sum
+	(
+		cd "$work_dir"/image
+		find . -type f -exec md5sum {} + | grep -v '\./md5sum.txt' > md5sum.txt
+	)
+
+	#Create ISO
+	iso_filename=${ISO_TITLE_BASE// /-}-${release}-${arch}.iso
+	iso_filename=${iso_filename,,}
+	if [[ -f $work_dir/$iso_filename ]]; then
+		rm -f "$work_dir"/"$iso_filename"
 	fi
-fi
 
-################
-#Install Karoshi
-################
+	hook pre-iso
 
-#Remove old PAM modules
-pam_modules=( )
-while read -r -d $'\0' file; do
-	if ! dpkg-query -S "$file"; then
-		pam_modules+=( "$(basename "$file")" )
-	fi
-done < <(find /usr/share/pam-configs -mindepth 1 -print0)
-if [[ $pam_modules ]]; then
-	pam-auth-update --package --remove "${pam_modules[@]}"
-	for file in "${pam_modules[@]}"; do
-		echo "Removing orphan PAM config $file"
-		rm -rf /usr/share/pam-configs/"$file"
-	done
-fi
+	mkisofs -r -V "$ISO_TITLE_BASE $release $arch" -cache-inodes -J -l \
+		-b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot \
+		-boot-load-size 4 -boot-info-table \
+		-o "$work_dir"/"$iso_filename" "$work_dir"/image
 
-#Remove PAM modules modified in configuration
-while read -r -d $'\0' file; do
-	config=$(basename "$file")
-	if [[ -f /usr/share/pam-configs/$config ]]; then
-		echo "Removing PAM config $config - found in new configuration"
-		pam-auth-update --package --remove "$config"
-		echo "$config" >> /var/lib/pam/seen
-	fi
-done < <(find configuration/usr/share/pam-configs -mindepth 1 -print0)
+	hook post-iso
+	;;
+3)
+	######################
+	# Third stage - chroot
+	######################
+	shopt -s dotglob
+	mkdir -p /etc/apt
+	cp -ft /etc/apt "$source_dir"/install/sources.list
+	export DEBIAN_FRONTEND=noninteractive
 
-#Copy in new configuration (overwrite)
-echo "Installing configuration..." >&2
-find configuration -mindepth 1 -maxdepth 1 -not -name '*~' -print0 | xargs -r0 cp -rf -t /
+	#Get GPG keys for PPAs
+	while read -r cmd; do
+		hook ppa-cmd
+		eval "$cmd"
+	done < <(sed -n 's/^#!cmd //p' "$source_dir"/install/sources.list)
 
-#Correct permissions for sudoers.d files
-find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
+	#Allow apt to work properly in a chroot
+	dpkg-divert --local --rename --add /sbin/initctl
+	cleanup_func_add dpkg-divert --rename --remove /sbin/initctl
+	ln -sfT /bin/true /sbin/initctl
+	cleanup_func_add rm /sbin/initctl
+	dpkg-divert --local --rename --add /usr/sbin/invoke-rc.d
+	cleanup_func_add dpkg-divert --rename --remove /usr/sbin/invoke-rc.d
+	ln -sfT /bin/true /usr/sbin/invoke-rc.d
+	cleanup_func_add rm /usr/sbin/invoke-rc.d
 
-#Reset /etc/network/interfaces to defaults
-cat > /etc/network/interfaces << EOF
-auto lo
-iface lo inet loopback
-EOF
+	#Architecture-specific tweaks
+	dpkg_arch=$(dpkg --print-architecture)
+	case "$dpkg_arch" in
+	amd64)
+		dpkg --add-architecture i386
+		;;
+	esac
 
-echo "Adjusting PAM configuration..." >&2
-#Adjust libpam-mount to only run on interactive sessions
-pam-auth-update --package --remove libpam-mount
-if ! grep -q 'Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount; then
-	sed -i '/Session-Type:/ a\
-Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
-fi
+	apt-get update
+	apt-get install --yes dbus
+	dbus-uuidgen > /var/lib/dbus/machine-id
+	cleanup_file_add /var/lib/dbus/machine-id
 
-#Remove auth modules from PAM to be added back in in setup
-pam-auth-update --package --remove sss sss-password karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
-echo "sss
-sss-password
-karoshi-pre-session
-karoshi-post-session
-karoshi-virtualbox-mkdir
-karoshi-offline-homes" >> /var/lib/pam/seen
+	hook pre-apt
 
-#Correct permissions for PAM configuration
-find /usr/share/pam-configs -mindepth 1 -maxdepth 1 -execdir chmod 0644 {} +
+	#Required software
+	apt-get install --yes ubuntu-standard casper lupin-casper discover \
+		laptop-detect os-prober linux-generic
 
-#Reconfigure PAM
-pam-auth-update --package
-
-#Install linuxclientsetup
-echo "Installing Karoshi..." >&2
-[[ -e /opt/karoshi ]] && rm -rf /opt/karoshi
-mkdir /opt/karoshi
-cp -rf linuxclientsetup /opt/karoshi
-find /opt/karoshi/linuxclientsetup -name '*~' -delete
-
-chmod 755 /opt/karoshi/linuxclientsetup/scripts/*
-chmod 755 /opt/karoshi/linuxclientsetup/utilities/*
-chmod 644 /opt/karoshi/linuxclientsetup/utilities/*.conf
-
-#Copy LICENCE
-[[ -f LICENCE ]] && cp -f LICENCE /opt/karoshi/linuxclientsetup/LICENCE
-
-#Reset existing alternatives
-while read -r alternative; do
-	alternative=$(basename "$alternative")
-	echo "Resetting existing alternative: $alternative"
-	while read -r alternative_file; do
-		update-alternatives --remove "$alternative" "$alternative_file"
-	done < <(update-alternatives --query "$alternative" | sed -n 's/^Alternative: //p')
-done < <(find /etc/alternatives -type l -name 'karoshi-*')
-
-#Create links with update-alternatives
-if [[ -f install/alternatives-list ]]; then
-	while read -r alternative_name link_name _ link_to; do
-		if [[ $link_name ]] && [[ $alternative_name ]] && [[ $alternative_name != \#* ]] && [[ -e $link_to ]]; then
-			update-alternatives --install "$link_name" "${alternative_name%:}" "$link_to" 20
-		fi
-	done < install/alternatives-list
-fi
-
-#####################
-#Users and home areas
-#####################
-
-echo "Preparing users and home areas..." >&2
-
-#Create administrator user
-[[ -e /opt/administrator ]] && rm -rf /opt/administrator
-if ! useradd -d /opt/administrator -m -U -r administrator; then
-	echo "Error in creating administrator user - removing existing user and trying again" >&2
-	userdel administrator -r
-	useradd -d /opt/administrator -m -U -r administrator
-	err=$?
-	if [[ $err -ne 0 ]]; then
-		echo >&2
-		echo "ERROR: Unable to create administrator user - error code from useradd: $err" >&2
-		exit 4
-	fi
-fi
-if ! [[ -d ~administrator ]]; then
-	echo >&2
-	echo "ERROR: We have a problem - administrator doesn't have a home directory" >&2
-	exit 4
-fi
-#Set password and other parameters for administrator
-chpasswd <<< "administrator:karoshi"
-err=$?
-if [[ $err -ne 0 ]]; then
-	echo >&2
-	echo "ERROR: Failed to set password for administrator user" >&2
-	echo "       Error code from chpasswd: $err" >&2
-	exit 4
-fi
-usermod -a -G adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare -s /bin/bash administrator
-err=$?
-if [[ $err -ne 0 ]]; then
-	echo >&2
-	echo "ERROR: Error setting various paramters to administrator user" >&2
-	echo "       Error code from usermod: $err" >&2
-	exit 4
-fi
-
-echo "Copying necessary admin files to administrator home area..." >&2
-find linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t ~administrator
-chown -R administrator:administrator ~administrator
-
-#Adjust any other users that exist
-echo "Adjusting any conflicting users found..." >&2
-#Create temporary FD for use inside &0-redirected while loop below
-exec 4<&0
-while IFS=":" read -r username _ uid gid gecos home shell; do
-	if [[ $uid -ge 1000 ]] && [[ $uid -ne 65534 ]]; then
-		echo "WARNING: $username has a UID greater than or equal to 1000" >&2
-		echo "         Karoshi requires that no local users exist with UIDs above 999" >&2
-		echo >&2
-		resolved=false
-		while ! $resolved; do
-			echo -n "Delete user [d] or recreate with lower UID [l]? [d]: " >&2
-			read -r usr_input <&4
-			case "$usr_input" in
-			d*|"")
-				echo "Deleting user $username..." >&2
-				userdel -r $username
-				err=$?
-				if [[ $err -eq 0 ]]; then
-					IFS=":" read -r _ _ user_group_gid user_group_members < <(getent group $username)
-					if [[ $user_group_gid == "$gid" ]]; then
-						if ! [[ $user_group_members ]]; then
-							echo "Detected empty user group with same name as user" >&2
-							groupdel $username
-							err=$?
-							if [[ $err -eq 0 ]]; then
-								echo "Took the liberty of removing the user group" >&2
-							else
-								echo "WARNING: Removing user group failed - error code from groupdel: $err" >&2
-							fi
-						else
-							echo "WARNING: Detected user group with the same name as user, but it was not empty" >&2
-						fi
-					fi
-					resolved=true
-				else
-					echo "ERROR: Unable to remove $username - error code from userdel: $err" >&2
+	#Remember to have ubiquity-frontend-* in install/install.list
+	install_packages=( ubiquity ubiquity-casper grub2 )
+	opts=( )
+	if [[ -f "$source_dir"/install/install.list ]]; then
+		while read -r pkg; do
+			case "$pkg" in
+			"#!install")
+				if [[ $install_pkgs ]]; then
+					hook apt-install
+					apt-get install --yes "${opts[@]}" "${install_pkgs[@]}"
 				fi
+				install_pkgs=( )
+				opts=( )
 				;;
-			l*)
-				#Get a list of groups to add the user to later
-				groups=( $(id -G $username) )
-				echo "Recreating $username with lower UID..." >&2
-				userdel $username
-				err=$?
-				if [[ $err -eq 0 ]]; then
-					IFS=":" read -r _ _ user_group_gid user_group_members < <(getent group $username)
-					user_group=false
-					if [[ $user_group_gid == "$gid" ]]; then
-						user_group=true
-						if ! [[ $user_group_members ]]; then
-							echo "Detected empty user group with same name as user" >&2
-							groupdel $username
-							err=$?
-							if [[ $err -eq 0 ]]; then
-								echo "Removed the user group" >&2
-								declare -a new_groups
-								#Remove old user group from list of groups
-								for group in "${groups[@]}"; do
-									[[ $group != "$user_group_gid" ]] && new_groups+=($group)
-								done
-								groups=( "${new_groups[@]}" )
-							else
-								echo "WARNING: Removing user group failed - error code from groupdel: $err" >&2
-							fi
-						else
-							echo "WARNING: Detected user group with the same name as user, but it was not empty" >&2
-						fi
-					fi
-					
-					#Recreate user
-					echo "Creating new user with same username $username..." >&2
-					if $user_group; then
-						useradd -c "$gecos" -d "$home" -G "${groups[@]}" -M -r -s "$shell" -U "$username"
-						err=$?
-					else
-						groups=( "${groups[@]#* }" )
-						useradd -c "$gecos" -d "$home" -g "${groups[0]}" -G "${groups[@]}" -M -N -r -s "$shell" "$username"
-						err=$?
-					fi
-					
-					if [[ $err -eq 0 ]]; then
-						chown -R $username: "$home"
-						echo "Successfully recreated $username" >&2
-						resolved=true
-					else
-						echo "ERROR: Failed to recreate user - error code from useradd: $err" >&2
-						exit 4
-					fi
-				else
-					echo "ERROR: Unable to remove $username - error code from userdel: $err" >&2
-				fi
+			"#!opt "*)
+				hook apt-opt
+				opt=${pkg##"#!opt "}
+				opts+=( "$opt" )
+				;;
+			"#!stop")
+				echo "DEBUG: Executing apt-get install ${opts[@]} ${install_pkgs[@]}" >&2
+				hook apt-stop
+				apt-get install "${opts[@]}" "${install_pkgs[@]}"
+				exit 2
+				;;
+			"#"*)
+				;;
+			"")
 				;;
 			*)
-				echo "$usr_input is not a valid option" >&2
+				install_pkgs+=( $pkg )
 				;;
 			esac
+		done < "$source_dir"/install/install.list
+	fi
+	if [[ $install_pkgs ]]; then
+		hook apt-install
+		apt-get install --yes "${opts[@]}" "${install_pkgs[@]}"
+	fi
+
+	apt-get dist-upgrade --yes
+
+	function disable_script {
+		for arg in "$@"; do
+			echo "Disabling $arg" >&2
+			dpkg-divert --local --add "$arg"
+			cat > "$arg" <<- EOF
+				#!/bin/sh
+				exit 0 #disabled
+			EOF
 		done
+	}
+	#Prevent CD being added as apt repository, and prevent attempted user creation
+	disable_script /usr/share/ubiquity/apt-setup
+	disable_script /usr/lib/ubiquity/user-setup/user-setup-apply
+	disable_script /usr/share/initramfs-tools/scripts/casper-bottom/{25adduser,41apt_cdrom}
+
+	hook post-apt
+
+	#Copy in new configuration (overwrite)
+	hook pre-custom
+	cp -rft / "$source_dir"/configuration/*
+	hook post-custom
+
+	#Correct permissions for sudoers.d files
+	find /etc/sudoers.d -mindepth 1 -maxdepth 1 -execdir chmod -R 0440 {} +
+
+	#Create links with update-alternatives
+	if [[ -f "$source_dir"/install/alternatives.list ]]; then
+		while read -r alternative_name link_name _ link_to; do
+			if [[ $link_name ]] && [[ $alternative_name ]] && [[ $alternative_name != \#* ]] && [[ -e $link_to ]]; then
+				update-alternatives --install "$link_name" "${alternative_name%:}" "$link_to" 100
+			fi
+		done < "$source_dir"/install/alternatives.list
 	fi
-	#Deal with home areas that exist in /home
-	if [[ $home =~ ^/home ]] && [[ -e $home ]]; then
-		echo "Moving home directory for $username..." >&2
-		if ! usermod -d /opt/"$username" -m "$username"; then
-			echo >&2
-			echo "WARNING: Moving home directory for $username has failed" >&2
-			echo "         Press Enter to continue" >&2
-			read <&4
-		fi
-	fi
-done < <(getent passwd)
 
+	apt-get clean --yes
 
-#Adjust existing groups
-echo "Adjusting any conflicting groups found..." >&2
-while IFS=":" read -r groupname _ gid members; do
-	if [[ $gid -ge 1000 ]] && [[ $gid -ne 65534 ]]; then
-		echo "WARNING: $groupname has a GID greater than or equal to 1000" >&2
-		echo "         Karoshi requires that no local groups exist with GIDs above 999" >&2
-		echo >&2
-		[[ $members ]] || echo "$groupname has no members" >&2
-		echo "Press Enter to remove $groupname" >&2
-		read <&4
-		groupdel $groupname
-		err=$?
-		if [[ $err -eq 0 ]]; then
-			echo "Deleted $groupname successfully" >&2
-		else
-			echo "ERROR: Failed to delete $groupname - error code from groupdel: $err" >&2
-			exit 4
-		fi
-	fi
-done < <(getent group)
+	#Regenerate initramfs
+	update-initramfs -u
 
-exec 4<&-
+	#Copy kernel and initrd to image directory
+	cp -f /boot/vmlinuz-* "$work_dir"/image/casper/vmlinuz
+	cp -f /boot/initrd.img-* "$work_dir"/image/casper/initrd.gz
 
-#Clean up /home
-echo "Cleaning up /home..." >&2
-find /home -mindepth 1 -delete
+	#Create filesystem manifest
+	dpkg-query -W --showformat='${Package} ${Version}\n' > "$work_dir"/image/casper/filesystem.manifest
+	cp -f "$work_dir"/image/casper/filesystem.manifest "$work_dir"/image/casper/filesystem.manifest-desktop
+	sed -i -e '/ubiquity/d' -e '/casper/d' "$work_dir"/image/casper/filesystem.manifest-desktop
+	;;
+esac
 
-#Run custom commands
-if [[ -f install/post-commands ]]; then
-	bash install/post-commands
-fi
-
-echo >&2
-echo "Installation of Karoshi Client complete - press Ctrl + C now to finish" >&2
-echo "Alternatively, press Enter to continue to remaster the current system" >&2
-read
-
-do_remastersys
