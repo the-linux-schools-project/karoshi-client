@@ -195,7 +195,7 @@ case "$stage" in
 		#debootstrap
 		ubuntu_release=$(sed -n 's/^#!release //p' "$source_dir"/install/sources.list)
 		http_proxy="$apt_proxy" debootstrap --variant=fakechroot \
-			--include=wget --arch="$arch" "$ubuntu_release" "$root"
+			--include=wget,man-db --arch="$arch" "$ubuntu_release" "$root"
 
 		#debootstrap workarounds
 		if [[ -L "$root"/dev ]]; then
@@ -211,6 +211,7 @@ case "$stage" in
 		}
 		remove_debootstrap_diversion /sbin/ldconfig
 		remove_debootstrap_diversion /usr/bin/ldd
+		chown -R man:root "$root"/var/cache/man
 
 		hook post-debootstrap
 	fi
