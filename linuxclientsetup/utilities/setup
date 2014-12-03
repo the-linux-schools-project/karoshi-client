@@ -182,9 +182,9 @@ pam-auth-update --package
 #Recreate SSH host keys
 dpkg-reconfigure openssh-server
 
-#Configure sshd to allow only root and itadmin users
+#Configure sshd to allow only root, itadmin and tech users
 if ! grep -q '^AllowGroups' /etc/ssh/sshd_config; then
-	echo "AllowGroups root itadmin" >> /etc/ssh/sshd_config
+	echo "AllowGroups root itadmin tech" >> /etc/ssh/sshd_config
 fi
 
 [[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
