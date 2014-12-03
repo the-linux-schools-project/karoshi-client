@@ -246,14 +246,14 @@ case "$stage" in
 	fi
 
 	#Fix symlinks
-	while read -r symlink; do
+	while read -r symlink <&11; do
 		link_dest=$(readlink -f "$symlink")
 		if [[ $link_dest != $root/* ]]; then
 			echo "Fixing symlink $symlink -> $link_dest" >&2
 			rm -f "$symlink"
 			ln -sfT "${root}${link_dest}" "$symlink"
 		fi
-	done < <(find "$root" -lname /'*')
+	done 11< <(find "$root" -lname /'*')
 
 	#Create links and copy required files
 	ln -sfT "$source_dir" "$root"/source
@@ -274,12 +274,12 @@ case "$stage" in
 	hook post-chroot-cleanup
 
 	#Fix symlinks
-	while read -r symlink; do
+	while read -r symlink <&11; do
 		link_dest=$(readlink -f "$symlink")
 		echo "Fixing symlink $symlink -> $link_dest" >&2
 		rm -f "$symlink"
 		ln -sfT "${link_dest##"$root"}" "$symlink"
-	done < <(find "$root" -lname "$root"/'*')
+	done 11< <(find "$root" -lname "$root"/'*')
 
 	#Configure isolinux
 	cp -ft "$work_dir"/image/isolinux /usr/lib/syslinux/{isolinux.bin,vesamenu.c32}
@@ -352,10 +352,10 @@ case "$stage" in
 	export DEBIAN_FRONTEND=noninteractive
 
 	#Get GPG keys for PPAs
-	while read -r cmd; do
+	while read -r cmd <&11; do
 		hook ppa-cmd
 		eval "$cmd"
-	done < <(sed -n 's/^#!cmd //p' "$source_dir"/install/sources.list)
+	done 11< <(sed -n 's/^#!cmd //p' "$source_dir"/install/sources.list)
 
 	#Allow apt to work properly in a chroot
 	dpkg-divert --local --rename --add /sbin/initctl
@@ -390,7 +390,7 @@ case "$stage" in
 	install_packages=( ubiquity ubiquity-casper grub2 )
 	opts=( )
 	if [[ -f "$source_dir"/install/install.list ]]; then
-		while read -r pkg; do
+		while read -r pkg <&11; do
 			case "$pkg" in
 			"#!install")
 				if [[ $install_pkgs ]]; then
@@ -419,7 +419,7 @@ case "$stage" in
 				install_pkgs+=( $pkg )
 				;;
 			esac
-		done < "$source_dir"/install/install.list
+		done 11< "$source_dir"/install/install.list
 	fi
 	if [[ $install_pkgs ]]; then
 		hook apt-install
@@ -455,11 +455,11 @@ case "$stage" in
 
 	#Create links with update-alternatives
 	if [[ -f "$source_dir"/install/alternatives.list ]]; then
-		while read -r alternative_name link_name _ link_to; do
+		while read -r alternative_name link_name _ link_to <&11; do
 			if [[ $link_name ]] && [[ $alternative_name ]] && [[ $alternative_name != \#* ]] && [[ -e $link_to ]]; then
 				update-alternatives --install "$link_name" "${alternative_name%:}" "$link_to" 100
 			fi
-		done < "$source_dir"/install/alternatives.list
+		done 11< "$source_dir"/install/alternatives.list
 	fi
 
 	apt-get clean --yes
