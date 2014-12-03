@@ -64,10 +64,11 @@ if ! getent passwd karoshi >/dev/null; then
 	useradd -d /opt/karoshi-admin -mUr -s /bin/bash \
 		-G adm,cdrom,sudo,dip,plugdev,lpadmin karoshi
 	# Set password to `karoshi`
-	passwd_crypt=$(openssl passwd -crypt "karoshi")
-	sed -i /etc/shadow \
-	    -e "s/^karoshi:[^:]*/karoshi:$passwd_crypt/" \
-	    -e "s/^root:[^:]*/root:$passwd_crypt/"
+	# chpasswd will change the password, but prints errors
+	cat <<- EOF | chpasswd >/dev/null 2>&1 || true
+		root:karoshi
+		karoshi:karoshi
+	EOF
 fi
 
 cp -rft /opt/karoshi-admin "$source_dir"/linuxclientsetup/admin-skel/*
