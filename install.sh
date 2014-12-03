@@ -27,8 +27,29 @@ fi
 source "$source_dir"/install/cleanup.sh
 source "$source_dir"/install/config
 
+declare -A hook_break
+function hook_break_arg {
+	if [[ ${hook_break[@]} ]]; then
+		local hook str="--break="
+		for hook in "${!hook_break[@]}"; do
+			str+="${hook},"
+		done
+		echo "${str%,}"
+	fi
+}
+
 #Hooks
 function hook {
+	if [[ ${hook_break["$1"]} ]]; then
+		read -r lineno func file < <(caller 0)
+		echo >&2
+		echo "$file:$func:$lineno: Breakpoint at hook $1" >&2
+		echo "exit 0 to continue script, exit non-0 to abort" >&2
+		echo >&2
+		if ! /bin/bash >&2; then
+			exit 252
+		fi
+	fi
 	if [[ $1 ]] && [[ -f $source_dir/install/hook/$1 ]]; then
 		source "$source_dir"/install/hook/"$1"
 	fi
@@ -74,6 +95,7 @@ function usage {
 	echo "  --release=<version>  Create release version" >&2
 	echo "  --apt-proxy=<proxy>  Define apt proxy (http://server:port)" >&2
 	echo "  --help               Show this help message" >&2
+	echo "  --break=<hook>,<hook>... Break on hook(s)" >&2
 	hook usage
 }
 
@@ -93,6 +115,12 @@ while (( "$#" )); do
 		;;
 	--apt-proxy=*)
 		apt_proxy=${1##--apt-proxy=}
+		;;
+	--break=*)
+		IFS=',' read -r -a hooks <<< "${1##--break=}"
+		for hook in "${hooks[@]}"; do
+			hook_break["$hook"]=true
+		done <<< "${1##--break=}"
 		;;
 	--help)
 		usage
@@ -176,7 +204,8 @@ case "$stage" in
 
 	fakechroot -e debootstrap -- fakeroot "${fakeroot_args[@]}" -- \
 		"$source_dir"/install.sh --second-stage --dir="$work_dir" \
-			--arch="$arch" --release="$release" --apt-proxy="$apt_proxy"
+			--arch="$arch" --release="$release" --apt-proxy="$apt_proxy" \
+			"$(hook_break_arg)"
 
 	hook post-fakechroot
 	;;
@@ -217,14 +246,14 @@ case "$stage" in
 	fi
 
 	#Fix symlinks
-	while read -r symlink; do
+	while read -r symlink <&11; do
 		link_dest=$(readlink -f "$symlink")
 		if [[ $link_dest != $root/* ]]; then
 			echo "Fixing symlink $symlink -> $link_dest" >&2
 			rm -f "$symlink"
 			ln -sfT "${root}${link_dest}" "$symlink"
 		fi
-	done < <(find "$root" -lname /'*')
+	done 11< <(find "$root" -lname /'*')
 
 	#Create links and copy required files
 	ln -sfT "$source_dir" "$root"/source
@@ -234,8 +263,9 @@ case "$stage" in
 
 	hook pre-chroot
 
-	chroot "$root" /source/install.sh --third-stage \
-		--dir=/work --arch="$arch" --release="$release" --apt-proxy="$apt_proxy"
+	chroot "$root" /source/install.sh --third-stage --dir=/work \
+		--arch="$arch" --release="$release" --apt-proxy="$apt_proxy" \
+		"$(hook_break_arg)"
 
 	hook post-chroot
 
@@ -244,12 +274,12 @@ case "$stage" in
 	hook post-chroot-cleanup
 
 	#Fix symlinks
-	while read -r symlink; do
+	while read -r symlink <&11; do
 		link_dest=$(readlink -f "$symlink")
 		echo "Fixing symlink $symlink -> $link_dest" >&2
 		rm -f "$symlink"
 		ln -sfT "${link_dest##"$root"}" "$symlink"
-	done < <(find "$root" -lname "$root"/'*')
+	done 11< <(find "$root" -lname "$root"/'*')
 
 	#Configure isolinux
 	cp -ft "$work_dir"/image/isolinux /usr/lib/syslinux/{isolinux.bin,vesamenu.c32}
@@ -322,10 +352,10 @@ case "$stage" in
 	export DEBIAN_FRONTEND=noninteractive
 
 	#Get GPG keys for PPAs
-	while read -r cmd; do
+	while read -r cmd <&11; do
 		hook ppa-cmd
 		eval "$cmd"
-	done < <(sed -n 's/^#!cmd //p' "$source_dir"/install/sources.list)
+	done 11< <(sed -n 's/^#!cmd //p' "$source_dir"/install/sources.list)
 
 	#Allow apt to work properly in a chroot
 	dpkg-divert --local --rename --add /sbin/initctl
@@ -360,7 +390,7 @@ case "$stage" in
 	install_packages=( ubiquity ubiquity-casper grub2 )
 	opts=( )
 	if [[ -f "$source_dir"/install/install.list ]]; then
-		while read -r pkg; do
+		while read -r pkg <&11; do
 			case "$pkg" in
 			"#!install")
 				if [[ $install_pkgs ]]; then
@@ -389,7 +419,7 @@ case "$stage" in
 				install_pkgs+=( $pkg )
 				;;
 			esac
-		done < "$source_dir"/install/install.list
+		done 11< "$source_dir"/install/install.list
 	fi
 	if [[ $install_pkgs ]]; then
 		hook apt-install
@@ -425,11 +455,11 @@ case "$stage" in
 
 	#Create links with update-alternatives
 	if [[ -f "$source_dir"/install/alternatives.list ]]; then
-		while read -r alternative_name link_name _ link_to; do
+		while read -r alternative_name link_name _ link_to <&11; do
 			if [[ $link_name ]] && [[ $alternative_name ]] && [[ $alternative_name != \#* ]] && [[ -e $link_to ]]; then
 				update-alternatives --install "$link_name" "${alternative_name%:}" "$link_to" 100
 			fi
-		done < "$source_dir"/install/alternatives.list
+		done 11< "$source_dir"/install/alternatives.list
 	fi
 
 	apt-get clean --yes
