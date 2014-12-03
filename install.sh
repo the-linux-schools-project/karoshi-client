@@ -27,8 +27,29 @@ fi
 source "$source_dir"/install/cleanup.sh
 source "$source_dir"/install/config
 
+declare -A hook_break
+function hook_break_arg {
+	if [[ ${hook_break[@]} ]]; then
+		local hook str="--break="
+		for hook in "${!hook_break[@]}"; do
+			str+="${hook},"
+		done
+		echo "${str%,}"
+	fi
+}
+
 #Hooks
 function hook {
+	if [[ ${hook_break["$1"]} ]]; then
+		read -r lineno func file < <(caller 0)
+		echo >&2
+		echo "$file:$func:$lineno: Breakpoint at hook $1" >&2
+		echo "exit 0 to continue script, exit non-0 to abort" >&2
+		echo >&2
+		if ! /bin/bash >&2; then
+			exit 252
+		fi
+	fi
 	if [[ $1 ]] && [[ -f $source_dir/install/hook/$1 ]]; then
 		source "$source_dir"/install/hook/"$1"
 	fi
@@ -74,6 +95,7 @@ function usage {
 	echo "  --release=<version>  Create release version" >&2
 	echo "  --apt-proxy=<proxy>  Define apt proxy (http://server:port)" >&2
 	echo "  --help               Show this help message" >&2
+	echo "  --break=<hook>,<hook>... Break on hook(s)" >&2
 	hook usage
 }
 
@@ -93,6 +115,12 @@ while (( "$#" )); do
 		;;
 	--apt-proxy=*)
 		apt_proxy=${1##--apt-proxy=}
+		;;
+	--break=*)
+		IFS=',' read -r -a hooks <<< "${1##--break=}"
+		for hook in "${hooks[@]}"; do
+			hook_break["$hook"]=true
+		done <<< "${1##--break=}"
 		;;
 	--help)
 		usage
@@ -176,7 +204,8 @@ case "$stage" in
 
 	fakechroot -e debootstrap -- fakeroot "${fakeroot_args[@]}" -- \
 		"$source_dir"/install.sh --second-stage --dir="$work_dir" \
-			--arch="$arch" --release="$release" --apt-proxy="$apt_proxy"
+			--arch="$arch" --release="$release" --apt-proxy="$apt_proxy" \
+			"$(hook_break_arg)"
 
 	hook post-fakechroot
 	;;
@@ -234,8 +263,9 @@ case "$stage" in
 
 	hook pre-chroot
 
-	chroot "$root" /source/install.sh --third-stage \
-		--dir=/work --arch="$arch" --release="$release" --apt-proxy="$apt_proxy"
+	chroot "$root" /source/install.sh --third-stage --dir=/work \
+		--arch="$arch" --release="$release" --apt-proxy="$apt_proxy" \
+		"$(hook_break_arg)"
 
 	hook post-chroot
 

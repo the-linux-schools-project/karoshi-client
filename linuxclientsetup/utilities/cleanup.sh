@@ -103,7 +103,7 @@ function error_handler {
 		return
 		;;
 	252)
-		exit 1
+		exit 252
 		;;
 	253)
 		(( i = 0 ))
@@ -114,7 +114,7 @@ function error_handler {
 		;;
 	254)
 		usage
-		exit 1
+		exit 252
 		;;
 	*)
 		echo >&2
