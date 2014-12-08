@@ -27,18 +27,8 @@ fi
 source "$source_dir"/install/cleanup.sh
 source "$source_dir"/install/config
 
-declare -A hook_break
-function hook_break_arg {
-	if [[ ${hook_break[@]} ]]; then
-		local hook str="--break="
-		for hook in "${!hook_break[@]}"; do
-			str+="${hook},"
-		done
-		echo "${str%,}"
-	fi
-}
-
 #Hooks
+declare -A hook_break
 function hook {
 	if [[ ${hook_break["$1"]} ]]; then
 		read -r lineno func file < <(caller 0)
@@ -46,9 +36,17 @@ function hook {
 		echo "$file:$func:$lineno: Breakpoint at hook $1" >&2
 		echo "exit 0 to continue script, exit non-0 to abort" >&2
 		echo >&2
-		if ! /bin/bash >&2; then
-			exit 252
-		fi
+		(
+			export root work_dir source_dir arch release
+			case $stage in
+				1) cd "$work_dir" ;;
+				2) cd "$root" ;;
+				3) cd / ;;
+			esac
+			if ! /bin/bash >&2; then
+				exit 252
+			fi
+		)
 	fi
 	if [[ $1 ]] && [[ -f $source_dir/install/hook/$1 ]]; then
 		source "$source_dir"/install/hook/"$1"
@@ -100,23 +98,28 @@ function usage {
 }
 
 #Options
+proxy_args=( )
 stage=1
 apt_proxy=$http_proxy
 while (( "$#" )); do
 	case "$1" in
 	--arch=*)
+		proxy_args+=( "$1" )
 		arch=${1##--arch=}
 		;;
 	--dir=*)
 		work_dir=${1##--dir=}
 		;;
 	--release=*)
+		proxy_args+=( "$1" )
 		release=${1##--release=}
 		;;
 	--apt-proxy=*)
+		proxy_args+=( "$1" )
 		apt_proxy=${1##--apt-proxy=}
 		;;
 	--break=*)
+		proxy_args+=( "$1" )
 		IFS=',' read -r -a hooks <<< "${1##--break=}"
 		for hook in "${hooks[@]}"; do
 			hook_break["$hook"]=true
@@ -124,7 +127,7 @@ while (( "$#" )); do
 		;;
 	--help)
 		usage
-		exit 1
+		exit 254
 		;;
 	--second-stage)
 		stage=2
@@ -189,11 +192,15 @@ case "$stage" in
 	declare -A cmd_subst=(
 		[/usr/bin/chfn]="$source_dir"/install/chfn.fakechroot
 		[/usr/bin/ldd]="$source_dir"/install/ldd.fakechroot
+		[/sbin/initctl]=/bin/true
+		[/usr/sbin/invoke-rc.d]=/bin/true
 	)
 	for cmd in "${!cmd_subst[@]}"; do
 		FAKECHROOT_CMD_SUBST+=":$cmd=${cmd_subst[$cmd]}"
 	done
 	export FAKECHROOT_CMD_SUBST=${FAKECHROOT_CMD_SUBST#:}
+
+	fakechroot_args=( --environment debootstrap )
 
 	fakeroot_args=( -s "$work_dir"/fakeroot.save )
 	if [[ -f "$work_dir"/fakeroot.save ]]; then
@@ -202,10 +209,9 @@ case "$stage" in
 
 	hook pre-fakechroot
 
-	fakechroot -e debootstrap -- fakeroot "${fakeroot_args[@]}" -- \
+	fakechroot "${fakechroot_args[@]}" -- fakeroot "${fakeroot_args[@]}" -- \
 		"$source_dir"/install.sh --second-stage --dir="$work_dir" \
-			--arch="$arch" --release="$release" --apt-proxy="$apt_proxy" \
-			"$(hook_break_arg)"
+			"${proxy_args[@]}"
 
 	hook post-fakechroot
 	;;
@@ -223,8 +229,14 @@ case "$stage" in
 
 		#debootstrap
 		ubuntu_release=$(sed -n 's/^#!release //p' "$source_dir"/install/sources.list)
-		http_proxy="$apt_proxy" debootstrap --variant=fakechroot \
-			--include=wget,man-db --arch="$arch" "$ubuntu_release" "$root"
+		debootstrap_args=(
+			--variant=fakechroot
+			--include=wget,man-db
+			--arch="$arch"
+		)
+
+		http_proxy="$apt_proxy" debootstrap "${debootstrap_args[@]}" \
+			"$ubuntu_release" "$root"
 
 		#debootstrap workarounds
 		if [[ -L "$root"/dev ]]; then
@@ -264,8 +276,7 @@ case "$stage" in
 	hook pre-chroot
 
 	chroot "$root" /source/install.sh --third-stage --dir=/work \
-		--arch="$arch" --release="$release" --apt-proxy="$apt_proxy" \
-		"$(hook_break_arg)"
+		"${proxy_args[@]}"
 
 	hook post-chroot
 
@@ -356,16 +367,6 @@ case "$stage" in
 		hook ppa-cmd
 		eval "$cmd"
 	done 11< <(sed -n 's/^#!cmd //p' "$source_dir"/install/sources.list)
-
-	#Allow apt to work properly in a chroot
-	dpkg-divert --local --rename --add /sbin/initctl
-	cleanup_func_add dpkg-divert --rename --remove /sbin/initctl
-	ln -sfT /bin/true /sbin/initctl
-	cleanup_func_add rm /sbin/initctl
-	dpkg-divert --local --rename --add /usr/sbin/invoke-rc.d
-	cleanup_func_add dpkg-divert --rename --remove /usr/sbin/invoke-rc.d
-	ln -sfT /bin/true /usr/sbin/invoke-rc.d
-	cleanup_func_add rm /usr/sbin/invoke-rc.d
 
 	#Architecture-specific tweaks
 	dpkg_arch=$(dpkg --print-architecture)

@@ -1,4 +1,4 @@
-##!/bin/bash
+#!/bin/bash
 
 if [[ -z $source_dir ]] || [[ -z $work_dir ]]; then
 	echo "Must be sourced from install.sh" >&2
