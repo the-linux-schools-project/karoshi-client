@@ -78,3 +78,6 @@ mkdir -p ~karoshi/.config/autostart
 ln -sft ~karoshi/.config/autostart/ /usr/share/applications/karoshi-setup.desktop
 
 chown -R karoshi: /opt/karoshi-admin
+
+#Install skel
+cp -rT "$source_dir"/skel /etc/skel
