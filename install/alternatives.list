@@ -19,3 +19,6 @@ installer-background:              /usr/share/backgrounds/installer.png        -
 
 #GRUB
 grub-background:                   /boot/grub/background.png                   -> /opt/karoshi/linuxclientsetup/images/boot-menu.png
+
+#Plymouth theme
+default.plymouth:                      /lib/plymouth/themes/default.plymouth       -> /lib/plymouth/themes/karoshi-logo/karoshi-logo.plymouth
