@@ -73,6 +73,7 @@ function hook {
 # - post-iso
 
 #Third stage hooks:
+# - chroot-init    Start of chroot
 # - ppa-cmd        PPA command
 # - pre-apt        Pre installation
 # - apt-install    Install packages
@@ -81,6 +82,7 @@ function hook {
 # - post-apt       Post package installation
 # - pre-custom     Pre custom installation
 # - post-custom    Post custom installation
+# - chroot-final   End of chroot
 
 #Usage
 function usage {
@@ -357,6 +359,8 @@ case "$stage" in
 	######################
 	# Third stage - chroot
 	######################
+	hook chroot-init
+
 	shopt -s dotglob
 	mkdir -p /etc/apt
 	cp -ft /etc/apt "$source_dir"/install/sources.list
@@ -467,6 +471,8 @@ case "$stage" in
 
 	#Regenerate initramfs
 	update-initramfs -u
+
+	hook chroot-final
 
 	#Copy kernel and initrd to image directory
 	cp -f /boot/vmlinuz-* "$work_dir"/image/casper/vmlinuz
