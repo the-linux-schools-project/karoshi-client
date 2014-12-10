@@ -260,14 +260,16 @@ case "$stage" in
 	fi
 
 	#Fix symlinks
+	echo -n "Fixing symlinks" >&2
 	while read -r symlink <&11; do
-		link_dest=$(readlink -f "$symlink")
+		link_dest=$(readlink -m "$symlink")
 		if [[ $link_dest != $root/* ]]; then
-			echo "Fixing symlink $symlink -> $link_dest" >&2
+			echo -n . >&2
 			rm -f "$symlink"
 			ln -sfT "${root}${link_dest}" "$symlink"
 		fi
 	done 11< <(find "$root" -lname /'*')
+	echo >&2
 
 	#Create links and copy required files
 	ln -sfT "$source_dir" "$root"/source
@@ -287,12 +289,14 @@ case "$stage" in
 	hook post-chroot-cleanup
 
 	#Fix symlinks
+	echo -n "Fixing symlinks" >&2
 	while read -r symlink <&11; do
-		link_dest=$(readlink -f "$symlink")
-		echo "Fixing symlink $symlink -> $link_dest" >&2
+		link_dest=$(readlink -m "$symlink")
+		echo -n . >&2
 		rm -f "$symlink"
 		ln -sfT "${link_dest##"$root"}" "$symlink"
 	done 11< <(find "$root" -lname "$root"/'*')
+	echo >&2
 
 	#Configure isolinux
 	cp -ft "$work_dir"/image/isolinux /usr/lib/syslinux/{isolinux.bin,vesamenu.c32}
