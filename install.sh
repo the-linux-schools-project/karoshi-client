@@ -43,7 +43,7 @@ function hook {
 				2) cd "$root" ;;
 				3) cd / ;;
 			esac
-			if ! /bin/bash >&2; then
+			if ! /bin/bash --norc >&2; then
 				exit 252
 			fi
 		)
