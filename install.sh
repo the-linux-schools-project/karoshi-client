@@ -460,9 +460,9 @@ case "$stage" in
 
 	#Create links with update-alternatives
 	if [[ -f "$source_dir"/install/alternatives.list ]]; then
-		while read -r alternative_name link_name _ link_to <&11; do
+		while read -r alternative_name link_name _ link_to priority <&11; do
 			if [[ $link_name ]] && [[ $alternative_name ]] && [[ $alternative_name != \#* ]] && [[ -e $link_to ]]; then
-				update-alternatives --install "$link_name" "${alternative_name%:}" "$link_to" 100
+				update-alternatives --install "$link_name" "${alternative_name%:}" "$link_to" "${priority:-100}"
 			fi
 		done 11< "$source_dir"/install/alternatives.list
 	fi

@@ -1,5 +1,5 @@
 #Format:
-# [alternative name]: [link name] -> [file]
+# [alternative name]: [link name] -> [file] [[priority]=100]
 
 #Karoshi utilities
 karoshi-set-local-password:        /usr/bin/karoshi-set-local-password         -> /opt/karoshi/linuxclientsetup/utilities/set-local-password
@@ -21,6 +21,6 @@ installer-background:              /usr/share/backgrounds/installer.png        -
 grub-background:                   /boot/grub/background.png                   -> /opt/karoshi/linuxclientsetup/images/boot-menu.png
 
 #Plymouth theme
-default.plymouth: /lib/plymouth/themes/default.plymouth -> /lib/plymouth/themes/karoshi-logo/karoshi-logo.plymouth
-text.plymouth:    /lib/plymouth/themes/text.plymouth    -> /lib/plymouth/themes/karoshi-text/karoshi-text.plymouth
+default.plymouth: /lib/plymouth/themes/default.plymouth -> /lib/plymouth/themes/karoshi-logo/karoshi-logo.plymouth 200
+text.plymouth:    /lib/plymouth/themes/text.plymouth    -> /lib/plymouth/themes/karoshi-text/karoshi-text.plymouth 200
 
