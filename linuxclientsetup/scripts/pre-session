@@ -272,12 +272,7 @@ user_pref('extensions.lastPlatformVersion', '$firefox_version');" >> ~/.mozilla/
 			#Add Zotero settings
 			if [[ $alternate_home ]]; then
 				echo "user_pref('extensions.zotero.dataDir', '~/$alternate_home/.zotero');
-user_pref('extensions.zotero.useDataDir', true);
-user_pref('extensions.zotero.firstRun2', false);
-user_pref('extensions.zotero.firstRunGuidanceShown.toolbarButton', false);
-user_pref('extensions.zotero.integration.useClassicAddCitationDialog', true);
-user_pref('extensions.zoteroOpenOfficeIntegration.installed', true);
-user_pref('extensions.zoteroOpenOfficeIntegration.unopkgPaths', '{\"/usr/bin/unopkg\":true,\"/usr/lib/libreoffice/program/unopkg\":true,\"undefined\":false}');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+user_pref('extensions.zotero.useDataDir', true);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
 
 			#Cache settings

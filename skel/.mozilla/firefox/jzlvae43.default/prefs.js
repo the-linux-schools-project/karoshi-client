@@ -55,6 +55,11 @@ user_pref("extensions.installCache", "[{\"name\":\"app-system-share\",\"addons\"
 user_pref("extensions.pendingOperations", false);
 user_pref("extensions.update.enabled", false);
 user_pref("extensions.update.notifyUser", false);
+user_pref('extensions.zotero.firstRun2', false);
+user_pref('extensions.zotero.firstRunGuidanceShown.toolbarButton', true);
+user_pref('extensions.zotero.integration.useClassicAddCitationDialog', true);
+user_pref('extensions.zoteroOpenOfficeIntegration.installed', true);
+user_pref("extensions.zoteroOpenOfficeIntegration.skipInstallation", true);
 user_pref("flagfox.warn.tld", false);
 user_pref("flagfox.warn.updates", false);
 user_pref("gfx.blacklist.direct2d", 3);

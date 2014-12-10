@@ -274,7 +274,7 @@ case "$stage" in
 	#Create links and copy required files
 	ln -sfT "$source_dir" "$root"/source
 	ln -sfT "$work_dir" "$root"/work
-	cp -ft "$root"/etc /etc/resolv.conf "$source_dir"/install/hosts
+	cp --remove-destination -ft "$root"/etc /etc/resolv.conf "$source_dir"/install/hosts
 	cleanup_file_add "$root"/{source,work,etc/resolv.conf}
 
 	hook pre-chroot

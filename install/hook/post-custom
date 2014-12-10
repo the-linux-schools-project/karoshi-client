@@ -82,4 +82,7 @@ ln -sft ~karoshi/.config/autostart/ /usr/share/applications/karoshi-setup.deskto
 chown -R karoshi: /opt/karoshi-admin
 
 #Install skel
+if [[ -d /etc/skel ]]; then
+	rm -rf /etc/skel
+fi
 cp -rT "$source_dir"/skel /etc/skel
