@@ -60,6 +60,7 @@ function getMac {
 
 function getClientSettings {
 	echo \#$"Asking for network settings" >&11
+	auto_network=false
 	while ! $client_settings; do
 		#Create network_int_list for use in combo box in yad
 		network_int_list=$NETWORKINT
@@ -191,6 +192,7 @@ pdc_set=false
 manual_pdc=false
 client_settings=false
 dhcp=false
+auto_network=false
 [[ ! -d $netlogon_mount ]] && mkdir -p "$netlogon_mount"
 
 #Attempt to guess SERVERIP by DHCP
@@ -215,7 +217,10 @@ echo \#$"Bringing up network interface" >&11
 timeout 20 ifup $NETWORKINT
 echo 10 >&11
 # flag forcesetpdc can be used to prevent automatic pdc guessing for testing purposes
-if [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]] && ! karoshi-manage-flags get forcesetpdc; then dhcp=true; fi
+if [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]] && ! karoshi-manage-flags get forcesetpdc; then
+	dhcp=true
+	auto_network=true
+fi
 
 #Try until we have a PDC
 while ! $pdc_set; do
@@ -282,7 +287,7 @@ while ! $pdc_set; do
 	}
 
 	#Get PDC information
-	if ! [[ $SERVERIP ]]; then
+	if ! $auto_network; then
 		understandableYad --form --title $"Karoshi Set Network" \
 						--field=$"Primary Domain Controller IP Address" \
 						--button=$"Skip":1 --button='gtk-ok:0' \
