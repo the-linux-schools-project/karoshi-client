@@ -13,10 +13,12 @@ if ! grep -q 'Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
 Session-Interactive-Only: yes' /usr/share/pam-configs/libpam-mount
 fi
 
-#Remove auth modules from PAM to be added back in in setup
+#Reconfigure PAM modules
 pam_remove=( sss sss-password karoshi-pre-session karoshi-post-session
 	karoshi-virtualbox-mkdir karoshi-offline-homes )
-pam-auth-update --package --remove "${pam_remove[@]}"
+pam_reset=( mkhomedir )
+
+pam-auth-update --package --remove "${pam_remove[@]}" "${pam_reset[@]}"
 for pam_mod in "${pam_remove[@]}"; do
 	echo "$pam_mod" >> /var/lib/pam/seen
 done
