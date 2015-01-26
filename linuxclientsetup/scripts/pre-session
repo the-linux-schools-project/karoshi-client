@@ -300,6 +300,14 @@ user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla
 
 			#Set up Kerberos
 			echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+			
+			#Set spellcheck language to machine language
+			if [[ -z $LANG ]]; then
+				echo "user_pref('spellchecker.dictionary', 'en_US');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+			else
+				spellLang="${LANG%.*}"
+				echo "user_pref('spellchecker.dictionary', '$spellLang');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
+			fi
 		fi
 	fi
 
@@ -378,6 +386,14 @@ user_pref('mail.smtpserver.smtp1.port', 25);
 user_pref('mail.smtpserver.smtp1.try_ssl', 2);
 user_pref('mail.smtpserver.smtp1.username', '$USER');
 user_pref('mail.smtpservers', 'smtp1');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
+			fi
+			
+			#Set spellcheck language to machine language
+			if [[ -z $LANG ]]; then
+				echo "user_pref('spellchecker.dictionary', 'en_US');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
+			else
+				spellLang="${LANG%.*}"
+				echo "user_pref('spellchecker.dictionary', '$spellLang');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 			fi
 		fi
 	fi
