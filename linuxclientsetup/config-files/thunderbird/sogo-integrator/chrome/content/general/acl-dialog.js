@@ -54,8 +54,8 @@ function subscriptionDialogType() {
 
 var aclQueryHandler = {
  onDAVQueryComplete: function(status, response, headers, data) {
-// 		dump("request: " + data.rqType + "\n");
-// 		dump("response: " + response + "\n");
+ 		//dump("request: " + data.rqType + "\n");
+ 		//dump("response: " + response + "\n");
 		if (status > 199 && status < 300) {
 			if (data.rqType == "user-list") {
 				var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]

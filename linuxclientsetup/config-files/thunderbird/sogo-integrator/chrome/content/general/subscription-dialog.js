@@ -320,6 +320,10 @@ SubscriptionTreeView.prototype = {
  getCellProperties: function(rowIndex, col, properties) {
         let rows = [];
         let i = 0;
+
+        if (!properties)
+            return;
+
         for (let userCount = 0;
              i <= rowIndex && userCount < this.data.length;
              userCount++) {

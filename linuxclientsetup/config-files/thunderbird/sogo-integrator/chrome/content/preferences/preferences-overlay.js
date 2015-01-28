@@ -29,7 +29,6 @@ function SIMailsLabelsObserver() {
 SIMailsLabelsObserver.prototype = {
     
     observe: function(subject, topic, data) {
-        dump("*** SIMailsLabelsObserver.observe " + subject + "\n");
         gSIMailsLabelsChanged = true;
     },
 
@@ -83,12 +82,11 @@ function SIPrefsOnLoad() {
     /* mail labels */
     let labelsObserver = new SIMailsLabelsObserver();
     let prefService = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefBranch);
+        .getService(Components.interfaces.nsIPrefBranch);    
     prefService.addObserver("mailnews.tags.", labelsObserver, false);
 }
 
 function SIPrefsOnUnload() {
-    dump("*** SIPrefsOnUnload\n");
     if (gSICategoriesChanged) {
         SIContactCategories.synchronizeToServer();
     }

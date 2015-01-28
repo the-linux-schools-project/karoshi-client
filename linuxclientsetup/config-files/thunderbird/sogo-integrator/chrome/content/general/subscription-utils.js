@@ -60,7 +60,8 @@ _subscriptionTarget.prototype = {
  node: null,
  target: null,
  onDAVQueryComplete: function(status, result) {
-// 		dump("onDavQueryComplette...." + status + "\n");
+ 		//dump("onDavQueryComplete - status: " + status + "\n");
+		//dump("onDavQueryComplete - result: " + result + "\n");
 		if (status > 199 && status < 400) {
 			var rawOwner = "" + this.node["owner"];
 			var start = rawOwner.indexOf("http");
@@ -72,8 +73,17 @@ _subscriptionTarget.prototype = {
 																			 + "/SOGo/dav/".length);
 			if (owner[owner.length-1] == '/')
 				owner = owner.substr(0, owner.length-1);
+
+			var formattedName = this.node["displayName"];
+			
+			// If we received a payload, use this as the display name. Since SOGo v2.2.7,
+			// we return a 200 (instead of a 204) and the folder name in the response.
+			if (status == 200) {
+				formattedName = result;
+			}
+			
 			this.handler.addDirectories([{url: this.folderURL, owner: owner,
-							displayName: this.node["displayName"]}])
+							displayName: formattedName}])
 		}
 	}
 };

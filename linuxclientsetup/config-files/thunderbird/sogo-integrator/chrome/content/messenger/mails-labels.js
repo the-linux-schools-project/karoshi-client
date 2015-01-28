@@ -25,10 +25,10 @@ let SIMailsLabels = {
         let tagArray = MailServices.tags.getAllTags({});
         
         for (let j = 0; j < tagArray.length; j++) {
+
             let key = tagArray[j].key;
             let name = MailServices.tags.getTagForKey(key);
             let color =  MailServices.tags.getColorForKey(key);
-            dump("*** [" + j + "] "  + name);
             
             if (!color) {
                 color = "#000000";
