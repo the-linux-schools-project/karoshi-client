@@ -1,3 +1,19 @@
+24.0.7
+------
+- version bump to match SOGo Connector
+
+24.0.6
+------
+- we now honor "sogo-integrator.disable-send-invitations-checkbox" correctly and in case
+  the "Notify attendees" checkbox is unchecked, we add the "X-SOGo-Send-Appointment-Notifications: NO"
+  key/value pair to avoid sending notifications.
+- we now handle the 200's response content when subscribing to resources to properly honor the name
+  enforced on the server
+
+24.0.5
+------
+- version bump to match SOGo Connector
+
 24.0.4
 ------
 - fixed the synchronization of mail tags when creating them from the "New Tag..." popup menu
