@@ -1,0 +1,6 @@
+Name: Activate /etc/security/group.conf
+Default: yes
+Priority: 256
+Auth-Type: Additional
+Auth:
+	required	pam_group.so use_first_pass
