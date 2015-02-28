@@ -396,7 +396,7 @@ case "$stage" in
 		laptop-detect os-prober linux-generic
 
 	#Remember to have ubiquity-frontend-* in install/install.list
-	install_packages=( ubiquity ubiquity-casper grub2 )
+	install_pkgs=( ubiquity ubiquity-casper grub2 )
 	opts=( )
 	if [[ -f "$source_dir"/install/install.list ]]; then
 		while read -r pkg <&11; do
