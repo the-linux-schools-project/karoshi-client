@@ -285,7 +285,7 @@ fi
 
 #Remove unnecessary dictionaries
 machineLang=$(dbus-send --print-reply --system --dest=org.freedesktop.locale1 /org/freedesktop/locale1 org.freedesktop.DBus.Properties.Get string:org.freedesktop.locale1 string:Locale | sed -n '/LANG=/s/.*LANG=\([^\.]*\)\..*/\1/p')
-if [[ -d /usr/lib/firefox/dictionaries ]]; then
+if [[ -L /usr/lib/firefox/dictionaries ]]; then
 	dpkg-divert --local --add /usr/lib/firefox/dictionaries
 	rm -rf /usr/lib/firefox/dictionaries
 	mkdir /usr/lib/firefox/dictionaries
