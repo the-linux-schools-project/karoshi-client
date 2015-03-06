@@ -173,7 +173,7 @@ if ! karoshi-manage-flags get no_update_other >/dev/null; then
 fi
 
 #######################
-#Mozilla extensions
+#Mozilla configuration
 #######################
 
 # Mozilla app IDs
@@ -292,6 +292,53 @@ if [[ -L /usr/lib/firefox/dictionaries ]]; then
 	ln -s /usr/share/hunspell/"$machineLang".dic /usr/lib/firefox/dictionaries/"$machineLang".dic
 	ln -s /usr/share/hunspell/"$machineLang".aff /usr/lib/firefox/dictionaries/"$machineLang".aff
 fi
+
+#Lockdown preferences
+firefox_version=`firefox --version | sed 's/^[^0-9]*//'`
+cat > /var/lib/karoshi/firefox/mozilla.cfg << EOF
+//
+EOF
+
+#Proxy server
+if [[ $PROXYSERVER ]]; then
+	cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
+pref("network.proxy.http", "$PROXYSERVER.$DNSSUFFIX");
+pref("network.proxy.http_port", 3128);
+pref("network.proxy.ssl", "$PROXYSERVER.$DNSSUFFIX");
+pref("network.proxy.ssl_port", 3128);
+pref("network.proxy.ftp", "$PROXYSERVER.$DNSSUFFIX");
+pref("network.proxy.ftp_port", 3128);
+pref("network.proxy.socks", "$PROXYSERVER.$DNSSUFFIX");
+pref("network.proxy.socks_port", 3128);
+pref("network.proxy.gopher", "$PROXYSERVER.$DNSSUFFIX");
+pref("network.proxy.gopher_port", 3128);
+pref("network.proxy.type", 1);
+pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC");
+lockPref("browser.startup.homepage", "$PROXYSERVER.$DNSSUFFIX");
+EOF
+else
+	#For no proxy, we want the homepage to be about:home
+	cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
+lockPref("browser.startup.homepage", "about:home");
+FOE
+fi
+
+#Remove updated messages and extension checking
+cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
+pref("browser.startup.homepage_override.mstone", "$firefox_version");
+pref("extensions.lastAppVersion", "$firefox_version");
+pref("extensions.lastPlatformVersion", "$firefox_version");
+FOE
+
+#Setup Kerberos
+cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
+lockPref("network.negotiate-auth.trusted-uris", "$DNSSUFFIX");
+FOE
+
+#Set spellchecker language to machine language
+cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
+pref("spellchecker.dictionary", "$machineLang");
+FOE
 
 ###########################
 #Create cronjob to shut computer down

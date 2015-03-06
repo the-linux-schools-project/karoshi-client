@@ -265,12 +265,6 @@ user_pref('capability.policy.allowclipboard.Clipboard.cutcopy', 'allAccess');
 user_pref('capability.policy.allowclipboard.Clipboard.paste', 'allAccess');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
 
-			#Remove updated messages and extension checking
-			firefox_version=`firefox --version | sed 's/^[^0-9]*//'`
-			echo "user_pref('browser.startup.homepage_override.mstone', '$firefox_version');
-user_pref('extensions.lastAppVersion', '$firefox_version');
-user_pref('extensions.lastPlatformVersion', '$firefox_version');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-
 			#Add Zotero settings
 			if [[ $alternate_home ]]; then
 				echo "user_pref('extensions.zotero.dataDir', '~/$alternate_home/.zotero');
@@ -279,32 +273,6 @@ user_pref('extensions.zotero.useDataDir', true);" >> ~/.mozilla/firefox/"$firefo
 
 			#Cache settings
 			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-
-			#Proxy server
-			if [[ $PROXYSERVER ]]; then
-				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.http_port', 3128);
-user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.ssl_port', 3128);
-user_pref('network.proxy.ftp', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.ftp_port', 3128);
-user_pref('network.proxy.socks', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.socks_port', 3128);
-user_pref('network.proxy.gopher', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.gopher_port', 3128);
-user_pref('network.proxy.type', 1);
-user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC');
-user_pref('browser.startup.homepage', '$PROXYSERVER.$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-			else
-				#For no proxy, we want the homepage to be about:home
-				echo "user_pref('browser.startup.homepage', 'about:home');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-			fi
-
-			#Set up Kerberos
-			echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-
-			#Set spellcheck language to machine language
-			echo "user_pref('spellchecker.dictionary', '$machineLang');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 		fi
 	fi
 
