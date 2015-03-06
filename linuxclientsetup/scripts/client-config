@@ -409,16 +409,35 @@ if ! karoshi-manage-flags get no_update_printers >/dev/null; then
 fi
 
 ############################
-#Update client
+#Software control
 ############################
-#Use update var so that apt-get only updates once
-apt_updated=false
-#Only run if flag file is present
-if [[ -f /tmp/netlogon/linuxclient/$LINUX_VERSION/enable_updates ]]
+software_control_path=/tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install
+
+karoshi-manage-flags unset system_upgrade
+if [[ -f $software_control_path/all_updates ]] ||
+	( [[ $LOCATION ]] && [[ -f $software_control_path/${LOCATION}_updates ]] )
 then
 	karoshi-manage-flags set system_upgrade
-else
-	karoshi-manage-flags unset system_upgrade
+fi
+
+if [[ ! -d /var/lib/karoshi/software ]]; then
+	mkdir /var/lib/karoshi/software
+fi
+
+karoshi-manage-flags unset software_install
+rm -f /var/lib/karoshi/software/install.list
+
+# If install file does not match known install file, trigger a software install
+function check_install_file {
+	if [[ -f $software_control_path/${1}_install ]]; then
+		karoshi-manage-flags set software_install
+		cat "$software_control_path"/"$1"_software >> /var/lib/karoshi/software/install.list
+	fi
+}
+
+check_install_file all
+if [[ $LOCATION ]]; then
+	check_install_file "$LOCATION"
 fi
 
 ##########################

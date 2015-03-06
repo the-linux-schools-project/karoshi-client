@@ -1,0 +1,76 @@
+#!/bin/bash
+
+#Copyright (C) 2015 Robin McCorkell <rmccorkell@karoshi.org.uk>
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+export DEBIAN_FRONTEND=noninteractive
+
+eval `apt-config shell http_proxy Acquire::http::Proxy`
+export http_proxy
+
+dpkg --configure -a --force-confdef --force-confold
+
+software_install=false
+system_upgrade=false
+if karoshi-manage-flags get software_install >/dev/null; then
+	software_install=true
+fi
+if karoshi-manage-flags get system_upgrade >/dev/null; then
+	system_upgrade=true
+fi
+
+if $software_install || $system_upgrade; then
+	apt-get -q update
+fi
+
+apt_options=( -q -fy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" )
+
+if $software_install; then
+	install_pkgs=( )
+	opts=( "${apt_options[@]}" )
+	if [[ -f /var/lib/karoshi/software/install.list ]]; then
+		while read -r pkg <&11; do
+			case "$pkg" in
+			"#!install")
+				if [[ $install_pkgs ]]; then
+					apt-get install "${opts[@]}" "${install_pkgs[@]}"
+				fi
+				install_pkgs=( )
+				opts=( "${apt_options[@]}" )
+				;;
+			"#!opt "*)
+				opt=${pkg##"#!opt "}
+				opts+=( "$opt" )
+				;;
+			"#"*)
+				;;
+			"")
+				;;
+			*)
+				install_pkgs+=( $pkg )
+				;;
+			esac
+		done 11< /var/lib/karoshi/software/install.list
+	fi
+	if [[ $install_pkgs ]]; then
+		apt-get install "${opts[@]}" "${install_pkgs[@]}"
+	fi
+fi
+
+if $system_upgrade; then
+	apt-get dist-upgrade "${apt_options[@]}"
+fi
