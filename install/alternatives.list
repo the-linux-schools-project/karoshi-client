@@ -24,5 +24,3 @@ grub-background:                   /boot/grub/background.png                   -
 default.plymouth: /lib/plymouth/themes/default.plymouth -> /lib/plymouth/themes/karoshi-logo/karoshi-logo.plymouth 200
 text.plymouth:    /lib/plymouth/themes/text.plymouth    -> /lib/plymouth/themes/karoshi-text/karoshi-text.plymouth 200
 
-#Firefox mozilla.cfg
-firefox.mozilla.cfg /usr/lib/firefox/mozilla.cfg -> /var/lib/karoshi/firefox/mozilla.cfg
