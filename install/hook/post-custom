@@ -16,7 +16,7 @@ fi
 #Reconfigure PAM modules
 pam_remove=( sss sss-password karoshi-pre-session karoshi-post-session
 	karoshi-virtualbox-mkdir karoshi-offline-homes )
-pam_reset=( mkhomedir )
+pam_reset=( mkhomedir group )
 
 pam-auth-update --package --remove "${pam_remove[@]}" "${pam_reset[@]}"
 for pam_mod in "${pam_remove[@]}"; do
