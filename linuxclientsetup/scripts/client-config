@@ -56,8 +56,11 @@ if [[ $(net_addr_type $NETWORKINT) == static ]] && [[ -f /tmp/netlogon/domain_in
 	while read -r server; do
 		dns_servers+=( "$server" )
 	done < /tmp/netlogon/domain_information/dns_servers
-	sed -i "s/dns-nameservers .*/dns-nameservers ${dns_servers[@]}/" /etc/network/interfaces
-	resolvconf -u
+	sed -i "s/dns-nameservers .*/dns-nameservers ${dns_servers[*]}/" /etc/network/interfaces
+fi
+
+if [[ -f /tmp/netlogon/domain_information/dfs_enabled ]]; then
+	karoshi-manage-flags set dfs_enabled
 fi
 
 ####################

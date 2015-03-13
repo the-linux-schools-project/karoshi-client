@@ -541,6 +541,11 @@ fi
 echo 80 >&11
 echo \#$"Finalising network configuration" >&11
 
+# Configure DFS support
+if [[ -f /tmp/netlogon/domain_information/dfs_enabled ]]; then
+	karoshi-manage-flags set dfs_enabled
+fi
+
 #Set NTP settings
 sed -i "s/### KAROSHI HOOK ###/server $PDC.$DNSSUFFIX/" /etc/ntp.conf
 
