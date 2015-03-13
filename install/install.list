@@ -119,6 +119,7 @@ pam-exec2
 wine1.7
 plymouth-x11
 rsyslog
+unbound
 
 intltool
 
