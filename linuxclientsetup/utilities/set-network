@@ -222,7 +222,7 @@ if [[ -s /var/lib/dhcp/dhclient.$NETWORKINT.leases ]] && ! karoshi-manage-flags 
 	auto_network=true
 fi
 
-#Try until we have a PDC
+#Try until we have a DC
 while ! $pdc_set; do
 	karoshi-manage-flags unset networkset
 	unset SERVERIP
@@ -278,7 +278,7 @@ while ! $pdc_set; do
 	#At this point a network has been configured, so the flag is set
 	karoshi-manage-flags set networkset
 
-	#exitfunc if the user cancelled selecting a PDC
+	#exitfunc if the user cancelled selecting a DC
 	function exitfunc {
 		info_alert $"Karoshi Set Network" $"Not configuring for Karoshi Server"
 		karoshi-manage-flags set nokaroshi
@@ -286,10 +286,10 @@ while ! $pdc_set; do
 		exit 0
 	}
 
-	#Get PDC information
+	#Get DC information
 	if ! $auto_network; then
 		understandableYad --form --title $"Karoshi Set Network" \
-						--field=$"Primary Domain Controller IP Address" \
+						--field=$"IP Address of a Domain Controller" \
 						--button=$"Skip":1 --button='gtk-ok:0' \
 						"$SERVERIP"
 		SERVERIP=`cut -d"|" -f1 <<< "$DATA" | sed 's/ //g'`
@@ -312,7 +312,7 @@ while ! $pdc_set; do
 			pdc_set=true
 		fi
 	else
-		$manual_pdc && info_alert $"Karoshi Set Network" $"Invalid PDC"
+		$manual_pdc && info_alert $"Karoshi Set Network" $"Invalid Domain Controller"
 		pdc_set=false
 		dhcp=false
 	fi
@@ -322,7 +322,7 @@ echo 20 >&11
 echo \#$"Setting network configuration" >&11
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#At this point it is assumed that a PDC can be contacted
+#At this point it is assumed that a DC can be contacted
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 karoshi-manage-flags unset nokaroshi
@@ -547,7 +547,7 @@ if [[ -f /tmp/netlogon/domain_information/dfs_enabled ]]; then
 fi
 
 #Set NTP settings
-sed -i "s/### KAROSHI HOOK ###/server $PDC.$DNSSUFFIX/" /etc/ntp.conf
+sed -i "s/### KAROSHI HOOK ###/server $DNSSUFFIX/" /etc/ntp.conf
 
 #Automation steps
 if [[ -f $netlogon_mount/domain_information/lockadministrator ]]; then
