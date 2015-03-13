@@ -90,6 +90,20 @@ function understandableYad {
 	return $yad_status
 }
 
+#################
+# Network utils
+#################
+
+function net_addr_type {
+	local re="iface $1 inet (.*)"
+	while read -r line; do
+		if [[ $line =~ $re ]]; then
+			echo "${BASH_REMATCH[1]}"
+			return
+		fi
+	done < /etc/network/interfaces
+}
+
 function updateVariables {
 	echo "LINUX_VERSION=$LINUX_VERSION
 NETWORKINT=$NETWORKINT
