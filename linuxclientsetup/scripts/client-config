@@ -301,7 +301,7 @@ update-alternatives --install /usr/lib/firefox/mozilla.cfg firefox.mozilla.cfg "
 
 #Proxy server
 if [[ $PROXYSERVER ]]; then
-	cat << 'FOE' >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
 		pref("network.proxy.http", "$PROXYSERVER.$DNSSUFFIX");
 		pref("network.proxy.http_port", 3128);
 		pref("network.proxy.ssl", "$PROXYSERVER.$DNSSUFFIX");
@@ -318,24 +318,24 @@ if [[ $PROXYSERVER ]]; then
 	FOE
 else
 	#For no proxy, we want the homepage to be about:home
-	cat << 'FOE' >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
 		lockPref("browser.startup.homepage", "about:home");
 	FOE
 fi
 
 #Setup Kerberos
-cat << 'FOE' >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
 	lockPref("network.negotiate-auth.trusted-uris", "$DNSSUFFIX");
 FOE
 
 #Set spellchecker language to machine language
-cat << 'FOE' >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
 	pref("spellchecker.dictionary", "$machineLang");
 FOE
 
 #Give clipboard capability to Moodle and other sites
 if [[ -f /opt/karoshi/allow_clipboard_sites ]]; then
-	cat << 'FOE' >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
 		pref("capability.policy.allowclipboard.sites", "` < /opt/karoshi/allow_clipboard_sites`");
 		pref("capability.policy.allowclipboard.Clipboard.cutcopy", "allAccess");
 		pref("capability.policy.allowclipboard.Clipboard.paste", "allAccess");
