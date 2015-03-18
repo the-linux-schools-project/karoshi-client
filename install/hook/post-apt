@@ -13,3 +13,7 @@ while read -r -d $'\0' file; do
 		echo "$config" >> /var/lib/pam/seen
 	fi
 done < <(find "$source_dir"/configuration/usr/share/pam-configs -mindepth 1 -print0)
+
+#Remove Unbound DNSSEC (not working with Samba4)
+dpkg-divert --local --add /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
+rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
