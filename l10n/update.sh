@@ -7,7 +7,7 @@ languages=( ar cs da de el es fr he it nb pl pt ru sv zh )
 xgettext_args=(
 	--copyright-holder="The Linux Schools Project"
 	--package-name=karoshi-client
-	--package-version=4.2
+	--package-version=4.3
 	--msgid-bugs-address=rmccorkell@karoshi.org.uk
 )
 msginit_args=(

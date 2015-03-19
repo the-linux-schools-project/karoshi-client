@@ -1,14 +1,14 @@
 # Danish translations for karoshi-client package.
-# Copyright (C) 2014 The Linux Schools Project
+# Copyright (C) 2015 The Linux Schools Project
 # This file is distributed under the same license as the karoshi-client package.
-# Automatically generated, 2014.
+# Automatically generated, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: karoshi-client 4.2\n"
+"Project-Id-Version: karoshi-client 4.3\n"
 "Report-Msgid-Bugs-To: rmccorkell@karoshi.org.uk\n"
-"POT-Creation-Date: 2014-11-29 15:42+0000\n"
-"PO-Revision-Date: 2014-11-29 00:44+0000\n"
+"POT-Creation-Date: 2015-03-19 15:13+0000\n"
+"PO-Revision-Date: 2015-03-19 15:13+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: da\n"
@@ -37,27 +37,27 @@ msgstr "Dette system er på vej ned i $1 $minute_string"
 msgid "Make sure to save your work!"
 msgstr "Sørg for at gemme dit arbejde!"
 
+#: linuxclientsetup/scripts/pre-session:133
+#: linuxclientsetup/scripts/pre-session:137
 #: linuxclientsetup/scripts/pre-session:139
 #: linuxclientsetup/scripts/pre-session:143
-#: linuxclientsetup/scripts/pre-session:145
-#: linuxclientsetup/scripts/pre-session:149
-#: linuxclientsetup/scripts/pre-session:176
-#: linuxclientsetup/scripts/pre-session:412
+#: linuxclientsetup/scripts/pre-session:170
+#: linuxclientsetup/scripts/pre-session:379
 msgid "Home"
 msgstr "Hjem"
 
-#: linuxclientsetup/scripts/pre-session:154
-#: linuxclientsetup/scripts/pre-session:157
-#: linuxclientsetup/scripts/pre-session:159
+#: linuxclientsetup/scripts/pre-session:148
+#: linuxclientsetup/scripts/pre-session:151
+#: linuxclientsetup/scripts/pre-session:153
 msgid "Offline Home"
 msgstr "Offline Hjem"
 
-#: linuxclientsetup/scripts/pre-session:170
+#: linuxclientsetup/scripts/pre-session:164
 msgid "Web Hosting"
 msgstr "Web Hosting"
 
-#: linuxclientsetup/scripts/pre-session:190
-#: linuxclientsetup/scripts/pre-session:416
+#: linuxclientsetup/scripts/pre-session:184
+#: linuxclientsetup/scripts/pre-session:383
 msgid "Admin File Manager"
 msgstr "Admin File Manager"
 
@@ -67,11 +67,11 @@ msgid "Karoshi Setup"
 msgstr "Karoshi Setup"
 
 #: linuxclientsetup/utilities/common:66
-#: linuxclientsetup/utilities/set-network:204
-#: linuxclientsetup/utilities/set-network:226
-#: linuxclientsetup/utilities/set-network:327
-#: linuxclientsetup/utilities/set-network:383
-#: linuxclientsetup/utilities/set-network:553
+#: linuxclientsetup/utilities/set-network:206
+#: linuxclientsetup/utilities/set-network:231
+#: linuxclientsetup/utilities/set-network:332
+#: linuxclientsetup/utilities/set-network:388
+#: linuxclientsetup/utilities/set-network:563
 msgid "Configuration cancelled"
 msgstr "Konfiguration aflyst"
 
@@ -179,7 +179,7 @@ msgid "Change password for $username and root"
 msgstr "Skift adgangskode til $username og rod"
 
 #: linuxclientsetup/utilities/set-local-password:39
-#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/set-network:498
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Password"
 msgstr "adgangskode"
@@ -223,28 +223,28 @@ msgstr "$HOSTNAME indstillet til placering $LOCATION"
 
 #: linuxclientsetup/utilities/set-network:31
 #: linuxclientsetup/utilities/set-network:38
-#: linuxclientsetup/utilities/set-network:71
-#: linuxclientsetup/utilities/set-network:82
-#: linuxclientsetup/utilities/set-network:86
-#: linuxclientsetup/utilities/set-network:91
-#: linuxclientsetup/utilities/set-network:102
-#: linuxclientsetup/utilities/set-network:201
-#: linuxclientsetup/utilities/set-network:204
-#: linuxclientsetup/utilities/set-network:226
-#: linuxclientsetup/utilities/set-network:243
-#: linuxclientsetup/utilities/set-network:265
-#: linuxclientsetup/utilities/set-network:278
-#: linuxclientsetup/utilities/set-network:286
-#: linuxclientsetup/utilities/set-network:310
-#: linuxclientsetup/utilities/set-network:327
-#: linuxclientsetup/utilities/set-network:372
-#: linuxclientsetup/utilities/set-network:383
-#: linuxclientsetup/utilities/set-network:397
-#: linuxclientsetup/utilities/set-network:443
-#: linuxclientsetup/utilities/set-network:484
-#: linuxclientsetup/utilities/set-network:492
-#: linuxclientsetup/utilities/set-network:526
-#: linuxclientsetup/utilities/set-network:553
+#: linuxclientsetup/utilities/set-network:72
+#: linuxclientsetup/utilities/set-network:83
+#: linuxclientsetup/utilities/set-network:87
+#: linuxclientsetup/utilities/set-network:92
+#: linuxclientsetup/utilities/set-network:103
+#: linuxclientsetup/utilities/set-network:203
+#: linuxclientsetup/utilities/set-network:206
+#: linuxclientsetup/utilities/set-network:231
+#: linuxclientsetup/utilities/set-network:248
+#: linuxclientsetup/utilities/set-network:270
+#: linuxclientsetup/utilities/set-network:283
+#: linuxclientsetup/utilities/set-network:291
+#: linuxclientsetup/utilities/set-network:315
+#: linuxclientsetup/utilities/set-network:332
+#: linuxclientsetup/utilities/set-network:377
+#: linuxclientsetup/utilities/set-network:388
+#: linuxclientsetup/utilities/set-network:402
+#: linuxclientsetup/utilities/set-network:448
+#: linuxclientsetup/utilities/set-network:489
+#: linuxclientsetup/utilities/set-network:497
+#: linuxclientsetup/utilities/set-network:531
+#: linuxclientsetup/utilities/set-network:563
 msgid "Karoshi Set Network"
 msgstr "Karoshi Set Network"
 
@@ -258,159 +258,159 @@ msgstr "$netlogon_mount er allerede monteret"
 msgid "Asking for network settings"
 msgstr "Bede om netværksindstillinger"
 
-#: linuxclientsetup/utilities/set-network:71
+#: linuxclientsetup/utilities/set-network:72
 msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
 msgstr "IP-adresse, netmaske og gateway er ikke påkrævet, hvis DHCP er valgt"
 
-#: linuxclientsetup/utilities/set-network:72
+#: linuxclientsetup/utilities/set-network:73
 msgid "Hostname"
 msgstr "Værtsnavn"
 
-#: linuxclientsetup/utilities/set-network:72
+#: linuxclientsetup/utilities/set-network:73
 msgid "Network Interface"
 msgstr "netværksinterface"
 
-#: linuxclientsetup/utilities/set-network:72
+#: linuxclientsetup/utilities/set-network:73
 msgid "IP Address"
 msgstr "IP-adresse"
 
-#: linuxclientsetup/utilities/set-network:72
+#: linuxclientsetup/utilities/set-network:73
 msgid "Netmask"
 msgstr "netmask"
 
-#: linuxclientsetup/utilities/set-network:72
+#: linuxclientsetup/utilities/set-network:73
 msgid "Gateway"
 msgstr "Gateway"
 
-#: linuxclientsetup/utilities/set-network:72
+#: linuxclientsetup/utilities/set-network:73
 msgid "DHCP"
 msgstr "DHCP"
 
-#: linuxclientsetup/utilities/set-network:82
+#: linuxclientsetup/utilities/set-network:83
 msgid "You must enter a client name and network interface"
 msgstr "Du skal indtaste en klient navn og netværksinterface"
 
-#: linuxclientsetup/utilities/set-network:86
+#: linuxclientsetup/utilities/set-network:87
 msgid "You must enter a valid IP address, netmask and gateway, or choose DHCP"
 msgstr ""
 "Du skal indtaste en gyldig IP -adresse, netmaske og gateway, eller vælg DHCP"
 
-#: linuxclientsetup/utilities/set-network:91
+#: linuxclientsetup/utilities/set-network:92
 msgid "Wireless device configuration"
 msgstr "Trådløs enhed konfiguration"
 
-#: linuxclientsetup/utilities/set-network:92
-#: linuxclientsetup/utilities/set-network:398
+#: linuxclientsetup/utilities/set-network:93
+#: linuxclientsetup/utilities/set-network:403
 msgid "SSID"
 msgstr "SSID"
 
-#: linuxclientsetup/utilities/set-network:92
-#: linuxclientsetup/utilities/set-network:398
+#: linuxclientsetup/utilities/set-network:93
+#: linuxclientsetup/utilities/set-network:403
 msgid "WPA2-PSK Key"
 msgstr "WPA2 -PSK Key"
 
-#: linuxclientsetup/utilities/set-network:102
+#: linuxclientsetup/utilities/set-network:103
 msgid "You must enter an SSID and key"
 msgstr "Du skal indtaste en SSID og nøgle"
 
-#: linuxclientsetup/utilities/set-network:201
+#: linuxclientsetup/utilities/set-network:203
 msgid "Karoshi Client Setup: Network Configuration"
 msgstr "Karoshi Client Setup: Netværkskonfiguration"
 
-#: linuxclientsetup/utilities/set-network:210
-#: linuxclientsetup/utilities/set-network:250
+#: linuxclientsetup/utilities/set-network:212
+#: linuxclientsetup/utilities/set-network:255
 msgid "Bringing down network interface"
 msgstr "At fjerne netværksinterface"
 
-#: linuxclientsetup/utilities/set-network:214
-#: linuxclientsetup/utilities/set-network:256
+#: linuxclientsetup/utilities/set-network:216
+#: linuxclientsetup/utilities/set-network:261
 msgid "Bringing up network interface"
 msgstr "At op netværksinterface"
 
-#: linuxclientsetup/utilities/set-network:243
+#: linuxclientsetup/utilities/set-network:248
 msgid "Did not get DHCP lease"
 msgstr "Fik ikke DHCP lease"
 
-#: linuxclientsetup/utilities/set-network:265
+#: linuxclientsetup/utilities/set-network:270
 #, sh-format
 msgid "Cannot contact gateway $GATEWAY"
 msgstr "Kan ikke kontakte gateway $GATEWAY"
 
-#: linuxclientsetup/utilities/set-network:278
+#: linuxclientsetup/utilities/set-network:283
 msgid "Not configuring for Karoshi Server"
 msgstr "Ikke konfiguration for Karoshi Server"
 
-#: linuxclientsetup/utilities/set-network:287
-msgid "Primary Domain Controller IP Address"
-msgstr "Primary Domain Controller IP-adresse"
+#: linuxclientsetup/utilities/set-network:292
+msgid "IP Address of a Domain Controller"
+msgstr "IP-adresse af en domænecontroller"
 
-#: linuxclientsetup/utilities/set-network:288
+#: linuxclientsetup/utilities/set-network:293
 msgid "Skip"
 msgstr "Spring"
 
-#: linuxclientsetup/utilities/set-network:294
+#: linuxclientsetup/utilities/set-network:299
 msgid "Attempting automatic configuration"
 msgstr "Forsøg automatisk konfiguration"
 
-#: linuxclientsetup/utilities/set-network:310
-msgid "Invalid PDC"
-msgstr "Ugyldig PDC"
+#: linuxclientsetup/utilities/set-network:315
+msgid "Invalid Domain Controller"
+msgstr "Ugyldig Domain Controller"
 
-#: linuxclientsetup/utilities/set-network:317
-#: linuxclientsetup/utilities/set-network:402
-#: linuxclientsetup/utilities/set-network:419
+#: linuxclientsetup/utilities/set-network:322
+#: linuxclientsetup/utilities/set-network:407
+#: linuxclientsetup/utilities/set-network:424
 msgid "Setting network configuration"
 msgstr "Indstilling netværkskonfiguration"
 
-#: linuxclientsetup/utilities/set-network:372
-#: linuxclientsetup/utilities/set-network:443
+#: linuxclientsetup/utilities/set-network:377
+#: linuxclientsetup/utilities/set-network:448
 msgid "Cannot find domain information on server"
 msgstr "Kan ikke finde domæne på serveren"
 
-#: linuxclientsetup/utilities/set-network:391
+#: linuxclientsetup/utilities/set-network:396
 msgid "Checking wireless network settings"
 msgstr "Kontrol trådløse netværksindstillinger"
 
-#: linuxclientsetup/utilities/set-network:450
+#: linuxclientsetup/utilities/set-network:455
 msgid "Performing domain setup"
 msgstr "Udførelse domæne setup"
 
-#: linuxclientsetup/utilities/set-network:463
+#: linuxclientsetup/utilities/set-network:468
 msgid "Copying files"
 msgstr "Kopiering af filer"
 
-#: linuxclientsetup/utilities/set-network:470
+#: linuxclientsetup/utilities/set-network:475
 msgid "Configuring services"
 msgstr "Konfiguration tjenester"
 
-#: linuxclientsetup/utilities/set-network:481
+#: linuxclientsetup/utilities/set-network:486
 msgid "Joining domain"
 msgstr "Vær med domæne"
 
-#: linuxclientsetup/utilities/set-network:484
+#: linuxclientsetup/utilities/set-network:489
 msgid "Domain configuration cancelled"
 msgstr "Domæne konfiguration aflyst"
 
-#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/set-network:498
 msgid "Enter credentials to join the domain"
 msgstr "Indtast legitimationsoplysninger til at slutte sig til domænet"
 
-#: linuxclientsetup/utilities/set-network:493
+#: linuxclientsetup/utilities/set-network:498
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Username"
 msgstr "Brugernavn"
 
-#: linuxclientsetup/utilities/set-network:502
+#: linuxclientsetup/utilities/set-network:507
 msgid "Finalising domain configuration"
 msgstr "Slutbehandling domæne konfiguration"
 
-#: linuxclientsetup/utilities/set-network:526
+#: linuxclientsetup/utilities/set-network:531
 msgid ""
 "This version of Karoshi Client requires Karoshi Server version 9.0 or above"
 msgstr ""
 "Denne version af Karoshi Client kræver Karoshi Server version 9.0 eller nyere"
 
-#: linuxclientsetup/utilities/set-network:537
+#: linuxclientsetup/utilities/set-network:542
 msgid "Finalising network configuration"
 msgstr "Slutbehandling netværkskonfiguration"
 
