@@ -5,13 +5,13 @@
   xmlns:NC="http://home.netscape.com/NC-rdf#">
   <Description about="rdf:#$Iwquq2"
     em:id="{3550f703-e582-4d05-9a08-453d09bdfdc6}"
-    em:minVersion="24.0"
-    em:maxVersion="24.*" />
+    em:minVersion="31.0"
+    em:maxVersion="31.*" />
   <!-- em:optionsURL="chrome://sogo-integrator/content/general/preferences.xul" -->
   <Description about="urn:mozilla:install-manifest"
     em:name="Inverse SOGo Integrator"
     em:id="sogo-integrator@inverse.ca"
-    em:version="24.0.7"
+    em:version="31.0.1"
     em:description="A SOGo integration plugin for Thunderbird and Lightning"
     em:iconURL="chrome://sogo-integrator/skin/sogo.png"
     em:creator="Inverse &lt;support@inverse.ca&gt;"

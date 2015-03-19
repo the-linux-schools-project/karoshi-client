@@ -1,6 +1,10 @@
-24.0.7
+31.0.1
 ------
 - version bump to match SOGo Connector
+
+31.0.0
+------
+- initial import for Thunderbird 31
 
 24.0.6
 ------
