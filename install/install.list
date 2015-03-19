@@ -7,6 +7,7 @@ xfce4-datetime-plugin
 xfce4-indicator-plugin
 xfce4-screenshooter
 xfce4-terminal
+xfce4-power-manager
 xubuntu-artwork
 shimmer-themes
 xubuntu-icon-theme
@@ -15,6 +16,7 @@ thunar-media-tags-plugin
 catfish
 gnome-calculator
 gnome-system-monitor
+light-locker
 
 #General Applications
 lightdm
