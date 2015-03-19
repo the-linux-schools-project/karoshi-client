@@ -311,50 +311,52 @@ fi
 
 #Lockdown preferences
 firefox_version=`firefox --version | sed 's/^[^0-9]*//'`
-cat > /var/lib/karoshi/firefox/mozilla.cfg << EOF
-//
-EOF
+mkdir -p "$KAROSHI_DATA"/firefox
+cat /opt/karoshi/linuxclientsetup/config-files/firefox/prefs.cfg > "$KAROSHI_DATA"/firefox/mozilla.cfg
+update-alternatives --install /usr/lib/firefox/mozilla.cfg firefox.mozilla.cfg "$KAROSHI_DATA"/firefox/mozilla.cfg 150
 
 #Proxy server
 if [[ $PROXYSERVER ]]; then
-	cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
-pref("network.proxy.http", "$PROXYSERVER.$DNSSUFFIX");
-pref("network.proxy.http_port", 3128);
-pref("network.proxy.ssl", "$PROXYSERVER.$DNSSUFFIX");
-pref("network.proxy.ssl_port", 3128);
-pref("network.proxy.ftp", "$PROXYSERVER.$DNSSUFFIX");
-pref("network.proxy.ftp_port", 3128);
-pref("network.proxy.socks", "$PROXYSERVER.$DNSSUFFIX");
-pref("network.proxy.socks_port", 3128);
-pref("network.proxy.gopher", "$PROXYSERVER.$DNSSUFFIX");
-pref("network.proxy.gopher_port", 3128);
-pref("network.proxy.type", 1);
-pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC");
-lockPref("browser.startup.homepage", "$PROXYSERVER.$DNSSUFFIX");
-EOF
+	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+		pref("network.proxy.http", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.http_port", 3128);
+		pref("network.proxy.ssl", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.ssl_port", 3128);
+		pref("network.proxy.ftp", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.ftp_port", 3128);
+		pref("network.proxy.socks", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.socks_port", 3128);
+		pref("network.proxy.gopher", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.gopher_port", 3128);
+		pref("network.proxy.type", 1);
+		pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC");
+		lockPref("browser.startup.homepage", "$PROXYSERVER.$DNSSUFFIX");
+	FOE
 else
 	#For no proxy, we want the homepage to be about:home
-	cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
-lockPref("browser.startup.homepage", "about:home");
-FOE
+	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+		lockPref("browser.startup.homepage", "about:home");
+	FOE
 fi
 
-#Remove updated messages and extension checking
-cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
-pref("browser.startup.homepage_override.mstone", "$firefox_version");
-pref("extensions.lastAppVersion", "$firefox_version");
-pref("extensions.lastPlatformVersion", "$firefox_version");
-FOE
-
 #Setup Kerberos
-cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
-lockPref("network.negotiate-auth.trusted-uris", "$DNSSUFFIX");
+cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+	lockPref("network.negotiate-auth.trusted-uris", "$DNSSUFFIX");
 FOE
 
 #Set spellchecker language to machine language
-cat << FOE >> /var/lib/karoshi/firefox/mozilla.cfg
-pref("spellchecker.dictionary", "$machineLang");
+cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+	pref("spellchecker.dictionary", "$machineLang");
 FOE
+
+#Give clipboard capability to Moodle and other sites
+if [[ -f /opt/karoshi/allow_clipboard_sites ]]; then
+	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+		pref("capability.policy.allowclipboard.sites", "` < /opt/karoshi/allow_clipboard_sites`");
+		pref("capability.policy.allowclipboard.Clipboard.cutcopy", "allAccess");
+		pref("capability.policy.allowclipboard.Clipboard.paste", "allAccess");
+	FOE
+fi
 
 ###########################
 #Create cronjob to shut computer down

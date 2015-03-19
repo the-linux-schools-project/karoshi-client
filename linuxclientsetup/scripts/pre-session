@@ -99,14 +99,6 @@ if $is_domain && [[ $(mount | grep "on $HOME/offline-home") ]]; then
 	offline_home_exists=true
 fi
 
-#Detect Firefox and Thunderbird profiles
-if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
-	firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
-fi
-if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
-	thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
-fi
-
 #Create required folders
 [[ ! -d ~/Desktop ]] && mkdir ~/Desktop
 [[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
@@ -219,11 +211,25 @@ if $is_domain; then
 			temp_dir=$(mktemp -d)
 			tar -x -C "$temp_dir" -f ~/"$alternate_home"/.config/all.tar.gz
 
+			#Detect Firefox and Thunderbird profiles
+			if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
+				firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
+			fi
+			if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
+				thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
+			fi
+
+			#DEPRECATED
 			if [[ -f $temp_dir/firefox/places.sqlite ]] && [[ $firefox_profile ]]; then
 				cp -ft ~/.mozilla/firefox/"$firefox_profile"/ "$temp_dir"/firefox/places.sqlite
 			fi
 			if [[ -f $temp_dir/thunderbird/places.sqlite ]] && [[ $thunderbird_profile ]]; then
 				cp -ft ~/.thunderbird/"$thunderbird_profile"/ "$temp_dir"/thunderbird/places.sqlite
+			fi
+
+			#New Firefox profile
+			if [[ -d $temp_dir/firefox/karoshi.profile ]]; then
+				cp -ft ~/.mozilla/firefox/ "$temp_dir"/firefox/karoshi.profile
 			fi
 
 			rm -rf "$temp_dir"
@@ -258,21 +264,11 @@ if $is_domain; then
 				echo "user_pref('browser.download.lastDir', '~/$alternate_home');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
 
-			#Give clipboard capability to Moodle and other sites
-			if [[ -f /opt/karoshi/allow_clipboard_sites ]]; then
-				echo "user_pref('capability.policy.allowclipboard.sites', '` < /opt/karoshi/allow_clipboard_sites`');
-user_pref('capability.policy.allowclipboard.Clipboard.cutcopy', 'allAccess');
-user_pref('capability.policy.allowclipboard.Clipboard.paste', 'allAccess');" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
-			fi
-
 			#Add Zotero settings
 			if [[ $alternate_home ]]; then
 				echo "user_pref('extensions.zotero.dataDir', '~/$alternate_home/.zotero');
 user_pref('extensions.zotero.useDataDir', true);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
-
-			#Cache settings
-			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 		fi
 	fi
 
