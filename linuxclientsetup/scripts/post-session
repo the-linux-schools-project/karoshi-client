@@ -27,6 +27,7 @@ source /opt/karoshi/linuxclientsetup/utilities/pam-common
 config_exclude=(
 	.
 	..
+	.mozilla
 	.thunderbird
 	.cache
 	.thumbnails
@@ -147,6 +148,13 @@ if $is_domain; then
 			[[ -f $temp_dir/thunderbird/places.sqlite ]] && rm -f "$temp_dir"/thunderbird/places.sqlite
 			if [[ -f ~/.thunderbird/$thunderbird_profile/places.sqlite ]]; then
 				cp -ft "$temp_dir"/thunderbird ~/.thunderbird/"$thunderbird_profile"/places.sqlite
+			fi
+		fi
+
+		if [[ $firefox_profile ]]; then
+			[[ -d $temp_dir/firefox ]] || mkdir -p "$temp_dir"/firefox
+			if [[ -d ~/.mozilla/firefox/karoshi.profile ]]; then
+				cp -ft "$temp_dir"/firefox ~/.mozilla/firefox/karoshi.profile
 			fi
 		fi
 
