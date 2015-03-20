@@ -312,8 +312,11 @@ fi
 #Lockdown preferences
 firefox_version=`firefox --version | sed 's/^[^0-9]*//'`
 mkdir -p "$KAROSHI_DATA"/firefox
+mkdir -p "$KAROSHI_DATA"/thunderbird
 cat /opt/karoshi/linuxclientsetup/config-files/firefox/prefs.cfg > "$KAROSHI_DATA"/firefox/mozilla.cfg
+cat /opt/karoshi/linuxclientsetup/config-files/thunderbird/prefs.cfg > "$KAROSHI_DATA"/thunderbird/mozilla.cfg
 update-alternatives --install /usr/lib/firefox/mozilla.cfg firefox.mozilla.cfg "$KAROSHI_DATA"/firefox/mozilla.cfg 150
+update-alternatives --install /usr/lib/thunderbird/mozilla.cfg thunderbird.mozilla.cfg "$KAROSHI_DATA"/thunderbird/mozilla.cfg 150
 
 #Proxy server
 if [[ $PROXYSERVER ]]; then
@@ -332,6 +335,20 @@ if [[ $PROXYSERVER ]]; then
 		pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC");
 		lockPref("browser.startup.homepage", "$PROXYSERVER.$DNSSUFFIX");
 	FOE
+	cat <<- FOE >> "$KAROSHI_DATA"/thunderbird/mozilla.cfg
+		pref("network.proxy.http", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.http_port", 3128);
+		pref("network.proxy.ssl", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.ssl_port", 3128);
+		pref("network.proxy.ftp", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.ftp_port", 3128);
+		pref("network.proxy.socks", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.socks_port", 3128);
+		pref("network.proxy.gopher", "$PROXYSERVER.$DNSSUFFIX");
+		pref("network.proxy.gopher_port", 3128);
+		pref("network.proxy.type", 1);
+		pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC");
+	FOE
 else
 	#For no proxy, we want the homepage to be about:home
 	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
@@ -341,11 +358,17 @@ fi
 
 #Setup Kerberos
 cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
-	lockPref("network.negotiate-auth.trusted-uris", "$DNSSUFFIX");
+	pref("network.negotiate-auth.trusted-uris", "$DNSSUFFIX");
+FOE
+cat <<- FOE >> "$KAROSHI_DATA"/thunderbird/mozilla.cfg
+	pref("network.negotiate-auth.trusted-uris", "$DNSSUFFIX");
 FOE
 
 #Set spellchecker language to machine language
 cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
+	pref("spellchecker.dictionary", "$machineLang");
+FOE
+cat <<- FOE >> "$KAROSHI_DATA"/thunderbird/mozilla.cfg
 	pref("spellchecker.dictionary", "$machineLang");
 FOE
 

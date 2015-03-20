@@ -215,8 +215,8 @@ if $is_domain; then
 			if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 				firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
 			fi
-			if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
-				thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
+			if which thunderbird >/dev/null && [[ -d ~/.mozilla/thunderbird ]]; then
+				thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/thunderbird/profiles.ini`
 			fi
 
 			#DEPRECATED
@@ -224,12 +224,15 @@ if $is_domain; then
 				cp -ft ~/.mozilla/firefox/"$firefox_profile"/ "$temp_dir"/firefox/places.sqlite
 			fi
 			if [[ -f $temp_dir/thunderbird/places.sqlite ]] && [[ $thunderbird_profile ]]; then
-				cp -ft ~/.thunderbird/"$thunderbird_profile"/ "$temp_dir"/thunderbird/places.sqlite
+				cp -ft ~/.mozilla/thunderbird/"$thunderbird_profile"/ "$temp_dir"/thunderbird/places.sqlite
 			fi
 
-			#New Firefox profile
+			#New profiles
 			if [[ -d $temp_dir/firefox/karoshi.profile ]]; then
 				cp -ft ~/.mozilla/firefox/ "$temp_dir"/firefox/karoshi.profile
+			fi
+			if [[ -d $temp_dir/thunderbird/karoshi.profile ]]; then
+				cp -ft ~/.mozilla/thunderbird/ "$temp_dir"/thunderbird/karoshi.profile
 			fi
 
 			rm -rf "$temp_dir"
@@ -273,84 +276,60 @@ user_pref('extensions.zotero.useDataDir', true);" >> ~/.mozilla/firefox/"$firefo
 	fi
 
 	#create user.js for default Thunderbird settings
-	if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
-		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
-		if [[ $thunderbird_profile ]] && [[ -d ~/.thunderbird/$thunderbird_profile ]]; then
+	if which thunderbird >/dev/null && [[ -d ~/.mozilla/thunderbird ]]; then
+		thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/thunderbird/profiles.ini`
+		if [[ $thunderbird_profile ]] && [[ -d ~/.mozilla/thunderbird/$thunderbird_profile ]]; then
 			echo "Found Thunderbird profile: $thunderbird_profile"
 			#Apply CA certificate
 			if [[ -f /opt/karoshi/cacert.pem ]]; then
 				echo "Installing cacert.pem for Thunderbird"
-				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.thunderbird/"$thunderbird_profile"
+				certutil -A -n "Karoshi CA" -addstore root -t "CTu,CTu,CTu" -i /opt/karoshi/cacert.pem -d ~/.mozilla/thunderbird/"$thunderbird_profile"
 			fi
-
-			#Remove updated messages and extension checking
-			thunderbird_version=`thunderbird --version | sed 's/^[^0-9]*//'`
-			echo "user_pref('extensions.lastAppVersion', '$thunderbird_version');
-user_pref('extensions.lastPlatformVersion', '$thunderbird_version');
-user_pref('mailnews.start_page_override.mstone', '$thunderbird_version');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
-
-			#Cache settings
-			echo "user_pref('browser.cache.disk.capacity', 5120);" >> ~/.thunderbird/"$thunderbird_profile"/user.js
-
-			#Proxy server
-			if [[ $PROXYSERVER ]]; then
-				echo "user_pref('network.proxy.http', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.http_port', 3128);
-user_pref('network.proxy.ssl', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.ssl_port', 3128);
-user_pref('network.proxy.ftp', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.ftp_port', 3128);
-user_pref('network.proxy.socks', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.socks_port', 3128);
-user_pref('network.proxy.gopher', '$PROXYSERVER.$DNSSUFFIX');
-user_pref('network.proxy.gopher_port', 3128);
-user_pref('network.proxy.type', 1);
-user_pref('network.proxy.no_proxies_on', 'localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
-			fi
-
-			#Set up Kerberos
-			echo "user_pref('network.negotiate-auth.trusted-uris', '$DNSSUFFIX');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 
 			if [[ $MAILSERVER ]]; then
 				user_fullname=${GECOS%%,*}
 				echo "Using $user_fullname as real name for user email"
 
-				echo "user_pref('mail.identity.id1.useremail', '$USER@$DNSSUFFIX');
-user_pref('mail.identity.id1.valid', true);
-user_pref('mail.identity.id1.fullName', '$user_fullname');
-user_pref('mail.identity.id1.smtpServer', 'smtp1');
-user_pref('mail.identity.id1.archive_enabled', false);
-user_pref('mail.identity.id1.draft_folder', 'imap://$USER@mail.$DNSSUFFIX/Drafts');
-user_pref('mail.identity.id1.drafts_folder_picker_mode', '0');
-user_pref('mail.identity.id1.fcc_folder', 'imap://$USER@mail.$DNSSUFFIX/Sent');
-user_pref('mail.identity.id1.fcc_folder_picker_mode', '0');
-user_pref('mail.identity.id1.stationery_folder', 'imap://$USER@mail.$DNSSUFFIX/Templates');
-user_pref('mail.identity.id1.tmpl_folder_picker_mode', '0');
-user_pref('mail.identity.id1.reply_on_top', 1);
-user_pref('mail.identity.id1.sig_bottom', false);
+				cat >> ~/.mozilla/thunderbird/"$thunderbird_profile"/user.js <<- EOF
+					user_pref('mail.accountmanager.appendaccounts', 'karoshi_account');
+					user_pref('mail.accountmanager.localfoldersserver', 'karoshi_server');
+					user_pref('mail.account.karoshi_account.identities', 'karoshi_id');
+					user_pref('mail.account.karoshi_account.server', 'karoshi_server');
+					user_pref('mail.smtpservers', 'karoshi_smtp');
 
-user_pref('mail.server.server1.authMethod', 5);
-user_pref('mail.server.server1.check_new_mail', true);
-user_pref('mail.server.server1.hostname', 'mail.$DNSSUFFIX');
-user_pref('mail.server.server1.login_at_startup', true);
-user_pref('mail.server.server1.name', '$USER@$DNSSUFFIX');
-user_pref('mail.server.server1.socketType', 2);
-user_pref('mail.server.server1.storeContractID', '@mozilla.org/msgstore/berkeleystore;1');
-user_pref('mail.server.server1.type', 'imap');
-user_pref('mail.server.server1.userName', '$USER');
-user_pref('mail.server.server1.using_subscription', false);
-user_pref('mail.server.server1.offline_download', false);
+					user_pref('mail.identity.karoshi_id.useremail', '$USER@$DNSSUFFIX');
+					user_pref('mail.identity.karoshi_id.valid', true);
+					user_pref('mail.identity.karoshi_id.fullName', '$user_fullname');
+					user_pref('mail.identity.karoshi_id.smtpServer', 'karoshi_smtp');
+					user_pref('mail.identity.karoshi_id.archive_enabled', false);
+					user_pref('mail.identity.karoshi_id.draft_folder', 'imap://$USER@mail.$DNSSUFFIX/Drafts');
+					user_pref('mail.identity.karoshi_id.drafts_folder_picker_mode', '0');
+					user_pref('mail.identity.karoshi_id.fcc_folder', 'imap://$USER@mail.$DNSSUFFIX/Sent');
+					user_pref('mail.identity.karoshi_id.fcc_folder_picker_mode', '0');
+					user_pref('mail.identity.karoshi_id.stationery_folder', 'imap://$USER@mail.$DNSSUFFIX/Templates');
+					user_pref('mail.identity.karoshi_id.tmpl_folder_picker_mode', '0');
+					user_pref('mail.identity.karoshi_id.reply_on_top', 1);
+					user_pref('mail.identity.karoshi_id.sig_bottom', false);
 
-user_pref('mail.smtpserver.smtp1.authMethod', 5);
-user_pref('mail.smtpserver.smtp1.hostname', 'mail.$DNSSUFFIX');
-user_pref('mail.smtpserver.smtp1.port', 25);
-user_pref('mail.smtpserver.smtp1.try_ssl', 2);
-user_pref('mail.smtpserver.smtp1.username', '$USER');
-user_pref('mail.smtpservers', 'smtp1');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
+					user_pref('mail.server.karoshi_server.authMethod', 5);
+					user_pref('mail.server.karoshi_server.check_new_mail', true);
+					user_pref('mail.server.karoshi_server.hostname', 'mail.$DNSSUFFIX');
+					user_pref('mail.server.karoshi_server.login_at_startup', true);
+					user_pref('mail.server.karoshi_server.name', '$USER@$DNSSUFFIX');
+					user_pref('mail.server.karoshi_server.socketType', 2);
+					user_pref('mail.server.karoshi_server.storeContractID', '@mozilla.org/msgstore/berkeleystore;1');
+					user_pref('mail.server.karoshi_server.type', 'imap');
+					user_pref('mail.server.karoshi_server.userName', '$USER');
+					user_pref('mail.server.karoshi_server.using_subscription', false);
+					user_pref('mail.server.karoshi_server.offline_download', false);
+
+					user_pref('mail.smtpserver.karoshi_smtp.authMethod', 5);
+					user_pref('mail.smtpserver.karoshi_smtp.hostname', 'mail.$DNSSUFFIX');
+					user_pref('mail.smtpserver.karoshi_smtp.port', 25);
+					user_pref('mail.smtpserver.karoshi_smtp.try_ssl', 2);
+					user_pref('mail.smtpserver.karoshi_smtp.username', '$USER');
+				EOF
 			fi
-
-			#Set spellcheck language to machine language
-			echo "user_pref('spellchecker.dictionary', '$machineLang');" >> ~/.thunderbird/"$thunderbird_profile"/user.js
 		fi
 	fi
 
