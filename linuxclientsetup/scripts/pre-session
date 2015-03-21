@@ -229,10 +229,28 @@ if $is_domain; then
 
 			#New profiles
 			if [[ -d $temp_dir/firefox/karoshi.profile ]]; then
-				cp -ft ~/.mozilla/firefox/ "$temp_dir"/firefox/karoshi.profile
+				cp -rft ~/.mozilla/firefox/ "$temp_dir"/firefox/karoshi.profile
+				cat > ~/.mozilla/firefox/profiles.ini <<- EOF
+					[General]
+					StartWithLastProfile=1
+
+					[Profile0]
+					Name=default
+					IsRelative=1
+					Path=karoshi.profile
+				EOF
 			fi
 			if [[ -d $temp_dir/thunderbird/karoshi.profile ]]; then
-				cp -ft ~/.mozilla/thunderbird/ "$temp_dir"/thunderbird/karoshi.profile
+				cp -rft ~/.mozilla/thunderbird/ "$temp_dir"/thunderbird/karoshi.profile
+				cat > ~/.mozilla/thunderbird/profiles.ini <<- EOF
+					[General]
+					StartWithLastProfile=1
+
+					[Profile0]
+					Name=default
+					IsRelative=1
+					Path=karoshi.profile
+				EOF
 			fi
 
 			rm -rf "$temp_dir"
@@ -264,7 +282,8 @@ if $is_domain; then
 
 			#Default download directory
 			if [[ $alternate_home ]]; then
-				echo "user_pref('browser.download.lastDir', '~/$alternate_home');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
+				mkdir -p ~/"$alternate_home"/Downloads
+				echo "user_pref('browser.download.lastDir', '~/$alternate_home/Downloads');" > ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
 
 			#Add Zotero settings

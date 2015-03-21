@@ -147,17 +147,13 @@ if $is_domain; then
 		if [[ $thunderbird_profile ]]; then
 			[[ -d $temp_dir/thunderbird/karoshi.profile ]] && rm -rf "$temp_dir"/thunderbird/karoshi.profile
 			mkdir -p "$temp_dir"/thunderbird
-			if [[ -f ~/.mozilla/thunderbird/karoshi.profile ]]; then
-				cp -ft "$temp_dir"/thunderbird ~/.mozilla/thunderbird/karoshi.profile
-			fi
+			cp -rfT ~/.mozilla/thunderbird/"$thunderbird_profile" "$temp_dir"/thunderbird/karoshi.profile
 		fi
 
 		if [[ $firefox_profile ]]; then
 			[[ -d $temp_dir/firefox/karoshi.profile ]] && rm -rf "$temp_dir"/firefox/karoshi.profile
 			mkdir -p "$temp_dir"/firefox
-			if [[ -d ~/.mozilla/firefox/karoshi.profile ]]; then
-				cp -ft "$temp_dir"/firefox ~/.mozilla/firefox/karoshi.profile
-			fi
+			cp -rfT ~/.mozilla/firefox/"$firefox_profile" "$temp_dir"/firefox/karoshi.profile
 		fi
 
 		(
