@@ -89,8 +89,8 @@ fi
 if which firefox >/dev/null && [[ -d ~/.mozilla/firefox ]]; then
 	firefox_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/firefox/profiles.ini`
 fi
-if which thunderbird >/dev/null && [[ -d ~/.thunderbird ]]; then
-	thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.thunderbird/profiles.ini`
+if which thunderbird >/dev/null && [[ -d ~/.mozilla/thunderbird ]]; then
+	thunderbird_profile=`sed -n '0,/^Path=/s/^Path=//p' ~/.mozilla/thunderbird/profiles.ini`
 fi
 
 #Remove Karoshi desktop icons
@@ -143,19 +143,17 @@ if $is_domain; then
 		#all.tar.gz
 		temp_dir=$(mktemp -d)
 		[[ -f ~/$alternate_home/.config/all.tar.gz ]] && tar -x -C "$temp_dir" -f ~/"$alternate_home"/.config/all.tar.gz
+
 		if [[ $thunderbird_profile ]]; then
-			[[ -d $temp_dir/thunderbird ]] || mkdir -p "$temp_dir"/thunderbird
-			[[ -f $temp_dir/thunderbird/places.sqlite ]] && rm -f "$temp_dir"/thunderbird/places.sqlite
-			if [[ -f ~/.thunderbird/$thunderbird_profile/places.sqlite ]]; then
-				cp -ft "$temp_dir"/thunderbird ~/.thunderbird/"$thunderbird_profile"/places.sqlite
-			fi
+			[[ -d $temp_dir/thunderbird/karoshi.profile ]] && rm -rf "$temp_dir"/thunderbird/karoshi.profile
+			mkdir -p "$temp_dir"/thunderbird
+			cp -rfT ~/.mozilla/thunderbird/"$thunderbird_profile" "$temp_dir"/thunderbird/karoshi.profile
 		fi
 
 		if [[ $firefox_profile ]]; then
-			[[ -d $temp_dir/firefox ]] || mkdir -p "$temp_dir"/firefox
-			if [[ -d ~/.mozilla/firefox/karoshi.profile ]]; then
-				cp -ft "$temp_dir"/firefox ~/.mozilla/firefox/karoshi.profile
-			fi
+			[[ -d $temp_dir/firefox/karoshi.profile ]] && rm -rf "$temp_dir"/firefox/karoshi.profile
+			mkdir -p "$temp_dir"/firefox
+			cp -rfT ~/.mozilla/firefox/"$firefox_profile" "$temp_dir"/firefox/karoshi.profile
 		fi
 
 		(
