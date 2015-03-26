@@ -83,6 +83,10 @@ function getClientSettings {
 			info_alert $"Karoshi Set Network" $"You must enter a client name and network interface"
 			continue
 		fi
+		if (( ${#CLIENT_NAME} > 15 )); then
+			info_alert $"Karoshi Set Network" $"Client name must be 15 characters or less"
+			continue
+		fi
 		if ! ( $dhcp || ( [[ $IPADDR =~ $IPREGEX ]] && [[ $NETMASK =~ $IPREGEX ]] && [[ $GATEWAY =~ $IPREGEX ]] ) ); then
 			info_alert $"Karoshi Set Network" $"You must enter a valid IP address, netmask and gateway, or choose DHCP"
 			continue
