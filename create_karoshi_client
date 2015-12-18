@@ -1,0 +1,341 @@
+#!/bin/bash
+
+#This script has been developed from the information at https://help.ubuntu.com/community/LiveCDCustomizationFromScratch
+
+clear
+
+#Exit if this is not the root user
+if [ `id -u` != 0 ]
+then
+	echo -e "Karoshi Client Remaster Utility\n\nThis script must be run as root."
+	exit
+fi
+
+#Ask which architecture to build
+ARCH=amd64
+echo -e "Choose the architecture version you want to build\n\n1: amd64\n2: i386\n"
+read choice
+case $choice in
+	1)
+	ARCH=amd64
+	;;
+	2)
+	ARCH=i386
+esac
+
+KAROSHIVER=karoshi-client-v4.4
+KAROSHIVER=$KAROSHIVER-$ARCH
+KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
+BUILDPATH=/home/karoshi/$KAROSHIVERNOCAPS
+RELEASE=trusty
+BRANCH=lightdm-kg
+ZIPFILE=$BRANCH.zip
+
+echo -e "Karoshi Client Remaster Utility\n"
+
+which unzip 1>/dev/null
+if [ $? != 0 ]
+then
+echo -e "Installing unzip\n"
+sudo apt-get install unzip
+	if [ $? != 0 ]
+	then
+		echo -e "There was a problem installing unzip - exiting now."
+		exit
+	fi
+fi
+
+#Install debootstrap
+which debootstrap 1>/dev/null
+if [ $? != 0 ]
+then
+	echo -e "Installing debootstrap\n"
+	sleep 1
+	apt-get install debootstrap
+	if [ $? != 0 ]
+	then
+		echo -e "There was a problem installing debootstrap - exiting now."
+		exit
+	fi
+fi
+
+echo -e "Making the chroot environment for $KAROSHIVER based on $RELEASE.\n"
+sleep 1
+
+
+#Create the chroot folder
+if [ -d $BUILDPATH/chroot ]
+then
+	echo -e "$BUILDPATH/chroot exits\n\n1: Delete this folder and make the chroot environment\n2: Skip this step\n"
+	read choice
+	case $choice in
+		1)
+		RUNDEBOOSTRAP=yes
+		rm -f -R $BUILDPATH/chroot
+		;;
+		2)
+		RUNDEBOOSTRAP=no;;
+	esac
+
+else
+	RUNDEBOOSTRAP=yes
+	echo -e "Creating $BUILDPATH/chroot\n"
+	sleep 1	
+	mkdir -p $BUILDPATH/chroot
+fi
+
+#Chroot into the folder
+
+cd $BUILDPATH
+
+[ $RUNDEBOOSTRAP = yes ] && debootstrap --arch=$ARCH $RELEASE chroot
+
+echo -e "\nDownload $ZIPFILE\n"
+sleep 1
+if [ -d chroot/opt/karoshi/karoshi-client-$BRANCH ]
+then
+	echo -e "$BUILDPATH/chroot/opt/karoshi/karoshi-client exits\n\n1: Delete this folder and download the latest version\n2: Skip this step\n"
+	read choice
+	case $choice in
+		1)
+		getclientsetup=yes
+		rm -f -R chroot/opt/karoshi/karoshi-client-$BRANCH
+		;;
+		2)
+		getclientsetup=no
+		;;
+	esac
+else
+	getclientsetup=yes
+fi
+
+#Download master.zip and extract to chroot
+
+if [ $getclientsetup = yes ]
+then
+	[ -f /tmp/$ZIPFILE ] && rm -f /tmp/$ZIPFILE
+	cd /tmp
+	echo -e "\nDownloading $ZIPFILE from github.\n"
+	sleep 1
+	wget https://github.com/the-linux-schools-project/karoshi-client/archive/lightdm-kg.zip
+	if [ $? != 0 ]
+	then
+		echo -e "There was a problem downloading $ZIPFILE - exiting now."
+		exit
+	fi
+
+	echo -e "Unziping $ZIPFILE to $BUILDPATH/chroot/opt/karoshi\n"
+	sleep 1
+	mkdir -p $BUILDPATH/chroot/opt/karoshi/
+	unzip $ZIPFILE  -d $BUILDPATH/chroot/opt/karoshi/
+	if [ $? != 0 ]
+	then
+		echo -e "There was a problem unziping $ZIPFILE - exiting now."
+		exit
+	fi
+
+	cd $BUILDPATH
+fi
+
+#Mount dev folder
+
+echo -e "\nMounting $BUILDPATH/chroot\n"
+sleep 1	
+mount --bind /dev chroot/dev
+
+#Install software to create the ISO image
+echo -e "Installing syslinux squashfs-tools and genisoimage\n"
+sleep 1	
+apt-get install --yes syslinux squashfs-tools genisoimage
+
+#Copy in system files for network configuration for the chroot
+cd $BUIDLPATH
+echo -e "Copying /etc/hosts\n"
+cp /etc/hosts chroot/etc/hosts
+echo -e "Copying /etc/resolv.conf\n"
+cp /etc/resolv.conf chroot/etc/resolv.conf
+
+#Copy in sources.list if only a minimal list is there
+cp chroot/opt/karoshi/karoshi-client-$BRANCH/install/sources.list chroot/etc/apt/sources.list
+
+#Backup /sbin/initctl
+cp /sbin/initctl /sbin/initctl.$$
+
+#Run configure chroot
+sudo chroot chroot
+
+
+#Install Karoshi Client packages
+apt-get install --yes  $PACKAGES
+apt-get install --yes ubuntu-standard casper lupin-casper
+apt-get install --yes discover laptop-detect os-prober
+apt-get install --yes linux-generic grub2
+
+umount $BUILDPATH/chroot/dev 
+
+echo -e "\nCreate ISO image\n"
+
+
+#Remove existing image directory
+if [ -d image ]
+then
+	echo -e "\nDeleting existing image directory\n"
+	sleep 1	
+	rm -f -R image
+fi
+
+#Create image directory
+echo -e "\nCreating image directory\n"
+sleep 1	
+
+mkdir -p image/{casper,isolinux,install}
+
+#Copy in the kernel built with the casper scripts
+echo -e "\nCopying in the kernel built with casper scripts\n"
+sleep 1	
+cp chroot/boot/vmlinuz-3.13.**-**-generic image/casper/vmlinuz
+cp chroot/boot/initrd.img-3.13.**-**-generic image/casper/initrd.gz
+
+#Copy in isolinux and memtest binaries
+echo -e "\nCopying in isolinux and memtest binaries\n"
+sleep 1	
+cp /usr/lib/syslinux/isolinux.bin image/isolinux/
+cp /boot/memtest86+.bin image/install/memtest
+cp /usr/lib/syslinux/vesamenu.c32 image/isolinux/
+
+#Copy in boot splash
+cp -f chroot/opt/karoshi/karoshi-client-$BRANCH/linuxclientsetup/images/boot-menu.png image/isolinux/splash.png
+
+#Create boot instructions
+echo -e "\nCreating boot instructions\n"
+sleep 1	
+echo 'splash.rle
+
+************************************************************************
+
+This is a Ubuntu Remix Live CD.
+
+For the default live system, enter "live".  To run memtest86+, enter "memtest"
+
+************************************************************************' > image/isolinux/isolinux.txt
+
+#Create isolinux.cfg
+echo -e "Creating isolinux.cfg\n"
+sleep 1	
+echo '
+default vesamenu.c32
+prompt 0
+timeout 100
+
+menu title Karoshi Client
+menu background splash.png
+menu color title 1;37;44 #c0ffffff #00000000 std
+
+label install
+  menu label Install The Linux Schools Project Client
+  kernel /casper/vmlinuz
+  append  file=/cdrom/preseed/custom.seed boot=casper automatic-ubiquity initrd=/casper/initrd.gz quiet splash vga=791 --
+
+LABEL Live-CD
+  menu label Live CD
+  kernel /casper/vmlinuz
+  append  file=/cdrom/preseed/ubuntu.seed boot=casper initrd=/casper/initrd.gz quiet splash vga=791 --
+
+label memtest
+  menu label memtest - Run memtest
+  kernel /install/memtest
+  append -
+
+label hd
+  menu label hd - boot the first hard disk
+  localboot 0x80
+  append -
+' > image/isolinux/isolinux.cfg
+
+#Create preseed
+[ ! -d image/preseed ] && mkdir -p image/preseed
+
+echo "# Only install the standard system and language packs.
+tasksel	tasksel/first	multiselect
+d-i	pkgsel/language-pack-patterns	string
+# No language support packages.
+d-i	pkgsel/install-language-support	boolean false
+d-i passwd/user-fullname string karoshi
+d-i passwd/username string karoshi
+d-i passwd/user-password password karoshi
+d-i passwd/user-password-again password karoshi
+d-i user-setup/allow-password-weak boolean true
+d-i user-setup/encrypt-home boolean false
+d-i finish-install/reboot_in_progress note
+ubiquity ubiquity/summary note
+
+" > image/preseed/custom.seed
+
+#Create manifest
+echo -e "\nCreating manifest\n"
+
+sudo chroot chroot dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee image/casper/filesystem.manifest
+sudo cp -v image/casper/filesystem.manifest image/casper/filesystem.manifest-desktop
+REMOVE='ubiquity ubiquity-frontend-gtk ubiquity-frontend-kde casper lupin-casper live-initramfs user-setup discover1 xresprobe os-prober libdebian-installer4'
+for i in $REMOVE 
+do
+        sudo sed -i "/${i}/d" image/casper/filesystem.manifest-desktop
+done
+
+#Set permissions on vmlinuz
+chmod 0644 image/casper/vmlinuz
+
+echo -e "\nCompressing chroot\n"
+sleep 1
+#Compress the chroot
+mksquashfs chroot image/casper/filesystem.squashfs 
+#Write the filesystem size - needed by the installer
+echo -e "\nWriting the filesystem size\n"
+sleep 1
+printf $(sudo du -sx --block-size=1 chroot | cut -f1) > image/casper/filesystem.size
+
+#Create diskdefines
+echo '#define DISKNAME  '$KAROSHIVER'
+#define TYPE  binary
+#define TYPEbinary  1
+#define ARCH  '$ARCH'
+#define ARCH'$ARCH'  1
+#define DISKNUM  1
+#define DISKNUM1  1
+#define TOTALNUM  0
+#define TOTALNUM0  1
+' > image/README.diskdefines
+
+cp -f image/README.diskdefines image/casper/
+
+#Recognition as a Ubuntu remix
+KAROSHIVER2=`echo "$KAROSHIVER" | sed 's/-/ /g'`
+touch image/ubuntu
+mkdir image/.disk
+cd image/.disk
+touch base_installable
+echo "full_cd/single" > cd_type
+echo "$KAROSHIVER2" > info
+echo "http://www.linuxschools.com" > release_notes_url
+cd ../..
+
+#Set permissions on vmlinuz
+chmod 0644 image/casper/vmlinuz
+
+#Calculate MD5
+echo -e "\nCalculating MD5\n"
+sleep 1
+cd $BUILDPATH/image
+sudo find . -type f -print0 | xargs -0 md5sum | grep -v "\./md5sum.txt" > md5sum.txt
+echo -e "\nCreating the iso image\n"
+sleep 1
+#Create iso image for the live CD
+
+[ -f $BUILDPATH/$KAROSHIVER.iso ] && rm -f $BUILDPATH/$KAROSHIVER.iso
+
+sudo mkisofs -r -V "$KAROSHIVER" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../$KAROSHIVER.iso .
+cd ..
+
+echo -e "\nThe iso has been created at: $BUILDPATH/$KAROSHIVER.iso\n"
+
+exit
