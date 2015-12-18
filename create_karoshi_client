@@ -28,7 +28,7 @@ KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
 BUILDPATH=/home/karoshi/$KAROSHIVERNOCAPS
 RELEASE=trusty
-BRANCH=lightdm-kg
+BRANCH=pheonix
 ZIPFILE=$BRANCH.zip
 
 echo -e "Karoshi Client Remaster Utility\n"
@@ -88,7 +88,10 @@ fi
 
 cd $BUILDPATH
 
-[ $RUNDEBOOSTRAP = yes ] && debootstrap --arch=$ARCH $RELEASE chroot
+if [ $RUNDEBOOTSTRAP = yes ]; then
+	echo -e "Creating the chroot environment"
+	sudo debootstrap --arch=$ARCH $RELEASE chroot
+fi
 
 echo -e "\nDownload $ZIPFILE\n"
 sleep 1
@@ -162,7 +165,7 @@ cp chroot/opt/karoshi/karoshi-client-$BRANCH/install/sources.list chroot/etc/apt
 cp /sbin/initctl /sbin/initctl.$$
 
 #Run configure chroot
-sudo chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient
+sudo chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/buildclient
 
 umount $BUILDPATH/chroot/dev 
 
