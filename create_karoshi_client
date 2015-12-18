@@ -88,7 +88,7 @@ fi
 
 cd $BUILDPATH
 
-if [ $RUNDEBOOTSTRAP = yes ]; then
+if [ $RUNDEBOOSTRAP = yes ]; then
 	echo -e "Creating the chroot environment"
 	sudo debootstrap --arch=$ARCH $RELEASE chroot
 fi
@@ -120,7 +120,7 @@ then
 	cd /tmp
 	echo -e "\nDownloading $ZIPFILE from github.\n"
 	sleep 1
-	wget https://github.com/the-linux-schools-project/karoshi-client/archive/lightdm-kg.zip
+	wget https://github.com/the-linux-schools-project/karoshi-client/archive/$BRANCH.zip
 	if [ $? != 0 ]
 	then
 		echo -e "There was a problem downloading $ZIPFILE - exiting now."
