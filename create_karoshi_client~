@@ -197,7 +197,7 @@ cp /boot/memtest86+.bin image/install/memtest
 cp /usr/lib/syslinux/vesamenu.c32 image/isolinux/
 
 #Copy in boot splash
-cp -f chroot/opt/karoshi/karoshi-client-$BRANCH/clientsetup/images/boot-menu.png image/isolinux/splash.png
+cp -f chroot/opt/karoshi/karoshi-client-$BRANCH/linuxclientsetup/images/boot-menu.png image/isolinux/splash.png
 
 #Create boot instructions
 echo -e "\nCreating boot instructions\n"
