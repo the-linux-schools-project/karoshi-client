@@ -1,0 +1,145 @@
+#!/bin/bash
+
+#Copyright (C) 2013-2014 Robin McCorkell
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+if [[ $EUID -ne 0 ]]; then
+	echo $"This script must be run as root" >&2
+	info_alert $"Karoshi Unset Network" $"This script must be run as root"
+	exit 1
+fi
+
+export DEBIAN_FRONTEND=noninteractive
+
+#Get nsswitch functions
+source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
+
+exec 11> >(progress_info $"Karoshi Unset Network" $"Karoshi Client Setup: Network Deconfiguration")
+echo 10 >&11
+echo \#$"Deconfiguring domain settings" >&11
+
+function attemptAdsLeave {
+	if ! net ads testjoin -k; then
+		echo $"Machine not joined to the domain" >&2
+		return
+	fi
+	leave_status=1
+	while [[ $leave_status -ne 0 ]]; do
+		understandableYad --form --title=$"Karoshi Unset Network" --wrap \
+							--text $"Enter credentials to leave the domain" --field=$"Username" --field=$"Password":H \
+							--button='gtk-cancel:1' --button='gtk-ok:0'
+		domain_username=`cut -d"|" -f1 <<< "$DATA"`
+		domain_password=`cut -d"|" -f2 <<< "$DATA"`
+		net ads leave -U $domain_username%$domain_password
+		leave_status=$?
+	done
+}
+
+#Deconfigure domain
+case "$DOMAINTYPE" in
+samba4)
+	attemptAdsLeave
+
+	#Deconfigure PAM
+	pam-auth-update --package --remove sss sss-password
+	echo "sss
+sss-password" >> /var/lib/pam/seen
+
+	#Deconfigure nsswitch.conf
+	nss_disable passwd sss
+	nss_disable group sss
+
+	echo 20 >&11
+
+	service sssd stop
+	;;
+*)
+	info_alert $"Karoshi Unset Network" $"Invalid domain type"
+	echo 100 >&11
+	exit 1
+	;;
+esac
+
+echo 30 >&11
+
+#Revert configuration files
+config_root="/opt/karoshi/linuxclientsetup/config-files"
+
+function revert_backup {
+	config_suffix="$1"
+	while read -r -d $'\0' filename; do
+		realpath=${filename#$config_root/$config_suffix}
+		if [[ -f $realpath.karoshi-$config_suffix~ ]]; then
+			#Replace existing file with backup
+			mv -fT "$realpath".karoshi-"$config_suffix"~ "$realpath"
+		else
+			#Delete file
+			rm -rf "$realpath"
+		fi
+	done < <(find "$config_root"/"$config_suffix" -type f -print0)
+}
+
+echo 40 >&11
+echo \#$"Reverting configuration files" >&11
+
+case "$DOMAINTYPE" in
+samba4)
+	revert_backup "samba4"
+	;;
+esac
+
+echo 50 >&11
+
+revert_backup "common"
+
+echo 60 >&11
+echo \#$"Resetting hostname" >&11
+
+#Deconfigure hostname
+hostnamectl set-hostname "karoshi"
+
+sed -i "/##STATIC##/{ N; d; }" /etc/hosts
+if grep "^127\.0\.1\.1" /etc/hosts; then
+	sed -i "s/^127\.0\.1\.1.*/127.0.1.1 karoshi/" /etc/hosts
+else
+	echo "127.0.1.1	karoshi" >> /etc/hosts
+fi
+
+#Deconfigure all network interfaces
+echo 70 >&11
+echo \#$"Bringing down old network interface" >&11
+ifdown --force $NETWORKINT
+echo 80 >&11
+echo \#$"Resetting network interface configuration" >&11
+echo "auto lo
+iface lo inet loopback" > /etc/network/interfaces
+
+#Reset DNS information
+echo 90 >&11
+echo \#$"Resetting DNS information" >&11
+resolvconf -u
+
+echo 100 >&11
+
+exit 0
+

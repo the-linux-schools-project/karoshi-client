@@ -1,0 +1,54 @@
+#!/bin/bash
+
+#Copyright (C) 2013,2014 Robin McCorkell
+#Original Copyright (C) 2010  Paul Sharrad
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+#Connect to netlogon
+[[ ! -d /tmp/netlogon ]] && mkdir /tmp/netlogon
+if ! mount.cifs //$PDC.$DNSSUFFIX/netlogon /tmp/netlogon -o guest 1>/dev/null; then
+	info_alert $"Karoshi Set Location" $"Unable to contact Primary Domain Controller"
+	exitfunc 1
+fi
+
+function exitfunc {
+	umount /tmp/netlogon
+	exit $1
+}
+
+#Check that room list exists
+if [[ ! -f /tmp/netlogon/locations.txt ]]; then
+	info_alert $"Karoshi Set Location" $"No locations have been created"
+	exitfunc 1
+fi
+
+#######################
+#Choose room
+#######################
+selection=` < /tmp/netlogon/locations.txt`
+understandableYad --wrap --image-on-top --entry --title $"Karoshi Set Location" \
+					--button='gtk-cancel:1' --button='gtk-ok:0' \
+					--text $"Choose the location of this computer" \
+					$selection
+LOCATION=$DATA
+
+#Completed message
+info_alert $"Karoshi Set Location" $"$HOSTNAME set to location $LOCATION"
+
+updateVariables

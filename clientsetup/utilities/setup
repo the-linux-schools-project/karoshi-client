@@ -1,0 +1,217 @@
+#!/bin/bash
+
+#Copyright (C) 2013,2014 Robin McCorkell
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+#Exit this script if running live.
+if [[ `mount | grep -c -w /cow` -gt 0 ]]
+then
+	exit
+fi
+
+if [[ $EUID -ne 0 ]]; then
+	echo $"This script must be run as root" >&2
+	info_alert $"Karoshi Setup" $"This script must be run as root"
+	exit 1
+fi
+
+export DEBIAN_FRONTEND=noninteractive
+
+##################
+#Logging
+##################
+[[ ! -d /var/log/karoshi ]] && mkdir -p /var/log/karoshi
+
+[[ -e /var/log/karoshi ]] && rm -rf /var/log/karoshi
+mkdir -p /var/log/karoshi
+
+touch /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
+chown root:adm /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
+chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
+
+exec &>/var/log/karoshi/setup.log
+
+#Create symlink to Upstart logs
+ln -s /var/log/upstart/karoshi-update.log /var/log/karoshi/update.log
+ln -s /var/log/upstart/karoshi-multicast.log /var/log/karoshi/multicast.log
+ln -s /var/log/upstart/karoshi-remount.log /var/log/karoshi/remount.log
+ln -s /var/log/upstart/karoshi-cups.log /var/log/karoshi/cups.log
+
+#Allow root to connect to X even after hostname is changed (temporarily)
+xhost +si:localuser:root
+
+#Remove Ubiquity icon from administrator desktop
+find ~karoshi/Desktop -name 'ubiquity*.desktop' -delete
+
+##################
+#Deconfigure system
+##################
+
+if [[ -e /etc/init/karoshi-update.conf ]]; then
+	stop karoshi-update
+	rm -rf /etc/init/karoshi-update.conf
+fi
+if [[ -e /etc/init/karoshi-idle-shutdown.conf ]]; then
+	stop karoshi-idle-shutdown
+	rm -rf /etc/init/karoshi-idle-shutdown.conf
+fi
+if [[ -e /etc/init/karoshi-multicast.conf ]]; then
+	stop karoshi-multicast
+	rm -rf /etc/init/karoshi-multicast.conf
+fi
+if [[ -e /etc/init/karoshi-remount.conf ]]; then
+	stop karoshi-remount
+	rm -rf /etc/init/karoshi-remount.conf
+fi
+if [[ -e /etc/init/karoshi-cups.conf ]]; then
+	stop karoshi-cups
+	rm -rf /etc/init/karoshi-cups.conf
+fi
+
+#Reset alternatives
+update-alternatives --remove karoshi-login-background "$KAROSHI_DATA"/images/login-background.png
+update-alternatives --remove karoshi-background "$KAROSHI_DATA"/images/background.png
+
+[[ -e $KAROSHI_DATA/images ]] && rm -rf "$KAROSHI_DATA"/images
+
+#Deconfigure Karoshi PAM modules
+pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
+
+echo "karoshi-pre-session
+karoshi-post-session
+karoshi-virtualbox-mkdir
+karoshi-offline-homes" >> /var/lib/pam/seen
+
+is_reconfigure=false
+
+#Deconfigure domain
+if karoshi-manage-flags get domainset || karoshi-manage-flags get networkset; then
+	is_reconfigure=true
+	karoshi-unset-network || exit 9
+fi
+
+#Unlock root and administrator accounts
+passwd -u karoshi
+passwd -u root
+
+#Clean up /opt/karoshi
+find /opt/karoshi -mindepth 1 -maxdepth 1 -not -name 'linuxclientsetup' -execdir rm -rf {} +
+
+#Clear out logs
+> /var/log/karoshi/pre-session.log
+> /var/log/karoshi/post-session.log
+> /var/log/karoshi/virtualbox-mkdir.log
+> /var/log/karoshi/offline-homes.log
+find /var/log/upstart -name 'karoshi-*.log*' -delete
+
+##################
+#Configure system
+##################
+
+#Configure grub to hide the splash screen
+sed -i 's/^GRUB_TIMEOUT=10/GRUB_TIMEOUT=0/g' /etc/default/grub
+sed -i 's/^GRUB_HIDDEN_TIMEOUT/#GRUB_HIDDEN_TIMEOUT/g' /etc/default/grub
+update-grub
+
+#Create flag directory
+[[ -d /opt/karoshi/flags ]] || mkdir -p /opt/karoshi/flags
+
+#Set reconfigure flags
+if $is_reconfigure; then
+	karoshi-manage-flags set forcesetpdc
+	karoshi-manage-flags set passwordset
+fi
+
+#Configure network
+karoshi-set-network || exit 10
+
+#Change client password
+if ! karoshi-manage-flags get passwordset; then
+	karoshi-set-local-password || exit 11
+fi
+
+#Configure Wireshark to allow non-root to capture packets
+if [[ -e /usr/bin/dumpcap ]]; then
+	groupadd --system wireshark
+	chown root:wireshark /usr/bin/dumpcap
+	if which setcap > /dev/null ; then
+		chmod u=rwx,g=rx,o=r /usr/bin/dumpcap
+		if ! setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap; then
+			echo $"Setting capabilities for dumpcap using Linux Capabilities failed."
+			echo $"Falling back to setting set-user-id bit."
+			chmod u=rwxs,g=rx,o=r /usr/bin/dumpcap
+		fi
+	else
+			chmod u=rwxs,g=rx,o=r /usr/bin/dumpcap
+	fi
+fi
+
+##################
+#Install Karoshi files
+##################
+
+find /opt/karoshi/linuxclientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /etc/init {} +
+find /etc/init -name "karoshi-*.conf" -execdir chmod 644 {} +
+
+[[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
+cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
+find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
+
+[[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
+cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
+
+#Configure Karoshi PAM modules
+pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
+pam-auth-update --package
+
+#Recreate SSH host keys
+dpkg-reconfigure openssh-server
+
+#Configure sshd to allow only root, itadmin and tech users
+if ! grep -q '^AllowGroups' /etc/ssh/sshd_config; then
+	echo "AllowGroups root itadmin tech" >> /etc/ssh/sshd_config
+fi
+
+[[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
+
+#Install default firewall rules
+if ! [[ -e $KAROSHI_DATA/firewall/local_rules ]]; then
+	mkdir -p "$KAROSHI_DATA"/firewall
+	cp -t "$KAROSHI_DATA"/firewall /opt/karoshi/linuxclientsetup/config-files/firewall/local_rules
+fi
+
+##################
+#Finish and restart
+##################
+#Stop Auto logon
+sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
+
+#Start lightdm after sssd
+sed -i '/and started dbus/a and started sssd' /etc/init/lightdm.conf
+
+#Stop running this script on administrator login
+[[ -f ~karoshi/.config/autostart/karoshi-setup.desktop ]] && rm -f ~karoshi/.config/autostart/karoshi-setup.desktop
+
+shutdown -r now
+exit
+
