@@ -27,7 +27,7 @@ KAROSHIVER=karoshi-client-v4.4
 KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
 BUILDPATH=/home/karoshi/$KAROSHIVERNOCAPS
-RELEASE=trusty
+RELEASE=vivid
 BRANCH=pheonix
 ZIPFILE=$BRANCH.zip
 
@@ -165,7 +165,8 @@ cp chroot/opt/karoshi/karoshi-client-$BRANCH/install/sources.list chroot/etc/apt
 cp /sbin/initctl /sbin/initctl.$$
 
 #Run configure chroot
-sudo chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/buildclient
+echo -e "\nConfiguring chroot\n"
+chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/configure-chroot
 
 umount $BUILDPATH/chroot/dev 
 
