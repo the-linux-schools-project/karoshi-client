@@ -165,6 +165,8 @@ cp chroot/opt/karoshi/karoshi-client-$BRANCH/install/sources.list chroot/etc/apt
 cp /sbin/initctl /sbin/initctl.$$
 
 #Run configure chroot
+cd $BUILDPATH
+cd chroot
 echo -e "\nConfiguring chroot\n"
 chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/configure-chroot
 
