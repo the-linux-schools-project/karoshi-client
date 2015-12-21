@@ -1,6 +1,6 @@
 
 #!/bin/bash
-
+source=/opt/karoshi/karoshi-client-pheonix/buildclient/buildclient
 #Set this to yes if you do not want to stop for errors or help messages.
 AUTO=no
 #Create the karoshi user
@@ -127,11 +127,18 @@ else
 	done
 fi
 }
+#Update initramfs
+sudo update-initramfs -u
 
-function update_server {
-#Update server
-/opt/karoshi/serversetup/distro/ubuntu/scripts/updateserver buildserver
-}
+#Configure grub
+echo -e "\nConfiguring grub2.\n"
+cp -f /opt/karoshi/karoshi-client-pheonix/buildclient/config/grub /etc/default/grub
+echo -e "\nUpdating grub2.\n"
+update-grub
+
+function run_config {
+#Configure to make client
+./opt/karoshi/karoshi-client-pheonix/buildclient/config/config
 
 function configure_sudoers {
 #Configure sudoers
