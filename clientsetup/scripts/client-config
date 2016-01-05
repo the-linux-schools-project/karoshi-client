@@ -561,10 +561,14 @@ fi
 ##########################
 #Custom startup scripts
 ##########################
+custom_scripts_path=/tmp/netlogon/linuxclient/"$LINUX_VERSION"/custom_scripts
+if [[ -e /tmp/netlogon/linuxclient/all_custom_scripts ]]; then
+	chmod 0755 /tmp/netlogon/linuxclient/all_custom_scripts
+	run-parts /tmp/netlogon/linuxclient/all_custom_scripts
+fi
 if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/custom_scripts ]; then
-	run-parts /var/lib/samba/netlogon/linuxclient/$LINUX_VERSION/custom_scripts
-else
-	mkdir -p /var/lib/samba/netlogon/linuxclient/$LINUX_VERSION/custom_scripts
+	chmod 0755 /tmp/netlogon/linuxclient/all_custom_scripts
+	run-parts /tmp/netlogon/linuxclient/$LINUX_VERSION/custom_scripts
 fi
 ##########################
 #Configure virtualbox drive
