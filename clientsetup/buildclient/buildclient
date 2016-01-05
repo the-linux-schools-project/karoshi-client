@@ -13,6 +13,7 @@ UPDATE_REPOS=yes
 INSTALL_ADDITIONAL=yes
 #Install all of the main software packages needed such as apache and mysql.
 INSTALL_SOFTWARE=yes
+INSTALL_EXTRA=yes
 #We are currently using sysv startup scripts instead of upstart.
 SYSVSUPPORT=yes
 #Download and compile samba4 - we are staying with a compiled version rather than the version from the repos for backward compatibily with Karoshi V9.
@@ -76,7 +77,7 @@ apt-get -y install feh ubiquity-frontend-gtk
 
 function install_additional_software {
 #Install software
-if [ $INSTALL_BATCH = yes ]
+if [ $INSTALL_EXTRA = yes ]
 then
 		apt-get -y install $extrapackages
 		if [ $? != 0 ]
@@ -105,7 +106,7 @@ function install_software {
 echo -e "\nInstalling main software packages\n"
 sleep 1
 
-if [ $INSTALL_BATCH = yes ]
+if [ $INSTALL_SOFTWARE = yes ]
 then
 		apt-get -y install $packages
 		if [ $? != 0 ]
@@ -140,14 +141,18 @@ function tidy_packages {
 apt-get -y autoremove
 }
 
-function run_config {
-#Configure to make client
-./opt/karoshi/karoshi-client-pheonix/buildclient/config/config
-}
 
 #Copy config files
 mkdir -p /opt/karoshi/images
 cp /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/images/background.png /opt/karoshi/images/background.png
+
+cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-update.conf /etc/init
+cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-remount.conf /etc/init
+cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
+cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-cups.conf /etc/init
+cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-multicast.conf /etc/init
+
 
 function configure_sudoers {
 #Configure sudoers
