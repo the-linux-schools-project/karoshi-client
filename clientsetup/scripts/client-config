@@ -561,7 +561,7 @@ fi
 ##########################
 #Custom startup scripts
 ##########################
-if [ -d /var/lib/samba/netlogon/linuxclient/$LINUX_VERSION/custom_scripts ];then
+if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/custom_scripts ]; then
 	run-parts /var/lib/samba/netlogon/linuxclient/$LINUX_VERSION/custom_scripts
 else
 	mkdir -p /var/lib/samba/netlogon/linuxclient/$LINUX_VERSION/custom_scripts
