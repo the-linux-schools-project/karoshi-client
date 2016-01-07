@@ -28,7 +28,7 @@ KAROSHIVER=karoshi-client-v4.4
 KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
 BUILDPATH=/home/karoshi/$KAROSHIVERNOCAPS
-RELEASE=willy
+RELEASE=wily
 BRANCH=pheonix
 ZIPFILE=$BRANCH.zip
 
@@ -167,9 +167,10 @@ cp /sbin/initctl /sbin/initctl.$$
 
 #Run configure chroot
 cd $BUILDPATH
-cd chroot
 echo -e "\nConfiguring chroot\n"
-chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/configure-chroot
+sudo chroot chroot
+cd chroot
+/opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/configure-chroot
 
 umount $BUILDPATH/chroot/dev
 
