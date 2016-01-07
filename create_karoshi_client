@@ -28,7 +28,7 @@ KAROSHIVER=karoshi-client-v4.4
 KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
 BUILDPATH=/home/karoshi/$KAROSHIVERNOCAPS
-RELEASE=vivid
+RELEASE=willy
 BRANCH=pheonix
 ZIPFILE=$BRANCH.zip
 
@@ -81,7 +81,7 @@ then
 else
 	RUNDEBOOSTRAP=yes
 	echo -e "Creating $BUILDPATH/chroot\n"
-	sleep 1	
+	sleep 1
 	mkdir -p $BUILDPATH/chroot
 fi
 
@@ -144,12 +144,12 @@ fi
 #Mount dev folder
 
 echo -e "\nMounting $BUILDPATH/chroot\n"
-sleep 1	
+sleep 1
 mount --bind /dev chroot/dev
 
 #Install software to create the ISO image
 echo -e "Installing syslinux squashfs-tools and genisoimage\n"
-sleep 1	
+sleep 1
 apt-get install --yes syslinux squashfs-tools genisoimage
 
 #Copy in system files for network configuration for the chroot
@@ -171,7 +171,7 @@ cd chroot
 echo -e "\nConfiguring chroot\n"
 chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/configure-chroot
 
-umount $BUILDPATH/chroot/dev 
+umount $BUILDPATH/chroot/dev
 
 echo -e "\nCreate ISO image\n"
 
@@ -180,25 +180,25 @@ echo -e "\nCreate ISO image\n"
 if [ -d image ]
 then
 	echo -e "\nDeleting existing image directory\n"
-	sleep 1	
+	sleep 1
 	rm -f -R image
 fi
 
 #Create image directory
 echo -e "\nCreating image directory\n"
-sleep 1	
+sleep 1
 
 mkdir -p image/{casper,isolinux,install}
 
 #Copy in the kernel built with the casper scripts
 echo -e "\nCopying in the kernel built with casper scripts\n"
-sleep 1	
+sleep 1
 cp chroot/boot/vmlinuz-3.13.**-**-generic image/casper/vmlinuz
 cp chroot/boot/initrd.img-3.13.**-**-generic image/casper/initrd.gz
 
 #Copy in isolinux and memtest binaries
 echo -e "\nCopying in isolinux and memtest binaries\n"
-sleep 1	
+sleep 1
 cp /usr/lib/syslinux/isolinux.bin image/isolinux/
 cp /boot/memtest86+.bin image/install/memtest
 cp /usr/lib/syslinux/vesamenu.c32 image/isolinux/
@@ -208,7 +208,7 @@ cp -f chroot/opt/karoshi/karoshi-client-$BRANCH/clientsetup/images/boot-menu.png
 
 #Create boot instructions
 echo -e "\nCreating boot instructions\n"
-sleep 1	
+sleep 1
 echo 'splash.rle
 
 ************************************************************************
@@ -221,7 +221,7 @@ For the default live system, enter "live".  To run memtest86+, enter "memtest"
 
 #Create isolinux.cfg
 echo -e "Creating isolinux.cfg\n"
-sleep 1	
+sleep 1
 echo '
 default vesamenu.c32
 prompt 0
@@ -277,7 +277,7 @@ echo -e "\nCreating manifest\n"
 sudo chroot chroot dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee image/casper/filesystem.manifest
 sudo cp -v image/casper/filesystem.manifest image/casper/filesystem.manifest-desktop
 REMOVE='ubiquity ubiquity-frontend-gtk ubiquity-frontend-kde casper lupin-casper live-initramfs user-setup discover1 xresprobe os-prober libdebian-installer4'
-for i in $REMOVE 
+for i in $REMOVE
 do
         sudo sed -i "/${i}/d" image/casper/filesystem.manifest-desktop
 done
@@ -288,7 +288,7 @@ chmod 0644 image/casper/vmlinuz
 echo -e "\nCompressing chroot\n"
 sleep 1
 #Compress the chroot
-mksquashfs chroot image/casper/filesystem.squashfs 
+mksquashfs chroot image/casper/filesystem.squashfs
 #Write the filesystem size - needed by the installer
 echo -e "\nWriting the filesystem size\n"
 sleep 1
