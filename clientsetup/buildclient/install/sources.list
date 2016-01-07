@@ -56,7 +56,9 @@ deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
 deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
 deb-src http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
-
+#### Bluegriffon PPA
+deb http://archive.getdeb.net/ubuntu trusty-getdeb apps
+# deb-src http://archive.getdeb.net/ubuntu trusty-getdeb apps
 
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
 deb http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main
