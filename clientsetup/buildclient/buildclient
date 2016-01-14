@@ -146,12 +146,13 @@ apt-get -y autoremove
 mkdir -p /opt/karoshi/images
 cp /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/images/background.png /opt/karoshi/images/background.png
 
-cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-update.conf /etc/init
-cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-remount.conf /etc/init
-cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
-cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-cups.conf /etc/init
-cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
-cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-multicast.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/skel /etc
+sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-update.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-remount.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-cups.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 
 function configure_sudoers {
