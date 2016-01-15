@@ -51,6 +51,8 @@ deb http://download.virtualbox.org/virtualbox/debian trusty contrib
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
 deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
 deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
+deb http://ppa.launchpad.net/webupd8team/atom/ubuntu trusty main 
+deb-src http://ppa.launchpad.net/webupd8team/atom/ubuntu trusty main 
 
 #### Wine PPA - https://launchpad.net/~ubuntu-wine/+archive/ppa/
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
