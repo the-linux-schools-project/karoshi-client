@@ -20,7 +20,7 @@ msgstr ""
 
 #: linuxclientsetup/scripts/client-shutdown:27
 msgid "minutes"
-msgstr "protokół"
+msgstr "minuty"
 
 #: linuxclientsetup/scripts/client-shutdown:29
 msgid "minute"
@@ -28,15 +28,15 @@ msgstr "minuta"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Karoshi Scheduled Shutdown"
-msgstr "Karoshi Zaplanowane Shutdown"
+msgstr "Zaplanowane wylaczenie Karoshi"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "This system is going down in $1 $minute_string"
-msgstr "System ten będzie w $1 $minute_string"
+msgstr "System zostanie wylaczony za $1 $minute_string"
 
 #: linuxclientsetup/scripts/client-shutdown:52
 msgid "Make sure to save your work!"
-msgstr "Upewnij się, aby zapisać swoją pracę!"
+msgstr "Upewnij się, że zapisałes swoją pracę!"
 
 #: linuxclientsetup/scripts/pre-session:133
 #: linuxclientsetup/scripts/pre-session:137
@@ -45,13 +45,13 @@ msgstr "Upewnij się, aby zapisać swoją pracę!"
 #: linuxclientsetup/scripts/pre-session:170
 #: linuxclientsetup/scripts/pre-session:379
 msgid "Home"
-msgstr "dom"
+msgstr "Strona Główna"
 
 #: linuxclientsetup/scripts/pre-session:148
 #: linuxclientsetup/scripts/pre-session:151
 #: linuxclientsetup/scripts/pre-session:153
 msgid "Offline Home"
-msgstr "Offline Strona główna"
+msgstr "Strona główna offline"
 
 #: linuxclientsetup/scripts/pre-session:164
 msgid "Web Hosting"
@@ -60,7 +60,7 @@ msgstr "Hosting"
 #: linuxclientsetup/scripts/pre-session:184
 #: linuxclientsetup/scripts/pre-session:383
 msgid "Admin File Manager"
-msgstr "Administrator File Manager"
+msgstr "Administrator Menedżera Plików"
 
 #: linuxclientsetup/utilities/common:66 linuxclientsetup/utilities/common:79
 #: linuxclientsetup/utilities/setup:34
@@ -74,19 +74,19 @@ msgstr "Konfiguracja Karoshi"
 #: linuxclientsetup/utilities/set-network:388
 #: linuxclientsetup/utilities/set-network:563
 msgid "Configuration cancelled"
-msgstr "konfiguracja anulowane"
+msgstr "Konfiguracja została anulowana"
 
 #: linuxclientsetup/utilities/common:79
 msgid "You must complete the form"
-msgstr "Musisz wypełnić formularz"
+msgstr "Musisz uzupełnić formularz"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:44
 msgid "Rule file $1 does not exist"
-msgstr "Plik Zasada $1 nie istnieje"
+msgstr "Plik z zasada $1 nie istnieje"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:49
 msgid "iptables chain $2 does not exist"
-msgstr "iptables łańcuch $2 nie istnieje"
+msgstr "łańcuch iptables $2 nie istnieje"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:67
 #, sh-format
@@ -95,12 +95,12 @@ msgstr "Nieprawidłowy protokół $protocol"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:77
 msgid "Port required for TCP or UDP"
-msgstr "Port wymagane dla TCP lub UDP"
+msgstr "Port wymagany dla TCP lub UDP"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:85
 #: linuxclientsetup/utilities/generate-firewall-rules:98
 msgid "Port option requires TCP or UDP"
-msgstr "Opcja port wymaga TCP lub UDP"
+msgstr "Opcjonalny port wymaga TCP lub UDP"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:93
 #, sh-format
@@ -110,12 +110,12 @@ msgstr "Niedopuszczalny zakres portów $port"
 #: linuxclientsetup/utilities/generate-firewall-rules:104
 #, sh-format
 msgid "Invalid port $port"
-msgstr "Port Nieprawidłowy $port"
+msgstr "Port $port jest nieprawidłowy"
 
 #: linuxclientsetup/utilities/generate-firewall-rules:128
 #, sh-format
 msgid "Invalid action $action"
-msgstr "Nieprawidłowy $action działania"
+msgstr "Działanie $action jest nieprawidłowe"
 
 #: linuxclientsetup/utilities/manage-flags:31
 #, sh-format
@@ -124,7 +124,7 @@ msgstr "Nie można utworzyć $flagsDir"
 
 #: linuxclientsetup/utilities/manage-flags:49
 msgid "Usage:"
-msgstr "Sposób użycia:"
+msgstr "Stopień użycia:"
 
 #: linuxclientsetup/utilities/manage-flags:50
 msgid "flag"
@@ -133,24 +133,24 @@ msgstr "flaga"
 #: linuxclientsetup/utilities/offline-homes:27
 #: linuxclientsetup/utilities/offline-homes:32
 msgid "Offline Home Area"
-msgstr "Offline Dom wypoczynkowy"
+msgstr "Obszar domowy trybu offline"
 
 #: linuxclientsetup/utilities/offline-homes:28
 msgid "You are now running in offline mode"
-msgstr "Jesteś teraz działa w trybie offline"
+msgstr "Jesteś teraz w trybie offline"
 
 #: linuxclientsetup/utilities/offline-homes:28
 #, sh-format
 msgid "Make sure you save your work in $offline_dir"
-msgstr "Upewnij się, zapisać swoją pracę w $offline_dir"
+msgstr "Upewnij się, że zapisałeś swoją pracę w $offline_dir"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "You are now connected to the network"
-msgstr "Zostaniesz podłączony do sieci"
+msgstr "Jesteś teraz podłączony do sieci"
 
 #: linuxclientsetup/utilities/offline-homes:33
 msgid "Logging out will remove your offline home area"
-msgstr "Zalogowaniu się usunie startowej obszar nieaktywny"
+msgstr "UWAGA! Wylogowanie usunie dane z obszaru startowego trybu offline"
 
 #: linuxclientsetup/utilities/set-local-password:24
 #: linuxclientsetup/utilities/set-local-password:25
@@ -160,7 +160,7 @@ msgstr "Zalogowaniu się usunie startowej obszar nieaktywny"
 #: linuxclientsetup/utilities/unset-network:27
 #: linuxclientsetup/utilities/unset-network:28
 msgid "This script must be run as root"
-msgstr "Skrypt musi być uruchamiany jako root"
+msgstr "Ten skrypt musi być uruchamiany z uprawnieniami root"
 
 #: linuxclientsetup/utilities/set-local-password:25
 #: linuxclientsetup/utilities/set-local-password:30
@@ -168,50 +168,50 @@ msgstr "Skrypt musi być uruchamiany jako root"
 #: linuxclientsetup/utilities/set-local-password:45
 #: linuxclientsetup/utilities/set-local-password:54
 msgid "Karoshi Change Password"
-msgstr "Karoshi Zmień hasło"
+msgstr "Zmień hasło Karoshi"
 
 #: linuxclientsetup/utilities/set-local-password:30
 msgid "Password not set, original still active"
-msgstr "Hasło nie ustawione, oryginalna nadal aktywne"
+msgstr "Nowe hasło nie ustawione, poprzednia wersja nadal aktywna"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #, sh-format
 msgid "Change password for $username and root"
-msgstr "Zmień hasło do $username i korzenia"
+msgstr "Zmień hasło dla $username i roota"
 
 #: linuxclientsetup/utilities/set-local-password:39
 #: linuxclientsetup/utilities/set-network:498
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Password"
-msgstr "hasło"
+msgstr "Hasło"
 
 #: linuxclientsetup/utilities/set-local-password:39
 msgid "Confirm"
-msgstr "potwierdzać"
+msgstr "Potwierdz"
 
 #: linuxclientsetup/utilities/set-local-password:45
 msgid "The passwords did not match"
-msgstr "Hasła nie pasują"
+msgstr "Hasła nie pasują do siebie"
 
 #: linuxclientsetup/utilities/set-local-password:54
 #, sh-format
 msgid "Password changed for $username and root"
-msgstr "Hasło zostało zmienione na $username i korzenia"
+msgstr "Hasło dla $surname i roota zostało zmienione"
 
 #: linuxclientsetup/utilities/set-location:26
 #: linuxclientsetup/utilities/set-location:37
 #: linuxclientsetup/utilities/set-location:45
 #: linuxclientsetup/utilities/set-location:52
 msgid "Karoshi Set Location"
-msgstr "Karoshi Zestaw Lokalizacja"
+msgstr "Ustawienia lokalizacji Karoshi"
 
 #: linuxclientsetup/utilities/set-location:26
 msgid "Unable to contact Primary Domain Controller"
-msgstr "Nie można skontaktować się z podstawowego kontrolera domeny"
+msgstr "Nie można skontaktować się z podstawowym kontrolerem domeny"
 
 #: linuxclientsetup/utilities/set-location:37
 msgid "No locations have been created"
-msgstr "Brak miejsca zostały stworzone"
+msgstr "Lokalizacja nie została stworzona"
 
 #: linuxclientsetup/utilities/set-location:47
 msgid "Choose the location of this computer"
@@ -220,7 +220,7 @@ msgstr "Wybierz lokalizację tego komputera"
 #: linuxclientsetup/utilities/set-location:52
 #, sh-format
 msgid "$HOSTNAME set to location $LOCATION"
-msgstr "$HOSTNAME ustawienie lokalizacji $LOCATION"
+msgstr "$HOSTNAME został ustawiony w lokalizacji $LOCATION"
 
 #: linuxclientsetup/utilities/set-network:31
 #: linuxclientsetup/utilities/set-network:38
@@ -247,7 +247,7 @@ msgstr "$HOSTNAME ustawienie lokalizacji $LOCATION"
 #: linuxclientsetup/utilities/set-network:531
 #: linuxclientsetup/utilities/set-network:563
 msgid "Karoshi Set Network"
-msgstr "Karoshi Zestaw sieciowy"
+msgstr "Ustawienia Sieci Karoshi"
 
 #: linuxclientsetup/utilities/set-network:37
 #: linuxclientsetup/utilities/set-network:38
@@ -257,7 +257,7 @@ msgstr "$netlogon_mount jest już zamontowana"
 
 #: linuxclientsetup/utilities/set-network:62
 msgid "Asking for network settings"
-msgstr "Pytanie o ustawieniach sieci"
+msgstr "Pytanie o ustawienia sieci"
 
 #: linuxclientsetup/utilities/set-network:72
 msgid "IP Address, Netmask and Gateway are not required if DHCP is selected"
@@ -281,7 +281,7 @@ msgstr "Maska sieci"
 
 #: linuxclientsetup/utilities/set-network:73
 msgid "Gateway"
-msgstr "przejście"
+msgstr "Brama"
 
 #: linuxclientsetup/utilities/set-network:73
 msgid "DHCP"
@@ -315,30 +315,30 @@ msgstr "Musisz podać identyfikator SSID i klucz"
 
 #: linuxclientsetup/utilities/set-network:203
 msgid "Karoshi Client Setup: Network Configuration"
-msgstr "Karoshi Konfiguracja klienta: Konfiguracja sieci"
+msgstr "Konfiguracja klienta Karoshi: Konfiguracja sieci"
 
 #: linuxclientsetup/utilities/set-network:212
 #: linuxclientsetup/utilities/set-network:255
 msgid "Bringing down network interface"
-msgstr "Obniżenie interfejs sieciowy"
+msgstr "Wyłaczenie interfejsu sieciowego"
 
 #: linuxclientsetup/utilities/set-network:216
 #: linuxclientsetup/utilities/set-network:261
 msgid "Bringing up network interface"
-msgstr "Wychowywanie interfejs sieciowy"
+msgstr "Właczenie interfejsu sieciowego"
 
 #: linuxclientsetup/utilities/set-network:248
 msgid "Did not get DHCP lease"
-msgstr "Nie dostać dzierżawy DHCP"
+msgstr "Nie otrzymano dzierżawy DHCP"
 
 #: linuxclientsetup/utilities/set-network:270
 #, sh-format
 msgid "Cannot contact gateway $GATEWAY"
-msgstr "Nie można skontaktować się z bramy $GATEWAY"
+msgstr "Nie można skontaktować się z brama $GATEWAY"
 
 #: linuxclientsetup/utilities/set-network:283
 msgid "Not configuring for Karoshi Server"
-msgstr "Nie konfigurowania serwera dla Karoshi"
+msgstr "Nie skonfigurowane dla Serwera Karoshi"
 
 #: linuxclientsetup/utilities/set-network:292
 msgid "IP Address of a Domain Controller"
@@ -346,7 +346,7 @@ msgstr "Adres IP kontrolera domeny"
 
 #: linuxclientsetup/utilities/set-network:293
 msgid "Skip"
-msgstr "skip"
+msgstr "Pomin"
 
 #: linuxclientsetup/utilities/set-network:299
 msgid "Attempting automatic configuration"
@@ -354,7 +354,7 @@ msgstr "Próba automatycznej konfiguracji"
 
 #: linuxclientsetup/utilities/set-network:315
 msgid "Invalid Domain Controller"
-msgstr "Nieprawidłowy Domain Controller"
+msgstr "Nieprawidłowy kontroler domeny"
 
 #: linuxclientsetup/utilities/set-network:322
 #: linuxclientsetup/utilities/set-network:407
@@ -365,7 +365,7 @@ msgstr "Ustawienie konfiguracji sieci"
 #: linuxclientsetup/utilities/set-network:377
 #: linuxclientsetup/utilities/set-network:448
 msgid "Cannot find domain information on server"
-msgstr "Nie możesz znaleźć informacje o domenie na serwerze"
+msgstr "Nie można znaleźć na serwerze informacji o domenie"
 
 #: linuxclientsetup/utilities/set-network:396
 msgid "Checking wireless network settings"
@@ -385,15 +385,15 @@ msgstr "Konfiguracja usługi"
 
 #: linuxclientsetup/utilities/set-network:486
 msgid "Joining domain"
-msgstr "Łączenie domeną"
+msgstr "Łączenie z domeną"
 
 #: linuxclientsetup/utilities/set-network:489
 msgid "Domain configuration cancelled"
-msgstr "Konfiguracja domeny anulowane"
+msgstr "Konfiguracja domeny została anulowana"
 
 #: linuxclientsetup/utilities/set-network:498
 msgid "Enter credentials to join the domain"
-msgstr "Wprowadź poświadczenia do przystąpienia do domeny"
+msgstr "Wprowadź poświadczenia aby przyłaczyc sie do domeny"
 
 #: linuxclientsetup/utilities/set-network:498
 #: linuxclientsetup/utilities/unset-network:49
@@ -402,49 +402,47 @@ msgstr "Nazwa użytkownika"
 
 #: linuxclientsetup/utilities/set-network:507
 msgid "Finalising domain configuration"
-msgstr "Konfiguracja domeny Finalizacja"
+msgstr "Finalizacja konfiguracji domeny"
 
 #: linuxclientsetup/utilities/set-network:531
 msgid ""
 "This version of Karoshi Client requires Karoshi Server version 9.0 or above"
-msgstr "Ta wersja Karoshi Klienta wymaga Karoshi wersji serwera 9.0 lub wyżej"
+msgstr "Ta wersja Klienta Karoshi wymaga Serwera Karoshi w wersji 9.0 lub wyższej"
 
 #: linuxclientsetup/utilities/set-network:542
 msgid "Finalising network configuration"
-msgstr "Finalizacja konfiguracja sieci"
+msgstr "Finalizacja konfiguracji sieci"
 
 #: linuxclientsetup/utilities/setup:155
 msgid "Setting capabilities for dumpcap using Linux Capabilities failed."
-msgstr ""
-"Możliwości ustawienia dla dumpcap z wykorzystaniem potencjału Linux nie "
-"powiodło się."
+msgstr "Możliwości ustawienia dla dumpcap z wykorzystaniem potencjału Linux nie powiodło się."
 
 #: linuxclientsetup/utilities/setup:156
 msgid "Falling back to setting set-user-id bit."
-msgstr "Spadła do ustawiania set- user-id trochę."
+msgstr "Nieudane ustawienie set-user-id bit."
 
 #: linuxclientsetup/utilities/unset-network:28
 #: linuxclientsetup/utilities/unset-network:37
 #: linuxclientsetup/utilities/unset-network:48
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Karoshi Unset Network"
-msgstr "Karoshi Wyłączony sieci"
+msgstr "Nieskonfigurowana siec Karoshi"
 
 #: linuxclientsetup/utilities/unset-network:37
 msgid "Karoshi Client Setup: Network Deconfiguration"
-msgstr "Karoshi Konfiguracja klienta: Sieć dekonfigurowanie"
+msgstr "Konfiguracja klienta Karoshi: Dekonfiguracja Sieci"
 
 #: linuxclientsetup/utilities/unset-network:39
 msgid "Deconfiguring domain settings"
-msgstr "Deconfiguring ustawienia domeny"
+msgstr "Dekonfiguracja ustawien domeny"
 
 #: linuxclientsetup/utilities/unset-network:43
 msgid "Machine not joined to the domain"
-msgstr "Urządzenie nie jest przyłączony do domeny"
+msgstr "Urządzenie nie jest przyłączone do domeny"
 
 #: linuxclientsetup/utilities/unset-network:49
 msgid "Enter credentials to leave the domain"
-msgstr "Wprowadź poświadczenia opuścić domenę"
+msgstr "Wprowadź poświadczenia aby opuścić domenę"
 
 #: linuxclientsetup/utilities/unset-network:77
 msgid "Invalid domain type"
@@ -460,15 +458,15 @@ msgstr "Resetowanie nazwa hosta"
 
 #: linuxclientsetup/utilities/unset-network:130
 msgid "Bringing down old network interface"
-msgstr "Obniżenie stary interfejs sieciowy"
+msgstr "Wylaczenie starego interfejsu sieciowego"
 
 #: linuxclientsetup/utilities/unset-network:133
 msgid "Resetting network interface configuration"
-msgstr "Przywracanie konfiguracji interfejsu sieciowego"
+msgstr "Resetowanie konfiguracji interfejsu sieciowego"
 
 #: linuxclientsetup/utilities/unset-network:139
 msgid "Resetting DNS information"
-msgstr "Uaktualnienie informacji o DNS"
+msgstr "Resetowanie informacji DNS"
 
 #: l10n/tmp/karoshi-change-admin-password.desktop.h:1
 msgid "Change Administrator Password"
@@ -484,8 +482,8 @@ msgstr "Konfigurowanie drukarki w systemie lokalnym"
 
 #: l10n/tmp/karoshi-set-location.desktop.h:1
 msgid "Set Karoshi Client Location"
-msgstr "Ustaw Karoshi Client Lokalizacja"
+msgstr "Ustaw Lokalizacje Klienta Karoshi"
 
 #: l10n/tmp/karoshi-setup.desktop.h:1
 msgid "Setup Karoshi Client"
-msgstr "Konfiguracja Karoshi klienta"
+msgstr "Konfiguracja Klienta Karoshi"
