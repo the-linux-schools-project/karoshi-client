@@ -132,7 +132,7 @@ sudo update-initramfs -u
 
 #Configure grub
 echo -e "\nConfiguring grub2.\n"
-cp -f /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/grub /etc/default/grub
+sudo cp -f /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/grub /etc/default/grub
 echo -e "\nUpdating grub2.\n"
 update-grub
 
@@ -146,7 +146,11 @@ apt-get -y autoremove
 mkdir -p /opt/karoshi/images
 cp /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/images/background.png /opt/karoshi/images/background.png
 
-sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/skel /etc
+
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/share/* /usr/share
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/lib/* /usr/lib
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/bin/* /usr/bin
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/skel/* /etc/skel
 sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-update.conf /etc/init
 sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-remount.conf /etc/init
 sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init

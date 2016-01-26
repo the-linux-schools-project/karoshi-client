@@ -1,0 +1,11 @@
+#!/bin/bash
+
+case "$1" in
+sound)
+	exec pavucontrol
+	;;
+*)
+	echo "ERROR: Unsupported" >&2
+	exit 1
+	;;
+esac

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=gksudo -D 'Set Client Location' karoshi-set-location
+_Name=Set Karoshi Client Location
+Icon=karoshi-set-location
+Categories=Settings;X-XFCE-SystemSettings;X-XFCE-SettingsDialog;
