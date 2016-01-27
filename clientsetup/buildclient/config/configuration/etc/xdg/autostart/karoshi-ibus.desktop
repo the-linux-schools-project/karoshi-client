@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Karoshi iBus launcher
+OnlyShowIn=XFCE;
+Exec=ibus-daemon

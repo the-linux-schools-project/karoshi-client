@@ -1,0 +1,7 @@
+Name: Create persistent home folder in offline mode
+Default: yes
+Priority: 129
+Session-Type: Additional
+Session-Interactive-Only: yes
+Session:
+	optional	pam_exec2.so log=/var/log/karoshi/offline-homes.log type=open_session once /opt/karoshi/scripts/offline-homes

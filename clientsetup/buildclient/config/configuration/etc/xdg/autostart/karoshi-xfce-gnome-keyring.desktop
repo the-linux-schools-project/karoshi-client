@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=XFCE Gnome Keyring daemon
+Comment=GNOME Keyring for XFCE
+OnlyShowIn=XFCE;
+Exec=gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh

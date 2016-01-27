@@ -1,0 +1,11 @@
+[Plymouth Theme]
+Name=Karoshi Text
+Description=Text mode version of karoshi-logo
+ModuleName=ubuntu-text
+
+[ubuntu-text]
+title=Karoshi Client
+black=0x002b46
+white=0xffffff
+brown=0xf6c00d
+blue=0x349fe3

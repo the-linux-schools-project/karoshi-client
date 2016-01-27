@@ -89,9 +89,8 @@ echo -e "\nChroot: Do you want to run the karoshi client build process? (y/n)"
 read choice
 [ -z "$choice" ] && choice=y
 [ "$choice" = y ] && /opt/karoshi/clientsetup/buildclient 2>/tmp/buildclienterrors
-/chroot/opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/buildclient
+/opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/buildclient
 
-/chroot/opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/buildclient
 echo -e "\nChroot: ubiquity-frontend-gtk\n"
 sleep 1
 apt-get install --yes ubiquity-frontend-gtk
