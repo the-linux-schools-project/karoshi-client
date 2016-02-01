@@ -27,7 +27,7 @@ esac
 KAROSHIVER=karoshi-client-v4.4
 KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
-BUILDPATH=/home/karoshi/$KAROSHIVERNOCAPS
+BUILDPATH=/home/karoshi-client/$KAROSHIVERNOCAPS
 RELEASE=wily
 BRANCH=pheonix
 ZIPFILE=$BRANCH.zip
@@ -166,8 +166,12 @@ cp chroot/opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/install/sou
 cp /sbin/initctl /sbin/initctl.$$
 
 #Run configure chroot
-cd $BUILDPATH/chroot
+cd $BUILDPATH
+
 echo -e "\nConfiguring chroot\n"
+
+chmod 0755 chroot/opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/configure-chroot
+chmod 0755 chroot/opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/buildclient
 sudo chroot chroot /opt/karoshi/karoshi-client-$BRANCH/clientsetup/buildclient/configure-chroot
 umount $BUILDPATH/chroot/dev
 
@@ -191,8 +195,8 @@ mkdir -p image/{casper,isolinux,install}
 #Copy in the kernel built with the casper scripts
 echo -e "\nCopying in the kernel built with casper scripts\n"
 sleep 1
-cp chroot/boot/vmlinuz-3.13.**-**-generic image/casper/vmlinuz
-cp chroot/boot/initrd.img-3.13.**-**-generic image/casper/initrd.gz
+cp chroot/boot/vmlinuz* image/casper/vmlinuz
+cp chroot/boot/initrd.img* image/casper/initrd.gz
 
 #Copy in isolinux and memtest binaries
 echo -e "\nCopying in isolinux and memtest binaries\n"
