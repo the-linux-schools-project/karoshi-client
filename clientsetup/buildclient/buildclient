@@ -149,6 +149,9 @@ sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/image
 sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/configuration/etc/* /etc
 sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/configuration/lib/* /lib
 
+#Copy /etc files
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/etc/* /etc
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/usr/share/* /usr/share
 
 #Copy more configuration files
 sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/usr/share/* /usr/share
