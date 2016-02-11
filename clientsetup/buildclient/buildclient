@@ -165,6 +165,10 @@ sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-cups.c
 sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
 sudo cp /opt/karoshi/karoshi-client-pheonix/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
+#Copy plymouth animations
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/plymouth/* /lib/plymouth/themes
+
+
 
 function configure_sudoers {
 #Configure sudoers
