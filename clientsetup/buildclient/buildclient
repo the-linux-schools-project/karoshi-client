@@ -74,7 +74,7 @@ function install_seperate {
 apt-get -y install feh ubiquity-frontend-gtk
 }
 
-
+sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
 function install_additional_software {
 #Install software
 if [ $INSTALL_EXTRA = yes ]
