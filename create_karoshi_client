@@ -131,7 +131,7 @@ then
 	echo -e "Unziping $ZIPFILE to $BUILDPATH/chroot/opt/karoshi\n"
 	sleep 1
 	mkdir -p $BUILDPATH/chroot/opt/karoshi/
-	unzip $ZIPFILE  -d $BUILDPATH/chroot/opt/karoshi/
+	unzip $ZIPFILE  -d $BUILDPATH/chroot/opt/karoshi/karoshi-client
 	if [ $? != 0 ]
 	then
 		echo -e "There was a problem unziping $ZIPFILE - exiting now."
