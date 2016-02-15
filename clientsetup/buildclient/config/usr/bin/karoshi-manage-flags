@@ -1,0 +1,75 @@
+#!/bin/bash
+
+#Copyright (C) 2013, 2014 Robin McCorkell
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+declare -A flags
+flagsDir="/var/lib/karoshi/flags"
+
+if [[ ! -d $flagsDir ]]; then
+	if ! mkdir -p "$flagsDir"; then
+		echo $"Could not create $flagsDir" >&2
+		exit 255
+	fi
+fi
+
+function checkFlag {
+	if [[ -f $flagsDir/$1 ]]; then flags[$1]=true; else flags[$1]=false; fi
+}
+function setFlag {
+	if ${flags[$1]}; then
+		touch "$flagsDir"/"$1"
+	else
+		if [[ -f $flagsDir/$1 ]]; then
+			rm -f "$flagsDir"/"$1"
+		fi
+	fi
+}
+function printHelp {
+	echo $"Usage:" >&2
+	echo "	$0 <get|set|unset> "$"flag" >&2
+	exit 255
+}
+
+if [[ $# -eq 2 ]]; then
+	#Command line mode
+	case "$1" in
+	get)
+		checkFlag "$2"
+		${flags[$2]} && echo "$flagsDir/$2"
+		;;
+	set)
+		flags[$2]=true
+		setFlag "$2"
+		;;
+	unset)
+		flags[$2]=false
+		setFlag "$2"
+		;;
+	*)
+		printHelp
+		;;
+	esac
+else
+	printHelp
+fi

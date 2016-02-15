@@ -1,0 +1,145 @@
+#!/bin/bash
+
+#Copyright (C) 2013 Robin McCorkell
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/linuxclientsetup/utilities/common
+
+#Add iptables template
+iptables-restore < /opt/karoshi/linuxclientsetup/config-files/firewall/iptables.rules
+
+deny_target="DROP"
+
+if ! karoshi-manage-flags get firewall_no_ping >/dev/null; then
+	iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+fi
+if ! karoshi-manage-flags get firewall_drop_deny >/dev/null; then
+	iptables -A INPUT -j REJECT
+	deny_target="REJECT"
+fi
+
+function process_rules {
+	# $1 = file to process
+	# $2 = iptables chain
+	[[ $1 ]] || return
+	if ! [[ -f $1 ]]; then
+		echo $"Rule file $1 does not exist" >&2
+		return
+	fi
+	[[ $2 ]] || return
+	if ! iptables -n --list "$2" >/dev/null; then
+		echo $"iptables chain $2 does not exist" >&2
+		return
+	fi
+
+	(( line_no = 0 ))
+	while read -r action protocol port source; do
+		(( ++line_no ))
+		if [[ $action ]] && [[ $action != \#* ]]; then
+			rule=( )
+
+			#Protocol
+			case "$protocol" in
+			all|any)
+				;;
+			*)
+				if getent protocols "$protocol" >/dev/null; then
+					rule+=( -p "$protocol" )
+				else
+					echo "$1:$line_no:" $"Invalid protocol $protocol" >&2
+					continue
+				fi
+				;;
+			esac
+
+			#Port
+			case "$port" in
+			-)
+				if [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]]; then
+					echo "$1:$line_no:" $"Port required for TCP or UDP" >&2
+					continue
+				fi
+				;;
+			all|any)
+				;;
+			*:*)
+				if ! ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ); then
+					echo "$1:$line_no:" $"Port option requires TCP or UDP" >&2
+					continue
+				fi
+				port1=${port%%:*}
+				port2=${port#*:}
+				if (( port1 > 0 && port1 < 65536 )) && (( port2 > 0 && port2 < 65536 )); then
+					rule+=( --dport $port )
+				else
+					echo "$1:$line_no:" $"Invalid port range $port" >&2
+				fi
+				;;
+			*)
+				if ! ( [[ $protocol == "tcp" ]] || [[ $protocol == "udp" ]] ); then
+					echo "$1:$line_no:" $"Port option requires TCP or UDP" >&2
+					continue
+				fi
+				if getent services "$port" >/dev/null || ( (( port > 0 && port < 65536 )) ); then
+					rule+=( --dport $port )
+				else
+					echo "$1:$line_no:" $"Invalid port $port" >&2
+					continue
+				fi
+				;;
+			esac
+
+			#Source
+			case "$source" in
+			any|all|"")
+				;;
+			*)
+				rule+=( --source "$source" )
+				;;
+			esac
+
+			#Action
+			case "$action" in
+			allow)
+				rule+=( -j ACCEPT )
+				;;
+			deny)
+				rule+=( -j "$deny_target" )
+				;;
+			*)
+				echo "$1:$line_no:" $"Invalid action $action" >&2
+				continue
+				;;
+			esac
+
+			#Commit rule
+			iptables -A "$2" "${rule[@]}"
+		fi
+	done < "$1"
+}
+
+if [[ -f /var/lib/karoshi/firewall/domain_rules ]]; then
+	process_rules /var/lib/karoshi/firewall/domain_rules karoshi-domain
+fi
+if [[ -f /var/lib/karoshi/firewall/local_rules ]]; then
+	process_rules /var/lib/karoshi/firewall/local_rules karoshi-local
+fi
+
