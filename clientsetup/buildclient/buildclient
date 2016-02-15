@@ -74,7 +74,7 @@ function install_seperate {
 apt-get -y install feh ubiquity-frontend-gtk
 }
 
-sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
+sudo cp -r /opt/karoshi/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
 function install_additional_software {
 #Install software
 if [ $INSTALL_EXTRA = yes ]
@@ -132,7 +132,7 @@ sudo update-initramfs -u
 
 #Configure grub
 echo -e "\nConfiguring grub2.\n"
-sudo cp -f /opt/karoshi/karoshi-client-pheonix/clientsetup/buildclient/config/grub /etc/default/grub
+sudo cp -f /opt/karoshi/clientsetup/buildclient/config/grub /etc/default/grub
 echo -e "\nUpdating grub2.\n"
 update-grub
 
@@ -144,31 +144,31 @@ apt-get -y autoremove
 
 #Copy config files
 mkdir -p /opt/karoshi/images
-sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/images/* /opt/karoshi/images
+sudo cp /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
 
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/configuration/etc/* /etc
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/configuration/lib/* /lib
+sudo cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
+sudo cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
 
 #Copy /etc files
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/etc/* /etc
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/share/* /usr/share
+sudo cp -r /opt/karoshi/clientsetup/etc/* /etc
+sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
 
 #Copy images
-sudo cp -r /opt/karoshi/karoshi-client
+
 #Copy more configuration files
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/share/* /usr/share
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/lib/* /usr/lib
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/bin/* /usr/bin
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/skel/* /etc/skel
-sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-update.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-remount.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-cups.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-multicast.conf /etc/init
+sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
+sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
+sudo cp -r /opt/karoshi/clientsetup/skel/* /etc/skel
+sudo cp /opt/karoshi/clientsetup/utilities/karoshi-update.conf /etc/init
+sudo cp /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
+sudo cp /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
+sudo cp /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
+sudo cp /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+sudo cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 #Copy plymouth animations
-sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/plymouth/* /lib/plymouth/themes
+sudo cp -r /opt/karoshi/clientsetup/plymouth/* /lib/plymouth/themes
 
 
 
