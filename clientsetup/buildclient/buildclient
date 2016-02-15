@@ -1,7 +1,7 @@
 
 #!/bin/bash
 
-
+branch=pheonix
 #Set this to yes if you do not want to stop for errors or help messages.
 AUTO=no
 #Create the karoshi user
@@ -144,31 +144,31 @@ apt-get -y autoremove
 
 #Copy config files
 mkdir -p /opt/karoshi/images
-sudo cp /opt/karoshi/karoshi-client/clientsetup/buildclient/config/images/* /opt/karoshi/images/background.png
+sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/images/* /opt/karoshi/images
 
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/buildclient/config/configuration/etc/* /etc
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/buildclient/config/configuration/lib/* /lib
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/configuration/etc/* /etc
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/configuration/lib/* /lib
 
 #Copy /etc files
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/etc/* /etc
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/buildclient/config/usr/share/* /usr/share
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/etc/* /etc
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/share/* /usr/share
 
 #Copy images
 sudo cp -r /opt/karoshi/karoshi-client
 #Copy more configuration files
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/buildclient/config/usr/share/* /usr/share
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/buildclient/config/usr/lib/* /usr/lib
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/buildclient/config/usr/bin/* /usr/bin
-sudo cp -r /opt/karoshi/karoshi-client/clientsetup/skel/* /etc/skel
-sudo cp /opt/karoshi/karoshi-client/clientsetup/utilities/karoshi-update.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client/clientsetup/utilities/karoshi-remount.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client/clientsetup/utilities/karoshi-cups.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
-sudo cp /opt/karoshi/karoshi-client/clientsetup/utilities/karoshi-multicast.conf /etc/init
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/share/* /usr/share
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/lib/* /usr/lib
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/buildclient/config/usr/bin/* /usr/bin
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/skel/* /etc/skel
+sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-update.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-remount.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-cups.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+sudo cp /opt/karoshi/karoshi-client-$branch/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 #Copy plymouth animations
-sudo cp -r /opt/karoshi/karoshi-client-pheonix/clientsetup/plymouth/* /lib/plymouth/themes
+sudo cp -r /opt/karoshi/karoshi-client-$branch/clientsetup/plymouth/* /lib/plymouth/themes
 
 
 
