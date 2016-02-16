@@ -24,7 +24,7 @@ case $choice in
 	ARCH=i386
 esac
 
-KAROSHIVER=karoshi-client-v4.4
+KAROSHIVER=karoshi-client-v5
 KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
 BUILDPATH=/home/karoshi-client/$KAROSHIVERNOCAPS
