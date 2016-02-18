@@ -40,16 +40,16 @@
 #function updateVariables
 #	updates variables file
 
-if [[ -f /opt/karoshi/variables ]]; then
-	source /opt/karoshi/variables
+if [[ -f /opt/karoshi/clientsetup/variables ]]; then
+	source /opt/karoshi/clientsetup/variables
 else
-	source /opt/karoshi/linuxclientsetup/variables
+	source /opt/karoshi/clientsetup/variables
 fi
 
 if [[ -f /opt/karoshi/paths ]]; then
-	source /opt/karoshi/paths
+	source /opt/karoshi/clientsetup/paths
 else
-	source /opt/karoshi/linuxclientsetup/paths
+	source /opt/karoshi/clientsetup/paths
 fi
 
 ipregex='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
@@ -117,7 +117,7 @@ DOMAINTYPE=$DOMAINTYPE
 DOMAIN=$DOMAIN
 DNSSUFFIX=$DNSSUFFIX
 CLIENTSHUTDOWNTIME=$CLIENTSHUTDOWNTIME
-IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/variables
+IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/clientseyup/variables
 }
 
 function l10n_init {
