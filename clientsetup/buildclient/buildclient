@@ -76,7 +76,7 @@ sudo apt-get -y install $packages
 		then
 			echo There was a problem installing the packages. Press return to continue.
 		fi
-else
+
 		sudo apt-get -y install $extrapackages
 		if [ $? != 0 ]
 		then
@@ -93,23 +93,19 @@ function install_software {
 echo -e "\nInstalling main software packages\n"
 sleep 1
 
-if [ $INSTALL_SOFTWARE = yes ]
-then
-		apt-get -y install $packages
+sudo apt-get -y install $packages
 		if [ $? != 0 ]
 		then
 			echo There was a problem installing the packages. Press return to continue.
 		fi
-else
-	for package in `echo $packages`
-	do
-		echo -e "\nInstalling $package\n"
-		sleep 1
-		apt-get -y install $package
+		
+echo -e "\nInstalling $extrapackages\n"
+sleep 1
+
+sudo apt-get -y install $extrapackages
 		if [ $? != 0 ]
 		then
-			echo $package: There was a problem installing this package. Press return to continue.
-			[ $AUTO = no ] && read pause
+		echo $extrapackages: There was a problem installing packages. Press return to continue.
 		fi
 	done
 fi

@@ -85,7 +85,6 @@ apt-get install --yes wget
 check_status
 
 #Install and configure Karoshi
-/opt/karoshi/clientsetup/buildclient 2>/tmp/buildclienterrors
 /opt/karoshi/clientsetup/buildclient/buildclient
 
 echo -e "\nChroot: ubiquity-frontend-gtk\n"
