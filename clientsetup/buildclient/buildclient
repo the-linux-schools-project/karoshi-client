@@ -55,7 +55,11 @@ UBUNTUVER=trusty
 apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
 add-apt-repository -y "deb http://inverse.ca/ubuntu $UBUNTUVER $UBUNTUVER"
 
+apt-get update
+apt-key update
+
 #Yad
+
 add-apt-repository -y ppa:webupd8team/y-ppa-manager
 
 function update_repos {
@@ -68,12 +72,12 @@ function install_seperate {
 apt-get -y install feh ubiquity-frontend-gtk
 }
 
-sudo cp -r /opt/karoshi/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
+
 
 #Install software
 sudo apt-key update
 sudo apt-get update
-apt-get --force-yes install $packages
+apt-get -y install $packages
 		if [ $? != 0 ]
 		then
 			echo There was a problem installing the packages. Press return to continue.

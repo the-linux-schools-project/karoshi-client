@@ -38,6 +38,7 @@ check_status
 echo -e "Chroot: updating apt\n"
 sleep 1	
 apt-get update
+apt-key update
 check_status
 
 echo -e "\nChroot: installing dbus\n"
@@ -84,6 +85,7 @@ sleep 1
 apt-get install --yes wget
 check_status
 
+apt-get update
 #Install and configure Karoshi
 /opt/karoshi/clientsetup/buildclient/buildclient
 
