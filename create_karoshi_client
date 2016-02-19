@@ -160,8 +160,6 @@ sudo cp /etc/hosts chroot/etc/hosts
 echo -e "Copying /etc/resolv.conf\n"
 cp /etc/resolv.conf chroot/etc/resolv.conf
 
-#Copy in sources.list if only a minimal list is there
-sudo cp chroot/opt/karoshi/clientsetup/buildclient/install/sources.list chroot/etc/apt/sources.list
 
 #Backup /sbin/initctl
 cp /sbin/initctl /sbin/initctl.$$

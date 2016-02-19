@@ -21,6 +21,8 @@ ln -s /bin/true /tmp/fake/service
 export PATH=/tmp/fake:$PATH
 export DEBIAN_FRONTEND=noninteractive
 
+sudo cp -r /opt/karoshi/clientsetup/buildclient/installs/sources.list /etc/apt
+
 function check_status {
 if [ $? != 0 ]
 then
