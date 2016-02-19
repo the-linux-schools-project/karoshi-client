@@ -71,45 +71,20 @@ apt-get -y install feh ubiquity-frontend-gtk
 sudo cp -r /opt/karoshi/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
 
 #Install software
-sudo apt-get -y install $packages
+apt-get -y install $packages
 		if [ $? != 0 ]
 		then
 			echo There was a problem installing the packages. Press return to continue.
 		fi
 
-		sudo apt-get -y install $extrapackages
+		apt-get -y install $extrapackages
 		if [ $? != 0 ]
 		then
 			echo $packages: There was a problem installing this package. Press return to continue.
-			[ $AUTO = no ] && read pause
+
 		fi
-	done
 
 
-function install_software {
-#Install software
-
-
-echo -e "\nInstalling main software packages\n"
-sleep 1
-
-sudo apt-get -y install $packages
-		if [ $? != 0 ]
-		then
-			echo There was a problem installing the packages. Press return to continue.
-		fi
-		
-echo -e "\nInstalling $extrapackages\n"
-sleep 1
-
-sudo apt-get -y install $extrapackages
-		if [ $? != 0 ]
-		then
-		echo $extrapackages: There was a problem installing packages. Press return to continue.
-		fi
-	done
-fi
-}
 #Update initramfs
 sudo update-initramfs -u
 
