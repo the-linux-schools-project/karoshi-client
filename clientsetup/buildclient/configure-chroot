@@ -86,7 +86,7 @@ check_status
 
 #Install and configure Karoshi
 /opt/karoshi/clientsetup/buildclient 2>/tmp/buildclienterrors
-/opt/karoshi/karoshi-client/clientsetup/buildclient/buildclient
+/opt/karoshi/clientsetup/buildclient/buildclient
 
 echo -e "\nChroot: ubiquity-frontend-gtk\n"
 sleep 1
