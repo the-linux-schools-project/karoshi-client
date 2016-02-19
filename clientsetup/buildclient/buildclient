@@ -71,6 +71,8 @@ apt-get -y install feh ubiquity-frontend-gtk
 sudo cp -r /opt/karoshi/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
 
 #Install software
+sudo apt-key update
+sudo apt-get update
 apt-get --force-yes install $packages
 		if [ $? != 0 ]
 		then
