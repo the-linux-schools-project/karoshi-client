@@ -71,13 +71,13 @@ apt-get -y install feh ubiquity-frontend-gtk
 sudo cp -r /opt/karoshi/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
 
 #Install software
-apt-get -y install $packages
+apt-get --force-yes install $packages
 		if [ $? != 0 ]
 		then
 			echo There was a problem installing the packages. Press return to continue.
 		fi
 
-		apt-get -y install $extrapackages
+		apt-get --force-yes install $extrapackages
 		if [ $? != 0 ]
 		then
 			echo $packages: There was a problem installing this package. Press return to continue.
