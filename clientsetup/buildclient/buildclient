@@ -2,18 +2,12 @@
 #!/bin/bash
 
 branch=pheonix
-#Set this to yes if you do not want to stop for errors or help messages.
-AUTO=no
 #Create the karoshi user
 CREATE_KAROSHI_USER=yes
 #Add additional repos for zfs yad remastersys and mailscanner.
 ADD_REPOS=yes
 UPDATE_REPOS=yes
-#Install additional software utils.
-INSTALL_ADDITIONAL=yes
-#Install all of the main software packages needed such as apache and mysql.
-INSTALL_SOFTWARE=yes
-INSTALL_EXTRA=yes
+
 #We are currently using sysv startup scripts instead of upstart.
 SYSVSUPPORT=yes
 #Download and compile samba4 - we are staying with a compiled version rather than the version from the repos for backward compatibily with Karoshi V9.
@@ -75,29 +69,22 @@ apt-get -y install feh ubiquity-frontend-gtk
 }
 
 sudo cp -r /opt/karoshi/clientsetup/buildclient/install/sources.list /etc/apt/sources.list
-function install_additional_software {
+
 #Install software
-if [ $INSTALL_EXTRA = yes ]
-then
-		apt-get -y install $extrapackages
+sudo apt-get -y install $packages
 		if [ $? != 0 ]
 		then
-			echo There was a problem installing the extra packages. Press return to continue.
+			echo There was a problem installing the packages. Press return to continue.
 		fi
 else
-	for package in `echo $extrapackages`
-	do
-		echo -e "\nInstalling $package\n"
-		sleep 1
-		apt-get -y install $package
+		sudo apt-get -y install $extrapackages
 		if [ $? != 0 ]
 		then
-			echo $package: There was a problem installing this package. Press return to continue.
+			echo $packages: There was a problem installing this package. Press return to continue.
 			[ $AUTO = no ] && read pause
 		fi
 	done
-fi
-}
+
 
 function install_software {
 #Install software
