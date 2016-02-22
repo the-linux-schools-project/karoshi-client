@@ -71,6 +71,7 @@
       <property name="items" type="empty"/>
       <property name="appearance" type="empty"/>
       <property name="invert-orientation" type="empty"/>
+      <property name="plugin-9" type="string" value="tasklist"/>
     </property>
     <property name="plugin-8" type="string" value="pager">
       <property name="flat-buttons" type="empty"/>
@@ -97,7 +98,6 @@
       <property name="style" type="empty"/>
     </property>
     <property name="plugin-1" type="string" value="actions"/>
-    <property name="plugin-9" type="string" value="tasklist"/>
   </property>
   <property name="configver" type="int" value="2"/>
 </channel>
