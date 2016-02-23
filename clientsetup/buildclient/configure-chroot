@@ -43,7 +43,7 @@ check_status
 
 echo -e "\nChroot: installing dbus\n"
 sleep 1	
-apt-get install --yes dbus
+apt-get install dbus
 check_status
 
 dbus-uuidgen > /var/lib/dbus/machine-id
@@ -52,7 +52,7 @@ dpkg-divert --local --rename --add /sbin/initctl
 #Install Packages needed for the live system
 echo -e "\nChroot: Installing packages for the live system\n"
 sleep 1	
-apt-get install --yes ubuntu-minimal casper lupin-casper ubiquity-casper ubiquity-slideshow-ubuntu-gnome
+apt-get install ubuntu-minimal casper lupin-casper ubiquity-casper ubiquity-slideshow-ubuntu-gnome
 check_status
 
 #Temporary fudge for package dependency problem with casper and samba4 from linuxschools backports
@@ -62,22 +62,22 @@ apt-get remove casper
 
 echo -e "\nChroot: Installing discover and os-prober\n"
 sleep 1	
-apt-get install --yes discover os-prober
+apt-get install discover os-prober
 check_status
 
 echo -e "\nChroot: Installing linux-generic\n"
 sleep 1	
-apt-get install --yes linux-generic
+apt-get install linux-generic
 check_status
 
 echo -e "\nChroot: Installing grub2 and plymouth-x11\n"
 sleep 1	
 
-apt-get install --yes grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lists plymouth-x11
+apt-get install grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lists plymouth-x11
 
 echo -e "\nChroot: Installing python-software-properties\n"
 sleep 1	
-apt-get install --yes software-properties-common python-software-properties
+apt-get install software-properties-common python-software-properties
 check_status
  
 echo -e "\nChroot: Installing wget\n"
@@ -91,7 +91,7 @@ apt-get update
 
 echo -e "\nChroot: ubiquity-frontend-gtk\n"
 sleep 1
-apt-get install --yes ubiquity-frontend-gtk
+apt-get install ubiquity-frontend-gtk
 check_status
 
 #Add the ubuntu user for casper
@@ -125,7 +125,7 @@ ls /boot/vmlinuz-3.13.**-**-generic > list.txt
 sum=$(cat list.txt | grep '[^ ]' | wc -l)
 
 if [ $sum -gt 1 ]; then
-dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | xargs sudo apt-get -y purge
+dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | xargs sudo apt-get purge
 fi
 
 #Update initramfs

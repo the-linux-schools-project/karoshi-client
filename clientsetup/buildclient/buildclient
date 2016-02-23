@@ -53,7 +53,7 @@ sleep 1
 UBUNTUVER=trusty
 [ `lsb_release -a 2>/dev/null | grep -c precise` -gt 0 ] && UBUNTUVER=precise
 apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
-add-apt-repository -y "deb http://inverse.ca/ubuntu $UBUNTUVER $UBUNTUVER"
+add-apt-repository "deb http://inverse.ca/ubuntu trusty trusty"
 
 apt-get update
 apt-key update
@@ -94,7 +94,7 @@ apt-get install $packages
 			echo There was a problem installing the packages. Press return to continue.
 		fi
 
-		apt-get --force-yes install $extrapackages
+		apt-get install $extrapackages
 		if [ $? != 0 ]
 		then
 			echo $packages: There was a problem installing this package. Press return to continue.
@@ -113,7 +113,7 @@ update-grub
 
 #Tidy packages
 function tidy_packages {
-apt-get -y autoremove
+apt-get autoremove
 }
 
 
