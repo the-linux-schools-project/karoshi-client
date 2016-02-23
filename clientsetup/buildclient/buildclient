@@ -58,6 +58,17 @@ add-apt-repository -y "deb http://inverse.ca/ubuntu $UBUNTUVER $UBUNTUVER"
 apt-get update
 apt-key update
 
+
+#GPG keys
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3E5C1192
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 614C4B28
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0xcbcb082a1bb943db
+wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -0- | apt-key add -
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1378B444
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
 #Yad
 
 add-apt-repository -y ppa:webupd8team/y-ppa-manager
@@ -135,9 +146,3 @@ sudo cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 sudo cp -r /opt/karoshi/clientsetup/plymouth/* /lib/plymouth/themes
 
 
-
-function configure_sudoers {
-#Configure sudoers
-cp /opt/karoshi/serversetup/all/configfiles/sudoers /etc
-chown root:root /etc/sudoers
-}
