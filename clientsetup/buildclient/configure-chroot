@@ -5,7 +5,6 @@ mount none -t sysfs /sys
 mount none -t devpts /dev/pts
 export HOME=/root
 export LC_ALL=C
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
 
 #Create /tmp/fake for symlinks to /bin/true
 mkdir /tmp/fake
@@ -22,6 +21,17 @@ export PATH=/tmp/fake:$PATH
 export DEBIAN_FRONTEND=noninteractive
 
 sudo cp -r /opt/karoshi/clientsetup/buildclient/installs/sources.list /etc/apt
+#GPG keys
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3E5C1192
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 614C4B28
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0xcbcb082a1bb943db
+wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -0- | apt-key add -
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1378B444
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
 
 function check_status {
 if [ $? != 0 ]
