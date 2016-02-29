@@ -46,7 +46,7 @@ else
 	source /opt/karoshi/clientsetup/variables
 fi
 
-if [[ -f /opt/karoshi/paths ]]; then
+if [[ -f /opt/karoshi/clientsetup/paths ]]; then
 	source /opt/karoshi/clientsetup/paths
 else
 	source /opt/karoshi/clientsetup/paths
@@ -117,7 +117,7 @@ DOMAINTYPE=$DOMAINTYPE
 DOMAIN=$DOMAIN
 DNSSUFFIX=$DNSSUFFIX
 CLIENTSHUTDOWNTIME=$CLIENTSHUTDOWNTIME
-IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/clientseyup/variables
+IDLESHUTDOWNTIME=$IDLESHUTDOWNTIME" > /opt/karoshi/clientsetup/variables
 }
 
 function l10n_init {
