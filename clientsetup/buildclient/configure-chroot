@@ -6,6 +6,7 @@ mount none -t devpts /dev/pts
 export HOME=/root
 export LC_ALL=C
 
+sudo apt-get install software-properties-common
 #Create /tmp/fake for symlinks to /bin/true
 mkdir /tmp/fake
 
@@ -20,7 +21,18 @@ ln -s /bin/true /tmp/fake/service
 export PATH=/tmp/fake:$PATH
 export DEBIAN_FRONTEND=noninteractive
 
-sudo cp -r /opt/karoshi/clientsetup/buildclient/installs/sources.list /etc/apt
+function add_repos {
+sudo add-apt-repository ppa:otto-kesselgulasch/gimp
+sudo add-apt-repository ppa:libreoffice/libreoffice-5-0
+sudo add-apt-repository ppa:nilarimogard/webupd8
+sudo add-apt-repository ppa:webupd8team/atom
+sudo add-apt-repository ppa:ubuntu-wine/ppa
+sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ saucy universe multiverse"
+sudo add-apt-repository ppa:xubuntu-dev/xfce-4.12
+sudo add-apt-repository "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
+add-apt-repository -y ppa:webupd8team/y-ppa-manager
+}
+
 #GPG keys
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3E5C1192
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 614C4B28
@@ -32,6 +44,7 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
+wget -q -O- http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
 
 function check_status {
 if [ $? != 0 ]
@@ -45,7 +58,7 @@ fi
 dpkg --configure -a
 check_status
 
-echo -e "Chroot: updating apt\n"
+echo -e "\nChroot: updating apt\n"
 sleep 1	
 apt-get update
 apt-key update
