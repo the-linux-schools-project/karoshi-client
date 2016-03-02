@@ -66,8 +66,32 @@ function install_seperate {
 apt-get install feh ubiquity-frontend-gtk
 }
 
+function create_karoshi_user { 
+#Create karoshi user
+getent passwd karoshi 1>/dev/null
+	echo -e "Creating karoshi user\n"
+	sleep 1
+	useradd -d /opt/karoshi-admin -s /bin/bash -m karoshi
+	#Set password to karoshi
+	echo -e "\nSetting karoshi user password to karoshi\n"
+	sleep 1
+	echo -e "karoshi\nkaroshi\n" | passwd karoshi
 
+	#Extract karoshi home area
+	echo -e "\nExtracting karoshi home area folder\n"
+	sleep 1
+	chmod 0600 -R /opt/karoshi-admin
+	chmod u+X -R /opt/karoshi-admin
+	chown karoshi -R /opt/karoshi-admin
 
+	#Make sure that there is an admin group
+	getent group admin 1>/dev/null
+	[ $? != 0 ] && groupadd admin
+
+	#Add karoshi user to the admin group
+	usermod -a -G admin karoshi
+fi
+}
 #Install software
 sudo apt-key update
 sudo apt-get update
