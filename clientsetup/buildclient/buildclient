@@ -50,7 +50,7 @@ sleep 1
 UBUNTUVER=trusty
 [ `lsb_release -a 2>/dev/null | grep -c precise` -gt 0 ] && UBUNTUVER=precise
 apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
-add-apt-repository "deb http://inverse.ca/ubuntu trusty trusty"
+add-apt-repository "deb http://inverse.ca/ubuntu xenial xenial"
 
 apt-get update
 apt-key update
