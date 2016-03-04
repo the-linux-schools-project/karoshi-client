@@ -158,7 +158,8 @@ cd $BUIDLPATH
 echo -e "Copying /etc/hosts\n"
 sudo cp /etc/hosts chroot/etc/hosts
 echo -e "Copying /etc/resolv.conf\n"
-cp /etc/resolv.conf chroot/etc/resolv.conf
+sudo cp /etc/resolv.conf chroot/etc/resolv.conf
+sudo cp /etc/sources.list chroot/etc/sources.list
 
 
 #Backup /sbin/initctl
