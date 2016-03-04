@@ -75,10 +75,6 @@ sleep 1
 apt-get install ubuntu-minimal casper lupin-casper ubiquity-casper ubiquity-slideshow-ubuntu-gnome
 apt-get insttall syslinux isolinux
 
-#Temporary fudge for package dependency problem with casper and samba4 from linuxschools backports
-apt-get remove casper
-
-#Install a version of casper that does not have cifs-utils as a dependency.
 
 echo -e "\nChroot: Installing discover and os-prober\n"
 sleep 1	
@@ -107,6 +103,10 @@ check_status
 
 apt-get update
 #Install and configure Karoshi
+chmod 0755 /opt/karoshi/clientsetup/buildclient/buildclient
+echo "Running buildclient"
+sleep 4
+
 /opt/karoshi/clientsetup/buildclient/buildclient
 
 echo -e "\nChroot: ubiquity-frontend-gtk\n"
