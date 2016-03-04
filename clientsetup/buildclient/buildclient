@@ -47,7 +47,7 @@ echo -e "\nAdding required repositories\n"
 sleep 1
 
 
-UBUNTUVER=trusty
+UBUNTUVER=xenial
 [ `lsb_release -a 2>/dev/null | grep -c precise` -gt 0 ] && UBUNTUVER=precise
 apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
 add-apt-repository "deb http://inverse.ca/ubuntu xenial xenial"
