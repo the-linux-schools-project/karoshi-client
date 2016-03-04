@@ -95,18 +95,12 @@ fi
 #Install software
 sudo apt-key update
 sudo apt-get update
+
+echo "Installing packages"
+
 apt-get install $packages
-		if [ $? != 0 ]
-		then
-			echo There was a problem installing the packages. Press return to continue.
-		fi
 
-		apt-get install $extrapackages
-		if [ $? != 0 ]
-		then
-			echo $packages: There was a problem installing this package. Press return to continue.
-
-		fi
+apt-get install $extrapackages
 
 
 #Update initramfs

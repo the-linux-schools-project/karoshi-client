@@ -62,7 +62,6 @@ check_status
 echo -e "\nChroot: updating apt\n"
 sleep 1	
 apt-get update
-apt-key update
 check_status
 
 echo -e "\nChroot: installing dbus\n"
@@ -70,6 +69,9 @@ sleep 1
 apt-get install dbus
 check_status
 
+echo "Installing plymouth pakcages"
+apt-get install plymouth-label
+apt-get install plymouth-themes
 dbus-uuidgen > /var/lib/dbus/machine-id
 dpkg-divert --local --rename --add /sbin/initctl
 
