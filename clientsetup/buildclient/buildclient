@@ -89,6 +89,7 @@ getent passwd karoshi 1>/dev/null
 	cd /opt/karoshi-admin
 	tar -xvzf *
 	rm karoshi-*
+	cd
 	chmod 0600 -R /opt/karoshi-admin
 	chmod u+X -R /opt/karoshi-admin
 	chown karoshi -R /opt/karoshi-admin
