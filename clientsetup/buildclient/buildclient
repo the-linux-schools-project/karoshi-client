@@ -56,17 +56,15 @@ apt-get update
 apt-key update
 
 
-function update_repos {
+#Update repos
 echo -e "\nUpdating repositories\n"
 sleep 1
 apt-get update
-}
 
-function install_seperate {
+
 apt-get install feh ubiquity-frontend-gtk
-}
 
-function create_karoshi_user { 
+
 #Create karoshi user
 getent passwd karoshi 1>/dev/null
 	echo -e "Creating karoshi user\n"
@@ -91,7 +89,6 @@ getent passwd karoshi 1>/dev/null
 	#Add karoshi user to the admin group
 	usermod -a -G admin karoshi
 fi
-}
 #Install software
 sudo apt-key update
 sudo apt-get update
@@ -113,9 +110,7 @@ echo -e "\nUpdating grub2.\n"
 update-grub
 
 #Tidy packages
-function tidy_packages {
 apt-get autoremove
-}
 
 
 #Copy config files
