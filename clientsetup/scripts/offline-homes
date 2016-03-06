@@ -21,7 +21,7 @@
 #
 #Website: http://www.karoshi.org.uk
 
-source /opt/karoshi/linuxclientsetup/utilities/pam-common
+source /opt/karoshi/clientsetup/utilities/pam-common
 
 if [[ ! $PAM_USER ]]; then
 	echo "ERROR: Must be run through pam_exec.so" >&2
@@ -36,7 +36,7 @@ fi
 if [[ -f /opt/karoshi/paths ]]; then
 	source /opt/karoshi/paths
 else
-	source /opt/karoshi/linuxclientsetup/paths
+	source /opt/karoshi/clientsetup/paths
 fi
 
 #Check for required directories

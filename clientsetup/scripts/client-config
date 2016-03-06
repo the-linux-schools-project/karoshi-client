@@ -22,7 +22,7 @@
 #
 #Website: http://www.karoshi.org.uk
 
-source /opt/karoshi/linuxclientsetup/utilities/common
+source /opt/karoshi/clientsetup/utilities/common
 
 #Force update time from server
 echo "Setting time from $PDC.$DNSSUFFIX"
@@ -135,7 +135,7 @@ if ! karoshi-manage-flags get no_update_skel >/dev/null; then
 		find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 	else
 		karoshi-manage-flags get offline_mode >/dev/null || echo "WARNING: No admin skel found on server - using default one"
-		find /opt/karoshi/linuxclientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
+		find /opt/karoshi/clientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 	fi
 
 	#Do skel (properly)
@@ -264,8 +264,8 @@ if [[ $MAILSERVER ]]; then
 	mailserver_alias=$(< /tmp/netlogon/domain_information/aliases/"$MAILSERVER")
 
 	#Install SOGo
-	do_xpi /opt/karoshi/linuxclientsetup/config-files/thunderbird/sogo-connector-31.0.1.xpi thunderbird
-	do_xpi_raw sogo-integrator /opt/karoshi/linuxclientsetup/config-files/thunderbird/sogo-integrator thunderbird
+	do_xpi /opt/karoshi/clientsetup/config/thunderbird/sogo-connector-31.0.1.xpi thunderbird
+	do_xpi_raw sogo-integrator /opt/karoshi/clientsetup/config/thunderbird/sogo-integrator thunderbird
 	if [[ -d /opt/karoshi/mozilla/extensions/sogo-integrator ]]; then
 		sed -i "s@CHANGETHISTIMEZONE@$timezone@" \
 			/opt/karoshi/mozilla/extensions/sogo-integrator/defaults/preferences/site.js
@@ -273,7 +273,7 @@ if [[ $MAILSERVER ]]; then
 			/opt/karoshi/mozilla/extensions/sogo-integrator/chrome/content/extensions.rdf
 	fi
 	#Install Firetray
-	do_xpi /opt/karoshi/linuxclientsetup/config-files/thunderbird/firetray.xpi thunderbird
+	do_xpi /opt/karoshi/clientsetup/config/thunderbird/firetray.xpi thunderbird
 
 	if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/thunderbird/extensions ]]; then
 		while read -r -d $'\0' xpi; do
@@ -285,12 +285,12 @@ fi
 
 # Firefox
 #Install Zotero
-do_xpi /opt/karoshi/linuxclientsetup/config-files/firefox/zotero-4.0.26.2.xpi firefox
-do_xpi /opt/karoshi/linuxclientsetup/config-files/firefox/Zotero-LibreOffice-Plugin-3.5.9.xpi firefox
+do_xpi /opt/karoshi/clientsetup/config/firefox/zotero-4.0.26.2.xpi firefox
+do_xpi /opt/karoshi/clientsetup/config/firefox/Zotero-LibreOffice-Plugin-3.5.9.xpi firefox
 unopkg add --shared /opt/karoshi/mozilla/extensions/Zotero-LibreOffice-Plugin-3.5.9/install/Zotero_OpenOffice_Integration.oxt
 
 #Install Omnibar
-do_xpi /opt/karoshi/linuxclientsetup/config-files/firefox/omnibar.xpi firefox
+do_xpi /opt/karoshi/clientsetup/config/firefox/omnibar.xpi firefox
 
 if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions ]]; then
 	while read -r -d $'\0' xpi; do
@@ -322,8 +322,8 @@ fi
 firefox_version=`firefox --version | sed 's/^[^0-9]*//'`
 mkdir -p "$KAROSHI_DATA"/firefox
 mkdir -p "$KAROSHI_DATA"/thunderbird
-cat /opt/karoshi/linuxclientsetup/config-files/firefox/prefs.cfg > "$KAROSHI_DATA"/firefox/mozilla.cfg
-cat /opt/karoshi/linuxclientsetup/config-files/thunderbird/prefs.cfg > "$KAROSHI_DATA"/thunderbird/mozilla.cfg
+cat /opt/karoshi/clientsetup/config/firefox/prefs.cfg > "$KAROSHI_DATA"/firefox/mozilla.cfg
+cat /opt/karoshi/clientsetup/config/thunderbird/prefs.cfg > "$KAROSHI_DATA"/thunderbird/mozilla.cfg
 update-alternatives --install /usr/lib/firefox/mozilla.cfg firefox.mozilla.cfg "$KAROSHI_DATA"/firefox/mozilla.cfg 150
 update-alternatives --install /usr/lib/thunderbird/mozilla.cfg thunderbird.mozilla.cfg "$KAROSHI_DATA"/thunderbird/mozilla.cfg 150
 

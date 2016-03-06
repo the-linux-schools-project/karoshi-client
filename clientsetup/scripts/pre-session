@@ -21,8 +21,8 @@
 #
 #Website: http://www.karoshi.org.uk
 
-source /opt/karoshi/linuxclientsetup/utilities/common
-source /opt/karoshi/linuxclientsetup/utilities/pam-common
+source /opt/karoshi/clientsetup/utilities/common
+source /opt/karoshi/clientsetup/utilities/pam-common
 
 #function create_entries
 #	$1 is mount name
@@ -357,15 +357,15 @@ user_pref('extensions.zotero.useDataDir', true);" >> ~/.mozilla/firefox/"$firefo
 
 	if karoshi-manage-flags get offline_mode >/dev/null; then
 		if $offline_home_exists && [[ ! -e ~/.config/karoshi/offline-home-seen ]]; then
-			if [[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ]]; then
-				cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/new-offline-user.desktop ~/.config/autostart/karoshi-new-offline-user.desktop
+			if [[ -e /opt/karoshi/clientsetup/config/offline-homes/new-offline-user.desktop ]]; then
+				cp -f /opt/karoshi/clientsetup/config/offline-homes/new-offline-user.desktop ~/.config/autostart/karoshi-new-offline-user.desktop
 			fi
 			touch ~/.config/karoshi/offline-home-seen
 		fi
 	else
 		if $offline_home_exists; then
-			if [[ -e /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ]]; then
-				cp -f /opt/karoshi/linuxclientsetup/config-files/offline-homes/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
+			if [[ -e /opt/karoshi/clientsetup/config/offline-homes/online-merge.desktop ]]; then
+				cp -f /opt/karoshi/clientsetup/config/offline-homes/online-merge.desktop ~/.config/autostart/karoshi-online-merge.desktop
 			fi
 			[[ -e ~/.config/karoshi/offline-home-seen ]] && rm -f ~/.config/karoshi/offline-home-seen
 		fi
