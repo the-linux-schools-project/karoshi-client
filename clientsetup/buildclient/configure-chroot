@@ -112,12 +112,15 @@ chmod 0755 /opt/karoshi/clientsetup/buildclient/buildclient
 echo "Running buildclient"
 sleep 4
 
-/opt/karoshi/clientsetup/buildclient/buildclient
+cd /opt/karoshi/clientsetup/buildclient
+chmod 0755 buildclient
+sudo ./buildclient
+
+cd
 
 echo -e "\nChroot: ubiquity-frontend-gtk\n"
 sleep 1
 apt-get install ubiquity-frontend-gtk
-check_status
 
 #Add the ubuntu user for casper
 #echo -e "\nChroot: Creating karoshi user\n"
