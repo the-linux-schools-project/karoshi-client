@@ -74,9 +74,9 @@ sudo apt-get update
 
 echo "Installing packages"
 
-apt-get install $packages
+apt-get install --yes$packages
 
-apt-get install $extrapackages
+apt-get install --yes $extrapackages
 
 
 #Update initramfs
