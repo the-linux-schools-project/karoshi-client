@@ -1,0 +1,13 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:LOGDROP - [0:0]
+:LOGREJECT - [0:0]
+:karoshi-domain - [0:0]
+:karoshi-local - [0:0]
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -j karoshi-local
+-A INPUT -j karoshi-domain
+COMMIT

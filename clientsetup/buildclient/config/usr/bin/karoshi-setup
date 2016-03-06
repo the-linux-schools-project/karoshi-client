@@ -21,7 +21,7 @@
 #
 #Website: http://www.karoshi.org.uk
 
-source /opt/karoshi/linuxclientsetup/utilities/common
+source /opt/karoshi/clientsetup/utilities/common
 
 #Exit this script if running live.
 if [[ `mount | grep -c -w /cow` -gt 0 ]]
@@ -170,15 +170,12 @@ fi
 #Install Karoshi files
 ##################
 
-find /opt/karoshi/linuxclientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /etc/init {} +
+find /opt/karoshi/clientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /etc/init {} +
 find /etc/init -name "karoshi-*.conf" -execdir chmod 644 {} +
 
-[[ -e /opt/karoshi/scripts ]] && rm -rf /opt/karoshi/scripts
-cp -rf /opt/karoshi/linuxclientsetup/scripts /opt/karoshi
-find /opt/karoshi/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
-
-[[ -e /opt/karoshi/admin-skel ]] && rm -rf /opt/karoshi/admin-skel
-cp -rf /opt/karoshi/linuxclientsetup/admin-skel /opt/karoshi
+[[ -e /opt/karoshi/clientsetup/scripts ]] && rm -rf /opt/karoshi/clientsetup/scripts
+cp -rf /opt/karoshi/clientsetup/linuxclientsetup/scripts /opt/karoshi
+find /opt/karoshi/clientsetup/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
 
 #Configure Karoshi PAM modules
 pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
@@ -197,7 +194,7 @@ fi
 #Install default firewall rules
 if ! [[ -e $KAROSHI_DATA/firewall/local_rules ]]; then
 	mkdir -p "$KAROSHI_DATA"/firewall
-	cp -t "$KAROSHI_DATA"/firewall /opt/karoshi/linuxclientsetup/config-files/firewall/local_rules
+	cp -t "$KAROSHI_DATA"/firewall /opt/karoshi/clientsetup/config/firewall/local_rules
 fi
 
 ##################

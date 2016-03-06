@@ -43,6 +43,23 @@ sudo add-apt-repository ppa:mozillateam/thunderbird-stable
 sudo add-apt-repository ppa.launchpad.net/wireshark-dev/stable/ubuntu
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
 sudo add-apt-repository ppa:stellarium/stellarium-releases
+sudo add-apt-repository ppa:kubuntu-ppa
+sudo add-apt-repository ppa:libreoffice/ppa
+sudo add-apt-repository ppa:suraia/ppa
+sudo add-apt-repository ppa:scribus/ppa
+wget -q -O - http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
+sudo sh -c 'echo "deb http://archive.getdeb.net/ubuntu trusty-getdeb apps" >> /etc/apt/sources.list.d/getdeb.list'
+sudo add-apt-repository ppa:otto-kesselgulasch/gimp
+sudo add-apt-repository ppa:inkscape.dev/stable
+sudo add-apt-repository ppa:dobey/audiotools
+sudo add-apt-repository ppa:ubuntuhandbook1/audacity
+sudo add-apt-repository ppa:mscore-ubuntu/mscore-stable
+sudo add-apt-repository ppa:kxstudio-team/ppa
+sudo add-apt-repository ppa:kxstudio-team/hydrogen
+sudo add-apt-repository ppa:ubuntu-audio-dev/ppa
+
+
+
 
 
 

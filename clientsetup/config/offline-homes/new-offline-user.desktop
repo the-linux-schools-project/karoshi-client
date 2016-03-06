@@ -1,0 +1,9 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=karoshi-offline-homes new-user
+Name=Offline Home Folder - New User Prompt
+Icon=archive-insert
