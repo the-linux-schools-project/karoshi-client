@@ -2,27 +2,6 @@
 #!/bin/bash
 
 branch=pheonix
-#Create the karoshi user
-CREATE_KAROSHI_USER=yes
-#Add additional repos for zfs yad remastersys and mailscanner.
-ADD_REPOS=yes
-UPDATE_REPOS=yes
-
-#INSTALL_SAMBA4=yes
-#Download and install sogo email 
-#INSTALL_SOGO=yes
-#Configure sudoers to allow the karoshi user to sudo.
-CONFIGURE_SUDOERS=yes
-#Purge packages that are no longer required.
-TIDYPACKAGES=yes
-#Change to a better theme for the karoshi user in xfce.
-SET_THEME=yes
-#Configure system settings
-CONFIGURE_SYSTEM=yes
-#Update the system.
-UPDATE_SERVER=no
-#Services are started and set to run on boot when installed so lets turn them all back off for now until they are actually needed.
-TURN_OFF_SERVICES=yes
 
 
 #Reboot the machine to auto log in to the karoshi user.
@@ -114,23 +93,26 @@ apt-get autoremove
 
 
 #Copy config files
+cd /
 mkdir -p /opt/karoshi/images
-sudo cp /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
+cp /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
 
-sudo cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
-sudo cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
+cp /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
+cp -/opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
 
 #Copy /etc files
-sudo cp -r /opt/karoshi/clientsetup/etc/* /etc
-sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+echo "copying etc files"
+sleep 2
+cp /opt/karoshi/clientsetup/etc/* /etc
+cp /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
 
 #Copy images
 
 #Copy more configuration files
-sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
-sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
-sudo cp -r /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
-sudo cp -r /opt/karoshi/clientsetup/skel/* /etc/skel
+sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
+sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
+sudo cp /opt/karoshi/clientsetup/skel/* /etc/skel
 sudo cp /opt/karoshi/clientsetup/utilities/karoshi-update.conf /etc/init
 sudo cp /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
 sudo cp /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
@@ -139,7 +121,7 @@ sudo cp /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
 sudo cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 #Copy plymouth animations
-sudo cp -r /opt/karoshi/clientsetup/plymouth/* /lib/plymouth/themes
+sudo cp /opt/karoshi/clientsetup/plymouth/* /lib/plymouth/themes
 
 #Needed to run after install software
 rm /var/lib/dbus/machine-id
