@@ -83,7 +83,7 @@ esac
 echo 30 >&11
 
 #Revert configuration files
-config_root="/opt/karoshi/linuxclientsetup/config-files"
+config_root="/opt/karoshi/clientsetup/config"
 
 function revert_backup {
 	config_suffix="$1"

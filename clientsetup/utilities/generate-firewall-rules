@@ -24,7 +24,7 @@
 source /opt/karoshi/clientsetup/utilities/common
 
 #Add iptables template
-iptables-restore < /opt/karoshi/clientsetup/config-files/firewall/iptables.rules
+iptables-restore < /opt/karoshi/clientsetup/config/firewall/iptables.rules
 
 deny_target="DROP"
 
