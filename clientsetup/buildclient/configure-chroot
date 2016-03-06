@@ -51,17 +51,15 @@ sudo apt-key update
 
 #Make sure that dpkg is happy
 dpkg --configure -a
-check_status
 
 echo -e "\nChroot: updating apt\n"
 sleep 1	
 apt-get update
-check_status
 
 echo -e "\nChroot: installing dbus\n"
 sleep 1	
 apt-get install dbus
-check_status
+
 
 echo "Installing plymouth pakcages"
 apt-get install plymouth-label
@@ -85,12 +83,12 @@ apt-get insttall syslinux isolinux
 echo -e "\nChroot: Installing discover and os-prober\n"
 sleep 1	
 apt-get install discover os-prober
-check_status
+
 
 echo -e "\nChroot: Installing linux-generic\n"
 sleep 1	
 apt-get install linux-generic
-check_status
+
 
 echo -e "\nChroot: Installing grub2 and plymouth-x11\n"
 sleep 1	
@@ -100,12 +98,12 @@ apt-get install grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lis
 echo -e "\nChroot: Installing python-software-properties\n"
 sleep 1	
 apt-get install software-properties-common python-software-properties
-check_status
+
  
 echo -e "\nChroot: Installing wget\n"
 sleep 1	
 apt-get install --yes wget
-check_status
+
 
 apt-get update
 #Install and configure Karoshi

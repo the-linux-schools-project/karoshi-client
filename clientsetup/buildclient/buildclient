@@ -57,7 +57,8 @@ getent passwd karoshi 1>/dev/null
 	echo -e "\nExtracting karoshi home area folder\n"
 	sleep 1
 	cp /opt/karoshi/clientsetup/karoshi-home/* /opt/karoshi-admin
-	unzip /opt/karoshi-admin/*
+	cd /opt/karoshi-admin
+	unzip karoshi*
 	chmod 0600 -R /opt/karoshi-admin
 	chmod u+X -R /opt/karoshi-admin
 	chown karoshi -R /opt/karoshi-admin
