@@ -95,33 +95,34 @@ apt-get autoremove
 #Copy config files
 cd /
 mkdir -p /opt/karoshi/images
-cp /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
+cp -f /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
 
-cp /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
-cp -/opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
+cp -f /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
+cp -f /opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
 
 #Copy /etc files
 echo "copying etc files"
 sleep 2
-cp /opt/karoshi/clientsetup/etc/* /etc
-cp /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+cp -f /opt/karoshi/clientsetup/etc/* /etc
+cp -f /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
 
 #Copy images
 
 #Copy more configuration files
-sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
-sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
-sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
-sudo cp /opt/karoshi/clientsetup/skel/* /etc/skel
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-update.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
+echo "Copying config files"
+sudo cp -f /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+sudo cp -f /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
+sudo cp -f /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
+sudo cp -f /opt/karoshi/clientsetup/skel/* /etc/skel
+sudo cp -f /opt/karoshi/clientsetup/utilities/karoshi-update.conf /etc/init
+sudo cp -f /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
+sudo cp -f /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
+sudo cp -f /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
+sudo cp -f /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+sudo cp -f /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 #Copy plymouth animations
-sudo cp /opt/karoshi/clientsetup/plymouth/* /lib/plymouth/themes
+sudo cp -f /opt/karoshi/clientsetup/plymouth/* /lib/plymouth/themes
 
 #Needed to run after install software
 rm /var/lib/dbus/machine-id
