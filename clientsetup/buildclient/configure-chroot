@@ -71,7 +71,7 @@ apt-get install --yes ubuntu-standard casper lupin-casper
 apt-get install --yes discover laptop-detect os-prober
 apt-get install --yes linux-generic
 apt-get install --yes grub2 plymouth-x11
-apt-get install --ubiquity-frontend-gtk
+apt-get install --yes ubiquity-frontend-gtk
 apt-get install --yes isolinux
 #Install Packages needed for the live system
 echo -e "\nChroot: Installing packages for the live system\n"
