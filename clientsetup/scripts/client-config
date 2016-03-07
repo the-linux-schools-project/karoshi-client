@@ -358,6 +358,14 @@ if [[ $PROXYSERVER ]]; then
 		pref("network.proxy.type", 1);
 		pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8, $DNSSUFFIX, $PDC");
 	FOE
+
+	# Git system confguration for proxy:
+	# Currently using Default NTLM Settings to authenticate user through proxy (if one exists).
+	[ -f "/etc/gitconfig" ] || echo >> "/etc/gitconfig"
+	if grep -Fxq "proxy = https://:@${PROXYSERVER}${DNSSUFFIX}:3128" "/etc/gitconfig"; then
+		echo -e "[http]
+        	proxy = https://:@${PROXYSERVER}${DNSSUFFIX}:3128" >> "/etc/gitconfig"
+	fi
 else
 	#For no proxy, we want the homepage to be about:home
 	cat <<- FOE >> "$KAROSHI_DATA"/firefox/mozilla.cfg
@@ -520,8 +528,8 @@ fi
 if [ $DRIVER != notset ]
 then
 	#Detect if driver software installed
-	if [ $(dpkg -s $DRIVER | grep ^Status: | grep -c ok) = 0 ] 
-	then 
+	if [ $(dpkg -s $DRIVER | grep ^Status: | grep -c ok) = 0 ]
+	then
 		apt-get update
 		apt-get -y install $DRIVER
 	fi
@@ -639,7 +647,7 @@ for device in /dev/sd*; do
 	if [[ $device_uuid ]] && [[ `hdparm -I $device | grep TRIM` ]]; then
 		#Add in trim support if the partition is not swap.
 		mount_data=`grep ^UUID=$device_uuid /etc/fstab`
-		
+
 		if [[ `echo $mount_data | grep -c swap` = 0 ]] &&  [[ `echo $mount_data | grep -c noatime` = 0 ]]; then
 			#Add in noatime option
 			sed '/^UUID='$device_uuid'/s/discard/discard,noatime/g' -i /etc/fstab
@@ -648,7 +656,7 @@ for device in /dev/sd*; do
 done
 
 
-#Create rc.local to enable trim 
+#Create rc.local to enable trim
 echo '#!/bin/sh -e
 #
 # rc.local
