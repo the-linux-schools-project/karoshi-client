@@ -320,7 +320,7 @@ echo -e "\nCreating the iso image\n"
 sleep 1
 #Create iso image for the live CD
 
-[ -f "${BUILDPATH}/${KAROSHIVER.iso}" ] && rm -f "${BUILDPATH}/${KAROSHIVER}.iso"
+[ -f "${BUILDPATH}/${KAROSHIVER}.iso" ] && rm -f "${BUILDPATH}/${KAROSHIVER}.iso"
 
 sudo mkisofs -r -V "$KAROSHIVER" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../$KAROSHIVER.iso .
 cd ..
