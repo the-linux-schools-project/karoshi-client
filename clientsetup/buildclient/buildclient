@@ -7,7 +7,7 @@ branch=pheonix
 REBOOT=yes
 
 #Main list of packages to install (apart from samba4 and SOGo which are compiled).
-packages="xorg bluegriffon xubuntu-desktop xfce indicator-application-gtk2 indicator-sound-gtk2 indicator-multiload xfce4-datetime-plugin indicator-plugin xfce4-screenshooter xfce4-terminal xfce4-power-manager xubuntu-artwork shimmer-themes xubuntu-icon-theme thunar-archive-plugin thunar-media-tags-plugin catfish gnome-calculator gnome-system monitor light-locker lightdm lightdm-gtk-greeter firefox flashplugin-installer thunderbird xul-ext lightning file-roller filezilla wireshark zenmap virtualbox geogebra stellarium kcolorchooser libreoffice libreoffice-mysql-connector libreoffice-lightproof-en wbritish gedit gedit-plugins scribus planner freemind ttf-dejavu ttf-mscorefonts-installer ttf-freefont dia blender gimp inkscape eog ardour audacity jackd2 qjackctl a2jmidid hydrogen rosegarden musescore pavucontrol qsynth fluid-soundfont-gm lmms yoshimi lame stopmotion gtk-recordmydesktop openshot vlc brasero codeblocks eclipse glade netbeans git default-jdk icedtea-plugin liblwjgl-java arduino tmux cups printer-driver-all openprinting-ppds cifs-utils libpam-mount krb5-user ntp xautolock yad gnupg ldap-utils synaptic xmlstarlet resolvconf iputils-ping iputils-tracepath iputils-arping net-tools mtr-tiny netcat-openbsd isc-dhcp-client libnss3 tools sssd virtualbox-guest-utils virtualbox-guest-x11 xserver-xorg-video-all wpasupplicant ssh-krb5 gksu zsh gvfs-backends pam-exec2 wine plymouth-x11 rsyslog unbound intltool nano netbeans-installer"
+packages="atom shellcheck xorg bluegriffon xubuntu-desktop xfce indicator-application-gtk2 indicator-sound-gtk2 indicator-multiload xfce4-datetime-plugin indicator-plugin xfce4-screenshooter xfce4-terminal xfce4-power-manager xubuntu-artwork shimmer-themes xubuntu-icon-theme thunar-archive-plugin thunar-media-tags-plugin catfish gnome-calculator gnome-system monitor light-locker lightdm lightdm-gtk-greeter firefox flashplugin-installer thunderbird xul-ext lightning file-roller filezilla wireshark zenmap virtualbox geogebra stellarium kcolorchooser libreoffice libreoffice-mysql-connector libreoffice-lightproof-en wbritish gedit gedit-plugins scribus planner freemind ttf-dejavu ttf-mscorefonts-installer ttf-freefont dia blender gimp inkscape eog ardour audacity jackd2 qjackctl a2jmidid hydrogen rosegarden musescore pavucontrol qsynth fluid-soundfont-gm lmms yoshimi lame stopmotion gtk-recordmydesktop openshot vlc brasero codeblocks eclipse glade netbeans git git-lfs default-jdk icedtea-plugin liblwjgl-java arduino tmux cups printer-driver-all openprinting-ppds cifs-utils libpam-mount krb5-user ntp xautolock yad gnupg ldap-utils synaptic xmlstarlet resolvconf iputils-ping iputils-tracepath iputils-arping net-tools mtr-tiny netcat-openbsd isc-dhcp-client libnss3 tools sssd virtualbox-guest-utils virtualbox-guest-x11 xserver-xorg-video-all wpasupplicant ssh-krb5 gksu zsh gvfs-backends pam-exec2 wine plymouth-x11 rsyslog unbound intltool nano netbeans-installer"
 
 #Utilities and other extras to install.
 extrapackages="language-pack-ar libreoffice-l10n-ar language-pack-cs libreoffice-l10n-cs language-pack-da libreoffice l10n-da language-pack-de libreoffice-l10n-de language-pack-el libreoffice-l10n-el language-pack-es libreoffice-l10n-es language-pack-en libreoffice-l10n-en-gb language-pack-fi libreoffice-l10n-fi language-pack-fr libreoffice-l10n-fr language-pack-he libreoffice-l10n-he language-pack-hi libreoffice-l10n-hi language-pack-id libreoffice-l10n-id language-pack-it libreoffice-l10n-it language-pack-ko libreoffice-l10n-ko language-pack-nb libreoffice-l10n-nb language-pack-nl libreoffice-l10n-nl language-pack-pl libreoffice-l10n-pl language-pack-pt libreoffice-l10n-pt language-pack-ru libreoffice-l10n-ru language-pack-sv libreoffice-l10n-sv language-pack-zh-hans-base libreoffice-l10n-zh-cn fonts-droid fonts nanum-coding fonts-gargi myspell-en-gb"
@@ -39,7 +39,7 @@ sudo add-apt-repository ppa:light-locker/release
 sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa
 sudo add-apt-repository universe
 sudo add-apt-repository ppa:nilarimogard/webupd8
-sudo add-apt-repository ppa:mozillateam/thunderbird-stable 
+sudo add-apt-repository ppa:mozillateam/thunderbird-stable
 sudo add-apt-repository ppa.launchpad.net/wireshark-dev/stable/ubuntu
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
 sudo add-apt-repository ppa:stellarium/stellarium-releases
@@ -66,7 +66,7 @@ sudo add-apt-repository ppa:eclipse-team/ppa
 sudo add-apt-repository ppa:rebuntu16/glade-3.19+-trusty
 sudo add-apt-repository ppa:vajdics/netbeans-installer
 sudo add-apt-repository ppa:git-core/ppa
-
+wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
 
 
 
@@ -164,4 +164,3 @@ sudo cp /opt/karoshi/clientsetup/plymouth/* /lib/plymouth/themes
 
 #Needed to run after install software
 rm /var/lib/dbus/machine-id
-

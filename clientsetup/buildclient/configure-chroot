@@ -44,6 +44,7 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
 wget -q -O- http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
+wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
 
 sudo apt-get update
 sudo apt-key update
@@ -53,11 +54,11 @@ sudo apt-key update
 dpkg --configure -a
 
 echo -e "\nChroot: updating apt\n"
-sleep 1	
+sleep 1
 apt-get update
 
 echo -e "\nChroot: installing dbus\n"
-sleep 1	
+sleep 1
 apt-get install dbus
 
 
@@ -77,33 +78,33 @@ apt-get install --yes plymouth
 apt-get install --yes ubiquity
 #Install Packages needed for the live system
 echo -e "\nChroot: Installing packages for the live system\n"
-sleep 1	
+sleep 1
 apt-get install ubuntu-minimal casper lupin-casper ubiquity-casper ubiquity-slideshow-ubuntu-gnome
 apt-get install syslinux isolinux
 
 
 echo -e "\nChroot: Installing discover and os-prober\n"
-sleep 1	
+sleep 1
 apt-get install discover os-prober
 
 
 echo -e "\nChroot: Installing linux-generic\n"
-sleep 1	
+sleep 1
 apt-get install linux-generic
 
 
 echo -e "\nChroot: Installing grub2 and plymouth-x11\n"
-sleep 1	
+sleep 1
 
 apt-get install grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lists plymouth-x11
 
 echo -e "\nChroot: Installing python-software-properties\n"
-sleep 1	
+sleep 1
 apt-get install software-properties-common python-software-properties
 
- 
+
 echo -e "\nChroot: Installing wget\n"
-sleep 1	
+sleep 1
 apt-get install --yes wget
 
 
