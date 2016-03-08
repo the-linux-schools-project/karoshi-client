@@ -160,8 +160,8 @@ sudo cp /etc/hosts chroot/etc/hosts
 echo -e "Copying /etc/resolv.conf\n"
 sudo cp /etc/resolv.conf chroot/etc/resolv.conf
 echo "Copying sources.list"
-sleep 5 
-cp -r /etc/apt/sources.list chroot/etc/apt/sources.list
+sleep 5
+cp -f /etc/apt/sources.list chroot/etc/apt/sources.list
 
 
 #Backup /sbin/initctl
