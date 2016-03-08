@@ -129,7 +129,7 @@ update-grub
 #Tidy packages
 apt-get autoremove
 
-
+su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Graybird"
 #Copy config files
 cd /
 mkdir -p /opt/karoshi/images
