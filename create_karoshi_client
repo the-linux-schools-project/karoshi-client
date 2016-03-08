@@ -154,7 +154,7 @@ sleep 1
 apt-get install --yes syslinux squashfs-tools genisoimage
 
 #Copy in system files for network configuration for the chroot
-cd $BUIDLPATH
+cd $BUILDPATH
 echo -e "Copying /etc/hosts\n"
 sudo cp /etc/hosts chroot/etc/hosts
 echo -e "Copying /etc/resolv.conf\n"
