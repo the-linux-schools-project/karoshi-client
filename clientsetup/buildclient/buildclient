@@ -110,7 +110,9 @@ getent passwd karoshi 1>/dev/null
 #Install software
 sudo apt-key update
 sudo apt-get update
+sleep 4
 sudo apt-get install xfce4
+sleep 4
 sudo apt-get install xubuntu-desktop
 echo "Installing packages"
 
