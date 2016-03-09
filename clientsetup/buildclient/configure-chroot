@@ -79,7 +79,7 @@ apt-get install --yes ubiquity
 #Install Packages needed for the live system
 echo -e "\nChroot: Installing packages for the live system\n"
 sleep 1
-apt-get install ubuntu-minimal casper lupin-casper ubiquity-casper ubiquity-slideshow-ubuntu-gnome
+apt-get install ubuntu-minimal casper lupin-casper ubiquity-casper
 apt-get install syslinux isolinux
 
 
