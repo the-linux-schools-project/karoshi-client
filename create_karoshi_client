@@ -6,8 +6,7 @@
 clear
 
 #Exit if this is not the root user
-if [ `id -u` != 0 ]
-then
+if [ $(id -u) != 0 ]; then
 	echo -e "Karoshi Client Remaster Utility\n\nThis script must be run as root."
 	exit
 fi
@@ -26,7 +25,7 @@ esac
 
 KAROSHIVER=karoshi-client-v5
 KAROSHIVER=$KAROSHIVER-$ARCH
-KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
+KAROSHIVERNOCAPS=$(echo $KAROSHIVER | tr 'A-Z' 'a-z')
 BUILDPATH=/home/karoshi-client/$KAROSHIVERNOCAPS
 RELEASE=xenial
 BRANCH=pheonix
@@ -35,12 +34,10 @@ ZIPFILE=$BRANCH.zip
 echo -e "Karoshi Client Remaster Utility\n"
 
 which unzip 1>/dev/null
-if [ $? != 0 ]
-then
+if [ $? != 0 ]; then
 echo -e "Installing unzip\n"
 sudo apt-get install unzip
-	if [ $? != 0 ]
-	then
+	if [ $? != 0 ]; then
 		echo -e "There was a problem installing unzip - exiting now."
 		exit
 	fi
@@ -48,13 +45,11 @@ fi
 
 #Install debootstrap
 which debootstrap 1>/dev/null
-if [ $? != 0 ]
-then
+if [ $? != 0 ]; then
 	echo -e "Installing debootstrap\n"
 	sleep 1
 	apt-get install debootstrap
-	if [ $? != 0 ]
-	then
+	if [ $? != 0 ]; then
 		echo -e "There was a problem installing debootstrap - exiting now."
 		exit
 	fi
@@ -65,14 +60,13 @@ sleep 1
 
 
 #Create the chroot folder
-if [ -d $BUILDPATH/chroot ]
-then
+if [ -d "${BUILDPATH}/chroot" ]; then
 	echo -e "$BUILDPATH/chroot exits\n\n1: Delete this folder and make the chroot environment\n2: Skip this step\n"
 	read choice
 	case $choice in
 		1)
 		RUNDEBOOSTRAP=yes
-		rm -f -R $BUILDPATH/chroot
+		rm -f -R "${BUILDPATH}/chroot"
 		;;
 		2)
 		RUNDEBOOSTRAP=no;;
@@ -82,12 +76,12 @@ else
 	RUNDEBOOSTRAP=yes
 	echo -e "Creating $BUILDPATH/chroot\n"
 	sleep 1
-	mkdir -p $BUILDPATH/chroot
+	mkdir -p "${BUILDPATH}/chroot"
 fi
 
 #Chroot into the folder
 
-cd $BUILDPATH
+cd "$BUILDPATH"
 
 if [ $RUNDEBOOSTRAP = yes ]; then
 	echo -e "Creating the chroot environment"
@@ -96,8 +90,7 @@ fi
 
 echo -e "\nDownload $ZIPFILE\n"
 sleep 1
-if [ -d chroot/opt/karoshi ]
-then
+if [ -d chroot/opt/karoshi ]; then
 	echo -e "$BUILDPATH/chroot/opt/karoshi/karoshi-client exits\n\n1: Delete this folder and download the latest version\n2: Skip this step\n"
 	read choice
 	case $choice in
@@ -115,15 +108,13 @@ fi
 
 #Download master.zip and extract to chroot
 
-if [ $getclientsetup = yes ]
-then
+if [ $getclientsetup = yes ]; then
 	[ -f /tmp/$ZIPFILE ] && rm -f /tmp/$ZIPFILE
 	cd /tmp
 	echo -e "\nDownloading $ZIPFILE from github.\n"
 	sleep 1
 	wget https://github.com/the-linux-schools-project/karoshi-client/archive/$BRANCH.zip
-	if [ $? != 0 ]
-	then
+	if [ $? != 0 ]; then
 		echo -e "There was a problem downloading $ZIPFILE - exiting now."
 		exit
 	fi
@@ -132,14 +123,13 @@ then
 	sleep 1
 	mkdir -p $BUILDPATH/chroot/opt/karoshi/
 	unzip $ZIPFILE  -d $BUILDPATH/chroot/opt/karoshi
-	if [ $? != 0 ]
-	then
+	if [ $? != 0 ]; then
 		echo -e "There was a problem unziping $ZIPFILE - exiting now."
 		exit
 	fi
-	mv $BUILDPATH/chroot/opt/karoshi/karoshi-client-$BRANCH/* $BUILDPATH/chroot/opt/karoshi
-	rm -r $BUILDPATH/chroot/opt/karoshi/karoshi-client-$BRANCH
-	cd $BUILDPATH
+	mv "${BUILDPATH}/chroot/opt/karoshi/karoshi-client-${BRANCH}/*" "${BUILDPATH}/chroot/opt/karoshi"
+	rm -r "${BUILDPATH}/chroot/opt/karoshi/karoshi-client-${BRANCH}"
+	cd "$BUILDPATH"
 fi
 
 #Mount dev folder
@@ -154,35 +144,34 @@ sleep 1
 apt-get install --yes syslinux squashfs-tools genisoimage
 
 #Copy in system files for network configuration for the chroot
-cd $BUIDLPATH
+cd "$BUILDPATH"
 echo -e "Copying /etc/hosts\n"
 sudo cp /etc/hosts chroot/etc/hosts
 echo -e "Copying /etc/resolv.conf\n"
 sudo cp /etc/resolv.conf chroot/etc/resolv.conf
 echo "Copying sources.list"
-sleep 5 
-cp -r /etc/apt/sources.list chroot/etc/apt/sources.list
+sleep 5
+cp -f /etc/apt/sources.list chroot/etc/apt/sources.list
 
 
 #Backup /sbin/initctl
 cp /sbin/initctl /sbin/initctl.$$
 
 #Run configure chroot
-cd $BUILDPATH
+cd "$BUILDPATH"
 
 echo -e "\nConfiguring chroot\n"
 
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/configure-chroot
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/buildclient
 sudo chroot chroot /opt/karoshi/clientsetup/buildclient/configure-chroot
-umount $BUILDPATH/chroot/dev
+umount "${BUILDPATH}/chroot/dev"
 
 echo -e "\nCreate ISO image\n"
 
 
 #Remove existing image directory
-if [ -d image ]
-then
+if [ -d image ]; then
 	echo -e "\nDeleting existing image directory\n"
 	sleep 1
 	rm -f -R image
@@ -309,7 +298,7 @@ echo '#define DISKNAME  '$KAROSHIVER'
 cp -f image/README.diskdefines image/casper/
 
 #Recognition as a Ubuntu remix
-KAROSHIVER2=`echo "$KAROSHIVER" | sed 's/-/ /g'`
+KAROSHIVER2=$(echo "$KAROSHIVER" | sed 's/-/ /g')
 touch image/ubuntu
 mkdir image/.disk
 cd image/.disk
@@ -325,13 +314,13 @@ chmod 0644 image/casper/vmlinuz
 #Calculate MD5
 echo -e "\nCalculating MD5\n"
 sleep 1
-cd $BUILDPATH/image
+cd "${BUILDPATH}/image"
 sudo find . -type f -print0 | xargs -0 md5sum | grep -v "\./md5sum.txt" > md5sum.txt
 echo -e "\nCreating the iso image\n"
 sleep 1
 #Create iso image for the live CD
 
-[ -f $BUILDPATH/$KAROSHIVER.iso ] && rm -f $BUILDPATH/$KAROSHIVER.iso
+[ -f "${BUILDPATH}/${KAROSHIVER}.iso" ] && rm -f "${BUILDPATH}/${KAROSHIVER}.iso"
 
 sudo mkisofs -r -V "$KAROSHIVER" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../$KAROSHIVER.iso .
 cd ..
