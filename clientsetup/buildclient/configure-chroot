@@ -21,14 +21,14 @@ ln -s /bin/true /tmp/fake/service
 export PATH=/tmp/fake:$PATH
 export DEBIAN_FRONTEND=noninteractive
 
-add-apt-repository ppa:otto-kesselgulasch/gimp
-add-apt-repository ppa:libreoffice/libreoffice-5-0
-add-apt-repository ppa:nilarimogard/webupd8
-add-apt-repository ppa:webupd8team/atom
-add-apt-repository ppa:ubuntu-wine/ppa
-add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ saucy universe multiverse"
-add-apt-repository ppa:xubuntu-dev/xfce-4.12
-add-apt-repository "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
+add-apt-repository -y ppa:otto-kesselgulasch/gimp
+add-apt-repository -y ppa:libreoffice/libreoffice-5-0
+add-apt-repository -y ppa:nilarimogard/webupd8
+add-apt-repository -y ppa:webupd8team/atom
+add-apt-repository -y ppa:ubuntu-wine/ppa
+add-apt-repository -y "deb http://us.archive.ubuntu.com/ubuntu/ saucy universe multiverse"
+add-apt-repository -y ppa:xubuntu-dev/xfce-4.12
+add-apt-repository -y "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
 add-apt-repository -y ppa:webupd8team/y-ppa-manager
 
 
@@ -59,12 +59,12 @@ apt-get update
 
 echo -e "\nChroot: installing dbus\n"
 sleep 1
-apt-get install dbus
+apt-get install -y dbus
 
 
 echo "Installing plymouth pakcages"
-apt-get install plymouth-label
-apt-get install plymouth-themes
+apt-get install -y plymouth-label
+apt-get install -y plymouth-themes
 dbus-uuidgen > /var/lib/dbus/machine-id
 dpkg-divert --local --rename --add /sbin/initctl
 
@@ -79,28 +79,28 @@ apt-get install --yes ubiquity
 #Install Packages needed for the live system
 echo -e "\nChroot: Installing packages for the live system\n"
 sleep 1
-apt-get install ubuntu-minimal casper lupin-casper ubiquity-casper
-apt-get install syslinux isolinux
+apt-get install -y ubuntu-minimal casper lupin-casper ubiquity-casper
+apt-get install -y syslinux isolinux
 
 
 echo -e "\nChroot: Installing discover and os-prober\n"
 sleep 1
-apt-get install discover os-prober
+apt-get install -y discover os-prober
 
 
 echo -e "\nChroot: Installing linux-generic\n"
 sleep 1
-apt-get install linux-generic
+apt-get install -y linux-generic
 
 
 echo -e "\nChroot: Installing grub2 and plymouth-x11\n"
 sleep 1
 
-apt-get install grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lists plymouth-x11
+apt-get install -y grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lists plymouth-x11
 
 echo -e "\nChroot: Installing python-software-properties\n"
 sleep 1
-apt-get install software-properties-common python-software-properties
+apt-get install -y software-properties-common python-software-properties
 
 
 echo -e "\nChroot: Installing wget\n"
