@@ -34,38 +34,38 @@ apt-get update
 apt-key update
 sudo add-apt-repository "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
 wget -q -O- http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
-sudo add-apt-repository ppa:catfish-search/catfish-stable
-sudo add-apt-repository ppa:light-locker/release
-sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa
-sudo add-apt-repository universe
-sudo add-apt-repository ppa:nilarimogard/webupd8
-sudo add-apt-repository ppa:mozillateam/thunderbird-stable
-sudo add-apt-repository ppa.launchpad.net/wireshark-dev/stable/ubuntu
+sudo add-apt-repository -y ppa:catfish-search/catfish-stable
+sudo add-apt-repository -y ppa:light-locker/release
+sudo add-apt-repository -y ppa:ubuntu-mozilla-daily/ppa
+sudo add-apt-repository -y universe
+sudo add-apt-repository -y ppa:nilarimogard/webupd8
+sudo add-apt-repository -y ppa:mozillateam/thunderbird-stable
+sudo add-apt-repository -y ppa.launchpad.net/wireshark-dev/stable/ubuntu
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-sudo add-apt-repository ppa:stellarium/stellarium-releases
-sudo add-apt-repository ppa:kubuntu-ppa
-sudo add-apt-repository ppa:libreoffice/ppa
-sudo add-apt-repository ppa:suraia/ppa
-sudo add-apt-repository ppa:scribus/ppa
+sudo add-apt-repository -y ppa:stellarium/stellarium-releases
+sudo add-apt-repository -y ppa:kubuntu-ppa
+sudo add-apt-repository -y ppa:libreoffice/ppa
+sudo add-apt-repository -y ppa:suraia/ppa
+sudo add-apt-repository -y ppa:scribus/ppa
 wget -q -O - http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
 sudo sh -c 'echo "deb http://archive.getdeb.net/ubuntu trusty-getdeb apps" >> /etc/apt/sources.list.d/getdeb.list'
-sudo add-apt-repository ppa:otto-kesselgulasch/gimp
-sudo add-apt-repository ppa:inkscape.dev/stable
-sudo add-apt-repository ppa:dobey/audiotools
-sudo add-apt-repository ppa:ubuntuhandbook1/audacity
-sudo add-apt-repository ppa:mscore-ubuntu/mscore-stable
-sudo add-apt-repository ppa:kxstudio-team/ppa
-sudo add-apt-repository ppa:kxstudio-team/hydrogen
-sudo add-apt-repository ppa:ubuntu-audio-dev/ppa
-sudo add-apt-repository ppa:irie/lmm
-sudo add-apt-repository ppa:openshot.developers/ppa
-sudo add-apt-repository ppa:videolan/stable-daily
-sudo add-apt-repository ppa:renbag/ppa
-sudo apt-add-repository ppa:pasgui/ppa
-sudo add-apt-repository ppa:eclipse-team/ppa
-sudo add-apt-repository ppa:rebuntu16/glade-3.19+-trusty
-sudo add-apt-repository ppa:vajdics/netbeans-installer
-sudo add-apt-repository ppa:git-core/ppa
+sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp
+sudo add-apt-repository -y ppa:inkscape.dev/stable
+sudo add-apt-repository -y ppa:dobey/audiotools
+sudo add-apt-repository -y ppa:ubuntuhandbook1/audacity
+sudo add-apt-repository -y ppa:mscore-ubuntu/mscore-stable
+sudo add-apt-repository -y ppa:kxstudio-team/ppa
+sudo add-apt-repository -y ppa:kxstudio-team/hydrogen
+sudo add-apt-repository -y ppa:ubuntu-audio-dev/ppa
+sudo add-apt-repository -y ppa:irie/lmm
+sudo add-apt-repository -y ppa:openshot.developers/ppa
+sudo add-apt-repository -y ppa:videolan/stable-daily
+sudo add-apt-repository -y ppa:renbag/ppa
+sudo apt-add-repository -y ppa:pasgui/ppa
+sudo add-apt-repository -y ppa:eclipse-team/ppa
+sudo add-apt-repository -y ppa:rebuntu16/glade-3.19+-trusty
+sudo add-apt-repository -y ppa:vajdics/netbeans-installer
+sudo add-apt-repository -y ppa:git-core/ppa
 wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
 
 
