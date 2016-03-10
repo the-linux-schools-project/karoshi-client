@@ -76,8 +76,8 @@ sleep 1
 apt-get update
 
 
-apt-get install feh ubiquity-frontend-gtk
-apt-get install xinit
+apt-get install -y feh ubiquity-frontend-gtk
+apt-get install -y xinit
 
 #Create karoshi user
 getent passwd karoshi 1>/dev/null
@@ -111,14 +111,14 @@ getent passwd karoshi 1>/dev/null
 sudo apt-key update
 sudo apt-get update
 sleep 4
-sudo apt-get install xfce4
+sudo apt-get install -y xfce4
 sleep 4
-sudo apt-get install xubuntu-desktop
+sudo apt-get install -y xubuntu-desktop
 echo "Installing packages"
 
-apt-get install $packages
+apt-get install -y $packages
 
-apt-get install $extrapackages
+apt-get install -y $extrapackages
 
 #Update initramfs
 sudo update-initramfs -u
@@ -132,7 +132,7 @@ update-grub
 #Tidy packages
 apt-get autoremove
 
-su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Graybird"
+su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Greybird"
 #Copy config files
 cd /
 mkdir -p /opt/karoshi/images
