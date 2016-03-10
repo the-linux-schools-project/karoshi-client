@@ -6,7 +6,7 @@ mount none -t devpts /dev/pts
 export HOME=/root
 export LC_ALL=C
 
-sudo apt-get install software-properties-common
+sudo apt-get install -y software-properties-common
 #Create /tmp/fake for symlinks to /bin/true
 mkdir /tmp/fake
 
@@ -122,7 +122,7 @@ cd
 
 echo -e "\nChroot: ubiquity-frontend-gtk\n"
 sleep 1
-apt-get install ubiquity-frontend-gtk
+apt-get install -y ubiquity-frontend-gtk
 
 #Add the ubuntu user for casper
 #echo -e "\nChroot: Creating karoshi user\n"
