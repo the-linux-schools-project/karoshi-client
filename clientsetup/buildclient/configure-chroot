@@ -6,7 +6,7 @@ mount none -t devpts /dev/pts
 export HOME=/root
 export LC_ALL=C
 
-sudo apt-get install -y software-properties-common
+apt-get install -y software-properties-common
 #Create /tmp/fake for symlinks to /bin/true
 mkdir /tmp/fake
 
@@ -42,12 +42,12 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
-wget -q -O- http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
-wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
+wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | apt-key add -
 
-sudo apt-get update
-sudo apt-key update
+apt-get update
+apt-key update
 
 
 #Make sure that dpkg is happy
@@ -116,7 +116,7 @@ sleep 4
 
 cd /opt/karoshi/clientsetup/buildclient
 chmod 0755 buildclient
-sudo ./buildclient
+./buildclient
 
 cd
 
@@ -149,7 +149,7 @@ disable_script /usr/share/initramfs-tools/scripts/casper-bottom/{25adduser,41apt
 rm /var/lib/dbus/machine-id
 [ -f /sbin/initctl ] && rm /sbin/initctl
 dpkg-divert --rename --remove /sbin/initctl
-sudo update in
+update in
 #Remove old linux kernels if there are more than one
 ls /boot/vmlinuz-3.13.**-**-generic > list.txt
 sum=$(cat list.txt | grep '[^ ]' | wc -l)
@@ -159,7 +159,7 @@ dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/"
 fi
 
 #Update initramfs
-sudo update-initramfs -u
+update-initramfs -u
 
 rm list.txt
 

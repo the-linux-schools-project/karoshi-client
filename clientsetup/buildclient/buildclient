@@ -32,41 +32,41 @@ add-apt-repository "deb http://inverse.ca/ubuntu xenial xenial"
 
 apt-get update
 apt-key update
-sudo add-apt-repository "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
-wget -q -O- http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
-sudo add-apt-repository -y ppa:catfish-search/catfish-stable
-sudo add-apt-repository -y ppa:light-locker/release
-sudo add-apt-repository -y ppa:ubuntu-mozilla-daily/ppa
-sudo add-apt-repository -y universe
-sudo add-apt-repository -y ppa:nilarimogard/webupd8
-sudo add-apt-repository -y ppa:mozillateam/thunderbird-stable
-sudo add-apt-repository -y ppa.launchpad.net/wireshark-dev/stable/ubuntu
-wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-sudo add-apt-repository -y ppa:stellarium/stellarium-releases
-sudo add-apt-repository -y ppa:kubuntu-ppa
-sudo add-apt-repository -y ppa:libreoffice/ppa
-sudo add-apt-repository -y ppa:suraia/ppa
-sudo add-apt-repository -y ppa:scribus/ppa
-wget -q -O - http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
-sudo sh -c 'echo "deb http://archive.getdeb.net/ubuntu trusty-getdeb apps" >> /etc/apt/sources.list.d/getdeb.list'
-sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp
-sudo add-apt-repository -y ppa:inkscape.dev/stable
-sudo add-apt-repository -y ppa:dobey/audiotools
-sudo add-apt-repository -y ppa:ubuntuhandbook1/audacity
-sudo add-apt-repository -y ppa:mscore-ubuntu/mscore-stable
-sudo add-apt-repository -y ppa:kxstudio-team/ppa
-sudo add-apt-repository -y ppa:kxstudio-team/hydrogen
-sudo add-apt-repository -y ppa:ubuntu-audio-dev/ppa
-sudo add-apt-repository -y ppa:irie/lmm
-sudo add-apt-repository -y ppa:openshot.developers/ppa
-sudo add-apt-repository -y ppa:videolan/stable-daily
-sudo add-apt-repository -y ppa:renbag/ppa
-sudo apt-add-repository -y ppa:pasgui/ppa
-sudo add-apt-repository -y ppa:eclipse-team/ppa
-sudo add-apt-repository -y ppa:rebuntu16/glade-3.19+-trusty
-sudo add-apt-repository -y ppa:vajdics/netbeans-installer
-sudo add-apt-repository -y ppa:git-core/ppa
-wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
+add-apt-repository "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
+wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+add-apt-repository -y ppa:catfish-search/catfish-stable
+add-apt-repository -y ppa:light-locker/release
+add-apt-repository -y ppa:ubuntu-mozilla-daily/ppa
+add-apt-repository -y universe
+add-apt-repository -y ppa:nilarimogard/webupd8
+add-apt-repository -y ppa:mozillateam/thunderbird-stable
+add-apt-repository -y ppa.launchpad.net/wireshark-dev/stable/ubuntu
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | apt-key add -
+add-apt-repository -y ppa:stellarium/stellarium-releases
+add-apt-repository -y ppa:kubuntu-ppa
+add-apt-repository -y ppa:libreoffice/ppa
+add-apt-repository -y ppa:suraia/ppa
+add-apt-repository -y ppa:scribus/ppa
+wget -q -O - http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+sh -c 'echo "deb http://archive.getdeb.net/ubuntu trusty-getdeb apps" >> /etc/apt/sources.list.d/getdeb.list'
+add-apt-repository -y ppa:otto-kesselgulasch/gimp
+add-apt-repository -y ppa:inkscape.dev/stable
+add-apt-repository -y ppa:dobey/audiotools
+add-apt-repository -y ppa:ubuntuhandbook1/audacity
+add-apt-repository -y ppa:mscore-ubuntu/mscore-stable
+add-apt-repository -y ppa:kxstudio-team/ppa
+add-apt-repository -y ppa:kxstudio-team/hydrogen
+add-apt-repository -y ppa:ubuntu-audio-dev/ppa
+add-apt-repository -y ppa:irie/lmm
+add-apt-repository -y ppa:openshot.developers/ppa
+add-apt-repository -y ppa:videolan/stable-daily
+add-apt-repository -y ppa:renbag/ppa
+apt-add-repository -y ppa:pasgui/ppa
+add-apt-repository -y ppa:eclipse-team/ppa
+add-apt-repository -y ppa:rebuntu16/glade-3.19+-trusty
+add-apt-repository -y ppa:vajdics/netbeans-installer
+add-apt-repository -y ppa:git-core/ppa
+wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | apt-key add -
 
 
 
@@ -108,10 +108,10 @@ getent passwd karoshi 1>/dev/null
 	#Add karoshi user to the admin group
 	usermod -a -G admin karoshi
 #Install software
-sudo apt-key update
-sudo apt-get update
+apt-key update
+apt-get update
 sleep 4
-sudo apt-get install -y xubuntu-desktop
+apt-get install -y xubuntu-desktop
 echo "Installing packages"
 
 apt-get install -y $packages
@@ -119,11 +119,11 @@ apt-get install -y $packages
 apt-get install -y $extrapackages
 
 #Update initramfs
-sudo update-initramfs -u
+update-initramfs -u
 
 #Configure grub
 echo -e "\nConfiguring grub2.\n"
-sudo cp -f /opt/karoshi/clientsetup/buildclient/config/grub /etc/default/grub
+cp -f /opt/karoshi/clientsetup/buildclient/config/grub /etc/default/grub
 echo -e "\nUpdating grub2.\n"
 update-grub
 
@@ -149,16 +149,16 @@ cp /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
 
 #Copy more configuration files
 echo "Copying config files"
-sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
-sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
-sudo cp /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
-sudo cp /opt/karoshi/clientsetup/skel/* /etc/skel
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-update.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
-sudo cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
+cp /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+cp /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
+cp /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
+cp /opt/karoshi/clientsetup/skel/* /etc/skel
+cp /opt/karoshi/clientsetup/utilities/karoshi-update.conf /etc/init
+cp /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
+cp /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
+cp /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
+cp /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 chmod 0600 /usr/bin/karoshi*
 chown karoshi -R /usr/bin/karoshi*
@@ -166,8 +166,7 @@ chmod u+X -R /usr/bin/karoshi*
 chmod 
 #Copy plymouth animations
 rm /usr/share/plymouth/themes/*
-sudo cp /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
+cp /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
 
 #Needed to run after install software
 rm /var/lib/dbus/machine-id
-
