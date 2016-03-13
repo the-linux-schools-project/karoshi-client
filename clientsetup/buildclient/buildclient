@@ -160,9 +160,14 @@ sudo cp /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
 sudo cp /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
 sudo cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
+chmod 0600 /usr/bin/karoshi*
+chown karoshi -R /usr/bin/karoshi*
+chmod u+X -R /usr/bin/karoshi*
+chmod 
 #Copy plymouth animations
+rm /usr/share/plymouth/themes/*
 sudo cp /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
-rm -r /usr/share/plymouth/themes/*
 
 #Needed to run after install software
 rm /var/lib/dbus/machine-id
+
