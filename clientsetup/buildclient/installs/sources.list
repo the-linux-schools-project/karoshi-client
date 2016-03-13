@@ -140,6 +140,10 @@ deb-src http://ppa.launchpad.net/ubuntu-mozilla-daily/ppa/ubuntu xenial main
 deb http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
 deb-src http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
 
+#### mozillateam/thunderbird-next (closest to outdated stable) (lightning-extension)
+deb http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu wily main
+deb-src http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu wily main
+
 #### wireshark-dev/stable/ubuntu
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 14ECA0F0
 deb http://ppa.launchpad.net/wireshark-dev/stable/ubuntu wily main
@@ -237,3 +241,13 @@ deb-src http://ppa.launchpad.net/vajdics/netbeans-installer/ubuntu xenial main
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E1DF1F24
 deb http://ppa.launchpad.net/git-core/ppa/ubuntu xenial main
 deb-src http://ppa.launchpad.net/git-core/ppa/ubuntu xenial main
+
+#### archive.getdeb.net - bluegriffon
+#!cmd wget -q http://archive.getdeb.net/getdeb-archive.key -O- | apt-key add -
+deb http://archive.getdeb.net/ubuntu wily-getdeb apps
+deb-src http://archive.getdeb.net/ubuntu wily-getdeb apps
+
+#### ppa.launchpad.net/mozillateam/xul-ext
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CE49EC21
+deb http://ppa.launchpad.net/mozillateam/xul-ext/ubuntu xenial main
+deb-src http://ppa.launchpad.net/mozillateam/xul-ext/ubuntu xenial main

@@ -104,6 +104,10 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 98F78EB3
 wget -q -O- https://packagecloud.io/github/git-lfs/gpgkey | apt-key add -
 # archive.getdeb.net/ubuntu
 wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+# archive.getdeb.net - bluegriffon
+wget -q http://archive.getdeb.net/getdeb-archive.key -O- | apt-key add -
+# ppa.launchpad.net/mozillateam/xul-ext
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CE49EC21
 
 # unknown/to be labeled
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3E5C1192
