@@ -30,7 +30,10 @@ apt-get install -y feh ubiquity-frontend-gtk
 apt-get install -y xinit
 
 # Get architecture version for reference when downloading packages
+ARCH=""
 . ./tmp/arch.sh
+
+[ "$ARCH" == "" ] && echo -e "\nNo architecture present in /tmp/arch.sh\n"
 
 # Checksum: a7ddf8be89d65e66dc09a54e98b47748  eclipse-java-mars-2-linux-gtk-x86_64.tar.gz
 # Checksum: 3f0460868e3702c6c8e6e346ae869f54  eclipse-java-mars-2-linux-gtk.tar.gz.
@@ -105,7 +108,7 @@ if [ "$checksum" != "7ea382267e24925e09b087c5af1e5daa" ]; then
 	echo "There was a problem validating the archive, skipping."
 else
 	echo "Archive validated."
-	dpkg -i kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb
+	dpkg -i "/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb"
 	echo -e "\nSources for kxstudio-team/ppa installed."
 fi
 
