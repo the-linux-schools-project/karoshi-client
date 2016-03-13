@@ -6,7 +6,6 @@ mount none -t devpts /dev/pts
 export HOME=/root
 export LC_ALL=C
 
-apt-get install -y software-properties-common
 #Create /tmp/fake for symlinks to /bin/true
 mkdir /tmp/fake
 
