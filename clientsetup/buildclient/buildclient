@@ -145,7 +145,9 @@ usermod -a -G admin karoshi
 apt-key update
 apt-get update
 sleep 4
-apt-get install -y xubuntu-desktop
+
+# Using --allow-unauthenticated temporarily to resolve libxfce4util6 that causes all package installs to cancel.
+apt-get install -y --allow-unauthenticated xubuntu-desktop
 echo "Installing packages"
 
 apt-get install -y $packages
