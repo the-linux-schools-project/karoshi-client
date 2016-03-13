@@ -72,6 +72,11 @@ then
 	case $choice in
 		1)
 		RUNDEBOOSTRAP=yes
+		# un-mount chroot sub-directories for removal
+		umount -nR "$BUILDPATH/chroot/proc"
+		umount -nR "$BUILDPATH/chroot/sys"
+		umount -nR "$BUILDPATH/chroot/dev"
+		umount -nR "$BUILDPATH/chroot/dev/pts"
 		rm -f -R $BUILDPATH/chroot
 		;;
 		2)
