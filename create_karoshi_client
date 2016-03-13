@@ -164,9 +164,9 @@ echo -e "Copying /etc/hosts\n"
 cp /etc/hosts chroot/etc/hosts
 echo -e "Copying /etc/resolv.conf\n"
 cp /etc/resolv.conf chroot/etc/resolv.conf
-echo "Copying sources.list"
-cp -f /etc/apt/sources.list chroot/etc/apt/sources.list
 
+echo "Copying sources.list"
+cp -f $BUILDPATH/chroot/opt/karoshi/clientsetup/buildclient/installs/sources.list chroot/etc/apt/sources.list
 
 #Backup /sbin/initctl
 cp /sbin/initctl /sbin/initctl.$$
@@ -176,13 +176,16 @@ cd $BUILDPATH
 
 echo -e "\nConfiguring chroot\n"
 
+# Copy architecture version for reference when downloading packages
+echo -e "ARCH=${ARCH}" >> chroot/tmp/arch.sh
+chmod 0755 chroot/tmp/arch.sh
+
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/configure-chroot
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/buildclient
 chroot chroot /opt/karoshi/clientsetup/buildclient/configure-chroot
 umount $BUILDPATH/chroot/dev
 
 echo -e "\nCreate ISO image\n"
-
 
 #Remove existing image directory
 if [ -d image ]

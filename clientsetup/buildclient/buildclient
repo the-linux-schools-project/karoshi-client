@@ -23,90 +23,121 @@ fi
 #Add required repositories
 echo -e "\nAdding required repositories\n"
 sleep 1
-
-
-UBUNTUVER=xenial
-[ `lsb_release -a 2>/dev/null | grep -c precise` -gt 0 ] && UBUNTUVER=precise
-apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
-add-apt-repository "deb http://inverse.ca/ubuntu xenial xenial"
-
-apt-get update
 apt-key update
-add-apt-repository "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
-wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
-add-apt-repository -y ppa:catfish-search/catfish-stable
-add-apt-repository -y ppa:light-locker/release
-add-apt-repository -y ppa:ubuntu-mozilla-daily/ppa
-add-apt-repository -y universe
-add-apt-repository -y ppa:nilarimogard/webupd8
-add-apt-repository -y ppa:mozillateam/thunderbird-stable
-add-apt-repository -y ppa.launchpad.net/wireshark-dev/stable/ubuntu
-wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | apt-key add -
-add-apt-repository -y ppa:stellarium/stellarium-releases
-add-apt-repository -y ppa:kubuntu-ppa
-add-apt-repository -y ppa:libreoffice/ppa
-add-apt-repository -y ppa:suraia/ppa
-add-apt-repository -y ppa:scribus/ppa
-wget -q -O - http://archive.getdeb.net/getdeb-archive.key | apt-key add -
-sh -c 'echo "deb http://archive.getdeb.net/ubuntu trusty-getdeb apps" >> /etc/apt/sources.list.d/getdeb.list'
-add-apt-repository -y ppa:otto-kesselgulasch/gimp
-add-apt-repository -y ppa:inkscape.dev/stable
-add-apt-repository -y ppa:dobey/audiotools
-add-apt-repository -y ppa:ubuntuhandbook1/audacity
-add-apt-repository -y ppa:mscore-ubuntu/mscore-stable
-add-apt-repository -y ppa:kxstudio-team/ppa
-add-apt-repository -y ppa:kxstudio-team/hydrogen
-add-apt-repository -y ppa:ubuntu-audio-dev/ppa
-add-apt-repository -y ppa:irie/lmm
-add-apt-repository -y ppa:openshot.developers/ppa
-add-apt-repository -y ppa:videolan/stable-daily
-add-apt-repository -y ppa:renbag/ppa
-apt-add-repository -y ppa:pasgui/ppa
-add-apt-repository -y ppa:eclipse-team/ppa
-add-apt-repository -y ppa:rebuntu16/glade-3.19+-trusty
-add-apt-repository -y ppa:vajdics/netbeans-installer
-add-apt-repository -y ppa:git-core/ppa
-wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | apt-key add -
-
-
-
-#Update repos
-echo -e "\nUpdating repositories\n"
-sleep 1
 apt-get update
-
 
 apt-get install -y feh ubiquity-frontend-gtk
 apt-get install -y xinit
 
+# Get architecture version for reference when downloading packages
+. ./tmp/arch.sh
+
+# Checksum: a7ddf8be89d65e66dc09a54e98b47748  eclipse-java-mars-2-linux-gtk-x86_64.tar.gz
+# Checksum: 3f0460868e3702c6c8e6e346ae869f54  eclipse-java-mars-2-linux-gtk.tar.gz.
+
+echo -e "\nAttempting to download eclipse."
+installEclipse="no"
+# Download eclipse
+if [ "$ARCH" == "amd64" ]; then
+	wget --timeout=10 -O /tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz&r=1"
+	wgetOut=$?
+	if [ $wgetOut != 0 ]; then
+			# The download failed.
+			echo "There was a problem downloading eclipse, skipping."
+	fi
+
+	checksum=$(md5sum "/tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz" | cut -d ' ' -f 1)
+	if [ "$checksum" != "a7ddf8be89d65e66dc09a54e98b47748" ]; then
+		echo "There was a problem validating the archive, skipping."
+	else
+		echo "Archive validated."
+		installEclipse="yes"
+	fi
+elif [ "$ARCH" == "i386" ]; then
+	wget --timeout=10 -O /tmp/eclipse-java-mars-2-linux-gtk.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk.tar.gz&r=1"
+	wgetOut=$?
+	if [ $wgetOut != 0 ]; then
+			# The download failed.
+			echo "There was a problem downloading eclipse, skipping."
+	fi
+
+	checksum=$(md5sum "/tmp/eclipse-java-mars-2-linux-gtk.tar.gz" | cut -d ' ' -f 1)
+	if [ "$checksum" != "3f0460868e3702c6c8e6e346ae869f54" ]; then
+		echo "There was a problem validating the archive, skipping."
+	else
+		echo "Archive validated."
+		installEclipse="yes"
+	fi
+fi
+
+if [ "$installEclipse" == "yes" ]; then
+	if [ "$ARCH" == "amd64" ]; then
+		echo -e "\nExtracting eclipse archive."
+		tar -zxvf /tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz
+		echo -e "\nMoving eclipse into place."
+		mv /tmp/eclipse-java-mars-2-linux-gtk-x86_64 /opt
+	fi
+	if [ "$ARCH" == "i386" ]; then
+		echo -e "\nExtracting eclipse archive."
+		tar -zxvf /tmp/eclipse-java-mars-2-linux-gtk.tar.gz
+		echo -e "\nMoving eclipse into place."
+		mv /tmp/eclipse-java-mars-2-linux-gtk.tar.gz /opt
+	fi
+	echo -e "\nEclipse installed."
+fi
+
+# Install sources for kxstudio-team/ppa as its PPA is obselete
+# See http://kxstudio.linuxaudio.org/Repositories
+echo -e "\nAttempting to download sources list for kxstudio-team/ppa."
+
+# Checksum: 7ea382267e24925e09b087c5af1e5daa *kxstudio-repos-gcc5_9.2.2-kxstudio1_all.deb
+
+# Download sources for kxstudio-team/ppa.
+wget --timeout=10 -O /tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb
+wgetOut=$?
+if [ $wgetOut != 0 ]; then
+		# The download failed.
+		echo "There was a problem downloading sources for kxstudio-team/ppa, skipping."
+fi
+
+checksum=$(md5sum "/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb" | cut -d ' ' -f 1)
+if [ "$checksum" != "7ea382267e24925e09b087c5af1e5daa" ]; then
+	echo "There was a problem validating the archive, skipping."
+else
+	echo "Archive validated."
+	dpkg -i kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb
+	echo -e "\nSources for kxstudio-team/ppa installed."
+fi
+
 #Create karoshi user
 getent passwd karoshi 1>/dev/null
-	echo -e "Creating karoshi user\n"
-	sleep 1
-	useradd -d /opt/karoshi-admin -s /bin/bash -m karoshi
-	#Set password to karoshi
-	echo -e "\nSetting karoshi user password to karoshi\n"
-	sleep 1
-	echo -e "karoshi\nkaroshi\n" | passwd karoshi
+echo -e "Creating karoshi user\n"
+sleep 1
+useradd -d /opt/karoshi-admin -s /bin/bash -m karoshi
+#Set password to karoshi
+echo -e "\nSetting karoshi user password to karoshi\n"
+sleep 1
+echo -e "karoshi\nkaroshi\n" | passwd karoshi
 
-	#Extract karoshi home area
-	echo -e "\nExtracting karoshi home area folder\n"
-	sleep 1
-	cp /opt/karoshi/clientsetup/karoshi-home/* /opt/karoshi-admin
-	cd /opt/karoshi-admin
-	tar -xvzf *
-	rm karoshi-*
-	cd
-	chmod 0600 -R /opt/karoshi-admin
-	chmod u+X -R /opt/karoshi-admin
-	chown karoshi -R /opt/karoshi-admin
+#Extract karoshi home area
+echo -e "\nExtracting karoshi home area folder\n"
+sleep 1
+cp /opt/karoshi/clientsetup/karoshi-home/* /opt/karoshi-admin
+cd /opt/karoshi-admin
+tar -xvzf *
+rm karoshi-*
+cd
+chmod 0600 -R /opt/karoshi-admin
+chmod u+X -R /opt/karoshi-admin
+chown karoshi -R /opt/karoshi-admin
 
-	#Make sure that there is an admin group
-	getent group admin 1>/dev/null
-	[ $? != 0 ] && groupadd admin
+#Make sure that there is an admin group
+getent group admin 1>/dev/null
+[ $? != 0 ] && groupadd admin
 
-	#Add karoshi user to the admin group
-	usermod -a -G admin karoshi
+#Add karoshi user to the admin group
+usermod -a -G admin karoshi
+
 #Install software
 apt-key update
 apt-get update
@@ -163,7 +194,7 @@ cp /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 chmod 0600 /usr/bin/karoshi*
 chown karoshi -R /usr/bin/karoshi*
 chmod u+X -R /usr/bin/karoshi*
-chmod 
+chmod
 #Copy plymouth animations
 rm /usr/share/plymouth/themes/*
 cp /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
