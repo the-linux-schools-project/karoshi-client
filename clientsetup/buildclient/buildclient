@@ -68,7 +68,8 @@ sudo add-apt-repository -y ppa:vajdics/netbeans-installer
 sudo add-apt-repository -y ppa:git-core/ppa
 wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
 sudo apt-add-repository -y ppa:webupd8team/java
-sudo add-apt-repository ppa:numix/ppa
+sudo add-apt-repository -y ppa:numix/ppa
+sudo add-apt-repository -y ppa:openjdk/ppa
 
 
 
