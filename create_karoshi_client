@@ -177,8 +177,9 @@ cd $BUILDPATH
 echo -e "\nConfiguring chroot\n"
 
 # Copy architecture version for reference when downloading packages
-echo -e "ARCH=${ARCH}" >> chroot/tmp/arch.sh
-chmod 0755 chroot/tmp/arch.sh
+[ -d "${BUILDCLIENT}/chroot/opt/tmp" ] || mkdir "${BUILDCLIENT}/chroot/opt/tmp"
+echo -e "ARCH=${ARCH}" >> "${BUILDCLIENT}/chroot/tmp/arch.sh"
+chmod 0755 "${BUILDCLIENT}/chroot/tmp/arch.sh"
 
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/configure-chroot
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/buildclient
