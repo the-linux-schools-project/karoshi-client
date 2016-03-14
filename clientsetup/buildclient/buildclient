@@ -114,6 +114,9 @@ else
 	echo -e "\nSources for kxstudio-team/ppa installed."
 fi
 
+# Remove the tmp directory so it is not copied into the ISO image.
+rm -rf "$BUILDPATH/opt/tmp"
+
 #Create karoshi user
 getent passwd karoshi 1>/dev/null
 echo -e "Creating karoshi user\n"
