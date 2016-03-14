@@ -38,7 +38,7 @@ which unzip 1>/dev/null
 if [ $? != 0 ]
 then
 echo -e "Installing unzip\n"
-sudo apt-get install unzip
+apt-get install unzip
 	if [ $? != 0 ]
 	then
 		echo -e "There was a problem installing unzip - exiting now."
@@ -96,7 +96,7 @@ cd $BUILDPATH
 
 if [ $RUNDEBOOSTRAP = yes ]; then
 	echo -e "Creating the chroot environment"
-	sudo debootstrap --arch=$ARCH $RELEASE chroot
+	debootstrap --arch=$ARCH $RELEASE chroot
 fi
 
 echo -e "\nDownload $ZIPFILE\n"
@@ -161,12 +161,12 @@ apt-get install --yes syslinux squashfs-tools genisoimage
 #Copy in system files for network configuration for the chroot
 cd $BUILDPATH
 echo -e "Copying /etc/hosts\n"
-sudo cp /etc/hosts chroot/etc/hosts
+cp /etc/hosts chroot/etc/hosts
 echo -e "Copying /etc/resolv.conf\n"
-sudo cp /etc/resolv.conf chroot/etc/resolv.conf
-echo "Copying sources.list"
-cp -f /etc/apt/sources.list chroot/etc/apt/sources.list
+cp /etc/resolv.conf chroot/etc/resolv.conf
 
+echo "Copying sources.list"
+cp -f $BUILDPATH/chroot/opt/karoshi/clientsetup/buildclient/installs/sources.list chroot/etc/apt/sources.list
 
 #Backup /sbin/initctl
 cp /sbin/initctl /sbin/initctl.$$
@@ -176,13 +176,21 @@ cd $BUILDPATH
 
 echo -e "\nConfiguring chroot\n"
 
+# Copy architecture version for reference when downloading packages
+[ -d "${BUILDPATH}/chroot/opt/tmp" ] || mkdir "${BUILDPATH}/chroot/opt/tmp"
+
+echo -e "ARCH=${ARCH}" > "${BUILDPATH}/chroot/tmp/arch.sh"
+echo -e "BUILDPATH=${BUILDPATH}" > "${BUILDPATH}/chroot/tmp/build_client.sh"
+
+chmod 0755 "${BUILDPATH}/chroot/tmp/arch.sh"
+chmod 0755 "${BUILDPATH}/chroot/tmp/build_client.sh"
+
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/configure-chroot
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/buildclient
-sudo chroot chroot /opt/karoshi/clientsetup/buildclient/configure-chroot
+chroot chroot /opt/karoshi/clientsetup/buildclient/configure-chroot
 umount $BUILDPATH/chroot/dev
 
 echo -e "\nCreate ISO image\n"
-
 
 #Remove existing image directory
 if [ -d image ]
@@ -278,12 +286,12 @@ ubiquity ubiquity/summary note
 #Create manifest
 echo -e "\nCreating manifest\n"
 
-sudo chroot chroot dpkg-query -W --showformat='${Package} ${Version}\n' | sudo tee image/casper/filesystem.manifest
-sudo cp -v image/casper/filesystem.manifest image/casper/filesystem.manifest-desktop
+chroot chroot dpkg-query -W --showformat='${Package} ${Version}\n' | tee image/casper/filesystem.manifest
+cp -v image/casper/filesystem.manifest image/casper/filesystem.manifest-desktop
 REMOVE='ubiquity ubiquity-frontend-gtk ubiquity-frontend-kde casper lupin-casper live-initramfs user-setup discover1 xresprobe os-prober libdebian-installer4'
 for i in $REMOVE
 do
-        sudo sed -i "/${i}/d" image/casper/filesystem.manifest-desktop
+        sed -i "/${i}/d" image/casper/filesystem.manifest-desktop
 done
 
 #Set permissions on vmlinuz
@@ -296,7 +304,7 @@ mksquashfs chroot image/casper/filesystem.squashfs
 #Write the filesystem size - needed by the installer
 echo -e "\nWriting the filesystem size\n"
 sleep 1
-printf $(sudo du -sx --block-size=1 chroot | cut -f1) > image/casper/filesystem.size
+printf $(du -sx --block-size=1 chroot | cut -f1) > image/casper/filesystem.size
 
 #Create diskdefines
 echo '#define DISKNAME  '$KAROSHIVER'
@@ -330,14 +338,14 @@ chmod 0644 image/casper/vmlinuz
 echo -e "\nCalculating MD5\n"
 sleep 1
 cd $BUILDPATH/image
-sudo find . -type f -print0 | xargs -0 md5sum | grep -v "\./md5sum.txt" > md5sum.txt
+find . -type f -print0 | xargs -0 md5sum | grep -v "\./md5sum.txt" > md5sum.txt
 echo -e "\nCreating the iso image\n"
 sleep 1
 #Create iso image for the live CD
 
 [ -f $BUILDPATH/$KAROSHIVER.iso ] && rm -f $BUILDPATH/$KAROSHIVER.iso
 
-sudo mkisofs -r -V "$KAROSHIVER" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../$KAROSHIVER.iso .
+mkisofs -r -V "$KAROSHIVER" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../$KAROSHIVER.iso .
 cd ..
 
 echo -e "\nThe iso has been created at: $BUILDPATH/$KAROSHIVER.iso\n"

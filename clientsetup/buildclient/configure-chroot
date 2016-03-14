@@ -6,7 +6,6 @@ mount none -t devpts /dev/pts
 export HOME=/root
 export LC_ALL=C
 
-sudo apt-get install -y software-properties-common
 #Create /tmp/fake for symlinks to /bin/true
 mkdir /tmp/fake
 
@@ -21,46 +20,119 @@ ln -s /bin/true /tmp/fake/service
 export PATH=/tmp/fake:$PATH
 export DEBIAN_FRONTEND=noninteractive
 
-add-apt-repository -y ppa:otto-kesselgulasch/gimp
-add-apt-repository -y ppa:libreoffice/libreoffice-5-0
-add-apt-repository -y ppa:nilarimogard/webupd8
-add-apt-repository -y ppa:webupd8team/atom
-add-apt-repository -y ppa:ubuntu-wine/ppa
-add-apt-repository -y "deb http://us.archive.ubuntu.com/ubuntu/ saucy universe multiverse"
-add-apt-repository -y ppa:xubuntu-dev/xfce-4.12
-add-apt-repository -y "deb http://archive.getdeb.net/ubuntu $(lsb_release -sc)-getdeb apps"
-add-apt-repository -y ppa:webupd8team/y-ppa-manager
+# Update package sources, this should also gather the GPG keys from the PPAs,
+# just in case the keys are added later in the script.
+echo -e "\nChroot: updating apt for wget installation\n"
+echo -e "\nExpect gpg errors as the keys have not been added yet!"
+sleep 4
+apt-get update
 
+# Required for wget keys
+echo -e "\nChroot: Installing wget\n"
+apt-get install -y wget
 
-#GPG keys
+# Add GPG keys in-case they were not gathered already
+echo -e "\nChroot: Adding GPG keys for package sources.\n"
+# download.virtualbox.org/virtualbox/
+wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | apt-key add -
+# otto-kesselgulasch/gimp/
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 614C4B38
+# mirrors.coreix.net/mariadb/
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0xcbcb082a1bb943db
+# ppa.launchpad.net/libreoffice/
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1378B444
+# ppa.launchpad.net/nilarimogard/webupd8/
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
+# ppa.launchpad.net/webupd8team/y-ppa-manager/
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+# ppa.launchpad.net/ubuntu-wine/ppa/
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
+# ppa.launchpad.net/gottcode/gcppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 58043CFF
+# ppa.launchpad.net/catfish-search/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9163B46D
+# ppa.launchpad.net/mozillateam/thunderbird-next
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CE49EC21
+# wireshark-dev/stable
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 14ECA0F0
+# ppa.launchpad.net/stellarium/stellarium-releases
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C68D72A5
+# ppa.launchpad.net/kubuntu-ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8AC93F7A
+# ppa.launchpad.net/suraia/server
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1D9D38E5
+# ppa.launchpad.net/scribus
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 64B6EE15
+# ppa.launchpad.net/inkscape.dev/stable
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B9A06DE3
+# ppa.launchpad.net/dobey/audiotools
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AD555F67
+# ppa.launchpad.net/ubuntuhandbook1/audacity
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 852541CB
+# ppa.launchpad.net/mscore-ubuntu/mscore-stable
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3A258030
+# ppa.launchpad.net/openshot.developers/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B9BA26FA
+# ppa.launchpad.net/videolan/stable-daily
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 801DF724
+# ppa.launchpad.net/pasgui/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F599ACE3
+# ppa.launchpad.net/vajdics/netbeans-installer
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 21B4A5B3
+# ppa.launchpad.net/git-core/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E1DF1F24
+# ppa.launchpad.net/xenopathic/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
+# ppa.launchpad.net/xubuntu-dev/xfce-4.12
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
+# ppa.launchpad.net/light-locker/release
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 413214C1
+# ppa.launchpad.net/kxstudio-team/hydrogen
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DF8063EB
+# ppa.launchpad.net/ubuntu-audio-dev/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 72B194E5
+# ppa.launchpad.net/renbag/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4A346C04
+# ppa.launchpad.net/rebuntu16/glade-3.19+-trust
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 98F78EB3
+# packagecloud.io/github/git-lfs
+wget -q -O- https://packagecloud.io/github/git-lfs/gpgkey | apt-key add -
+# archive.getdeb.net/ubuntu
+wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+# archive.getdeb.net - bluegriffon
+wget -q http://archive.getdeb.net/getdeb-archive.key -O- | apt-key add -
+# ppa.launchpad.net/mozillateam/xul-ext
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CE49EC21
+#### ppa.launchpad.net/webupd8team/java
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+#### ppa.launchpad.net/numix/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0F164EEB
+#### ppa.launchpad.net/openjdk/ppa
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 214AEA0E
+
+# unknown/to be labeled
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3E5C1192
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 614C4B28
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0xcbcb082a1bb943db
-wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -0- | apt-key add -
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1378B444
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
-wget -q -O- http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
-wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
-
-sudo apt-get update
-sudo apt-key update
-
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
+apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
 
 #Make sure that dpkg is happy
 dpkg --configure -a
 
-echo -e "\nChroot: updating apt\n"
+echo -e "\nChroot: updating apt and apt-key\n"
 sleep 1
 apt-get update
+apt-key update
+
+# Required for add-apt-repository
+echo -e "\nChroot: Installing software-properties-common\n"
+apt-get install -y software-properties-common
+echo -e "\nChroot: Installing python-software-properties\n"
+apt-get install -y python-software-properties
 
 echo -e "\nChroot: installing dbus\n"
 sleep 1
 apt-get install -y dbus
-
 
 echo "Installing plymouth pakcages"
 apt-get install -y plymouth-label
@@ -97,17 +169,7 @@ sleep 1
 
 apt-get install -y grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lists plymouth-x11
 
-echo -e "\nChroot: Installing python-software-properties\n"
-sleep 1
-apt-get install -y software-properties-common python-software-properties
 
-
-echo -e "\nChroot: Installing wget\n"
-sleep 1
-apt-get install --yes wget
-
-
-apt-get update
 #Install and configure Karoshi
 chmod 0755 /opt/karoshi/clientsetup/buildclient/buildclient
 echo "Running buildclient"
@@ -115,7 +177,7 @@ sleep 4
 
 cd /opt/karoshi/clientsetup/buildclient
 chmod 0755 buildclient
-sudo ./buildclient
+./buildclient
 
 cd
 
@@ -148,7 +210,7 @@ disable_script /usr/share/initramfs-tools/scripts/casper-bottom/{25adduser,41apt
 rm /var/lib/dbus/machine-id
 [ -f /sbin/initctl ] && rm /sbin/initctl
 dpkg-divert --rename --remove /sbin/initctl
-sudo update in
+update in
 #Remove old linux kernels if there are more than one
 ls /boot/vmlinuz-3.13.**-**-generic > list.txt
 sum=$(cat list.txt | grep '[^ ]' | wc -l)
@@ -158,7 +220,7 @@ dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/"
 fi
 
 #Update initramfs
-sudo update-initramfs -u
+update-initramfs -u
 
 rm list.txt
 
