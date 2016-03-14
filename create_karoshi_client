@@ -179,8 +179,8 @@ echo -e "\nConfiguring chroot\n"
 # Copy architecture version for reference when downloading packages
 [ -d "${BUILDPATH}/chroot/opt/tmp" ] || mkdir "${BUILDPATH}/chroot/opt/tmp"
 
-echo -e "ARCH=${ARCH}" >> "${BUILDPATH}/chroot/tmp/arch.sh"
-echo -e "BUILDPATH=${BUILDPATH}" >> "${BUILDPATH}/chroot/tmp/build_client.sh"
+echo -e "ARCH=${ARCH}" > "${BUILDPATH}/chroot/tmp/arch.sh"
+echo -e "BUILDPATH=${BUILDPATH}" > "${BUILDPATH}/chroot/tmp/build_client.sh"
 
 chmod 0755 "${BUILDPATH}/chroot/tmp/arch.sh"
 chmod 0755 "${BUILDPATH}/chroot/tmp/build_client.sh"
