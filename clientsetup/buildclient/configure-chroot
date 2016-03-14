@@ -72,7 +72,6 @@ apt-get install --yes ubuntu-standard casper lupin-casper
 apt-get install --yes discover laptop-detect os-prober
 apt-get install --yes linux-generic
 apt-get install --yes grub2 plymouth-x11
-apt-get install --yes ubiquity-frontend-gtk
 apt-get install --yes isolinux
 apt-get install --yes plymouth
 apt-get install --yes ubiquity
