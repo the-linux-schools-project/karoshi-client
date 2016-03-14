@@ -22,22 +22,17 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Update package sources, this should also gather the GPG keys from the PPAs,
 # just in case the keys are added later in the script.
-echo -e "\nChroot: updating apt\n"
-sleep 1
+echo -e "\nChroot: updating apt for wget installation\n"
+echo -e "\nExpect gpg errors as the keys have not been added yet!"
+sleep 4
 apt-get update
-
-# Required for add-apt-repository
-echo -e "\nChroot: Installing software-properties-common\n"
-apt-get install -y software-properties-common
-echo -e "\nChroot: Installing python-software-properties\n"
-apt-get install -y python-software-properties
 
 # Required for wget keys
 echo -e "\nChroot: Installing wget\n"
 apt-get install -y wget
 
 # Add GPG keys in-case they were not gathered already
-
+echo -e "\nChroot: Adding GPG keys for package sources.\n"
 # download.virtualbox.org/virtualbox/
 wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | apt-key add -
 # otto-kesselgulasch/gimp/
@@ -123,10 +118,15 @@ sleep 1
 apt-get update
 apt-key update
 
+# Required for add-apt-repository
+echo -e "\nChroot: Installing software-properties-common\n"
+apt-get install -y software-properties-common
+echo -e "\nChroot: Installing python-software-properties\n"
+apt-get install -y python-software-properties
+
 echo -e "\nChroot: installing dbus\n"
 sleep 1
 apt-get install -y dbus
-
 
 echo "Installing plymouth pakcages"
 apt-get install -y plymouth-label
