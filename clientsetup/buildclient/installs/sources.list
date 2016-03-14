@@ -1,37 +1,74 @@
-#!release trusty
+# deb cdrom:[Xubuntu 16.04 LTS _Xenial Xerus_ - Alpha amd64 (20160310)]/ xenial main multiverse restricted universe
 
-#############################################################
-################### OFFICIAL UBUNTU REPOS ###################
-#############################################################
+# See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
+# newer versions of the distribution.
+deb http://gb.archive.ubuntu.com/ubuntu/ xenial main restricted
+# deb-src http://gb.archive.ubuntu.com/ubuntu/ xenial main restricted
 
-###### Ubuntu Main Repos
-deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+## Major bug fix updates produced after the final release of the
+## distribution.
+deb http://gb.archive.ubuntu.com/ubuntu/ xenial-updates main restricted
+# deb-src http://gb.archive.ubuntu.com/ubuntu/ xenial-updates main restricted
 
-###### Ubuntu Update Repos
-deb http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
-deb http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
-deb http://archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
-deb http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
+## team, and may not be under a free licence. Please satisfy yourself as to
+## your rights to use the software. Also, please note that software in
+## universe WILL NOT receive any review or updates from the Ubuntu security
+## team.
+deb http://gb.archive.ubuntu.com/ubuntu/ xenial universe
+# deb-src http://gb.archive.ubuntu.com/ubuntu/ xenial universe
+deb http://gb.archive.ubuntu.com/ubuntu/ xenial-updates universe
+# deb-src http://gb.archive.ubuntu.com/ubuntu/ xenial-updates universe
 
-###### Ubuntu Extras Repo
-#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3E5C1192
-deb http://extras.ubuntu.com/ubuntu trusty main
+## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
+## team, and may not be under a free licence. Please satisfy yourself as to
+## your rights to use the software. Also, please note that software in
+## multiverse WILL NOT receive any review or updates from the Ubuntu
+## security team.
+deb http://gb.archive.ubuntu.com/ubuntu/ xenial multiverse
+# deb-src http://gb.archive.ubuntu.com/ubuntu/ xenial multiverse
+deb http://gb.archive.ubuntu.com/ubuntu/ xenial-updates multiverse
+# deb-src http://gb.archive.ubuntu.com/ubuntu/ xenial-updates multiverse
 
-##############################################################
-##################### UNOFFICIAL  REPOS ######################
-##############################################################
+## N.B. software from this repository may not have been tested as
+## extensively as that contained in the main release, although it includes
+## newer versions of some applications which may provide useful features.
+## Also, please note that software in backports WILL NOT receive any review
+## or updates from the Ubuntu security team.
+deb http://gb.archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse
+# deb-src http://gb.archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse
+
+## Uncomment the following two lines to add software from Canonical's
+## 'partner' repository.
+## This software is not part of Ubuntu, but is offered by Canonical and the
+## respective vendors as a service to Ubuntu users.
+# deb http://archive.canonical.com/ubuntu xenial partner
+# deb-src http://archive.canonical.com/ubuntu xenial partner
+
+deb http://security.ubuntu.com/ubuntu xenial-security main restricted
+# deb-src http://security.ubuntu.com/ubuntu xenial-security main restricted
+
+deb http://security.ubuntu.com/ubuntu xenial-security universe
+# deb-src http://security.ubuntu.com/ubuntu xenial-security universe
+
+deb http://us.archive.ubuntu.com/ubuntu/ saucy universe multiverse
+# deb-src http://us.archive.ubuntu.com/ubuntu/ saucy universe multiverse
+
+deb http://archive.getdeb.net/ubuntu xenial-getdeb apps
+# deb-src http://archive.getdeb.net/ubuntu xenial-getdeb apps
+
+deb http://inverse.ca/ubuntu xenial xenial
+# deb-src http://inverse.ca/ubuntu xenial xenial
 
 ###### 3rd Party Binary Repos
 
+###### The following packages have been based on the ppas listed in the
+###### buildclient and configure-chroot scripts on 13.03.16.
+
 #### Gimp PPA - https://launchpad.net/~otto-kesselgulasch/+archive/gimp
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 614C4B38
-deb http://ppa.launchpad.net/otto-kesselgulasch/gimp/ubuntu trusty main
-deb-src http://ppa.launchpad.net/otto-kesselgulasch/gimp/ubuntu trusty main
+deb http://ppa.launchpad.net/otto-kesselgulasch/gimp/ubuntu xenial main
+deb-src http://ppa.launchpad.net/otto-kesselgulasch/gimp/ubuntu xenial main
 
 #### LibreOffice PPA - http://www.documentfoundation.org/download/
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1378B444
@@ -54,18 +91,23 @@ deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
 deb http://ppa.launchpad.net/webupd8team/atom/ubuntu trusty main
 deb-src http://ppa.launchpad.net/webupd8team/atom/ubuntu trusty main
 
+deb http://ppa.launchpad.net/webupd8team/y-ppa-manager/ubuntu xenial main
+deb-src http://ppa.launchpad.net/webupd8team/y-ppa-manager/ubuntu xenial main
+
 #### Wine PPA - https://launchpad.net/~ubuntu-wine/+archive/ppa/
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
 deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
 deb-src http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
-#### Bluegriffon PPA
-deb http://archive.getdeb.net/ubuntu trusty-getdeb apps
-# deb-src http://archive.getdeb.net/ubuntu trusty-getdeb apps
 
+#### Bluegriffon PPA - Already listed above
+#!cmd wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
+# deb http://archive.getdeb.net/ubuntu xenial-getdeb apps
+# deb-src http://archive.getdeb.net/ubuntu xenial-getdeb apps
+
+#### Xenopathic
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 96EFFE86
 deb http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main
 deb-src http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main
-
 
 #### XFCE 4.12 PPA - https://launchpad.net/~xubuntu-dev/+archive/xfce-4.12/
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
@@ -75,6 +117,152 @@ deb http://ppa.launchpad.net/gottcode/gcppa/ubuntu trusty main
 deb-src http://ppa.launchpad.net/gottcode/gcppa/ubuntu trusty main
 
 #### Git-LFS PPA - https://packagecloud.io/github/git-lfs/ubuntu/
-#!cmd wget -qO - https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
+#!cmd wget -q -O- https://packagecloud.io/github/git-lfs/gpgkey | apt-key add -
 deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main
 deb-src https://packagecloud.io/github/git-lfs/ubuntu/ trusty main
+
+#### catfish
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9163B46D
+deb http://ppa.launchpad.net/catfish-search/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/catfish-search/ppa/ubuntu xenial main
+
+#### light-locker stable
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 413214C1
+deb http://ppa.launchpad.net/light-locker/release/ubuntu trusty main
+deb-src http://ppa.launchpad.net/light-locker/release/ubuntu trusty main
+
+#### ubuntu-mozilla-daily-builds
+deb http://ppa.launchpad.net/ubuntu-mozilla-daily/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/ubuntu-mozilla-daily/ppa/ubuntu xenial main
+
+#### mozillateam/thunderbird-next (closest to outdated stable)
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CE49EC21
+deb http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
+deb-src http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
+
+#### mozillateam/thunderbird-next (closest to outdated stable) (lightning-extension)
+deb http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu wily main
+deb-src http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu wily main
+
+#### wireshark-dev/stable/ubuntu
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 14ECA0F0
+deb http://ppa.launchpad.net/wireshark-dev/stable/ubuntu wily main
+deb-src http://ppa.launchpad.net/wireshark-dev/stable/ubuntu wily main
+
+#### stellarium/stellarium-releases
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C68D72A5
+deb http://ppa.launchpad.net/stellarium/stellarium-releases/ubuntu xenial main
+deb-src http://ppa.launchpad.net/stellarium/stellarium-releases/ubuntu xenial main
+
+#### kubuntu-ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8AC93F7A
+deb http://ppa.launchpad.net/kubuntu-ppa/ppa/ubuntu wily main
+deb-src http://ppa.launchpad.net/kubuntu-ppa/ppa/ubuntu wily main
+
+#### suraia
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1D9D38E5
+deb http://ppa.launchpad.net/suraia/server/ubuntu wily main
+deb-src http://ppa.launchpad.net/suraia/server/ubuntu wily main
+
+#### scribus
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 64B6EE15
+deb http://ppa.launchpad.net/scribus/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/scribus/ppa/ubuntu xenial main
+
+#### inkscape.dev
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B9A06DE3
+deb http://ppa.launchpad.net/inkscape.dev/stable/ubuntu wily main
+deb-src http://ppa.launchpad.net/inkscape.dev/stable/ubuntu wily main
+
+#### dobey/audiotools
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AD555F67
+deb http://ppa.launchpad.net/dobey/audiotools/ubuntu xenial main
+deb-src http://ppa.launchpad.net/dobey/audiotools/ubuntu xenial main
+
+#### ubuntuhandbook1/audacity
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 852541CB
+deb http://ppa.launchpad.net/ubuntuhandbook1/audacity/ubuntu wily main
+deb-src http://ppa.launchpad.net/ubuntuhandbook1/audacity/ubuntu wily main
+
+#### mscore-ubuntu/mscore-stable
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3A258030
+deb http://ppa.launchpad.net/mscore-ubuntu/mscore-stable/ubuntu wily main
+deb-src http://ppa.launchpad.net/mscore-ubuntu/mscore-stable/ubuntu wily main
+
+#### kxstudio-team/ppa (obselete download ppa manually)
+
+#### kxstudio-team/hydrogen
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DF8063EB
+deb http://ppa.launchpad.net/kxstudio-team/hydrogen/ubuntu trusty main
+deb-src http://ppa.launchpad.net/kxstudio-team/hydrogen/ubuntu trusty main
+
+#### ubuntu-audio-dev/ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 72B194E5
+deb http://ppa.launchpad.net/ubuntu-audio-dev/ppa/ubuntu raring main
+deb-src http://ppa.launchpad.net/ubuntu-audio-dev/ppa/ubuntu raring main
+
+#### thomas-schiex/blender (revival of irie/lmm)
+deb http://ppa.launchpad.net/thomas-schiex/blender/ubuntu wily main
+deb-src http://ppa.launchpad.net/thomas-schiex/blender/ubuntu wily main
+
+#### openshot.developers/ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B9BA26FA
+deb http://ppa.launchpad.net/openshot.developers/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/openshot.developers/ppa/ubuntu xenial main
+
+#### videolan/stable-daily
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 801DF724
+deb http://ppa.launchpad.net/videolan/stable-daily/ubuntu xenial main
+deb-src http://ppa.launchpad.net/videolan/stable-daily/ubuntu xenial main
+
+#### renbag/ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4A346C04
+deb http://ppa.launchpad.net/renbag/ppa/ubuntu maverick main
+deb-src http://ppa.launchpad.net/renbag/ppa/ubuntu maverick main
+
+#### pasgui/ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F599ACE3
+deb http://ppa.launchpad.net/pasgui/ppa/ubuntu trusty main
+deb-src http://ppa.launchpad.net/pasgui/ppa/ubuntu trusty main
+
+#### eclipse-team/ppa (obselete download package manually)
+
+#### rebuntu16/glade-3.19+-trusty
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 98F78EB3
+deb http://ppa.launchpad.net/rebuntu16/glade-3.19+-trusty/ubuntu trusty main
+deb-src http://ppa.launchpad.net/rebuntu16/glade-3.19+-trusty/ubuntu trusty main
+
+#### vajdics/netbeans-installer
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 21B4A5B3
+deb http://ppa.launchpad.net/vajdics/netbeans-installer/ubuntu xenial main
+deb-src http://ppa.launchpad.net/vajdics/netbeans-installer/ubuntu xenial main
+
+#### git-core/ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E1DF1F24
+deb http://ppa.launchpad.net/git-core/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/git-core/ppa/ubuntu xenial main
+
+#### archive.getdeb.net - bluegriffon
+#!cmd wget -q http://archive.getdeb.net/getdeb-archive.key -O- | apt-key add -
+deb http://archive.getdeb.net/ubuntu wily-getdeb apps
+deb-src http://archive.getdeb.net/ubuntu wily-getdeb apps
+
+#### ppa.launchpad.net/mozillateam/xul-ext
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CE49EC21
+deb http://ppa.launchpad.net/mozillateam/xul-ext/ubuntu xenial main
+deb-src http://ppa.launchpad.net/mozillateam/xul-ext/ubuntu xenial main
+
+#### ppa.launchpad.net/webupd8team/java
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main
+deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main
+
+#### ppa.launchpad.net/numix/ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0F164EEB
+deb http://ppa.launchpad.net/numix/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/numix/ppa/ubuntu xenial main
+
+#### ppa.launchpad.net/openjdk/ppa
+#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 214AEA0E
+deb http://ppa.launchpad.net/openjdk/ppa/ubuntu natty main
+deb-src http://ppa.launchpad.net/openjdk/ppa/ubuntu natty main
