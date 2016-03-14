@@ -31,7 +31,9 @@ apt-get install -y xinit
 
 # Get architecture version for reference when downloading packages
 ARCH=""
-. ./tmp/arch.sh
+BUILDCLIENT=""
+. ./opt/tmp/build_client.sh
+. .$BUILDCLIENT/opt/tmp/arch.sh
 
 [ "$ARCH" == "" ] && echo -e "\nNo architecture present in /tmp/arch.sh\n"
 
