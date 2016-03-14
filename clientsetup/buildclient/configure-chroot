@@ -147,6 +147,8 @@ apt-get install --yes grub2 plymouth-x11
 apt-get install --yes isolinux
 apt-get install --yes plymouth
 apt-get install --yes ubiquity
+apt-get install --yes ubiquity-frontend-gtk
+apt-get install --yes ubiquity-frontend-gtk-dbgsym
 #Install Packages needed for the live system
 echo -e "\nChroot: Installing packages for the live system\n"
 sleep 1
