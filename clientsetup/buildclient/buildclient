@@ -31,9 +31,9 @@ apt-get install -y xinit
 
 # Get architecture version for reference when downloading packages
 ARCH=""
-BUILDCLIENT=""
+BUILDPATH=""
 . ./opt/tmp/build_client.sh
-. .$BUILDCLIENT/opt/tmp/arch.sh
+. .$BUILDPATH/opt/tmp/arch.sh
 
 [ "$ARCH" == "" ] && echo -e "\nNo architecture present in /tmp/arch.sh\n"
 
@@ -44,14 +44,14 @@ echo -e "\nAttempting to download eclipse."
 installEclipse="no"
 # Download eclipse
 if [ "$ARCH" == "amd64" ]; then
-	wget --timeout=10 -O /tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz&r=1"
+	wget --timeout=10 -O $BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz&r=1"
 	wgetOut=$?
 	if [ $wgetOut != 0 ]; then
 			# The download failed.
 			echo "There was a problem downloading eclipse, skipping."
 	fi
 
-	checksum=$(md5sum "/tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz" | cut -d ' ' -f 1)
+	checksum=$(md5sum "$BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz" | cut -d ' ' -f 1)
 	if [ "$checksum" != "a7ddf8be89d65e66dc09a54e98b47748" ]; then
 		echo "There was a problem validating the archive, skipping."
 	else
@@ -59,14 +59,14 @@ if [ "$ARCH" == "amd64" ]; then
 		installEclipse="yes"
 	fi
 elif [ "$ARCH" == "i386" ]; then
-	wget --timeout=10 -O /tmp/eclipse-java-mars-2-linux-gtk.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk.tar.gz&r=1"
+	wget --timeout=10 -O $BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk.tar.gz&r=1"
 	wgetOut=$?
 	if [ $wgetOut != 0 ]; then
 			# The download failed.
 			echo "There was a problem downloading eclipse, skipping."
 	fi
 
-	checksum=$(md5sum "/tmp/eclipse-java-mars-2-linux-gtk.tar.gz" | cut -d ' ' -f 1)
+	checksum=$(md5sum "$BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk.tar.gz" | cut -d ' ' -f 1)
 	if [ "$checksum" != "3f0460868e3702c6c8e6e346ae869f54" ]; then
 		echo "There was a problem validating the archive, skipping."
 	else
@@ -78,15 +78,15 @@ fi
 if [ "$installEclipse" == "yes" ]; then
 	if [ "$ARCH" == "amd64" ]; then
 		echo -e "\nExtracting eclipse archive."
-		tar -zxvf /tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz
+		tar -zxvf $BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz
 		echo -e "\nMoving eclipse into place."
-		mv /tmp/eclipse-java-mars-2-linux-gtk-x86_64 /opt
+		mv $BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk-x86_64 /opt
 	fi
 	if [ "$ARCH" == "i386" ]; then
 		echo -e "\nExtracting eclipse archive."
-		tar -zxvf /tmp/eclipse-java-mars-2-linux-gtk.tar.gz
+		tar -zxvf $BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk.tar.gz
 		echo -e "\nMoving eclipse into place."
-		mv /tmp/eclipse-java-mars-2-linux-gtk.tar.gz /opt
+		mv $BUILDPATH/opt/tmp/eclipse-java-mars-2-linux-gtk.tar.gz /opt
 	fi
 	echo -e "\nEclipse installed."
 fi
@@ -98,19 +98,19 @@ echo -e "\nAttempting to download sources list for kxstudio-team/ppa."
 # Checksum: 7ea382267e24925e09b087c5af1e5daa *kxstudio-repos-gcc5_9.2.2-kxstudio1_all.deb
 
 # Download sources for kxstudio-team/ppa.
-wget --timeout=10 -O /tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb
+wget --timeout=10 -O $BUILDPATH/opt/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb
 wgetOut=$?
 if [ $wgetOut != 0 ]; then
 		# The download failed.
 		echo "There was a problem downloading sources for kxstudio-team/ppa, skipping."
 fi
 
-checksum=$(md5sum "/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb" | cut -d ' ' -f 1)
+checksum=$(md5sum "$BUILDPATH/opt/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb" | cut -d ' ' -f 1)
 if [ "$checksum" != "7ea382267e24925e09b087c5af1e5daa" ]; then
 	echo "There was a problem validating the archive, skipping."
 else
 	echo "Archive validated."
-	dpkg -i "/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb"
+	dpkg -i "$BUILDPATH/opt/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb"
 	echo -e "\nSources for kxstudio-team/ppa installed."
 fi
 
