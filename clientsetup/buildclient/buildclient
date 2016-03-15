@@ -161,9 +161,29 @@ echo "Installing packages"
 
 sleep 2
 
-apt-get install -y $packages 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
+	for package in `echo $packages`
+	do
+		echo -e "\nInstalling $package\n"
+		sleep 1
+		apt-get -y install $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
+		if [ $? != 0 ]
+		then
+			echo $package: There was a problem installing this package. Press return to continue.
+			[ $AUTO = no ] && read pause
+		fi
+	done
 
-apt-get install -y $extrapackages 1>> /var/log/karoshi_build2.log 2>> /var/log/karoshi_build2.log
+	for package in `echo $extrapackages`
+	do
+		echo -e "\nInstalling $package\n"
+		sleep 1
+		apt-get -y install $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
+		if [ $? != 0 ]
+		then
+			echo $package: There was a problem installing this package. Press return to continue.
+			[ $AUTO = no ] && read pause
+		fi
+	done
 
 #Update initramfs
 update-initramfs -u
