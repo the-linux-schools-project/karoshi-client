@@ -35,10 +35,9 @@ apt-get install -y xubuntu-desktop
 # Get architecture version for reference when downloading packages
 ARCH=""
 BUILDPATH=""
-. ./opt/tmp/build_client.sh
-. .$BUILDPATH/opt/tmp/arch.sh
+source opt/tmp/setup_variables.sh
 
-[ "$ARCH" == "" ] && echo -e "\nNo architecture present in /tmp/arch.sh\n"
+[ "$ARCH" == "" ] && echo -e "\nNo architecture present in chroot/opt/tmp/setup_variables.sh\n"
 
 # Checksum: a7ddf8be89d65e66dc09a54e98b47748  eclipse-java-mars-2-linux-gtk-x86_64.tar.gz
 # Checksum: 3f0460868e3702c6c8e6e346ae869f54  eclipse-java-mars-2-linux-gtk.tar.gz.
