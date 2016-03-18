@@ -179,10 +179,6 @@ deb-src http://ppa.launchpad.net/inkscape.dev/stable/ubuntu wily main
 deb http://ppa.launchpad.net/dobey/audiotools/ubuntu xenial main
 deb-src http://ppa.launchpad.net/dobey/audiotools/ubuntu xenial main
 
-#### ubuntuhandbook1/audacity
-#!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 852541CB
-deb http://ppa.launchpad.net/ubuntuhandbook1/audacity/ubuntu wily main
-deb-src http://ppa.launchpad.net/ubuntuhandbook1/audacity/ubuntu wily main
 
 #### mscore-ubuntu/mscore-stable
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3A258030
