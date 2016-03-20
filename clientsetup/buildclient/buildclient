@@ -359,3 +359,4 @@ chmod
 #Copy plymouth animations
 rm -r /usr/share/plymouth/themes/*
 cp -r /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
+fi

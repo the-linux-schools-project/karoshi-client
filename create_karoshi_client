@@ -31,6 +31,7 @@ BUILDPATH=/home/karoshi-client/$KAROSHIVERNOCAPS
 RELEASE=xenial
 BRANCH=pheonix
 ZIPFILE=$BRANCH.zip
+# Change this version to testing to only install required packages
 VERSION=normal
 
 echo -e "Karoshi Client Remaster Utility\n"
