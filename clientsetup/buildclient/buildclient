@@ -2,7 +2,7 @@
 
 branch=pheonix
 
-
+source /tmp/setup_variables
 #Reboot the machine to auto log in to the karoshi user.
 REBOOT=yes
 
@@ -19,7 +19,132 @@ then
 	echo This script must be run as root.
 	exit
 fi
+if [ $VERSION=testing ]; then
 
+# Change packages list for testing purposes only
+packages="gtk2-engines xorg xubuntu-desktop xfce4 indicator-application-gtk2 indicator-sound-gtk2 indicator-multiload xfce4-datetime-plugin xfce4-indicator-plugin xfce4-screenshooter xfce4-terminal xfce4-power-manager xubuntu-artwork shimmer-themes xubuntu-icon-theme thunar-archive-plugin thunar-media-tags-plugin light-locker lightdm lightdm-gtk-greeter firefox file-roller wbritish gedit gedit-plugins ttf-dejavu ttf-mscorefonts-installer ttf-freefont dia blender gimp inkscape eog ardour jackd2 qjackctl a2jmidid tmux cups printer-driver-all openprinting-ppds cifs-utils libpam-mount krb5-user ntp xautolock yad gnupg ldap-utils synaptic xmlstarlet resolvconf iputils-ping iputils-tracepath iputils-arping net-tools mtr-tiny netcat-openbsd isc-dhcp-client libnss3-tools sssd virtualbox-guest-utils virtualbox-guest-x11 xserver-xorg-video-all wpasupplicant ssh-krb5 gksu zsh gvfs-backends pam-exec2 wine plymouth-x11 rsyslog unbound intltool nano netbeans-installer"
+
+	#Add required repositories
+		echo -e "\nAdding required repositories\n"
+		sleep 1
+		apt-key update
+		apt-get update
+
+	#Adding some required packages
+		apt-get install -y numix-gtk-theme numix-icon-theme-circle numix
+		apt-get install -y feh ubiquity-frontend-gtk
+		apt-get install -y xinit
+
+		apt-get install -y xubuntu-desktop
+
+	# Get architecture version for reference when downloading packages
+
+	#Create karoshi user
+		getent passwd karoshi 1>/dev/null
+		echo -e "Creating karoshi user\n"
+		sleep 1
+		useradd -d /opt/karoshi-admin -s /bin/bash -m karoshi
+	#Set password to karoshi
+		echo -e "\nSetting karoshi user password to karoshi\n"
+		sleep 1
+		echo -e "karoshi\nkaroshi\n" | passwd karoshi
+
+	#Extract karoshi home area
+		echo -e "\nExtracting karoshi home area folder\n"
+		sleep 1
+		cp /opt/karoshi/clientsetup/karoshi-home/* /opt/karoshi-admin
+		cd /opt/karoshi-admin
+		tar -xvzf *
+		rm karoshi-*
+		cd
+		su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Numix"
+		chmod 0600 -R /opt/karoshi-admin
+		chmod u+X -R /opt/karoshi-admin
+		chown karoshi -R /opt/karoshi-admin
+
+	#Make sure that there is an admin group
+		getent group admin 1>/dev/null
+		[ $? != 0 ] && groupadd admin
+
+	#Add karoshi user to the admin group
+		usermod -a -G admin karoshi
+
+	#Install software
+		apt-key update
+		apt-get update
+		sleep 4
+
+	# Using --allow-unauthenticated temporarily to resolve libxfce4util6 that causes all package installs to cancel.
+		apt-get install -y --allow-unauthenticated xubuntu-desktop
+		echo "Installing packages"
+
+	sleep 2
+
+	for package in `echo $packages`
+	do
+		echo -e "\nInstalling $package\n"
+		sleep 1
+		apt-get -y install $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
+		if [ $? != 0 ]
+		then
+			echo $package: There was a problem installing this package. Press return to continue.
+			[ $AUTO = no ] && read pause
+		fi
+	done
+
+	#Update initramfs
+		update-initramfs -u
+
+	#Copy in etc.conf to autologin karoshi user
+
+
+	#Configure grub
+		echo -e "\nConfiguring grub2.\n"
+		cp -f /opt/karoshi/clientsetup/buildclient/config/grub /etc/default/grub
+		echo -e "\nUpdating grub2.\n"
+		update-grub
+
+	#Tidy packages
+		apt-get autoremove
+
+	#Copy config files
+		cd /
+		mkdir -p /opt/karoshi/images
+		cp -r /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
+		cp -r /opt/karoshi/images/* /usr/share/backgrounds
+		cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
+		cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
+
+	#Copy /etc files
+		echo "copying etc files"
+		sleep 2
+		cp -r /opt/karoshi/clientsetup/etc/* /etc
+		cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+	
+	#Copy images
+
+	#Copy more configuration files
+		echo "Copying config files"
+		cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/init
+		cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
+		cp -r /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
+		cp -r /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
+		cp -r /opt/karoshi/clientsetup/skel/* /etc/skel
+		cp -r /opt/karoshi/clientsetup/utilities/karoshi-update.conf /etc/init
+		cp -r /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
+		cp -r /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
+		cp -r /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
+		cp -r /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
+		cp -r /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
+
+chmod 0755 /usr/bin/karoshi*
+chown karoshi -R /usr/bin/karoshi*
+
+	#Copy plymouth animations
+		rm -r /usr/share/plymouth/themes/*
+		cp -r /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
+	exit
+else
 #Add required repositories
 echo -e "\nAdding required repositories\n"
 sleep 1
@@ -33,9 +158,6 @@ apt-get install -y xinit
 apt-get install -y xubuntu-desktop
 
 # Get architecture version for reference when downloading packages
-ARCH=""
-BUILDPATH=""
-source opt/tmp/setup_variables.sh
 
 [ "$ARCH" == "" ] && echo -e "\nNo architecture present in chroot/opt/tmp/setup_variables.sh\n"
 

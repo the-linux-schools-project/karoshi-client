@@ -31,6 +31,7 @@ BUILDPATH=/home/karoshi-client/$KAROSHIVERNOCAPS
 RELEASE=xenial
 BRANCH=pheonix
 ZIPFILE=$BRANCH.zip
+VERSION=normal
 
 echo -e "Karoshi Client Remaster Utility\n"
 
@@ -177,12 +178,15 @@ cd $BUILDPATH
 echo -e "\nConfiguring chroot\n"
 
 # Store variables in file for reference in buildclient .etc
-[ -d "${BUILDPATH}/chroot/opt/tmp" ] || mkdir "${BUILDPATH}/chroot/opt/tmp"
+[ -d "${BUILDPATH}/chroot/tmp" ] || mkdir "${BUILDPATH}/chroot/tmp"
 
-echo -e "ARCH=${ARCH}
-BUILDCLIENT=${BUILDCLIENT}" >> "${BUILDPATH}/chroot/tmp/setup_variables.sh"
 
-chmod 0755 "${BUILDPATH}/chroot/tmp/setup_variables.sh"
+# Make a variables location within chroot
+echo -e "ARCH=$ARCH" >> $BUILDPATH/chroot/tmp/setup_variables
+echo -e "VERSION=$VERSION" >> $BUILDPATH/chroot/tmp/setup_variables
+echo -e "BUILDPATH=$BUILDPATH" >> $BUILDPATH/chroot/tmp/setup_variables
+
+chmod 0755 "${BUILDPATH}/chroot/tmp/setup_variables"
 
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/configure-chroot
 chmod 0755 chroot/opt/karoshi/clientsetup/buildclient/buildclient
