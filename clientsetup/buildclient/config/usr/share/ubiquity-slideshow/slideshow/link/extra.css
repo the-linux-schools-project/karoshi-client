@@ -1,0 +1,275 @@
+/* extra.css */
+
+/*
+Copyright (C) 2016 Matthew Jowett
+
+This file is part of Karoshi Client.
+
+Karoshi Client is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Karoshi Client is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Karoshi Client. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* This template requires base.css, found in this folder */
+
+.header {
+ position:absolute;
+ top:0px;
+ width:100%;
+ height:68px;
+ background-color:#2D3335;
+}
+
+.header > .outer, .inner {
+ display: block;
+}
+
+.header > .outer{
+	padding: 0;
+}
+
+.header .inner{
+ padding-right:5px;
+ padding-bottom:5px;
+ padding-left:5px;
+ padding-top:5px;
+}
+
+.header .versionheader {
+ position:absolute;
+ padding-right:5px;
+ bottom:0;
+ right:0;
+ font-size:10px;
+ line-height:15px;
+ font-weight:normal;
+ color:#F7F6F6;
+}
+
+.header .icon {
+ float: left;
+}
+
+.header .slidetitle {
+ display:table-cell;
+ padding-left: 25px;
+ vertical-align:middle;
+ font-size:24px;
+ line-height:55px;
+ font-weight:normal;
+ color:#F7F6F6;
+}
+
+.main .textbox{
+	font-size: 14.4px;
+	line-height: 19.2px;
+	font-family: 'Droid Sans', sans-serif;
+	font-weight:normal;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+
+.main .packagelist{
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  margin-left: 20px;
+}
+
+.main .packagelist p{
+	padding-bottom: 11.520px;
+	padding-left: 5px;
+	font-size: 11.52px;
+}
+
+.main .packagelist > .left{
+	float: left;
+  width: 50%;
+}
+
+.main .packagelist > .right{
+	float: left;
+  width: 50%;
+}
+
+.main .packagelist .column{
+	margin-bottom: 12.960px;
+}
+
+.main .packagelist .column > .title{
+	font-weight: bold;
+	font-size: 19.2px;
+	padding-bottom: 12.960px;
+}
+
+.main .packagelist img{
+  display: inline-block;
+  max-width:16px;
+  max-height:16px;
+  width: auto;
+  height: auto;
+	padding-right: 2.5px;
+}
+
+.desktopshowcase {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.desktopshowcase .largeicon img{
+  max-width: 80%;
+  max-height: 80%;
+  vertical-align: middle;
+  padding-bottom: 10px;
+}
+
+.desktopshowcase .largeicon p{
+  padding-top: 10px;
+  font-weight: bold;
+	font-size: 19.2px;
+}
+
+.desktopshowcase .right {
+  float: left;
+  width: 61.80%;
+}
+
+.desktopshowcase .left {
+  float: left;
+  width: 38.20%;
+}
+
+.desktopshowcase .screenshot {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.opensource {
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.opensource .left {
+  float: left;
+  width: 38.20%;
+}
+
+.opensource .right {
+  float: left;
+  width: 61.80%;
+}
+
+.opensource .left > .largeicon img{
+  max-width: 60%;
+  max-height: 60%;
+  vertical-align: middle;
+  padding-bottom: 10px;
+}
+
+.opensource .left > .largeicon p{
+  padding-top: 10px;
+  font-weight: bold;
+	font-size: 19.2px;
+}
+
+.opensource .left > p{
+  font-size: 14.4px;
+	line-height: 19.2px;
+	font-family: 'Droid Sans', sans-serif;
+	font-weight:normal;
+  padding-bottom: 20px;
+}
+
+.opensource .right > .screenshot{
+  margin-bottom: 20px;
+  margin-left:20px;
+}
+
+.opensource .right > .screenshot img{
+  max-width: 58%;
+  max-height: 58%;
+  vertical-align: middle;
+}
+
+.opensource .right > .screenshot p{
+  padding-top: 6px;
+  font-weight: bold;
+	font-size: 19.2px;
+}
+
+.support {
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.support .left {
+  float: left;
+  width: 60%;
+}
+
+.support .left > p{
+  font-size: 14.4px;
+	line-height: 19.2px;
+	font-family: 'Droid Sans', sans-serif;
+	font-weight: normal;
+}
+
+.support .left > .screenshot img{
+  max-width: 70%;
+  max-height: 70%;
+  vertical-align: middle;
+}
+
+.support .left > .screenshot p{
+  padding-top: 10px;
+  font-weight: bold;
+	font-size: 19.2px;
+}
+
+.support .right {
+  float: left;
+  width: 37.08%;
+}
+
+.support .right > .screenshot{
+  margin-bottom: 20px;
+  margin-left:20px;
+}
+
+.support .right > .screenshot img{
+  max-width: 98%;
+  max-height: 98%;
+  vertical-align: middle;
+}
+
+.support .right > .screenshot p{
+  padding-top: 10px;
+  font-weight: bold;
+	font-size: 19.2px;
+}
+
+.support .right > .textbox_alt p{
+  padding-left: 20px;
+  font-weight: bold;
+  font-size: 17.9px;
+	line-height: 19.2px;
+	font-family: 'Droid Sans', sans-serif;
+  padding-bottom: 20px;
+}
+
+#slideshow {
+  background: linear-gradient(to right, #12A3EB , #027CB9);
+}

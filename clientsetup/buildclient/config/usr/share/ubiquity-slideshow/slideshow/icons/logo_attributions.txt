@@ -1,0 +1,49 @@
+Firefox (firefox.png):
+https://www.mozilla.org/en-US/styleguide/identity/firefox/branding/
+
+Atom (atom.png):
+https://atom.io/faq
+https://raw.githubusercontent.com/atom/atom/master/resources/app-icons/stable/png/16.png
+
+Git (git.png):
+https://git-scm.com/downloads/logos
+https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png
+
+Thunderbird (thunderbird.png):
+https://www.mozilla.org/en-US/styleguide/identity/thunderbird/logo/
+
+LibreOffice (libreoffice.png):
+https://wiki.documentfoundation.org/Marketing/Branding
+
+FileZilla (filezilla.png):
+https://commons.wikimedia.org/wiki/File:FileZilla_logo.svg
+Author: eeme158 team
+License: "GNU General Public License (GPL) version 2 or (at your option) any later version."
+
+Wireshark (wireshark.png):
+https://www.wireshark.org/about.html
+https://commons.wikimedia.org/wiki/File:Wireshark_icon.svg
+
+VLC (vlc.png):
+http://www.videolan.org/goodies.html
+http://images.videolan.org/images/VLC-IconSmall.png
+
+Stellarium (stellarium.png):
+http://www.stellarium.org/wiki/index.php/FAQ
+http://www.stellarium.org/img/nd/bg-header.png
+
+Gimp (gimp.png):
+https://www.gimp.org/about/linking.html
+https://www.gimp.org/images/wilber_the_gimp.png
+
+Inkscape (inkscape.png):
+https://inkscape.org/en/about/trademark-policy/
+https://inkscape.org/en/~inkscape/%E2%98%85inkscape-official-logo-raster-128x128px
+
+Eclipse (eclipse.png):
+http://www.eclipse.org/legal/logo_guidelines.php
+https://eclipse.org/artwork/
+
+XFCE (xfce.png):
+https://commons.wikimedia.org/wiki/File:Xfce_logo-footprint.svg?uselang=en-gb
+https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Xfce_logo-footprint.svg/500px-Xfce_logo-footprint.svg.png?uselang=en-gb

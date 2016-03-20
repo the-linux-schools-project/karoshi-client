@@ -37,6 +37,9 @@ packages="gtk2-engines xorg xubuntu-desktop xfce4 indicator-application-gtk2 ind
 
 		apt-get install -y xubuntu-desktop
 
+		# Required for ubiquity-slideshow
+		apt-get install -y ubiquity-slideshow-ubuntu-gnome
+
 	# Get architecture version for reference when downloading packages
 
 	#Create karoshi user
@@ -120,7 +123,7 @@ packages="gtk2-engines xorg xubuntu-desktop xfce4 indicator-application-gtk2 ind
 		sleep 2
 		cp -r /opt/karoshi/clientsetup/etc/* /etc
 		cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
-	
+
 	#Copy images
 
 	#Copy more configuration files
