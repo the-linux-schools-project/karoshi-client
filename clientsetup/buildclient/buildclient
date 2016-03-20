@@ -144,9 +144,19 @@ chmod 0755 /usr/bin/karoshi*
 chown karoshi -R /usr/bin/karoshi*
 
 	#Copy plymouth animations
-		rm -r /usr/share/plymouth/themes/*
-		cp -r /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
-	exit
+		echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
+
+		cp -f -r /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
+		
+		update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth
+		/usr/share/plymouth/themes/karoshi-logo/karoshi-logo.plymouth 100
+
+		SELECT=`update-alternatives --list default.plymouth | grep -n karoshi-logo | cut -d: -f1`
+		echo -e "$SELECT\n" | update-alternatives --config default.plymouth | grep karoshi-logo
+
+		update-initramfs -u
+		
+
 else
 #Add required repositories
 echo -e "\nAdding required repositories\n"
