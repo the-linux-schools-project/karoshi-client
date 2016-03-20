@@ -21,10 +21,10 @@
 #
 #Website: http://www.karoshi.org.uk
 
-source /opt/karoshi/linuxclientsetup/utilities/common
+source /opt/karoshi/clientsetup/utilities/common
 
 #Add iptables template
-iptables-restore < /opt/karoshi/linuxclientsetup/config-files/firewall/iptables.rules
+iptables-restore < /opt/karoshi/clientsetup/config/firewall/iptables.rules
 
 deny_target="DROP"
 

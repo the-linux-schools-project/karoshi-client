@@ -22,7 +22,7 @@
 #
 #Website: http://www.karoshi.org.uk
 
-source /opt/karoshi/linuxclientsetup/utilities/common
+source /opt/karoshi/clientsetup/utilities/common
 
 netlogon_mount=/tmp/netlogon
 
@@ -446,7 +446,7 @@ function reconfigureNetwork {
 
 DNSSUFFIX="internal"
 #Get nsswitch functions
-source /opt/karoshi/linuxclientsetup/utilities/nsswitch-funcs
+source /opt/karoshi/clientsetup/utilities/nsswitch-funcs
 
 function exitfunc {
 	info_alert $"Karoshi Set Network" $"Cannot find domain information on server"
@@ -470,8 +470,8 @@ if [[ -f $netlogon_mount/domain_information/samba4 ]]; then
 
 	echo 60 >&11
 	echo \#$"Copying files" >&11
-	cp -rfbS '.karoshi-common~' /opt/karoshi/linuxclientsetup/config-files/common/* /
-	cp -rfbS '.karoshi-samba4~' /opt/karoshi/linuxclientsetup/config-files/samba4/* /
+	cp -rfbS '.karoshi-common~' /opt/karoshi/clientsetup/config/common/* /
+	cp -rfbS '.karoshi-samba4~' /opt/karoshi/clientsetup/config/samba4/* /
 	sed -i "s/CHANGETHISREALM/$dns_domain_caps/g" /etc/krb5.conf
 	sed -i "s/CHANGETHISDNS/$DNSSUFFIX/g" /etc/ssh/ssh_config
 

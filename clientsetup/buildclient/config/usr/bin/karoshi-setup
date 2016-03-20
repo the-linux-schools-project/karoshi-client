@@ -114,9 +114,6 @@ fi
 passwd -u karoshi
 passwd -u root
 
-#Clean up /opt/karoshi
-find /opt/karoshi -mindepth 1 -maxdepth 1 -not -name 'linuxclientsetup' -execdir rm -rf {} +
-
 #Clear out logs
 > /var/log/karoshi/pre-session.log
 > /var/log/karoshi/post-session.log
@@ -174,7 +171,7 @@ find /opt/karoshi/clientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /e
 find /etc/init -name "karoshi-*.conf" -execdir chmod 644 {} +
 
 [[ -e /opt/karoshi/clientsetup/scripts ]] && rm -rf /opt/karoshi/clientsetup/scripts
-cp -rf /opt/karoshi/clientsetup/linuxclientsetup/scripts /opt/karoshi
+cp -rf /opt/karoshi/clientsetup/scripts /opt/karoshi
 find /opt/karoshi/clientsetup/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
 
 #Configure Karoshi PAM modules

@@ -21,7 +21,7 @@
 #
 #Website: http://www.karoshi.org.uk
 
-source /opt/karoshi/linuxclientsetup/utilities/common
+source /opt/karoshi/clientsetup/utilities/common
 
 declare -A flags
 flagsDir="/var/lib/karoshi/flags"
