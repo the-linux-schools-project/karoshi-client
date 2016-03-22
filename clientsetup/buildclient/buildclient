@@ -233,7 +233,8 @@ chmod
 
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
-
+	
+	rm -r /usr/share/plymouth/themes/*
 	cp -f -r /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
 		
 	update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth
