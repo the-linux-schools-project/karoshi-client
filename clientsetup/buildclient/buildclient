@@ -165,7 +165,7 @@ sleep 2
 		if [ $? != 0 ]
 		then
 			echo $package: There was a problem installing this package. Press return to continue.
-			[ $AUTO = no ] && read pause
+			read pause
 		fi
 	done
 
@@ -177,7 +177,7 @@ sleep 2
 		if [ $? != 0 ]
 		then
 			echo $package: There was a problem installing this package. Press return to continue.
-			[ $AUTO = no ] && read pause
+			read pause
 		fi
 	done
 
@@ -233,7 +233,7 @@ chmod
 
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
-	
+
 	rm -r /usr/share/plymouth/themes/*
 	cp -f -r /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes
 	chmod 0755 /usr/share/plymouth/themes/karoshi-logo/karoshi-logo.plymouth
@@ -244,4 +244,3 @@ chmod
 	echo -e "$SELECT\n" | update-alternatives --config default.plymouth | grep karoshi-logo
 
 	update-initramfs -u
-		
