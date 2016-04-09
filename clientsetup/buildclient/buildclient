@@ -160,7 +160,6 @@ sleep 2
 	for package in `echo $packages`
 	do
 		echo -e "\nInstalling $package\n"
-		sleep 1
 		apt-get -y install $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
 		if [ $? != 0 ]
 		then
@@ -172,7 +171,6 @@ sleep 2
 	for package in `echo $extrapackages`
 	do
 		echo -e "\nInstalling $package\n"
-		sleep 1
 		apt-get -y install $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
 		if [ $? != 0 ]
 		then
