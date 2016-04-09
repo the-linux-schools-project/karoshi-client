@@ -163,8 +163,9 @@ sleep 2
 		apt-get -y install $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
 		if [ $? != 0 ]
 		then
-			echo $package: There was a problem installing this package. Press return to continue.
-			read pause
+			echo $package: There was a problem installing this package.
+			read -t 5 -p "Press return or wait 5 seconds to continue."
+
 		fi
 	done
 
@@ -174,8 +175,8 @@ sleep 2
 		apt-get -y install $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
 		if [ $? != 0 ]
 		then
-			echo $package: There was a problem installing this package. Press return to continue.
-			read pause
+			echo $package: There was a problem installing this package.
+			read -t 5 -p "Press return or wait 5 seconds to continue."
 		fi
 	done
 
