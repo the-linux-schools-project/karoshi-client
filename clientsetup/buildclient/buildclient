@@ -227,8 +227,8 @@ cp -r /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 chmod 0600 /usr/bin/karoshi*
 chown karoshi -R /usr/bin/karoshi*
-chmod u+X -R /usr/bin/karoshi*
-chmod
+chmod +x /usr/bin/karoshi*
+chmod -x /usr/bin/karoshi-setup
 
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
