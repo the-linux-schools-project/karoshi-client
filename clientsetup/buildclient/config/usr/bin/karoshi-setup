@@ -46,6 +46,13 @@ export DEBIAN_FRONTEND=noninteractive
 [[ -e /var/log/karoshi ]] && rm -rf /var/log/karoshi
 mkdir -p /var/log/karoshi
 
+#Set Permissions on scripts required to run
+chown karoshi /usr/bin/karoshi-*
+chmod +x /usr/bin/karoshi-*
+
+
+
+
 touch /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
 chown root:adm /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
 chmod 0640 /var/log/karoshi/{pre-session,post-session,virtualbox-mkdir,offline-homes,setup}.log
