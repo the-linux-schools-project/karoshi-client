@@ -134,7 +134,8 @@ cd /opt/karoshi-admin
 tar -xvzf *
 rm karoshi-*
 cd
-su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Numix"
+su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Greybird"
+
 chmod 0600 -R /opt/karoshi-admin
 chmod u+X -R /opt/karoshi-admin
 chown karoshi -R /opt/karoshi-admin
