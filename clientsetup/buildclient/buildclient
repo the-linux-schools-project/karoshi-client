@@ -115,6 +115,9 @@ fi
 # Remove the tmp directory so it is not copied into the ISO image.
 rm -rf "$BUILDPATH/opt/tmp"
 
+#Copy /usr/bin files before karoshi user created
+cp -r /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
+
 #Create karoshi user
 getent passwd karoshi 1>/dev/null
 echo -e "Creating karoshi user\n"
@@ -134,6 +137,8 @@ tar -xvzf *
 rm karoshi-*
 cd
 su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Greybird"
+su karoshi -c "chmod +xrw /usr/bin/karoshi-*"
+
 
 chmod 0600 -R /opt/karoshi-admin
 chmod u+X -R /opt/karoshi-admin
