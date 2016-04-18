@@ -178,8 +178,6 @@ fi
 find /opt/karoshi/clientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /etc/init {} +
 find /etc/init -name "karoshi-*.conf" -execdir chmod 644 {} +
 
-[[ -e /opt/karoshi/clientsetup/scripts ]] && rm -rf /opt/karoshi/clientsetup/scripts
-cp -rf /opt/karoshi/clientsetup/scripts /opt/karoshi
 find /opt/karoshi/clientsetup/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
 
 #Configure Karoshi PAM modules
