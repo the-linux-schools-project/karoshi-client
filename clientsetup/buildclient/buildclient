@@ -137,7 +137,6 @@ tar -xvzf *
 rm karoshi-*
 cd
 su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Greybird"
-su karoshi -c "chmod +xrw /usr/bin/karoshi-*"
 
 
 chmod 0600 -R /opt/karoshi-admin
@@ -231,9 +230,10 @@ cp -r /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 chmod 0600 /usr/bin/karoshi*
-chown karoshi -R /usr/bin/karoshi*
-chmod +x /usr/bin/karoshi*
-chmod -x /usr/bin/karoshi-setup
+chown karoshi +rwx /usr/bin/karoshi*
+chmod 0600 /opt/karoshi/*
+chown karoshi +rwx /opt/karoshi/*
+
 
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
