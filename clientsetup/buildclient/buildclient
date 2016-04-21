@@ -230,9 +230,11 @@ cp -r /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 chmod 0600 /usr/bin/karoshi*
-chown karoshi +rwx /usr/bin/karoshi*
+chown karoshi /usr/bin/karoshi*
 chmod 0600 /opt/karoshi/*
-chown karoshi +rwx /opt/karoshi/*
+chown karoshi /opt/karoshi/*
+chmod +rwx /opt/karoshi*
+chmod +rwx/usr/bin/karoshi*
 
 
 #Copy plymouth animations
