@@ -234,7 +234,7 @@ chown karoshi /usr/bin/karoshi*
 chmod 0600 /opt/karoshi/*
 chown karoshi /opt/karoshi/*
 chmod +rwx /opt/karoshi*
-chmod +rwx/usr/bin/karoshi*
+chmod +rwx /usr/bin/karoshi*
 
 
 #Copy plymouth animations
