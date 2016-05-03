@@ -236,7 +236,8 @@ chmod 0600 /opt/karoshi/*
 chown karoshi /opt/karoshi/*
 chmod +rwx /opt/karoshi*
 chmod +rwx /usr/bin/karoshi*
-
+chown karoshi.karoshi /etc/sssd/*
+chmod +rx /etc/sssd/*
 
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
