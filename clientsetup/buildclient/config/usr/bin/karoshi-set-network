@@ -135,6 +135,7 @@ iface $NETWORKINT inet $ip_type" > /etc/network/interfaces
 		fi
 	fi
 
+
 	#If wireless
 	if isWireless $NETWORKINT; then
 		echo "	wpa-ssid $wifi_ssid
@@ -340,6 +341,11 @@ function exitfunc {
 }
 
 echo $SERVERIP > /opt/karoshi/serverip
+
+echo "
+search $DNSSUFFIX
+nameserver $SERVERIP" > /etc/resolv.conf
+
 
 ####################
 #Pull down server information
