@@ -72,32 +72,32 @@ deb-src http://ppa.launchpad.net/otto-kesselgulasch/gimp/ubuntu xenial main
 
 #### LibreOffice PPA - http://www.documentfoundation.org/download/
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1378B444
-deb http://ppa.launchpad.net/libreoffice/ppa/ubuntu trusty main
-deb-src http://ppa.launchpad.net/libreoffice/ppa/ubuntu trusty main
+deb http://ppa.launchpad.net/libreoffice/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/libreoffice/ppa/ubuntu xenial main
 
 #### MariaDB - https://mariadb.org
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0xcbcb082a1bb943db
-deb http://mirrors.coreix.net/mariadb/repo/10.1/ubuntu trusty main
-deb-src http://mirrors.coreix.net/mariadb/repo/10.1/ubuntu trusty main
+deb http://mirrors.coreix.net/mariadb/repo/10.1/ubuntu xenial main
+deb-src http://mirrors.coreix.net/mariadb/repo/10.1/ubuntu xenial main
 
 #### VirtualBox - http://www.virtualbox.org
 #!cmd wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | apt-key add -
-deb http://download.virtualbox.org/virtualbox/debian trusty contrib
+deb http://download.virtualbox.org/virtualbox/debian xenial contrib
 
 #### WebUpd8 PPA - http://www.webupd8.org/
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4C9D234C
-deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
-deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu trusty main
-deb http://ppa.launchpad.net/webupd8team/atom/ubuntu trusty main
-deb-src http://ppa.launchpad.net/webupd8team/atom/ubuntu trusty main
+deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu xenial main
+deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu xenial main
+deb http://ppa.launchpad.net/webupd8team/atom/ubuntu xenial main
+deb-src http://ppa.launchpad.net/webupd8team/atom/ubuntu xenial main
 
 deb http://ppa.launchpad.net/webupd8team/y-ppa-manager/ubuntu xenial main
 deb-src http://ppa.launchpad.net/webupd8team/y-ppa-manager/ubuntu xenial main
 
 #### Wine PPA - https://launchpad.net/~ubuntu-wine/+archive/ppa/
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F9CB8DB0
-deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
-deb-src http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main
+deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu xenial main
 
 #### Bluegriffon PPA - Already listed above
 #!cmd wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
@@ -113,13 +113,13 @@ deb-src http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 142986CE
 deb http://ppa.launchpad.net/xubuntu-dev/xfce-4.12/ubuntu trusty main
 deb-src http://ppa.launchpad.net/xubuntu-dev/xfce-4.12/ubuntu trusty main
-deb http://ppa.launchpad.net/gottcode/gcppa/ubuntu trusty main
-deb-src http://ppa.launchpad.net/gottcode/gcppa/ubuntu trusty main
+deb http://ppa.launchpad.net/gottcode/gcppa/ubuntu xenial main
+deb-src http://ppa.launchpad.net/gottcode/gcppa/ubuntu xenial main
 
 #### Git-LFS PPA - https://packagecloud.io/github/git-lfs/ubuntu/
 #!cmd wget -q -O- https://packagecloud.io/github/git-lfs/gpgkey | apt-key add -
-deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main
-deb-src https://packagecloud.io/github/git-lfs/ubuntu/ trusty main
+deb https://packagecloud.io/github/git-lfs/ubuntu/ xenial main
+deb-src https://packagecloud.io/github/git-lfs/ubuntu/ xenial main
 
 #### catfish
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9163B46D
@@ -141,13 +141,13 @@ deb http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
 deb-src http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
 
 #### mozillateam/thunderbird-next (closest to outdated stable) (lightning-extension)
-deb http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu wily main
-deb-src http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu wily main
+deb http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
+deb-src http://ppa.launchpad.net/mozillateam/thunderbird-next/ubuntu xenial main
 
 #### wireshark-dev/stable/ubuntu
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 14ECA0F0
-deb http://ppa.launchpad.net/wireshark-dev/stable/ubuntu wily main
-deb-src http://ppa.launchpad.net/wireshark-dev/stable/ubuntu wily main
+deb http://ppa.launchpad.net/wireshark-dev/stable/ubuntu xenial main
+deb-src http://ppa.launchpad.net/wireshark-dev/stable/ubuntu xenial main
 
 #### stellarium/stellarium-releases
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C68D72A5
@@ -161,8 +161,8 @@ deb-src http://ppa.launchpad.net/kubuntu-ppa/ppa/ubuntu wily main
 
 #### suraia
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1D9D38E5
-deb http://ppa.launchpad.net/suraia/server/ubuntu wily main
-deb-src http://ppa.launchpad.net/suraia/server/ubuntu wily main
+deb http://ppa.launchpad.net/suraia/server/ubuntu xenial main
+deb-src http://ppa.launchpad.net/suraia/server/ubuntu xenial main
 
 #### scribus
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 64B6EE15
@@ -171,8 +171,8 @@ deb-src http://ppa.launchpad.net/scribus/ppa/ubuntu xenial main
 
 #### inkscape.dev
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B9A06DE3
-deb http://ppa.launchpad.net/inkscape.dev/stable/ubuntu wily main
-deb-src http://ppa.launchpad.net/inkscape.dev/stable/ubuntu wily main
+deb http://ppa.launchpad.net/inkscape.dev/stable/ubuntu xenial main
+deb-src http://ppa.launchpad.net/inkscape.dev/stable/ubuntu xenial main
 
 #### dobey/audiotools
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AD555F67
@@ -198,8 +198,8 @@ deb http://ppa.launchpad.net/ubuntu-audio-dev/ppa/ubuntu raring main
 deb-src http://ppa.launchpad.net/ubuntu-audio-dev/ppa/ubuntu raring main
 
 #### thomas-schiex/blender (revival of irie/lmm)
-deb http://ppa.launchpad.net/thomas-schiex/blender/ubuntu wily main
-deb-src http://ppa.launchpad.net/thomas-schiex/blender/ubuntu wily main
+deb http://ppa.launchpad.net/thomas-schiex/blender/ubuntu xenial main
+deb-src http://ppa.launchpad.net/thomas-schiex/blender/ubuntu xenial main
 
 #### openshot.developers/ppa
 #!cmd apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B9BA26FA
