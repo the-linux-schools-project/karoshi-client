@@ -248,6 +248,7 @@ echo '
 default vesamenu.c32
 prompt 0
 timeout 100
+MENU RESOLUTION 1024 768
 menu title Karoshi Client
 menu background splash.png
 menu color title 1;37;44 #c0ffffff #00000000 std
