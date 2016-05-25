@@ -230,6 +230,8 @@ cp -r /opt/karoshi/clientsetup/utilities/karoshi-cups.conf /etc/init
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
+update-rc.d karoshi-update defualts
+
 chmod 0600 /usr/bin/karoshi*
 chown karoshi /usr/bin/karoshi*
 chmod 0600 /opt/karoshi/*
