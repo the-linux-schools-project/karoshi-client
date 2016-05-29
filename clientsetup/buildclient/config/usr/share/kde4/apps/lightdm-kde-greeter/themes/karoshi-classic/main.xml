@@ -7,7 +7,7 @@
 
   <group name="greeter-settings">
     <entry name="Background" type="String">
-      <default>karoshi-login.png</default>
+      <default>background.png</default>
     </entry>
     <entry name="BackgroundKeepAspectRatio" type="Bool">
       <default>true</default>
