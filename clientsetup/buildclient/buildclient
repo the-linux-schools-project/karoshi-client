@@ -231,7 +231,7 @@ cp -r /opt/karoshi/clientsetup/utilities/karoshi-idle-shutdown.conf /etc/init
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 update-rc.d karoshi-update defaults
-sudo ln -s /usr/share/backgrounds/login-background /usr/share/kde4/apps/lightdm-kde-greeter/themes/karoshi-classic/login-backgrounds
+
 
 chmod 0600 /usr/bin/karoshi*
 chown karoshi /usr/bin/karoshi*
