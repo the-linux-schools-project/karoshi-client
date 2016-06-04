@@ -52,15 +52,15 @@ eclipseDownload="no"
 if [ "$ARCH" == "amd64" ]; then
 	echo "Architecture is ${ARCH}"
 	eclipsePath="/tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz"
-	eclipseFolder="/tmp/eclipse-java-mars-2-linux-gtk-x86_64"
-	eclipseURL="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz&r=1"
+	eclipseFolder="/opt/eclipse-java-mars-2-linux-gtk-x86_64"
+	eclipseURL="http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz"
 	eclipseDownload="yes"
 	eclipseChecksum="a7ddf8be89d65e66dc09a54e98b47748"
 elif [ "$ARCH" == "i386" ]; then
 	echo "Architecture is ${ARCH}"
 	eclipsePath="/tmp/eclipse-java-mars-2-linux-gtk.tar.gz"
-	eclipseFolder="/tmp/eclipse-java-mars-2-linux-gtk"
-	eclipseURL="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk.tar.gz&r=1"
+	eclipseFolder="/opt/eclipse-java-mars-2-linux-gtk"
+	eclipseURL="http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk.tar.gz"
 	eclipseDownload="yes"
 	eclipseChecksum="3f0460868e3702c6c8e6e346ae869f54"
 else
@@ -70,7 +70,7 @@ fi
 eclipseInstall="no"
 if [ "$eclipseDownload" == "yes" ]; then
 	echo "Attempting to download Eclipse."
-	wget --timeout=10 -O $eclipsePath $eclipseURL
+	wget --timeout=10 -c -O $eclipsePath $eclipseURL
 	if [ $? != 0 ]; then
 			echo "There was a problem downloading Eclipse."
 	fi
@@ -79,46 +79,25 @@ if [ "$eclipseDownload" == "yes" ]; then
 		echo "Verified Eclipse download."
 		eclipseInstall="yes"
 	else
-		echo "eclipse download failed to validate."
+		echo "Eclipse download failed to validate."
 	fi
 fi
 
 if [ "$eclipseInstall" == "yes" ]; then
 	echo "Attempting to install Eclipse."
-	echo "Extracting Eclipse archive."
-	tar -zxvf $eclipsePath
-	echo -e "Moving Eclipse into place."
-	mv $eclipseFolder /opt
+	echo "Creating and cleaning Eclipse directory: ${eclipseFolder}"
+	[ -d $eclipseFolder ] && rm -rf ${eclipseFolder}/eclipse || mkdir $eclipseFolder
+	echo "Extracting Eclipse archive into place."
+	tar -zxvf $eclipsePath -C $eclipseFolder
+	echo "Creating symlink for karoshi-admin."
+	ln -s ${eclipseFolder}/eclipse/eclipse /opt/karoshi-admin/Desktop/eclipse-mars-2
 	echo -e "Eclipse installed."
 fi
 
 ##############################
 
-# Install sources for kxstudio-team/ppa as its PPA is obselete
-# See http://kxstudio.linuxaudio.org/Repositories
-echo -e "\nAttempting to download sources list for kxstudio-team/ppa."
-
-# Checksum: 7ea382267e24925e09b087c5af1e5daa *kxstudio-repos-gcc5_9.2.2-kxstudio1_all.deb
-
-# Download sources for kxstudio-team/ppa.
-wget --timeout=10 -O $BUILDPATH/opt/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb
-wgetOut=$?
-if [ $wgetOut != 0 ]; then
-		# The download failed.
-		echo "There was a problem downloading sources for kxstudio-team/ppa, skipping."
-fi
-
-checksum=$(md5sum "$BUILDPATH/opt/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb" | cut -d ' ' -f 1)
-if [ "$checksum" != "7ea382267e24925e09b087c5af1e5daa" ]; then
-	echo "There was a problem validating the archive, skipping."
-else
-	echo "Archive validated."
-	dpkg -i "$BUILDPATH/opt/tmp/kxstudio-repos-gcc5_9.2.2~kxstudio1_all.deb"
-	echo -e "\nSources for kxstudio-team/ppa installed."
-fi
-
-# Remove the tmp directory so it is not copied into the ISO image.
-rm -rf "$BUILDPATH/opt/tmp"
+# Prevent tmp contents from being copied into the ISO.
+rm -rf /tmp/*
 
 #Copy /usr/bin files before karoshi user created
 cp -r /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
