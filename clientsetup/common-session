@@ -1,0 +1,22 @@
+session requisite
+# prime the stack with a posotive return value if there isn't one already;
+# this avoids us returning and error just because nothing sets a succes code
+# since the modules above will each just jump around
+session required                   pam_permit.so
+# The pam_umask module will set the umask according to the system default in
+# /etc/login.defs and user settings, solving the problem of different
+# umask settings with different shells, display managers, remote sessions etc.
+# See "man pam_umask".
+session optional pam_umask.so
+# and here are more per-package modules (the "Additional" block)
+session required        pam_unix.so
+session optional        pam_exec2.so log/var/log/karoshi/post-session.log drop_priv once type=close_session /opt/kasroshi/scripts/post-session
+session optional        pam_mkhomedir.so silent umask=0077
+session optional        pam_exec2.so log=/var/log/karoshi/virtualbox-mkdir.log type=open_session once /opt/karoshi/scripts/virtualbox-mkdir
+session optional        pam_exec2.so log=/var/log/karoshi/offline-homes.log type=open-session once /opt/karoshi/scripts/offline-homes
+session optional                        pam_sss.so
+session optional        pam_mount.so
+session optional        pam_exec2.so log=/var/log/karoshi/pre-session.log drop_priv once type=open_session /opt/karoshi/scripts/pre-session
+session optional        pam_systemd.so
+session optional        pam_encryptfs.so unwrap
+# end of pam-auth-update config
