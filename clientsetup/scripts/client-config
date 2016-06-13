@@ -641,6 +641,8 @@ fi
 # Fix for /etc/pam.d/common-session
 
 cp -r /opt/karoshi/clientsetup/common-session /etc/pam.d/
+chown root.root /etc/pam.d/common-session
+chmod +rx /etc/pam.d/common-session
 
 #Restrict cron and at to root
 echo root > /etc/cron.allow
