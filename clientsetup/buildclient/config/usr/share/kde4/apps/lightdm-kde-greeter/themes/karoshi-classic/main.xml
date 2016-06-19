@@ -16,7 +16,7 @@
         <default></default>
     </entry>
     <entry name="GreetMessage" type="String">
-        <default>%hostname% - V4.4</default>
+        <default>%hostname% - V5.0</default>
     </entry>
   </group>
 </kcfg>
