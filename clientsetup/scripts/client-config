@@ -637,10 +637,10 @@ fi
 ##########################
 # Fix for /etc/pam.d/common-session
 
-cp -r /opt/karoshi/clientsetup/common-session /etc/pam.d/
-chown root.root /etc/pam.d/common-session
-chmod +rx /etc/pam.d/common-session
-
+if [[ `grep -c pam_mkhomedir.so /etc/pam.d/common-session` = 0 ]]
+then
+	sed -i '31i pam_mkhomedir.so silent umask=0077' /etc/pam.d/common-session
+	
 #Restrict cron and at to root
 echo root > /etc/cron.allow
 echo root > /etc/at.allow
