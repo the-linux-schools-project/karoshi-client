@@ -519,10 +519,7 @@ fi
 # Check drivers
 ####################
 DRIVER=notset
-if [ $(lspci | grep VGA | grep -c AMD) -gt 0 ]
-then
-	DRIVER=fglrx
-fi
+
 if [ $(lspci | grep VGA | grep -c NVIDIA) -gt 0 ]
 then
 	DRIVER=nvidia-current
