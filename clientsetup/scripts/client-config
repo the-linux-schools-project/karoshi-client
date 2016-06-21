@@ -683,11 +683,6 @@ if [[ -f /etc/cron.weekly/fstrim ]]; then
 	rm -f /etc/cron.weekly/fstrim
 fi
 
-#Configure pam_mkdir.so to run silently to stop the annoying info box when logging in with kdm.
-if [[ `grep -c silent /etc/pam.d/common-session` = 0 ]]
-then
-	sed -i 's/pam_mkhomedir.so umask=0077/pam_mkhomedir.so silent umask=0077/g' /etc/pam.d/common-session
-fi
 
 #Write new variables to file
 updateVariables
