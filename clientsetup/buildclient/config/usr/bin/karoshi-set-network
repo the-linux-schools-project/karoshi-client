@@ -342,11 +342,6 @@ function exitfunc {
 
 echo $SERVERIP > /opt/karoshi/serverip
 
-echo "
-search $DNSSUFFIX
-nameserver $SERVERIP" > /etc/resolv.conf
-
-
 ####################
 #Pull down server information
 ####################
