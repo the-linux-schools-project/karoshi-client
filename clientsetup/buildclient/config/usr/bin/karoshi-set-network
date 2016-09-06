@@ -530,7 +530,8 @@ if [[ -f $netlogon_mount/domain_information/samba4 ]]; then
 	nss_enable group sss
 	#Update PAM - bit of a hack, removes the 'seen' entry of the pam
 	# module, causing it to be reconfigured into pam.d
-	pam-auth-update --package --remove sss sss-password mkhomedir
+	pam-auth-update --package --remove sss sss-password
+	sed -i "/\b\(mkhomedir\)\b/d" /var/lib/pam/seen
 	pam-auth-update --package mkhomedir
 	#Restart sssd
 	stop sssd
