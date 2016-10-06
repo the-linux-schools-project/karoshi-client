@@ -581,5 +581,10 @@ echo 100 >&11
 #Write new variables to file
 updateVariables
 
+#Make symbolic link for resolvconf
+rm /etc/resolv.conf
+ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+
+
 exit 0
 
