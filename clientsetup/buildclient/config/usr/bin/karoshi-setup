@@ -195,7 +195,7 @@ fi
 [[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
 
 #Install default firewall rules
-if ! [[ -e $KAROSHI_DATA/firewall/local_rules ]]; then
+if ! [[ -e $KAROSHI_DATA/firewall/local_rules ]]; th
 	mkdir -p "$KAROSHI_DATA"/firewall
 	cp -t "$KAROSHI_DATA"/firewall /opt/karoshi/clientsetup/config/firewall/local_rules
 fi
@@ -211,6 +211,7 @@ sed -i '/and started dbus/a and started sssd' /etc/init/lightdm.conf
 
 #Stop running this script on administrator login
 [[ -f ~karoshi/.config/autostart/karoshi-setup.desktop ]] && rm -f ~karoshi/.config/autostart/karoshi-setup.desktop
+resolvconf -u
 
 shutdown -r now
 exit
