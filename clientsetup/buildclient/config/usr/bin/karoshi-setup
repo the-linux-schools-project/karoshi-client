@@ -24,6 +24,12 @@
 
 source /opt/karoshi/clientsetup/utilities/common
 
+#Reconfigure Resolvconf
+dpkg-reconfigure resolvconf
+
+#Create /etc/init.d symlink
+update-rc.d karoshi-update defaults
+
 #Exit this script if running live.
 if [[ `mount | grep -c -w /cow` -gt 0 ]]
 then
@@ -211,7 +217,6 @@ sed -i '/and started dbus/a and started sssd' /etc/init/lightdm.conf
 #Stop running this script on administrator login
 [[ -f ~karoshi/.config/autostart/karoshi-setup.desktop ]] && rm -f ~karoshi/.config/autostart/karoshi-setup.desktop
 resolvconf -u
-update-rc.d karoshi-update defaults
 
 shutdown -r now
 exit
