@@ -24,8 +24,8 @@
 
 source /opt/karoshi/clientsetup/utilities/common
 
-#Reconfigure Resolvconf
-dpkg-reconfigure resolvconf
+#Creat resolvconf symlink
+sudo ln -s ../run/resolvconf/resolv.conf /etc/resolv.confdpkg-reconfigure resolvconf
 
 #Create /etc/init.d symlink
 update-rc.d karoshi-update defaults
