@@ -56,7 +56,8 @@ deb http://security.ubuntu.com/ubuntu xenial-security multiverse
 deb http://ppa.launchpad.net/webupd8team/y-ppa-manager/ubuntu xenial main 
 deb-src http://ppa.launchpad.net/webupd8team/y-ppa-manager/ubuntu xenial main
 
-deb http://inverse.ca/ubuntu xenial xenial
+#deb http://inverse.ca/ubuntu xenial xenial - this repository is now restricted
+deb http://packages.inverse.ca/SOGo/nightly/2/ubuntu xenial xenial
 # deb-src http://inverse.ca/ubuntu xenial xenial
 
 #### Bluegriffon PPA - Already listed above
