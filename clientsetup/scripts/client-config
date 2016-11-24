@@ -249,8 +249,6 @@ function do_xpi {
 	rm -rf "$temp_dir"
 }
 
-echo "search $DNSSUFFIX" > /etc/resolv.conf
-
 [[ -d /opt/karoshi/mozilla/extensions ]] || mkdir -p /opt/karoshi/mozilla/extensions
 #Clear all extensions
 find /opt/karoshi/mozilla/extensions -mindepth 1 -delete
