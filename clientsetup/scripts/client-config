@@ -638,7 +638,8 @@ fi
 if [[ `grep -c pam_mkhomedir.so /etc/pam.d/common-session` = 0 ]]
 then
 	sed -i '31i pam_mkhomedir.so silent umask=0077' /etc/pam.d/common-session
-	
+fi
+
 #Restrict cron and at to root
 echo root > /etc/cron.allow
 echo root > /etc/at.allow
