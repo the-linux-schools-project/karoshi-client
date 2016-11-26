@@ -19,6 +19,11 @@ if [ ! -f /opt/karoshi/clientsetup/variables ] || ! karoshi-manage-flags get dom
 fi
 . /opt/karoshi/clientsetup/variables
 
+#Make sure resolvconf is working
+rm -r /etc/resolv.conf
+ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+resolvconf -u
+
 echo
 echo "########################################"
 echo
