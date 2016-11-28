@@ -213,7 +213,7 @@ fi
 sed -i 's/^autologin/#autologin/' /etc/lightdm/lightdm.conf
 
 #Start lightdm after sssd
-sed -i '/and started dbus/a and started sssd' /etc/init/lightdm.conf
+sed -i '/and runlevel/a and started sssd' /etc/init/lightdm.conf
 #Stop running this script on administrator login
 [[ -f ~karoshi/.config/autostart/karoshi-setup.desktop ]] && rm -f ~karoshi/.config/autostart/karoshi-setup.desktop
 resolvconf -u
