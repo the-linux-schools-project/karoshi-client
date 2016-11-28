@@ -201,7 +201,6 @@ cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
 
 #Copy more configuration files
 echo "Copying config files"
-cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/init
 cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
 cp -r /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
 cp -r /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
