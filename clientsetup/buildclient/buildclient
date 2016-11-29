@@ -29,7 +29,7 @@ sleep 1
 apt-key update
 apt-get update
 
-apt-get install -y sssd samba-common ntp krb5-user
+apt-get install -y sssd samba samba-common ntp krb5-user
 apt-get install -y numix-gtk-theme numix-icon-theme-circle numix
 apt-get install -y feh ubiquity-frontend-gtk
 apt-get install -y xinit
