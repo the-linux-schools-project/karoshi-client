@@ -20,7 +20,10 @@ fi
 . /opt/karoshi/clientsetup/variables
 
 #Make sure resolvconf is working
-rm -r /etc/resolv.conf
+if [ -e /etc/resolv.conf ]
+then
+	rm -r /etc/resolv.conf
+fi
 ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
 resolvconf -u
 
