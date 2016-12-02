@@ -183,6 +183,9 @@ update-grub
 #Tidy packages
 apt-get autoremove
 
+#Remove staff group
+groupdel staff
+
 #Copy config files
 cd /
 mkdir -p /opt/karoshi/images
