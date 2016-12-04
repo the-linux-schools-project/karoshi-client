@@ -185,6 +185,7 @@ find /opt/karoshi/clientsetup/utilities -name "karoshi-*.conf" -execdir cp -t /e
 find /etc/init -name "karoshi-*.conf" -execdir chmod 644 {} +
 
 find /opt/karoshi/clientsetup/scripts -mindepth 1 -print0 | xargs -r0 chmod 755
+cp -f -R /opt/karoshi/clientsetup/scripts /opt/karoshi/
 
 #Configure Karoshi PAM modules
 pam-auth-update --package --remove karoshi-pre-session karoshi-post-session karoshi-virtualbox-mkdir karoshi-offline-homes
