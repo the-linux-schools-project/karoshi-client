@@ -199,6 +199,12 @@ if ! grep -q '^AllowGroups' /etc/ssh/sshd_config; then
 	echo "AllowGroups root itadmin tech" >> /etc/ssh/sshd_config
 fi
 
+#Configure sssd to wait for networking
+systemctl enable NetworkManager-wait-online
+
+#
+sed -i '/Description=/ a Requires=network.target' /lib/systemd/system/sssd.service
+
 [[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
 
 #Install default firewall rules
