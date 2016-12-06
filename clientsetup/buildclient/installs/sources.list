@@ -61,9 +61,8 @@ deb http://packages.inverse.ca/SOGo/nightly/2/ubuntu xenial xenial
 # deb-src http://inverse.ca/ubuntu xenial xenial
 
 ####pam_exec2
-deb http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main 
-deb-src http://ppa.launchpad.net/xenopathic/ppa/ubuntu trusty main 
-
+deb http://ppa.launchpad.net/linux-schools/backports/ubuntu trusty main  
+deb-src http://ppa.launchpad.net/linux-schools/backports/ubuntu trusty main 
 #### Bluegriffon PPA - Already listed above
 #!cmd wget -q -O- http://archive.getdeb.net/getdeb-archive.key | apt-key add -
 # deb http://archive.getdeb.net/ubuntu xenial-getdeb apps
