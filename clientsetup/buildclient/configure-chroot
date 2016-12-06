@@ -33,6 +33,8 @@ apt-get install -y wget
 
 # Add GPG keys in-case they were not gathered already
 echo -e "\nChroot: Adding GPG keys for package sources.\n"
+# Linux schools backports
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8E250180
 # download.virtualbox.org/virtualbox/
 wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | apt-key add -
 # otto-kesselgulasch/gimp/
