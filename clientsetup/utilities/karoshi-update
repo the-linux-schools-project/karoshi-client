@@ -98,6 +98,9 @@ fi
 #Run client config
 [ -f /opt/karoshi/clientsetup/scripts/client-config ] && /opt/karoshi/clientsetup/scripts/client-config
 
+#Run connect printers
+[ -f /opt/karoshi/clientsetup/scripts/cups-config ] && /opt/karoshi/clientsetup/scripts/cups-config
+
 #Disconnect from PDC
 if [ $mount_err -eq 0 ]; then
 	echo Disconnecting from netlogon
