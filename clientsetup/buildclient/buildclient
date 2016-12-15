@@ -207,7 +207,7 @@ echo "Copying config files"
 cp -r /opt/karoshi/clientsetup/buildclient/config/usr/share/* /usr/share
 cp -r /opt/karoshi/clientsetup/buildclient/config/usr/lib/* /usr/lib
 cp -r /opt/karoshi/clientsetup/buildclient/config/usr/bin/* /usr/bin
-cp -r /opt/karoshi/clientsetup/skel/* /etc/skel
+cp -r /opt/karoshi/clientsetup/skel /etc/skel
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-update /etc/init.d
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-remount.conf /etc/init
 cp -r /opt/karoshi/clientsetup/utilities/karoshi-system-upgrade.conf /etc/init
