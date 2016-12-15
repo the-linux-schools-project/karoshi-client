@@ -175,6 +175,7 @@ apt-get install -y grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-
 
 
 #Install and configure Karoshi
+chmod 0755 /opt/karoshi/clientsetup
 chmod 0755 /opt/karoshi/clientsetup/buildclient/buildclient
 echo "Running buildclient"
 sleep 4
