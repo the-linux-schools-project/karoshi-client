@@ -203,7 +203,7 @@ fi
 systemctl enable NetworkManager-wait-online
 
 #
-sed -i '/Description=/ a Requires=network.target' /lib/systemd/system/sssd.service
+sed -i '/Description=/ a Requires=network-online.target' /lib/systemd/system/sssd.service
 
 [[ -d $KAROSHI_DATA ]] || mkdir "$KAROSHI_DATA"
 
