@@ -217,8 +217,7 @@ cp -r /opt/karoshi/clientsetup/utilities/karoshi-multicast.conf /etc/init
 
 chmod 0600 /usr/bin/karoshi*
 chown karoshi /usr/bin/karoshi*
-chmod 0600 /opt/karoshi/*
-chown karoshi /opt/karoshi/*
+chown karoshi /opt/karoshi-admin/*
 chmod +rwx /opt/karoshi*
 chmod +rwx /usr/bin/karoshi*
 chown root.root /etc/sssd/*
