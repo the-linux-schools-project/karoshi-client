@@ -180,6 +180,9 @@ cp -f /opt/karoshi/clientsetup/buildclient/config/grub /etc/default/grub
 echo -e "\nUpdating grub2.\n"
 update-grub
 
+#Remove apport
+apt-get remove -y apport
+
 #Tidy packages
 apt-get autoremove
 
