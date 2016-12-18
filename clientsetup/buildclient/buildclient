@@ -122,6 +122,8 @@ rm karoshi-*
 cd
 su karoshi -c "xfconf-query -c xsettings -p /Net/ThemeName -s Greybird"
 
+#Make icons executable
+chmod +rwx /opt/karoshi-admin/Desktop/*
 
 chmod 0600 -R /opt/karoshi-admin
 chmod u+X -R /opt/karoshi-admin
