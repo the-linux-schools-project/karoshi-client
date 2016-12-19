@@ -230,6 +230,12 @@ chmod +rwx /etc/sssd/*
 chmod +rwx /etc/init/karoshi*
 chmod +rwx /etc/init.d/karoshi*
 
+#Configure unity greeter
+echo "[com.canonical.unity-greeter]
+draw-user-backgrounds=false
+background='/usr/share/backgrounds/background.png'" > /usr/share/glib-2.0/schemas/10_unity_greeter_background.gschema.override 
+glib-compile-schemas /usr/share/glib-2.0/schemas/
+
 rm /etc/resolv.conf
 ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf
 resolvconf -u
