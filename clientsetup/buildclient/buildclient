@@ -233,6 +233,7 @@ chmod +rwx /etc/init.d/karoshi*
 #Configure unity greeter
 echo "[com.canonical.unity-greeter]
 draw-user-backgrounds=false
+background-color='#000000'
 background='/usr/share/backgrounds/background.png'" > /usr/share/glib-2.0/schemas/10_unity_greeter_background.gschema.override 
 glib-compile-schemas /usr/share/glib-2.0/schemas/
 
