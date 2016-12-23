@@ -541,6 +541,8 @@ karoshi-manage-flags unset system_upgrade
 if [[ -f $software_control_path/all_updates ]] ||
 	( [[ $LOCATION ]] && [[ -f $software_control_path/${LOCATION}_updates ]] )
 then
+	apt-get update
+	apt-get -y dist-upgrade
 	karoshi-manage-flags set system_upgrade
 fi
 
