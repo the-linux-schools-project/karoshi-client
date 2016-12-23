@@ -563,6 +563,17 @@ check_install_file all
 if [[ $LOCATION ]]; then
 	check_install_file "$LOCATION"
 fi
+
+#Install any software in /var/lib/karoshi/software/install.list
+if [ -f /var/lib/karoshi/software/install.list ]
+then
+	apt-get update
+	for software_package in $(cat /var/lib/karoshi/software/install.list)
+	do
+		apt-get install -y $software_package
+	done
+fi
+
 ##########################
 #Custom startup scripts
 ##########################
