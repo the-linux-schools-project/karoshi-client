@@ -25,8 +25,8 @@
 source /opt/karoshi/clientsetup/utilities/common
 
 #Force update time from server
-echo "Setting time from $PDC.$DNSSUFFIX"
-net time set -S $PDC.$DNSSUFFIX
+echo "Setting time from $DNSSUFFIX"
+net time set -S $DNSSUFFIX
 
 ####################
 #Refresh client information
@@ -68,7 +68,7 @@ fi
 ####################
 if [[ $PROXYSERVER ]]; then
 	echo "Configuring APT proxy"
-	echo "Acquire::http::Proxy \"http://$PROXYSERVER.$DNSSUFFIX:8000/\";" > /etc/apt/apt.conf.d/01proxy
+	echo "Acquire::http::Proxy \"http://proxy.$DNSSUFFIX:8000/\";" > /etc/apt/apt.conf.d/01proxy
 fi
 
 ####################
