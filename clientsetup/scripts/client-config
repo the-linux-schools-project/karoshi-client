@@ -535,46 +535,50 @@ fi
 ############################
 #Software control
 ############################
-software_control_path=/tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install
-
-karoshi-manage-flags unset system_upgrade
-if [[ -f $software_control_path/all_updates ]] ||
-	( [[ $LOCATION ]] && [[ -f $software_control_path/${LOCATION}_updates ]] )
+function create_software_list {
+if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/"$location"_install ]
 then
-	apt-get update
-	apt-get -y dist-upgrade
-	karoshi-manage-flags set system_upgrade
-fi
-
-if [[ ! -d /var/lib/karoshi/software ]]; then
-	mkdir /var/lib/karoshi/software
-fi
-
-karoshi-manage-flags unset software_install
-rm -f /var/lib/karoshi/software/install.list
-
-# If install file does not match known install file, trigger a software install
-function check_install_file {
-	if [[ -f $software_control_path/${1}_install ]]; then
-		karoshi-manage-flags set software_install
-		cat "$software_control_path"/"$1"_software >> /var/lib/karoshi/software/install.list
+	if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/"$install_action"/"$location"_software ]
+	then
+		cat /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/"$install_action"/"$location"_software >> /var/lib/karoshi/software/"$install_action".list
 	fi
+fi
 }
 
-check_install_file all
-if [[ $LOCATION ]]; then
-	check_install_file "$LOCATION"
-fi
-
-#Install any software in /var/lib/karoshi/software/install.list
-if [ -f /var/lib/karoshi/software/install.list ]
+function do_software_action {
+#Install any software in /var/lib/karoshi/software/$install_action.list
+if [ -f /var/lib/karoshi/software/"$install_action".list ]
 then
-	apt-get update
-	for software_package in $(cat /var/lib/karoshi/software/install.list)
+	if [ $apt_updated = no ]
+	then	
+		apt-get update
+		apt_updated=yes
+	fi
+	for software_package in $(cat /var/lib/karoshi/software/"$install_action".list)
 	do
-		apt-get install -y $software_package
+		apt-get "$install_action" -y "$software_package"
 	done
 fi
+}
+
+[ -f "/var/lib/karoshi/software/install.list" ] && rm -f "/var/lib/karoshi/software/install.list"
+[ -f "/var/lib/karoshi/software/remove.list" ] && rm -f "/var/lib/karoshi/software/remove.list"
+
+
+apt_updated=no
+install_action=install
+location=all
+create_software_list
+location=$LOCATION
+create_software_list
+do_software_action
+
+install_action=remove
+location=all
+create_software_list
+location=$LOCATION
+create_software_list
+do_software_action
 
 ##########################
 #Custom startup scripts
