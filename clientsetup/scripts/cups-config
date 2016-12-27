@@ -55,6 +55,12 @@ if [[ $LOCATION ]] && [[ $PRINTSERVER ]] && [[ -f /var/lib/karoshi/printing/list
 	fi
 fi
 
+#Add savapage printing if we have the driver
+if [[ -f /var/lib/karoshi/printing/savapage.ppd ]]; then
+	lpadmin -p savapage -v ipps://$PRINTSERVER.$DNSSUFFIX:8632/printers -L "Follow Me" -D "savapage" -E
+	lpadmin -p savapage -P /var/lib/karoshi/printing/savapage.ppd
+fi
+
 #Permit administrative access to CUPS if offline
 if karoshi-manage-flags get offline_mode >/dev/null; then
 	echo "Unlocking CUPS for offline mode"
