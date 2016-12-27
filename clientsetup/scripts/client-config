@@ -511,6 +511,8 @@ if ! karoshi-manage-flags get no_update_printers >/dev/null; then
 			done
 		fi
 	fi
+	#Copy savapage PPD
+	[[ -f /tmp/netlogon/linuxclient/printer_drivers/savapage.ppd ]] && cp -f /tmp/netlogon/linuxclient/printer_drivers/savapage.ppd /var/lib/karoshi/printing/savapage.ppd
 fi
 
 ####################
