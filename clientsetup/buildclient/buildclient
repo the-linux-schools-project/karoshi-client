@@ -241,6 +241,11 @@ rm /etc/resolv.conf
 ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf
 resolvconf -u
 
+#Add in LibreOffice extensions
+cd /usr/lib/libreoffice/program
+unopkg add --shared /opt/karoshi/clientsetup/config/libreoffice/macroformatteradp-4-0-2.oxt
+
+
 
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
