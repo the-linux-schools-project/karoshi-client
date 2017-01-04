@@ -28,8 +28,14 @@ echo -e "\nAdding required repositories\n"
 sleep 1
 apt-key update
 
-sudo add-apt-repository ppa:openshot.developers/ppa
+add-apt-repository ppa:openshot.developers/ppa
+apt-add-repository ppa:maarten-fonville/android-studio 
+add-apt-repository -y ppa:webupd8team/java
+
 apt-get update
+sudo apt-get install android-studio
+apt-get install oracle-java8-installer
+apt-get install oracle-java8-set-default
 apt-get install -y sssd samba-common ntp krb5-user
 apt-get install -y numix-gtk-theme numix-icon-theme-circle numix
 apt-get install -y feh ubiquity-frontend-gtk
