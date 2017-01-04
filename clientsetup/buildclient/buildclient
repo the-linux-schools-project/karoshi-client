@@ -129,7 +129,7 @@ chmod 0600 -R /opt/karoshi-admin
 chmod u+X -R /opt/karoshi-admin
 chown karoshi -R /opt/karoshi-admin
 
-#Make sure that there is an admin group
+#Make sure that there is an admin grou
 getent group admin 1>/dev/null
 [ $? != 0 ] && groupadd admin
 
@@ -184,6 +184,9 @@ update-grub
 
 #Remove apport
 apt-get remove -y apport
+
+#Remove theme configuration
+apt-get remove gtk-theme-configuration
 
 #Tidy packages
 apt-get autoremove
