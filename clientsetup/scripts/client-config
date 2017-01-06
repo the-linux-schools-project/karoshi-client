@@ -677,6 +677,7 @@ for device in /dev/sd*; do
 	fi
 done
 
+ethtool -s eth0 wol g
 
 #Create rc.local to enable trim
 echo '#!/bin/sh -e
