@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <channel name="xfce4-panel" version="1.0" unlocked="@tech;@sudo;root">
-  <property name="panels" type="uint" value="2">
+  <property name="panels" type="uint" value="1">
     <property name="panel-0" type="empty">
       <property name="position" type="string" value="p=6;x=0;y=0"/>
       <property name="length" type="uint" value="100"/>
