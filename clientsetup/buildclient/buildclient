@@ -192,6 +192,9 @@ apt-get remove -y gtk-theme-configuration
 #Remove ibus - it was causing /etc/default/keyboard to be ignored
 apt-get purge -y --auto-remove ibus 
 
+#Remove gnome-keyring
+apt-get remove -y gnome-keyring
+
 #Tidy packages
 apt-get -y autoremove
 
