@@ -187,10 +187,13 @@ update-grub
 apt-get remove -y apport
 
 #Remove theme configuration
-apt-get remove gtk-theme-configuration
+apt-get remove -y gtk-theme-configuration
+
+#Remove ibus - it was causing /etc/default/keyboard to be ignored
+apt-get purge -y --auto-remove ibus 
 
 #Tidy packages
-apt-get autoremove
+apt-get -y autoremove
 
 #Remove staff group
 groupdel staff
