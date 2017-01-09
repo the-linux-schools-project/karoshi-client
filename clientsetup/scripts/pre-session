@@ -392,9 +392,5 @@ if ! $is_admin && karoshi-manage-flags get offline_mode >/dev/null && $is_domain
 	cp -rf /opt/karoshi/admin-skel/.config ~
 fi
 
-#Set the keyboard layout
-KEYBOARD_LAYOUT=$(grep ^"XKBLAYOUT=" /etc/default/keyboard | cut -d'"' -f2 )
-[ ! -z "$KEYBOARD_LAYOUT" ] && setxkbmap $KEYBOARD_LAYOUT
-
 #Set permissions on icons
 find ~/Desktop -name '*.desktop' -print0 | xargs -r0 chmod 0700
