@@ -255,7 +255,9 @@ resolvconf -u
 cd /usr/lib/libreoffice/program
 unopkg add --shared /opt/karoshi/clientsetup/config/libreoffice/macroformatteradp-4-0-2.oxt
 
+#Configure power button to power off without giving a choice of shutdown, reboot, or suspend
 
+sed -i 's%/etc/acpi/powerbtn.sh%/sbin/poweroff%g' /etc/acpi/events/powerbtn
 
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
