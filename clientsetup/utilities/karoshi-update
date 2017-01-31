@@ -19,6 +19,10 @@ if [ ! -f /opt/karoshi/clientsetup/variables ] || ! karoshi-manage-flags get dom
 fi
 . /opt/karoshi/clientsetup/variables
 
+#Clear home areas
+echo "Clearing /home"
+find /home -mindepth 1 -xdev -delete
+
 #Make sure resolvconf is working
 if [ -e /etc/resolv.conf ]
 then
