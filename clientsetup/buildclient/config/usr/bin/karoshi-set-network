@@ -491,6 +491,7 @@ if [[ -f $netlogon_mount/domain_information/samba4 ]]; then
 
 	#Join domain
 	
+	resolvconf -u
 	echo 70 >&11
 	echo \#$"Joining domain" >&11
 
