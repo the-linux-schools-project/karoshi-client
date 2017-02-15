@@ -705,7 +705,8 @@ for device in /dev/sd*; do
 	fi
 done
 
-ethtool -s eth0 wol g
+source /opt/karoshi/clientsetup/variables
+ethtool -s "$NETWORKINT" wol g
 
 #Create rc.local to enable trim
 echo '#!/bin/sh -e
