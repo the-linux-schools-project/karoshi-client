@@ -135,7 +135,10 @@ if ! karoshi-manage-flags get no_update_skel >/dev/null; then
 		find /tmp/netlogon/linuxclient/$LINUX_VERSION/admin_skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
 	else
 		karoshi-manage-flags get offline_mode >/dev/null || echo "WARNING: No admin skel found on server - using default one"
-		find /opt/karoshi/clientsetup/admin-skel -mindepth 1 -maxdepth 1 -print0 | xargs -r0 cp -rf -t /opt/karoshi/admin-skel
+		if [ -d /opt/karoshi/clientsetup/admin-skel ]
+		then		
+			cp -rf -t /opt/karoshi/clientsetup/admin-skel /opt/karoshi/admin-skel
+		fi
 	fi
 
 	#Do skel (properly)
@@ -533,26 +536,29 @@ then
 		apt-get -y install $DRIVER
 	fi
 fi
+
 ##########################
 # Libreoffice
 ##########################
 
 #Copy files .oxt
 if [[ ! -d /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions ]]; then
-mkdir -p /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions
+	mkdir -p /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions
 fi
-rsync -arP --delete /tmp/netlogon/linuxclient/$LINUX_VERSION/libreoffice/extensions/. /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions/
-chmod -R u=rwX,g=rX,o=rX /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions
 
-##Clear all extensions
-rm -Rf /var/spool/libreoffice/uno_packages/cache/uno_packages/*
+if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/libreoffice/extensions ]
+then
+	rsync -arP --delete /tmp/netlogon/linuxclient/$LINUX_VERSION/libreoffice/extensions/. /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions/
+	chmod -R u=rwX,g=rX,o=rX /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions
 
-#Install all extensions Dynamic
-if [[ -d /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions ]]; then
-while read -r -d $'\0' oxt; do
-echo "Found new extension: $oxt"
-unopkg add --shared "$oxt"
-done < <(find /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions -maxdepth 1 -mindepth 1 -name '*.oxt' -print0)
+	##Clear all extensions
+	rm -Rf /var/spool/libreoffice/uno_packages/cache/uno_packages/*
+
+	#Install all extensions Dynamic
+	while read -r -d $'\0' oxt; do
+	echo "Found new extension: $oxt"
+	unopkg add --shared "$oxt"
+	done < <(find /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions -maxdepth 1 -mindepth 1 -name '*.oxt' -print0)
 fi
 
 
