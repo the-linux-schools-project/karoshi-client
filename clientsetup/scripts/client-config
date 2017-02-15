@@ -75,7 +75,7 @@ fi
 #Domain specific stuff
 ####################
 echo "Configuring pam_mount"
-[[ -e /etc/security/pam_mount.conf.xml ]] && rm -f /etc/security/pam_mount.conf.xml
+#[[ -e /etc/security/pam_mount.conf.xml ]] && rm -f /etc/security/pam_mount.conf.xml
 if ! karoshi-manage-flags get offline_mode >/dev/null; then
 	case "$DOMAINTYPE" in
 	samba4)
