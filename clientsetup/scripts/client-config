@@ -68,7 +68,7 @@ fi
 ####################
 if [[ $PROXYSERVER ]]; then
 	echo "Configuring APT proxy"
-	echo "Acquire::http::Proxy \"http://proxy.$DNSSUFFIX:8000/\";" > /etc/apt/apt.conf.d/01proxy
+	echo "Acquire::http::Proxy \"http://$PROXYSERVER.$DNSSUFFIX:8000/\";" > /etc/apt/apt.conf.d/01proxy
 fi
 
 ####################
@@ -591,6 +591,7 @@ then
 fi
 }
 
+[ ! -d /var/lib/karoshi/software ] && mkdir -p /var/lib/karoshi/software
 [ -f "/var/lib/karoshi/software/install.list" ] && rm -f "/var/lib/karoshi/software/install.list"
 [ -f "/var/lib/karoshi/software/remove.list" ] && rm -f "/var/lib/karoshi/software/remove.list"
 
