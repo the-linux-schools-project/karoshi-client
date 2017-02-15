@@ -72,3 +72,4 @@ fi
 #Fix any outdated PPD files
 cups-genppdupdate
 restart cups
+exit 0
