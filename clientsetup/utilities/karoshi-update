@@ -100,10 +100,10 @@ if ! karoshi-manage-flags get no_update_scripts >/dev/null; then
 fi
 
 #Run client config
-[ -f /opt/karoshi/clientsetup/scripts/client-config ] && /opt/karoshi/clientsetup/scripts/client-config
+[ -f /opt/karoshi/scripts/client-config ] && /opt/karoshi/scripts/client-config
 
 #Run connect printers
-[ -f /opt/karoshi/clientsetup/scripts/cups-config ] && /opt/karoshi/clientsetup/scripts/cups-config
+[ -f /opt/karoshi/scripts/cups-config ] && /opt/karoshi/scripts/cups-config
 
 #Disconnect from PDC
 if [ $mount_err -eq 0 ]; then
