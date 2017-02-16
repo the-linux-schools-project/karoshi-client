@@ -611,6 +611,24 @@ location=$LOCATION
 create_software_list
 do_software_action
 
+#Check if the client is set to update
+if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/all_updates ] || [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/"$location"_updates ]
+then
+	if [ $apt_updated = no ]
+	then	
+		apt-get update
+		apt_updated=yes
+	fi
+
+	apt-get -y dist-upgrade
+
+	#Check if a reboot is required
+	if [ -f /var/run/reboot-required ]
+	then
+		shutdown -r now
+	fi
+fi
+
 ##########################
 #Custom startup scripts
 ##########################
