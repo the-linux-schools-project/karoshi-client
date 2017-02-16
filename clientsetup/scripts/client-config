@@ -611,9 +611,14 @@ location=$LOCATION
 create_software_list
 do_software_action
 
+#Clear nologin flag file just in case someone has forced a reboot during an upgrade
+[ -f /etc/nologin ] && rm -f /etc/nologin
+
 #Check if the client is set to update
 if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/all_updates ] || [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/"$location"_updates ]
 then
+	#Stop any users from logging in during the update
+	touch /etc/nologin
 	if [ $apt_updated = no ]
 	then	
 		apt-get update
@@ -625,8 +630,11 @@ then
 	#Check if a reboot is required
 	if [ -f /var/run/reboot-required ]
 	then
-		shutdown -r now
+		#Reboot with a 2 minute warning to any users that managed to log in
+		/opt/karoshi/scripts/client-shutdown -r 2
 	fi
+	#Clear the no login flag
+	rm -f /etc/nologin
 fi
 
 ##########################
