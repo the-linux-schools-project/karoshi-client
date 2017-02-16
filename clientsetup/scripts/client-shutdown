@@ -23,6 +23,14 @@
 
 source /opt/karoshi/clientsetup/utilities/common
 
+#Get shutdown parameters - shutdown -h reboot -r gracetime positive number
+action=$(echo "$1" | tr -cd '\-hr\n')
+gracetime=$(echo "$2" | tr -cd '0-9\n')
+
+#Set to defaults if notset
+[ -z $action ] && action=-h
+[ -z $gracetime ] && gracetime=5
+
 function sendXNotifications {
 	minute_string=$"minutes"
 	if [[ $1 -eq 1 ]]; then
@@ -60,10 +68,10 @@ function sendXNotifications {
 }
 
 #start shutdown sequence
-shutdown -h +5 &
+shutdown $action +$gracetime &
 
 #send notifications every minute
-for time in {5..1}; do
+for (( time=$gracetime; time>=1; time-- )); do
 	sendXNotifications $time &
 	sleep 60
 done
