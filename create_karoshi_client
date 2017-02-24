@@ -29,7 +29,7 @@ KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
 BUILDPATH=/home/karoshi-client/$KAROSHIVERNOCAPS
 RELEASE=xenial
-BRANCH=pheonix
+BRANCH=master
 ZIPFILE=$BRANCH.zip
 
 echo -e "Karoshi Client Remaster Utility\n"
