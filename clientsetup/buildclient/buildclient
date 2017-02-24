@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branch=pheonix
+branch=master
 
 #Check that this script is running as root.
 if [ `id -u` != 0 ]
