@@ -19,6 +19,10 @@ if [ ! -f /opt/karoshi/clientsetup/variables ] || ! karoshi-manage-flags get dom
 fi
 . /opt/karoshi/clientsetup/variables
 
+#Disable sssd and LightDM
+systemctl disable sssd >/dev/null 2>&1
+systemctl disable lightdm >/dev/null 2>&1
+
 #Clear home areas
 echo "Clearing /home"
 find /home -mindepth 1 -xdev -delete
@@ -116,3 +120,12 @@ if karoshi-manage-flags get offline_mode >/dev/null; then
 	stop
 	exit 0
 fi
+
+service sssd start
+counter=0
+while [ $(service sssd status | grep -c $DNSSUFFIX) = 0 ] && [ $counter -le 30 ]
+do
+	sleep 1
+	let counter=$counter+1
+done
+service lightdm start
