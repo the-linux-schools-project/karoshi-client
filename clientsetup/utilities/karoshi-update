@@ -115,12 +115,6 @@ if [ $mount_err -eq 0 ]; then
 	umount /tmp/netlogon
 fi
 
-#Don't 'start' if running in offline mode
-if karoshi-manage-flags get offline_mode >/dev/null; then
-	stop
-	exit 0
-fi
-
 service sssd start
 counter=0
 while [ $(service sssd status | grep -c $DNSSUFFIX) = 0 ] && [ $counter -le 30 ]
@@ -129,3 +123,11 @@ do
 	let counter=$counter+1
 done
 service lightdm start
+
+#Don't 'start' if running in offline mode
+if karoshi-manage-flags get offline_mode >/dev/null; then
+	stop
+	exit 0
+fi
+
+
