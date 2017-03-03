@@ -43,7 +43,7 @@ echo -e "\nAdding required repositories\n"
 sleep 1
 apt-key update
 
-add-apt-repository ppa:libreoffice/ppa
+add-apt-repository -y ppa:libreoffice/ppa
 add-apt-repository -y ppa:openshot.developers/ppa
 
 apt-get update
