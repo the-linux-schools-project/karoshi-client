@@ -290,6 +290,8 @@ fi
 #Install Zotero
 do_xpi /opt/karoshi/clientsetup/config/firefox/zotero-4.0.26.2.xpi firefox
 do_xpi /opt/karoshi/clientsetup/config/firefox/Zotero-LibreOffice-Plugin-3.5.9.xpi firefox
+#Make sure Libreoffice is not locked for root before trying to add in extensions
+[ -f /root/.config/libreoffice/4/.lock ] && rm -f /root/.config/libreoffice/4/.lock
 unopkg add --shared /opt/karoshi/mozilla/extensions/Zotero-LibreOffice-Plugin-3.5.9/install/Zotero_OpenOffice_Integration.oxt
 
 #Install Omnibar
