@@ -38,6 +38,8 @@ fi
 #Get a list of packages to install
 source /opt/karoshi/clientsetup/buildclient/software
 
+dpkg --add-architecture i386
+
 #Add required repositories
 echo -e "\nAdding required repositories\n"
 sleep 1
