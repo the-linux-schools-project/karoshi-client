@@ -173,6 +173,11 @@ sleep 1
 
 apt-get install -y grub-pc grub-pc-bin grub2-common grub-common grub-gfxpayload-lists plymouth-x11
 
+#Add Multiarch support if architecture is amd64
+if dpkg --print-architecture | grep -q "amd64"; then
+echo -e "\nAdd Multiarch support\n"
+dpkg --add-architecture i386
+fi
 
 #Install and configure Karoshi
 chmod 0755 /opt/karoshi/clientsetup
@@ -217,7 +222,7 @@ rm /var/lib/dbus/machine-id
 dpkg-divert --rename --remove /sbin/initctl
 update in
 #Remove old linux kernels if there are more than one
-ls /boot/vmlinuz-3.13.**-**-generic > list.txt
+ls /boot/vmlinuz-4.4.**-**-generic > list.txt
 sum=$(cat list.txt | grep '[^ ]' | wc -l)
 
 if [ $sum -gt 1 ]; then
