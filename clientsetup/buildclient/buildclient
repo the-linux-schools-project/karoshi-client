@@ -38,8 +38,6 @@ fi
 #Get a list of packages to install
 source /opt/karoshi/clientsetup/buildclient/software
 
-dpkg --add-architecture i386
-
 #Add required repositories
 echo -e "\nAdding required repositories\n"
 sleep 1
@@ -47,6 +45,10 @@ apt-key update
 
 add-apt-repository -y ppa:libreoffice/ppa
 add-apt-repository -y ppa:openshot.developers/ppa
+add-apt-repository -y ppa:numix/ppa
+add-apt-repository -y ppa:webupd8team/java
+add-apt-repository -y ppa:nilarimogard/webupd8
+add-apt-repository -y ppa:ubuntu-wine/ppa
 
 apt-get update
 apt-get install -y sssd samba-common ntp krb5-user
@@ -55,6 +57,14 @@ apt-get install -y feh ubiquity-frontend-gtk
 apt-get install -y xinit
 apt-get install -y xubuntu-desktop
 
+#Ask to install eclipse
+ECLIPSEINSTALL=no
+echo -e "\nDo you want install eclipse? y/n\n"
+read ECLIPSEINSTALL
+if [ "$ECLIPSEINSTALL" = y ]
+then
+	echo -e "\nIntall eclipse software\n"
+	sleep 5
 ##############################
 # ECLIPSE INSTALLATION
 ##############################
@@ -111,6 +121,8 @@ if [ "$eclipseInstall" == "yes" ]; then
 	echo "Creating symlink for karoshi-admin."
 	ln -s ${eclipseFolder}/eclipse/eclipse /opt/karoshi-admin/Desktop/eclipse-mars-2
 	echo -e "Eclipse installed."
+fi
+
 fi
 
 ##############################
@@ -189,11 +201,34 @@ sleep 2
 		fi
 	done
 
+#Remove unnecessary package
+for package in `echo $unnecessarypackages`
+	do
+		echo -e "\nRemoving $package\n"
+		apt-get -y remove $package 1>> /var/log/karoshi_build.log 2>> /var/log/karoshi_build.log
+		if [ $? != 0 ]
+		then
+			echo $package: There was a problem removing this package.
+			read -t 5 -p "Press return or wait 5 seconds to continue."
+
+		fi
+	done
+
+#Upgrade system
+apt-get -y dist-upgrade
+
 #Update initramfs
 update-initramfs -u
 
 #Copy in etc.conf to autologin karoshi user
 
+#Configure Wine if installed
+if [ "dpkg-query -W wine | awk {'print $1'} = """ ]; then
+        echo -e "Wine is installed"
+		export WINEARCH="win32"
+		winetricks win7
+		winecfg
+fi
 
 #Configure grub
 echo -e "\nConfiguring grub2.\n"
