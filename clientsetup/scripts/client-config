@@ -101,10 +101,12 @@ fi
 [[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "\@</pam_mount>@ i\\
 <volume uid='1000-10000000' path='$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users/%(USER)' mountpoint='~/offline-home' options='bind' />" /etc/security/pam_mount.conf.xml
 
-#Add VirtualBox entry
+#Add VirtualBox entry if virtualbox is installed
+if [ "dpkg-query -W virtualbox | awk {'print $1'} = """ ]; then
 [[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "\@</pam_mount>@ i\\
 <volume uid='1000-10000000' path='$KAROSHI_DATA/$KAROSHI_VIRTUALBOX/users/%(USER)' mountpoint='~/.VirtualBox' options='bind' />\\
 <volume uid='1000-10000000' path='$KAROSHI_DATA/$KAROSHI_VIRTUALBOX/users/%(USER)' mountpoint='~/VirtualBox VMs' options='bind' />" /etc/security/pam_mount.conf.xml
+fi
 
 #################
 #Home areas
@@ -297,11 +299,21 @@ unopkg add --shared /opt/karoshi/mozilla/extensions/Zotero-LibreOffice-Plugin-3.
 #Install Omnibar
 do_xpi /opt/karoshi/clientsetup/config/firefox/omnibar.xpi firefox
 
-if [[ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions ]]; then
+#Copy files .xpi
+if [[ ! -d /opt/karoshi/clientsetup/config-files/firefox/extensions ]]; then
+	mkdir -p /opt/karoshi/clientsetup/config-files/firefox/extensions
+fi
+
+if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions ]
+then
+	rsync -arP --delete /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions/. /opt/karoshi/clientsetup/config-files/firefox/extensions/
+	chmod -R u=rwX,g=rX,o=rX /opt/karoshi/clientsetup/config-files/firefox/extensions
+
+	#Install all extensions Dynamic
 	while read -r -d $'\0' xpi; do
 		echo "Found new extension: $xpi"
 		do_xpi "$xpi" firefox
-	done < <(find /tmp/netlogon/linuxclient/$LINUX_VERSION/firefox/extensions -maxdepth 1 -mindepth 1 -name '*.xpi' -print0)
+	done < <(find /opt/karoshi/clientsetup/config-files/firefox/extensions -maxdepth 1 -mindepth 1 -name '*.xpi' -print0)
 fi
 
 #Remove unnecessary dictionaries
@@ -544,14 +556,14 @@ fi
 ##########################
 
 #Copy files .oxt
-if [[ ! -d /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions ]]; then
-	mkdir -p /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions
+if [[ ! -d /opt/karoshi/clientsetup/config-files/libreoffice/extensions ]]; then
+	mkdir -p /opt/karoshi/clientsetup/config-files/libreoffice/extensions
 fi
 
 if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/libreoffice/extensions ]
 then
-	rsync -arP --delete /tmp/netlogon/linuxclient/$LINUX_VERSION/libreoffice/extensions/. /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions/
-	chmod -R u=rwX,g=rX,o=rX /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions
+	rsync -arP --delete /tmp/netlogon/linuxclient/$LINUX_VERSION/libreoffice/extensions/. /opt/karoshi/clientsetup/config-files/libreoffice/extensions/
+	chmod -R u=rwX,g=rX,o=rX /opt/karoshi/clientsetup/config-files/libreoffice/extensions
 
 	##Clear all extensions
 	rm -Rf /var/spool/libreoffice/uno_packages/cache/uno_packages/*
@@ -560,13 +572,17 @@ then
 	while read -r -d $'\0' oxt; do
 	echo "Found new extension: $oxt"
 	unopkg add --shared "$oxt"
-	done < <(find /opt/karoshi/linuxclientsetup/config-files/libreoffice/extensions -maxdepth 1 -mindepth 1 -name '*.oxt' -print0)
+	done < <(find /opt/karoshi/clientsetup/config-files/libreoffice/extensions -maxdepth 1 -mindepth 1 -name '*.oxt' -print0)
 fi
 
 
 ############################
 #Software control
 ############################
+#Repair install
+DEBIAN_FRONTEND=noninteractive dpkg --configure -a --force-confdef --force-confold
+
+#Install and upgrade
 function create_software_list {
 if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/"$location"_install ]
 then
@@ -588,7 +604,7 @@ then
 	fi
 	for software_package in $(cat /var/lib/karoshi/software/"$install_action".list)
 	do
-		apt-get "$install_action" -y "$software_package"
+		DEBIAN_FRONTEND=noninteractive apt-get "$install_action" -q -f -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-unauthenticated "$software_package"
 	done
 fi
 }
@@ -627,7 +643,7 @@ then
 		apt_updated=yes
 	fi
 
-	apt-get -y dist-upgrade
+	DEBIAN_FRONTEND=noninteractive apt-get -q -f -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
 
 	#Check if a reboot is required
 	if [ -f /var/run/reboot-required ]
@@ -648,13 +664,13 @@ if [[ -e /tmp/netlogon/linuxclient/all_custom_scripts ]]; then
 	run-parts /tmp/netlogon/linuxclient/all_custom_scripts
 fi
 if [ -d /tmp/netlogon/linuxclient/$LINUX_VERSION/custom_scripts ]; then
-	chmod 0755 /tmp/netlogon/linuxclient/all_custom_scripts
+	chmod 0755 /tmp/netlogon/linuxclient/$LINUX_VERSION/custom_scripts
 	run-parts /tmp/netlogon/linuxclient/$LINUX_VERSION/custom_scripts
 fi
 ##########################
-#Configure virtualbox drive
+#Configure virtualbox drive if virtualbox is installed
 ##########################
-
+if [ "dpkg-query -W virtualbox | awk {'print $1'} = """ ]; then
 function configureVboxPartition {
 	#Copy data if required
 	if ! [[ $(find "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -maxdepth 0 -type d -empty 2>/dev/null) ]]; then
@@ -704,6 +720,8 @@ if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:spa
 			configureVboxPartition "$drive"1
 		fi
 	fi
+fi
+
 fi
 
 ##########################
