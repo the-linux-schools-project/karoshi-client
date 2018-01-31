@@ -24,11 +24,11 @@ case $choice in
 	ARCH=i386
 esac
 
-KAROSHIVER=karoshi-client-v5
+KAROSHIVER=karoshi-client-v6
 KAROSHIVER=$KAROSHIVER-$ARCH
 KAROSHIVERNOCAPS=`echo $KAROSHIVER | tr 'A-Z' 'a-z'`
 BUILDPATH=/home/karoshi-client/$KAROSHIVERNOCAPS
-RELEASE=xenial
+RELEASE=bionic
 BRANCH=master
 ZIPFILE=$BRANCH.zip
 
