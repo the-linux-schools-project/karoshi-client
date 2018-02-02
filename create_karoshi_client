@@ -166,7 +166,7 @@ echo -e "Copying /etc/resolv.conf\n"
 cp /etc/resolv.conf chroot/etc/resolv.conf
 
 echo "Copying sources.list"
-cp -f $BUILDPATH/chroot/opt/karoshi/clientsetup/buildclient/installs/sources.list chroot/etc/apt/sources.list
+cp -f $BUILDPATH/chroot/opt/karoshi/clientsetup/buildclient/install/sources.list chroot/etc/apt/sources.list
 
 #Backup /sbin/initctl
 cp /sbin/initctl /sbin/initctl.$$
