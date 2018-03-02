@@ -48,7 +48,6 @@ add-apt-repository -y ppa:openshot.developers/ppa
 add-apt-repository -y ppa:numix/ppa
 add-apt-repository -y ppa:webupd8team/java
 add-apt-repository -y ppa:nilarimogard/webupd8
-add-apt-repository -y ppa:ubuntu-wine/ppa
 
 apt-get update
 apt-get install -y sssd samba-common ntp krb5-user
@@ -56,74 +55,6 @@ apt-get install -y numix-gtk-theme numix-icon-theme-circle numix
 apt-get install -y feh ubiquity-frontend-gtk
 apt-get install -y xinit
 apt-get install -y xubuntu-desktop
-
-#Ask to install eclipse
-ECLIPSEINSTALL=no
-echo -e "\nDo you want install eclipse? y/n\n"
-read ECLIPSEINSTALL
-if [ "$ECLIPSEINSTALL" = y ]
-then
-	echo -e "\nIntall eclipse software\n"
-	sleep 5
-##############################
-# ECLIPSE INSTALLATION
-##############################
-
-# The eclipse PPA has not been updated since Eclipse 3.8 (Juno)
-# The following script will download, verify and install Eclipse Mars for amd64 and i386 architectures.
-
-# Checksum: a7ddf8be89d65e66dc09a54e98b47748  eclipse-java-mars-2-linux-gtk-x86_64.tar.gz (amd64)
-# Checksum: 3f0460868e3702c6c8e6e346ae869f54  eclipse-java-mars-2-linux-gtk.tar.gz. (i386)
-
-echo "Begin Eclipse installation."
-
-eclipseDownload="no"
-if [ "$ARCH" == "amd64" ]; then
-	echo "Architecture is ${ARCH}"
-	eclipsePath="/tmp/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz"
-	eclipseFolder="/opt/eclipse-java-mars-2-linux-gtk-x86_64"
-	eclipseURL="http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk-x86_64.tar.gz"
-	eclipseDownload="yes"
-	eclipseChecksum="a7ddf8be89d65e66dc09a54e98b47748"
-elif [ "$ARCH" == "i386" ]; then
-	echo "Architecture is ${ARCH}"
-	eclipsePath="/tmp/eclipse-java-mars-2-linux-gtk.tar.gz"
-	eclipseFolder="/opt/eclipse-java-mars-2-linux-gtk"
-	eclipseURL="http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/technology/epp/downloads/release/mars/2/eclipse-java-mars-2-linux-gtk.tar.gz"
-	eclipseDownload="yes"
-	eclipseChecksum="3f0460868e3702c6c8e6e346ae869f54"
-else
-	echo "${ARCH} is not a supported architecture."
-fi
-
-eclipseInstall="no"
-if [ "$eclipseDownload" == "yes" ]; then
-	echo "Attempting to download Eclipse."
-	wget --timeout=10 -c -O $eclipsePath $eclipseURL
-	if [ $? != 0 ]; then
-			echo "There was a problem downloading Eclipse."
-	fi
-
-	if [ $(md5sum $eclipsePath | cut -d ' ' -f 1) == $eclipseChecksum ]; then
-		echo "Verified Eclipse download."
-		eclipseInstall="yes"
-	else
-		echo "Eclipse download failed to validate."
-	fi
-fi
-
-if [ "$eclipseInstall" == "yes" ]; then
-	echo "Attempting to install Eclipse."
-	echo "Creating and cleaning Eclipse directory: ${eclipseFolder}"
-	[ -d $eclipseFolder ] && rm -rf ${eclipseFolder}/eclipse || mkdir $eclipseFolder
-	echo "Extracting Eclipse archive into place."
-	tar -zxvf $eclipsePath -C $eclipseFolder
-	echo "Creating symlink for karoshi-admin."
-	ln -s ${eclipseFolder}/eclipse/eclipse /opt/karoshi-admin/Desktop/eclipse-mars-2
-	echo -e "Eclipse installed."
-fi
-
-fi
 
 ##############################
 
@@ -219,16 +150,6 @@ apt-get -y dist-upgrade
 
 #Update initramfs
 update-initramfs -u
-
-#Copy in etc.conf to autologin karoshi user
-
-#Configure Wine if installed
-if [ "dpkg-query -W wine | awk {'print $1'} = """ ]; then
-        echo -e "Wine is installed"
-		export WINEARCH="win32"
-		winetricks win7
-		winecfg
-fi
 
 #Configure grub
 echo -e "\nConfiguring grub2.\n"
