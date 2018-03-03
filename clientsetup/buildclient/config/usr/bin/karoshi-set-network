@@ -302,7 +302,7 @@ while ! $pdc_set; do
 	fi
 
 	echo \#$"Attempting automatic configuration" >&11
-	if mount.cifs //$SERVERIP/netlogon "$netlogon_mount" -o guest,sec=ntlm,nounix; then
+	if mount.cifs //$SERVERIP/netlogon "$netlogon_mount" -o guest,nounix; then
 		#Only check for automatic network settings if this was not a manual setting
 		if ! $manual_pdc; then
 			CLIENTMAC=`getMac $NETWORKINT`
@@ -442,7 +442,7 @@ function reconfigureNetwork {
 		sleep 1
 	done
 
-	mount.cifs //$SERVERIP/netlogon "$netlogon_mount" -o guest,sec=ntlm,nounix
+	mount.cifs //$SERVERIP/netlogon "$netlogon_mount" -o guest,nounix
 }
 
 DNSSUFFIX="internal"

@@ -72,7 +72,7 @@ while [ $mount_err -gt 0 ]
 do
 	for LSERVER in `dig $DNSSUFFIX +short`
 	do
-		mount.cifs //"$LSERVER"/netlogon /tmp/netlogon -o guest,sec=ntlm
+		mount.cifs //"$LSERVER"/netlogon /tmp/netlogon -o guest
 		mount_err=$?
 		if [ $mount_err -eq 0 ]
 		then

@@ -5,7 +5,7 @@
 GRUB_TIMEOUT=5
 GRUB_RECORDFAIL_TIMEOUT=0
 GRUB_GFXPAYLOAD_LINUX=keep
-GRUB_BACKGROUND=/opt/karoshi/images/background.png
+GRUB_BACKGROUND="/usr/share/backgrounds/bootmenu.png"
 GRUB_DEFAULT=0
 #GRUB_HIDDEN_TIMEOUT=0
 GRUB_HIDDEN_TIMEOUT_QUIET=true
@@ -35,5 +35,4 @@ GRUB_CMDLINE_LINUX=""
 
 # Uncomment to get a beep at grub start
 #GRUB_INIT_TUNE="480 440 1"
-GRUB_BACKGROUND="/usr/share/backgrounds/karoshi/bootmenu.png"
 

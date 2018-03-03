@@ -49,3 +49,8 @@ deb http://security.ubuntu.com/ubuntu bionic-security universe
 # deb-src http://security.ubuntu.com/ubuntu bionic-security universe
 deb http://security.ubuntu.com/ubuntu bionic-security multiverse
 # deb-src http://security.ubuntu.com/ubuntu bionic-security multiverse
+
+# pam_exec2
+deb http://ppa.launchpad.net/linux-schools/clientbackports/ubuntu trusty main
+deb-src http://ppa.launchpad.net/linux-schools/clientbackports/ubuntu trusty main
+
