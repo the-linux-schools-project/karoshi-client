@@ -79,7 +79,7 @@ echo "Configuring pam_mount"
 if ! karoshi-manage-flags get offline_mode >/dev/null; then
 	case "$DOMAINTYPE" in
 	samba4)
-		[[ -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 ]] && cp -f /tmp/netlogon/linuxclient/pam_mount.conf.xml.krb5 /etc/security/pam_mount.conf.xml
+		[[ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/pam_mount.conf.xml ]] && cp -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/pam_mount.conf.xml /etc/security/pam_mount.conf.xml
 		;;
 	*)
 		echo "WARNING: Unrecognized domain type $DOMAINTYPE"
