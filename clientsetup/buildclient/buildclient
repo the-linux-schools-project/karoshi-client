@@ -43,6 +43,10 @@ echo -e "\nAdding required repositories\n"
 sleep 1
 apt-key update
 
+#Clientbackports
+add-apt-repository -y "ppa:linux-schools/clientbackports"
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8E250180
+
 #add-apt-repository -y ppa:libreoffice/ppa
 add-apt-repository -y ppa:openshot.developers/ppa
 add-apt-repository -y ppa:numix/ppa
