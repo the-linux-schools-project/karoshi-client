@@ -180,6 +180,7 @@ groupdel staff
 cd /
 mkdir -p /opt/karoshi/images
 cp -r /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
+cp -r /opt/karoshi/clientsetup/buildclient/config/images/background.png /usr/share/xfce4/backdrops/xubuntu-bionic.png
 cp -r /opt/karoshi/images/* /usr/share/backgrounds
 cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
 cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
