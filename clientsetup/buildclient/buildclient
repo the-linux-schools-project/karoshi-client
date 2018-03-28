@@ -249,6 +249,10 @@ apt-get purge -y --auto-remove ibus
 #Remove gnome-keyring
 apt-get remove -y gnome-keyring
 
+#Remove kwallet pam as this is conflicting with pam_mkhomedir for copying /etc/skel
+apt-get remove -y libpam-kwallet-common libpam-kwallet5 
+
+
 #Tidy packages
 apt-get -y autoremove
 
