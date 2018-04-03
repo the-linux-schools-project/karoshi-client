@@ -11,3 +11,4 @@ pref("calendar.alarms.showmissed", false);
 pref("calendar.caldav.sched.enabled", true);
 pref("calendar.timezone.local", "/mozilla.org/20070129_1/CHANGETHISTIMEZONE");
 pref("sogo-integrator.autocomplete.server.urlid", "public");
+pref("ldap_2.autoComplete.directoryServer", "ldap_2.servers.ActiveDirectory");
