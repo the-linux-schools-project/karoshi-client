@@ -6,12 +6,21 @@ function SIOnLoadHandler(event) {
     window.SIOldSaveItem = window.saveItem;
     window.saveItem = window.SISaveItem;
     
-    SIOldOnLoad();
+    //SIOldOnLoad();
 }
 
 function SIOnAccept() {
-    let title = getElementValue("item-title");
+    let title;
+
+    title = "";
     
+    try {
+	title = getElementValue("item-title");
+    }  catch (e) {
+	let iframe = document.getElementById("lightning-item-panel-iframe");
+	title = iframe.contentWindow.document.getElementById("item-title").value;
+    }
+
     if (title.length > 0)
         title = title.replace(/(^\s+|\s+$)/g, "");
     
@@ -71,5 +80,6 @@ function SIUpdateAttendees() {
     }
 }
 
-window.SIOldOnLoad = onLoad;
-window.onLoad = SIOnLoadHandler;
+//window.SIOldOnLoad = onLoad;
+//window.onLoad = SIOnLoadHandler;
+window.addEventListener("load", SIOnLoadHandler, false);

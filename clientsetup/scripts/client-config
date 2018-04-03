@@ -269,7 +269,7 @@ if [[ $MAILSERVER ]]; then
 	mailserver_alias=$(< /tmp/netlogon/domain_information/aliases/"$MAILSERVER")
 
 	#Install SOGo
-	do_xpi /opt/karoshi/clientsetup/config/thunderbird/sogo-connector-31.0.1.xpi thunderbird
+	do_xpi /opt/karoshi/clientsetup/config/thunderbird/sogo-connector-31.0.5.xpi thunderbird
 	do_xpi_raw sogo-integrator /opt/karoshi/clientsetup/config/thunderbird/sogo-integrator thunderbird
 	if [[ -d /opt/karoshi/mozilla/extensions/sogo-integrator ]]; then
 		sed -i "s@CHANGETHISTIMEZONE@$timezone@" \
