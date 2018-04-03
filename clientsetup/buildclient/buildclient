@@ -245,7 +245,7 @@ sed -i 's%/etc/acpi/powerbtn.sh%/sbin/poweroff%g' /etc/acpi/events/powerbtn
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
 
-	cp -f -r /opt/karoshi/clientsetup/plymouth/* /usr/share/plymouth/themes/
+	cp -f -r /opt/karoshi-client/karoshi-client/clientsetup/buildclient/config/plymouth/karoshi-logo /usr/share/plymouth/themes/
 	chmod 0755 /usr/share/plymouth/themes/karoshi-logo/karoshi-logo.plymouth
 	update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/karoshi-logo/karoshi-logo.plymouth 100
 
