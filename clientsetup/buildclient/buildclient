@@ -46,13 +46,8 @@ apt-key update
 #Clientbackports
 add-apt-repository -y "ppa:linux-schools/clientbackports"
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8E250180
-
-#add-apt-repository -y ppa:libreoffice/ppa
-add-apt-repository -y ppa:openshot.developers/ppa
 add-apt-repository -y ppa:numix/ppa
 add-apt-repository -y ppa:webupd8team/java
-add-apt-repository -y ppa:nilarimogard/webupd8
-
 apt-get update
 apt-get install -y sssd samba-common ntp krb5-user
 apt-get install -y numix-gtk-theme numix-icon-theme-circle numix
