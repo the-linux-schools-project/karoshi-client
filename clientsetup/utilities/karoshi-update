@@ -41,12 +41,15 @@ echo
 echo Booting on `date`
 
 #Wait for network device for 30 seconds
-for i in `seq 1 300`; do
-	if [ `cat /sys/class/net/$NETWORKINT/operstate` = 'up' ]; then
-		break
-	fi
-	sleep 0.1
-done
+if [ ! -z "$NETWORKINT" ]
+then
+	for i in `seq 1 300`; do
+		if [ `cat /sys/class/net/$NETWORKINT/operstate` = 'up' ]; then
+			break
+		fi
+		sleep 0.1
+	done
+fi
 
 #Check if version has been set
 if [ -z "$LINUX_VERSION" ]; then
