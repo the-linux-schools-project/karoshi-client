@@ -182,7 +182,7 @@ groupdel staff
 cd /
 mkdir -p /opt/karoshi/images
 cp -r /opt/karoshi/clientsetup/buildclient/config/images/* /opt/karoshi/images
-cp -r /opt/karoshi/clientsetup/buildclient/config/images/background.png /usr/share/xfce4/backdrops/xubuntu-bionic.png
+cp -r /opt/karoshi/clientsetup/buildclient/config/images/karoshi.png /usr/share/xfce4/backdrops/xubuntu-bionic.png
 cp -r /opt/karoshi/images/* /usr/share/backgrounds
 cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/etc/* /etc
 cp -r /opt/karoshi/clientsetup/buildclient/config/configuration/lib/* /lib
@@ -240,7 +240,7 @@ sed -i 's%/etc/acpi/powerbtn.sh%/sbin/poweroff%g' /etc/acpi/events/powerbtn
 #Copy plymouth animations
 	echo -e "\nSetting karoshi-logo theme as the default theme for plymouth.\n"
 
-	cp -f -r /opt/karoshi-client/karoshi-client/clientsetup/buildclient/config/plymouth/karoshi-logo /usr/share/plymouth/themes/
+	cp -f -r /opt/karoshi/clientsetup/buildclient/config/plymouth/karoshi-logo /usr/share/plymouth/themes/
 	chmod 0755 /usr/share/plymouth/themes/karoshi-logo/karoshi-logo.plymouth
 	update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/karoshi-logo/karoshi-logo.plymouth 100
 

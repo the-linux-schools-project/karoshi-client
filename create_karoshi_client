@@ -226,7 +226,7 @@ cp chroot/usr/lib/syslinux/modules/bios/libcom32.c32 image/isolinux/
 cp chroot/usr/lib/syslinux/modules/bios/libutil.c32 image/isolinux/
 
 #Copy in boot splash
-cp -f chroot/opt/karoshi/clientsetup/images/boot-menu.png image/isolinux/splash.png
+cp -f chroot/opt/karoshi-client/karoshi-client/clientsetup/buildclient/config/images/boot-menu.png image/isolinux/splash.png
 
 #Create boot instructions
 echo -e "\nCreating boot instructions\n"
