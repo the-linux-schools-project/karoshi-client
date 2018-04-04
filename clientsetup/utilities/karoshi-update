@@ -19,6 +19,11 @@ if [ ! -f /opt/karoshi/clientsetup/variables ] || ! karoshi-manage-flags get dom
 fi
 . /opt/karoshi/clientsetup/variables
 
+if [ -z "$NETWORKINT" ]
+then
+	exit
+fi
+
 #Disable sssd and LightDM
 systemctl disable sssd >/dev/null 2>&1
 systemctl disable lightdm >/dev/null 2>&1
@@ -41,15 +46,13 @@ echo
 echo Booting on `date`
 
 #Wait for network device for 30 seconds
-if [ ! -z "$NETWORKINT" ]
-then
-	for i in `seq 1 300`; do
-		if [ `cat /sys/class/net/$NETWORKINT/operstate` = 'up' ]; then
-			break
-		fi
-		sleep 0.1
-	done
-fi
+for i in `seq 1 300`; do
+	if [ `cat /sys/class/net/$NETWORKINT/operstate` = 'up' ]; then
+		break
+	fi
+	sleep 0.1
+done
+
 
 #Check if version has been set
 if [ -z "$LINUX_VERSION" ]; then
