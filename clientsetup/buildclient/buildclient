@@ -218,6 +218,9 @@ chmod +rwx /etc/sssd/*
 chmod +rwx /etc/init/karoshi*
 chmod +rwx /etc/init.d/karoshi*
 
+#Configure dhcp with a shorter timeout
+sed -i 's/^timeout 300/timeout 20/g' /etc/dhcp/dhclient.conf
+
 #Configure unity greeter
 echo "[com.canonical.unity-greeter]
 draw-user-backgrounds=false
