@@ -7,7 +7,6 @@
       <property name="length" type="uint" value="100"/>
       <property name="position-locked" type="bool" value="true"/>
       <property name="plugin-ids" type="array">
-        <value type="int" value="100"/>
         <value type="int" value="1"/>
 	<value type="int" value="8"/>
         <value type="int" value="101"/>
