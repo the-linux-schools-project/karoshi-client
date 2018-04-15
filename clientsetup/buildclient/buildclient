@@ -25,9 +25,9 @@ then
 fi
 
 #Ask to edit the software install list
-EDITLIST=no
 echo -e "\nDo you want to edit the software install list? y/n\n"
-read EDITLIST
+read -t 10 EDITLIST
+[ -z "$EDITLIST" ] && EDITLIST=n
 if [ "$EDITLIST" = y ]
 then
 	echo -e "\nLoading the software list in nano - save and close nano to continue\n"
