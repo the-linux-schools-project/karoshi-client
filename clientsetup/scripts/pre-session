@@ -30,10 +30,10 @@ source /opt/karoshi/clientsetup/utilities/pam-common
 #	$3 is icon
 function create_entries {
 	filename=`tr '[:upper:] ' '[:lower:]-' <<< "$1"`
-	command="exo-open"
+	command="thunar"
 	iconname="$1"
 	if [[ $sudo_open ]]; then
-		command="gksudo -D '$iconname' -- exo-open"
+		command="lxqt-sudo thunar"
 	fi
 	echo "Generating desktop and menu entry: $1"
 	#Desktop and Menu
@@ -41,7 +41,7 @@ function create_entries {
 Version=1.0
 Type=Application
 Terminal=false
-Exec=$command --launch FileManager --working-directory $2
+Exec=$command $2
 Name=$iconname
 Icon=$3
 Categories=X-XFCE;X-Xfce-Toplevel;Karoshi;
