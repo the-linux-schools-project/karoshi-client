@@ -215,7 +215,7 @@ function exitfunc {
 
 echo 5 >&11
 echo \#$"Bringing down network interface" >&11
-ifdown --force $NETWORKINT
+timeout 10 ifdown --force $NETWORKINT
 #Clear leases to only get one lease in file
 > /var/lib/dhcp/dhclient.$NETWORKINT.leases
 echo \#$"Bringing up network interface" >&11
@@ -258,7 +258,7 @@ while ! $pdc_set; do
 		client_settings=false
 		echo 5 >&11
 		echo \#$"Bringing down network interface" >&11
-		ifdown $NETWORKINT
+		timeout 10 ifdown $NETWORKINT
 		#Clear leases to only get one lease in file
 		> /var/lib/dhcp/dhclient.$NETWORKINT.leases
 		getClientSettings
@@ -430,10 +430,10 @@ function reconfigureNetwork {
 
 	#Do network configuration and remount netlogon
 	umount "$netlogon_mount"
-	ifdown $current_network_int
+	timeout 10 ifdown $current_network_int
 	writeNetworkSettings
 	updateHostname
-	ifup $NETWORKINT
+	timeout 10 ifup $NETWORKINT
 	current_network_int=$NETWORKINT
 
 	#Wait for the network to actually be up
