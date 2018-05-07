@@ -146,7 +146,7 @@ for package in `echo $unnecessarypackages`
 	done
 
 #Install lxqt-sudo as a replacement for gksudo
-apt-get install --no-install-recommends lxqt-sudo
+apt-get -y install --no-install-recommends lxqt-sudo
 
 #Upgrade system
 apt-get -y dist-upgrade
