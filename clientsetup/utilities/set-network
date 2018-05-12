@@ -507,7 +507,7 @@ if [[ -f $netlogon_mount/domain_information/samba4 ]]; then
 							--button='gtk-cancel:1' --button='gtk-ok:0'
 		domain_username=`cut -d"|" -f1 <<< "$DATA"`
 		domain_password=`cut -d"|" -f2 <<< "$DATA"`
-		net ads join -S $PDC -U $domain_username%$domain_password
+		net ads join createcomputer="ClientComputers/LinuxClients/KaroshiClients" -S $PDC -U $domain_username%$domain_password
 		join_status=$?
 	done
 
