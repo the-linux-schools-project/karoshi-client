@@ -19,6 +19,7 @@
 #along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
 
 source /opt/karoshi/clientsetup/utilities/common
+/opt/karoshi/clientsetup/variables
 
 #Connect to netlogon
 [[ ! -d /tmp/netlogon ]] && mkdir /tmp/netlogon
@@ -41,14 +42,15 @@ fi
 #######################
 #Choose room
 #######################
-selection=` < /tmp/netlogon/locations.txt`
+selection=$(cat /tmp/netlogon/locations.txt | sed "s/$LOCATION//g")
 understandableYad --wrap --image-on-top --entry --title $"Karoshi Set Location" \
 					--button='gtk-cancel:1' --button='gtk-ok:0' \
 					--text $"Choose the location of this computer" \
+					$LOCATION \
 					$selection
 LOCATION=$DATA
 
 #Completed message
 info_alert $"Karoshi Set Location" $"$HOSTNAME set to location $LOCATION"
-
+umount /tmp/netlogon
 updateVariables
