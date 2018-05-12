@@ -115,8 +115,8 @@ fi
 #[[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "0,/[[:blank:]]*<volume/s@@<volume options=\"size=100m,uid=%(USERUID),gid=%(USERGID),mode=0700\" mountpoint=\"~\" uid=\"1000-50000\" fstype=\"tmpfs\" />\n<volume@" /etc/security/pam_mount.conf.xml
 
 #Clear home areas
-echo "Clearing /home"
-find /home -mindepth 1 -xdev -delete
+#echo "Clearing /home"
+#find /home -mindepth 1 -xdev -delete
 
 ####################
 #Copy configuration
@@ -749,44 +749,6 @@ fi
 #Restrict cron and at to root
 echo root > /etc/cron.allow
 echo root > /etc/at.allow
-
-#Optimise fstab for SSD support
-for device in /dev/sd*; do
-	device_uuid=`blkid $device | sed 's@.*UUID="\([^"]*\)".*@\1@'`
-	if [[ $device_uuid ]] && [[ `hdparm -I $device | grep TRIM` ]]; then
-		#Add in trim support if the partition is not swap.
-		mount_data=`grep ^UUID=$device_uuid /etc/fstab`
-
-		if [[ `echo $mount_data | grep -c swap` = 0 ]] &&  [[ `echo $mount_data | grep -c noatime` = 0 ]]; then
-			#Add in noatime option
-			sed '/^UUID='$device_uuid'/s/discard/discard,noatime/g' -i /etc/fstab
-		fi
-	fi
-done
-
-#Create rc.local to enable trim
-echo '#!/bin/sh -e
-#
-# rc.local
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# By default this script does nothing.
-fstrim /
-exit 0' > /etc/rc.local
-
-chmod 0755 /etc/rc.local
-
-#Disable Cron trim check since this only runs weekly.
-if [[ -f /etc/cron.weekly/fstrim ]]; then
-	rm -f /etc/cron.weekly/fstrim
-fi
-
 
 #Write new variables to file
 updateVariables

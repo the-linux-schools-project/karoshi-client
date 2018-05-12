@@ -28,18 +28,6 @@ fi
 systemctl disable sssd >/dev/null 2>&1
 systemctl disable lightdm >/dev/null 2>&1
 
-#Clear home areas
-echo "Clearing /home"
-find /home -mindepth 1 -xdev -delete
-
-#Make sure resolvconf is working
-if [ -e /etc/resolv.conf ]
-then
-	rm -r /etc/resolv.conf
-fi
-ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
-resolvconf -u
-
 echo
 echo "########################################"
 echo
