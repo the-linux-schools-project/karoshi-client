@@ -105,7 +105,8 @@ function net_addr_type {
 }
 
 function updateVariables {
-	echo "LINUX_VERSION=$LINUX_VERSION
+[ -z "$DOMAINTYPE" ] && DOMAINTYPE=samba4
+echo "LINUX_VERSION=$LINUX_VERSION
 NETWORKINT=$NETWORKINT
 CLIENTMAC=$CLIENTMAC
 PDC=$PDC
