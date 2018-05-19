@@ -162,7 +162,7 @@ if ! karoshi-manage-flags get no_update_other >/dev/null; then
 	[[ -d $KAROSHI_DATA/images ]] || mkdir -p "$KAROSHI_DATA"/images
 	if [[ -f /tmp/netlogon/linuxclient/background.png ]]; then
 		cp -f /tmp/netlogon/linuxclient/background.png "$KAROSHI_DATA"/images
-		update-alternatives --install /usr/share/backgrounds/karoshi.png karoshi-background "$KAROSHI_DATA"/images/background.png 150
+		update-alternatives --force --install /usr/share/backgrounds/karoshi.png karoshi-background "$KAROSHI_DATA"/images/background.png 150
 	fi
 	if [[ -f /tmp/netlogon/linuxclient/login-background.png ]]; then
 		cp -f /tmp/netlogon/linuxclient/login-background.png "$KAROSHI_DATA"/images
