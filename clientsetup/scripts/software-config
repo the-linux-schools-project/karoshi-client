@@ -1,0 +1,106 @@
+#!/bin/bash
+
+#Copyright (C) 2013 Robin McCorkell
+
+#This file is part of Karoshi Client.
+#
+#Karoshi Client is free software: you can redistribute it and/or modify
+#it under the terms of the GNU Affero General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#Karoshi Client is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Affero General Public License for more details.
+#
+#You should have received a copy of the GNU Affero General Public License
+#along with Karoshi Client.  If not, see <http://www.gnu.org/licenses/>.
+
+#The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
+#
+#Website: http://www.karoshi.org.uk
+
+source /opt/karoshi/clientsetup/utilities/common
+
+############################
+#Software control
+############################
+#Repair install
+DEBIAN_FRONTEND=noninteractive dpkg --configure -a --force-confdef --force-confold
+
+#Install and upgrade
+function create_software_list {
+if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/"$location"_install ]
+then
+	if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/"$install_action"/"$location"_software ]
+	then
+		cat /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/"$install_action"/"$location"_software >> /var/lib/karoshi/software/"$install_action".list
+	fi
+fi
+}
+
+function do_software_action {
+#Install any software in /var/lib/karoshi/software/$install_action.list
+if [ -f /var/lib/karoshi/software/"$install_action".list ]
+then
+	if [ $apt_updated = no ]
+	then	
+		apt-get update
+		apt_updated=yes
+	fi
+	for software_package in $(cat /var/lib/karoshi/software/"$install_action".list)
+	do
+		DEBIAN_FRONTEND=noninteractive apt-get "$install_action" -q -f -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-unauthenticated "$software_package"
+	done
+fi
+}
+
+[ ! -d /var/lib/karoshi/software ] && mkdir -p /var/lib/karoshi/software
+[ -f "/var/lib/karoshi/software/install.list" ] && rm -f "/var/lib/karoshi/software/install.list"
+[ -f "/var/lib/karoshi/software/remove.list" ] && rm -f "/var/lib/karoshi/software/remove.list"
+
+
+apt_updated=no
+install_action=install
+location=all
+create_software_list
+location=$LOCATION
+create_software_list
+do_software_action
+
+install_action=remove
+location=all
+create_software_list
+location=$LOCATION
+create_software_list
+do_software_action
+
+#Clear nologin flag file just in case someone has forced a reboot during an upgrade
+[ -f /etc/nologin ] && rm -f /etc/nologin
+
+#Check if the client is set to update
+if [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/all_updates ] || [ -f /tmp/netlogon/linuxclient/"$LINUX_VERSION"/software/install/"$location"_updates ]
+then
+	#Stop any users from logging in during the update
+	touch /etc/nologin
+	if [ $apt_updated = no ]
+	then	
+		apt-get update
+		apt_updated=yes
+	fi
+
+	DEBIAN_FRONTEND=noninteractive apt-get -q -f -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+
+	#Check if a reboot is required
+	if [ -f /var/run/reboot-required ]
+	then
+		#Reboot with a 2 minute warning to any users that managed to log in
+		/opt/karoshi/scripts/client-shutdown -r 2
+	fi
+	#Clear the no login flag
+	rm -f /etc/nologin
+fi
+
+
+exit 0

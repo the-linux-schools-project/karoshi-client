@@ -100,15 +100,6 @@ fi
 #Run client config
 [ -f /opt/karoshi/scripts/client-config ] && /opt/karoshi/scripts/client-config
 
-#Run connect printers
-[ -f /opt/karoshi/scripts/cups-config ] && /opt/karoshi/scripts/cups-config
-
-#Disconnect from PDC
-if [ $mount_err -eq 0 ]; then
-	echo Disconnecting from netlogon
-	umount /tmp/netlogon
-fi
-
 service sssd start
 counter=0
 while [ $(service sssd status | grep -c $DNSSUFFIX) = 0 ] && [ $counter -le 30 ]
@@ -117,6 +108,20 @@ do
 	let counter=$counter+1
 done
 service lightdm start
+
+#Run connect printers
+[ -f /opt/karoshi/scripts/cups-config ] && /opt/karoshi/scripts/cups-config
+
+#Update and install software
+[ -f /opt/karoshi/scripts/software-config ] && /opt/karoshi/scripts/software-config
+
+#Disconnect from PDC
+if [ $mount_err -eq 0 ]; then
+	echo Disconnecting from netlogon
+	umount /tmp/netlogon
+fi
+
+
 
 #Don't 'start' if running in offline mode
 if karoshi-manage-flags get offline_mode >/dev/null; then
