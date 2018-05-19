@@ -24,6 +24,10 @@
 source /opt/karoshi/clientsetup/utilities/common
 source /opt/karoshi/clientsetup/utilities/pam-common
 
+#Clear gtk bookmarks
+[ ! ~/.config/gtk-3.0 ] && mdkir -p ~/.config/gtk-3.0
+echo > ~/.config/gtk-3.0/bookmarks
+
 #function create_entries
 #	$1 is mount name
 #	$2 is mount path
@@ -46,6 +50,13 @@ Name=$iconname
 Icon=$3
 Categories=X-XFCE;X-Xfce-Toplevel;Karoshi;
 OnlyShowIn=XFCE;" | tee ~/Desktop/karoshi-"$filename".desktop > ~/.local/share/applications/karoshi-"$filename".desktop
+
+#Create shortcut in Thunar side panel
+if [[ "$command" = thunar ]]
+then
+	echo "file://$2" >> ~/.config/gtk-3.0/bookmarks
+fi
+
 }
 #function create_link
 #	$1 is name

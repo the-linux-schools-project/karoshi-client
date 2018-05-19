@@ -138,7 +138,7 @@ if $is_domain; then
 		done < <(find ~/Desktop -mindepth 1 -maxdepth 1 -not -name "karoshi-*.desktop" -and -size -1024c -print0)
 
 		[[ -f ~/$alternate_home/.config/linux.tar.gz ]] && rm -f ~/"$alternate_home"/.config/linux.tar.gz
-		[[ "${list[@]}" ]] && tar -cz --one-file-system --exclude='karoshi-*.desktop' --exclude='*.karoshi-session' -C ~ -f ~/"$alternate_home"/.config/linux.tar.gz "${list[@]}"
+		[[ "${list[@]}" ]] && tar -cz --one-file-system --exclude='karoshi-*.desktop' --exclude='*.karoshi-session' --exclude '.config/gtk-3.0/bookmarks' -C ~ -f ~/"$alternate_home"/.config/linux.tar.gz "${list[@]}"
 
 		#all.tar.gz
 		temp_dir=$(mktemp -d)
