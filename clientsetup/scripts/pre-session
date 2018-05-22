@@ -25,7 +25,7 @@ source /opt/karoshi/clientsetup/utilities/common
 source /opt/karoshi/clientsetup/utilities/pam-common
 
 #Clear gtk bookmarks
-[ ! ~/.config/gtk-3.0 ] && mdkir -p ~/.config/gtk-3.0
+[ ! -d ~/.config/gtk-3.0 ] && mdkir -p ~/.config/gtk-3.0
 echo > ~/.config/gtk-3.0/bookmarks
 
 #function create_entries
