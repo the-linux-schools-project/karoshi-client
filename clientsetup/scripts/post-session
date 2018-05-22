@@ -40,6 +40,10 @@ config_exclude=(
 	.VirtualBox
 	.goutputstream-*
 	.wine
+	.wine*
+	.local
+	.log
+	.nv
 )
 
 function checkAndList {
