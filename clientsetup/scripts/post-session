@@ -42,6 +42,7 @@ config_exclude=(
 	.wine
 	.wine*
 	.local
+	.steam
 	.log
 	.nv
 )
