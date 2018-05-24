@@ -86,7 +86,7 @@ EOF
 is_admin=false
 groups=( $(id -nG) )
 for group in "${groups[@]}"; do
-	if [[ $group == "admin" ]] || [[ $group == "sudo" ]] || [[ $group == "tech" ]]; then
+	if [[ $group == "admin" ]] || [[ $group == "sudo" ]] || [[ $group == "tech" ]] || [[ $group == "parents" ]]; then
 		echo "Detected admin user"
 		is_admin=true
 		break
