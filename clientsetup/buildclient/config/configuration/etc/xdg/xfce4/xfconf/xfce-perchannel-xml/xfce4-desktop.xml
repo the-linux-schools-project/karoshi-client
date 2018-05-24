@@ -20,6 +20,10 @@
         <property name="image-path" type="string" value="/usr/share/backgrounds/karoshi.png"/>
         <property name="image-show" type="bool" value="true"/>
       </property>
+        <property name="monitor2" type="empty">
+        <property name="image-path" type="string" value="/usr/share/backgrounds/karoshi.png"/>
+        <property name="image-show" type="bool" value="true"/>
+      </property>
     </property>
   </property>
 </channel>
