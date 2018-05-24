@@ -592,25 +592,6 @@ if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:spa
 			break
 		fi
 	done < <(find /dev -maxdepth 1 -name sd??)
-
-	if ! $vbox_set; then
-		#Detect any SATA or SCSI drives with no valid partition table
-		drive=$(parted -lms 2>/dev/null | sed -n 's@Error: \(/dev/sd.\): unrecognised disk label@\1@p')
-		#Detect any SATA or SCSI drives with no partitions
-		if ! [[ $drive ]]; then
-			drive=$(parted -lms 2>/dev/null | sed -n '/BYT;$/ { n; /^\/dev\/sd./ { h; n; /^$/ { g; s/\([^:]*\):.*/\1/p; q; } } }')
-		fi
-
-		if [[ $drive ]]; then
-			echo "Detected candidate drive for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $drive"
-			#Make GPT partition table and single logical partition
-			parted -s "$drive" -- mktable gpt
-			parted -s -a optimal "$drive" -- mkpart logical 0% 100%
-			mkfs.ext4 -L "KAROSHI-VBOX" "$drive"1
-
-			configureVboxPartition "$drive"1
-		fi
-	fi
 fi
 
 fi
