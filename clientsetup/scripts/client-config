@@ -599,8 +599,21 @@ fi
 ##########################
 #Miscellaneous things
 ##########################
-# Fix for /etc/pam.d/common-session
 
+
+#Unlock the client desktop settings if this is a home network install type
+if [ -f /tmp/netlogon/domain_information/install_type ]
+then
+	if [[ $(cat /tmp/netlogon/domain_information/install_type) = home ]]
+	then
+		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml ] && rm /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml ] && rm /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml ] && rm -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
+		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml ] && rm -f [ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+	fi
+fi
+
+# Fix for /etc/pam.d/common-session
 if [[ `grep -c pam_mkhomedir.so /etc/pam.d/common-session` = 0 ]]
 then
 	sed -i '31i pam_mkhomedir.so silent umask=0077' /etc/pam.d/common-session
