@@ -40,11 +40,7 @@ config_exclude=(
 	.VirtualBox
 	.goutputstream-*
 	.wine
-	.wine*
 	.local
-	.steam
-	.log
-	.nv
 )
 
 function checkAndList {
@@ -99,6 +95,8 @@ if which thunderbird >/dev/null && [[ -d ~/.mozilla/thunderbird ]]; then
 fi
 
 #Remove Karoshi desktop icons
+echo removing desktop icons >> /tmp/data2
+
 find ~/Desktop -mindepth 1 -maxdepth 1 -name 'karoshi-*.desktop' -delete
 
 if $is_domain; then
@@ -112,7 +110,7 @@ if $is_domain; then
 			alternate_home="offline-home"
 		fi
 	else
-		if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
+		if [[ -L "$HOME"/network/home ]]; then
 			echo "Using network/home as alternate home"
 			alternate_home="network/home"
 		fi

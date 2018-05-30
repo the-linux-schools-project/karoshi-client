@@ -20,13 +20,25 @@
 #The Karoshi Team can be contacted either at mpsharrad@karoshi.org.uk or rmccorkell@karoshi.org.uk
 #
 #Website: http://www.karoshi.org.uk
+[ $(id -u) -lt 1000 ] && exit
 
 source /opt/karoshi/clientsetup/utilities/common
-source /opt/karoshi/clientsetup/utilities/pam-common
+
+[[ ! -d "$HOME"/network ]] && mkdir -p "$HOME"/network
+
+#Mount network shares
+/usr/sbin/gvfs_mount_cifs_shares
+
+#Check if we have a home area
+if [ ! -L "$HOME"/network/home ]
+then
+	echo "No home area"
+	exit
+fi
 
 #Clear gtk bookmarks
-[ ! -d ~/.config/gtk-3.0 ] && mdkir -p ~/.config/gtk-3.0
-echo > ~/.config/gtk-3.0/bookmarks
+#[ ! -d ~/.config/gtk-3.0 ] && mkdir -p ~/.config/gtk-3.0
+#echo > ~/.config/gtk-3.0/bookmarks
 
 #function create_entries
 #	$1 is mount name
@@ -51,13 +63,14 @@ Icon=$3
 Categories=X-XFCE;X-Xfce-Toplevel;Karoshi;
 OnlyShowIn=XFCE;" | tee ~/Desktop/karoshi-"$filename".desktop > ~/.local/share/applications/karoshi-"$filename".desktop
 
-#Create shortcut in Thunar side panel
-if [[ "$command" = thunar ]]
-then
-	echo "file://$2" >> ~/.config/gtk-3.0/bookmarks
-fi
+#Create shortcut in Thunar side panel - disabled while using gvfs mount instead of pam_mount because gvfs mounts appear automatically in the side panel.
+#if [[ "$command" = thunar ]]
+#then
+#	echo "file://$2" >> ~/.config/gtk-3.0/bookmarks
+#fi
 
 }
+
 #function create_link
 #	$1 is name
 #	$2 is location
@@ -86,7 +99,7 @@ EOF
 is_admin=false
 groups=( $(id -nG) )
 for group in "${groups[@]}"; do
-	if [[ $group == "admin" ]] || [[ $group == "sudo" ]] || [[ $group == "tech" ]] || [[ $group == "parents" ]]; then
+	if [[ $group == "admin" ]] || [[ $group == "sudo" ]] || [[ $group == "tech" ]] || [[ $group == "itadmin" ]] || [[ $group == "parents" ]]; then
 		echo "Detected admin user"
 		is_admin=true
 		break
@@ -128,6 +141,8 @@ if $is_domain; then
 	###############
 	#Domain user
 	###############
+	
+	
 
 	offline_home_escape=$(sed 's/ /%20/g' <<< ~/offline-home)
 	machineLang=$(dbus-send --print-reply --system --dest=org.freedesktop.locale1 /org/freedesktop/locale1 org.freedesktop.DBus.Properties.Get string:org.freedesktop.locale1 string:Locale | sed -n '/LANG=/s/.*LANG=\([^\.]*\)\..*/\1/p')
@@ -182,10 +197,10 @@ if $is_domain; then
 		fi
 
 		#Create icons to other mounted network shares
-		for mountpath in `mount | grep "^[^ ]* on $HOME/network/[^ ]* type cifs" | cut -d' ' -f3 | sort`; do
+		for mountpath in `ls -1 ~/network | sort | sed 's/home//g' | sed '/^$/d'`; do
 			mountname=`basename $mountpath`
 			if [[ $mountname != home ]]; then
-				create_entries "$mountname" "$mountpath" folder-publicshare
+				create_entries "$mountname" "$HOME/network/$mountpath" folder-publicshare
 			fi
 		done
 	fi

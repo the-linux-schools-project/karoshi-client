@@ -25,8 +25,8 @@ then
 fi
 
 #Disable sssd and LightDM
-systemctl disable sssd >/dev/null 2>&1
-systemctl disable lightdm >/dev/null 2>&1
+#systemctl disable sssd >/dev/null 2>&1
+#systemctl disable lightdm >/dev/null 2>&1
 
 echo
 echo "########################################"
@@ -100,14 +100,14 @@ fi
 #Run client config
 [ -f /opt/karoshi/scripts/client-config ] && /opt/karoshi/scripts/client-config
 
-service sssd start
-counter=0
-while [ $(service sssd status | grep -c $DNSSUFFIX) = 0 ] && [ $counter -le 30 ]
-do
-	sleep 1
-	let counter=$counter+1
-done
-service lightdm start
+#service sssd start
+#counter=0
+#while [ $(service sssd status | grep -c $DNSSUFFIX) = 0 ] && [ $counter -le 30 ]
+#do
+#	sleep 1
+#	let counter=$counter+1
+#done
+#service lightdm start
 
 #Run connect printers
 [ -f /opt/karoshi/scripts/cups-config ] && /opt/karoshi/scripts/cups-config

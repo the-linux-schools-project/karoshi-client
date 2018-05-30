@@ -1,5 +1,4 @@
 [Desktop Entry]
 Type=Application
-Name=Karoshi Pre session
-OnlyShowIn=XFCE;
+Name=Karoshi Pre Session
 Exec=/opt/karoshi/clientsetup/scripts/pre-session

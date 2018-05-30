@@ -192,6 +192,21 @@ if ! [[ -e $KAROSHI_DATA/firewall/local_rules ]]; then
 	cp -t "$KAROSHI_DATA"/firewall /opt/karoshi/clientsetup/config/firewall/local_rules
 fi
 
+##########################
+#Miscellaneous things
+##########################
+# Fix for /etc/pam.d/common-session
+
+if [[ `grep -c pam_mkhomedir.so /etc/pam.d/common-session` = 0 ]]
+then
+	sed -i '31i pam_mkhomedir.so silent umask=0077' /etc/pam.d/common-session
+fi
+
+#Restrict cron and at to root
+echo root > /etc/cron.allow
+echo root > /etc/at.allow
+
+
 ##################
 #Finish and restart
 ##################

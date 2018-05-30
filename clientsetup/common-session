@@ -16,7 +16,6 @@ session optional        pam_exec2.so log=/var/log/karoshi/virtualbox-mkdir.log t
 session optional        pam_exec2.so log=/var/log/karoshi/offline-homes.log type=open-session once /opt/karoshi/scripts/offline-homes
 session optional                        pam_sss.so
 session optional        pam_mount.so
-session optional        pam_exec2.so log=/var/log/karoshi/pre-session.log drop_priv once type=open_session /opt/karoshi/scripts/pre-session
 session optional        pam_systemd.so
 session optional        pam_encryptfs.so unwrap
 # end of pam-auth-update config

@@ -25,7 +25,7 @@
 source /opt/karoshi/clientsetup/utilities/common
 
 #Force update time from server
-echo "Setting time from $DNSSUFFIX"
+echo "Setting time from da server $DNSSUFFIX"
 net time set -S $DNSSUFFIX
 
 ####################
@@ -76,6 +76,7 @@ fi
 ####################
 echo "Configuring pam_mount"
 #[[ -e /etc/security/pam_mount.conf.xml ]] && rm -f /etc/security/pam_mount.conf.xml
+
 if ! karoshi-manage-flags get offline_mode >/dev/null; then
 	case "$DOMAINTYPE" in
 	samba4)
@@ -101,12 +102,12 @@ fi
 [[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "\@</pam_mount>@ i\\
 <volume uid='1000-10000000' path='$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users/%(USER)' mountpoint='~/offline-home' options='bind' />" /etc/security/pam_mount.conf.xml
 
-#Add VirtualBox entry if virtualbox is installed
-if [ "dpkg-query -W virtualbox | awk {'print $1'} = """ ]; then
-[[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "\@</pam_mount>@ i\\
-<volume uid='1000-10000000' path='$KAROSHI_DATA/$KAROSHI_VIRTUALBOX/users/%(USER)' mountpoint='~/.VirtualBox' options='bind' />\\
-<volume uid='1000-10000000' path='$KAROSHI_DATA/$KAROSHI_VIRTUALBOX/users/%(USER)' mountpoint='~/VirtualBox VMs' options='bind' />" /etc/security/pam_mount.conf.xml
+if [ -f /tmp/netlogon/linuxclient/gvfs_mount_cifs_shares ]
+then
+	cp -f /tmp/netlogon/linuxclient/gvfs_mount_cifs_shares /usr/sbin/gvfs_mount_cifs_shares
 fi
+
+
 
 #################
 #Home areas
@@ -580,48 +581,21 @@ function configureVboxPartition {
 	mount "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX"
 }
 
-[[ -d $KAROSHI_DATA/$KAROSHI_VIRTUALBOX ]] || mkdir "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -m 0755
-if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:space:]]" /etc/fstab; then
-	vbox_set=false
-	#Detect any ext4 partition with a label of KAROSHI-VBOX
-	while read -r partition; do
-		if [[ $(e2label "$partition" 2>/dev/null) == "KAROSHI-VBOX" ]]; then
-			echo "Found existing VirtualBox partition for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $partition"
-			configureVboxPartition "$partition"
-			vbox_set=true
-			break
-		fi
-	done < <(find /dev -maxdepth 1 -name sd??)
-fi
-
-fi
-
-##########################
-#Miscellaneous things
-##########################
-
-
-#Unlock the client desktop settings if this is a home network install type
-if [ -f /tmp/netlogon/domain_information/install_type ]
-then
-	if [[ $(cat /tmp/netlogon/domain_information/install_type) = home ]]
-	then
-		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml ] && rm /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
-		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml ] && rm /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml ] && rm -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
-		[ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml ] && rm -f [ -f /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+	[[ -d $KAROSHI_DATA/$KAROSHI_VIRTUALBOX ]] || mkdir "$KAROSHI_DATA"/"$KAROSHI_VIRTUALBOX" -m 0755
+	if ! grep -Eq "^[^[:space:]]+[[:space:]]+$KAROSHI_DATA/$KAROSHI_VIRTUALBOX[[:space:]]" /etc/fstab; then
+		vbox_set=false
+		#Detect any ext4 partition with a label of KAROSHI-VBOX
+		while read -r partition; do
+			if [[ $(e2label "$partition" 2>/dev/null) == "KAROSHI-VBOX" ]]; then
+				echo "Found existing VirtualBox partition for $KAROSHI_DATA/$KAROSHI_VIRTUALBOX: $partition"
+				configureVboxPartition "$partition"
+				vbox_set=true
+				break
+			fi
+		done < <(find /dev -maxdepth 1 -name sd??)
 	fi
-fi
 
-# Fix for /etc/pam.d/common-session
-if [[ `grep -c pam_mkhomedir.so /etc/pam.d/common-session` = 0 ]]
-then
-	sed -i '31i pam_mkhomedir.so silent umask=0077' /etc/pam.d/common-session
 fi
-
-#Restrict cron and at to root
-echo root > /etc/cron.allow
-echo root > /etc/at.allow
 
 #Write new variables to file
 updateVariables
