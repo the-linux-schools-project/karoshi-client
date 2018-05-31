@@ -41,6 +41,7 @@ config_exclude=(
 	.goutputstream-*
 	.wine
 	.local
+	.steam
 )
 
 function checkAndList {

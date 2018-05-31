@@ -1,0 +1,35 @@
+#!/bin/bash
+
+choice=$(echo "$1" | tr -cd 'a-z')
+
+if [ -z "$choice" ] || [ "$choice" !- unlock ] || [ "$choice" != lock ]
+then
+	echo -e "\nThis script will remove or restore XDG restrictions for the XFCE Desktop.\n\nUsage\n\ndesktop-restrictions unlock/lock\n\nunlock\n\nRemove xdg configfile resrictions.\n\nlock\n\nRestore xdg configfile restrictions.\n"
+	exit
+fi
+
+Filelist="/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
+/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
+/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
+"
+if [ "$choice" = unlock ]
+then
+	for ConfigFile in $Filelist
+	do
+		echo $"Deleting $ConfigFile"
+		rm -f  "$ConfigFile"
+	done
+fi
+
+if [ "$choice" = lock ]
+then
+	echo "Restoring xdg config files"
+	cp /opt/karoshi/clientsetup/buildclient/config/configuration/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/* /etc/xdg/xfce4/xfconf/xfce-perchannel-xml
+fi
+
+

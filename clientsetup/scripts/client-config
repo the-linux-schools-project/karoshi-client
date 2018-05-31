@@ -102,9 +102,9 @@ fi
 [[ -f /etc/security/pam_mount.conf.xml ]] && sed -i "\@</pam_mount>@ i\\
 <volume uid='1000-10000000' path='$KAROSHI_DATA/$KAROSHI_OFFLINE_HOMES/users/%(USER)' mountpoint='~/offline-home' options='bind' />" /etc/security/pam_mount.conf.xml
 
-if [ -f /tmp/netlogon/linuxclient/gvfs_mount_cifs_shares ]
+if [ -f /tmp/netlogon/linuxclient/gvfs_cifs_shares ]
 then
-	cp -f /tmp/netlogon/linuxclient/gvfs_mount_cifs_shares /usr/sbin/gvfs_mount_cifs_shares
+	cp -f /tmp/netlogon/linuxclient/gvfs_cifs_shares /etc/security/gvfs_cifs_shares
 fi
 
 

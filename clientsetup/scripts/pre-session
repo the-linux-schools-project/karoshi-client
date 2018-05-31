@@ -24,21 +24,12 @@
 
 source /opt/karoshi/clientsetup/utilities/common
 
+#Create required folders
 [[ ! -d "$HOME"/network ]] && mkdir -p "$HOME"/network
-
-#Mount network shares
-/usr/sbin/gvfs_mount_cifs_shares
-
-#Check if we have a home area
-if [ ! -L "$HOME"/network/home ]
-then
-	echo "No home area"
-	exit
-fi
-
-#Clear gtk bookmarks
-#[ ! -d ~/.config/gtk-3.0 ] && mkdir -p ~/.config/gtk-3.0
-#echo > ~/.config/gtk-3.0/bookmarks
+[[ ! -d ~/Desktop ]] && mkdir ~/Desktop
+[[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
+[[ ! -d ~/.config/autostart ]] && mkdir -p ~/.config/autostart
+[[ -d ~/.config/karoshi ]] || mkdir -p ~/.config/karoshi
 
 #function create_entries
 #	$1 is mount name
@@ -91,6 +82,55 @@ URL=$location
 EOF
 }
 
+#Clear Karoshi icons from desktop, menu and autostart
+find ~/Desktop ~/.local/share/applications ~/.config/autostart -name 'karoshi-*.desktop' -delete
+
+
+#Mount network shares
+if [ -f /etc/security/gvfs_cifs_shares ]
+then
+	#Get Primary group
+	UserPrimaryGroup=$(id -g -n)
+	
+	#Remove all symlinks
+	[ -d "$HOME/network/" ] && find "$HOME/network/" -type l -delete 
+	 
+	#Network Shares
+	for MountData in $(cat /etc/security/gvfs_cifs_shares | tr -cd 'A-Za-z0-9,.\n')
+	do
+		Server=$(echo "$MountData" | cut -d, -f1)
+		NetworkShare=$(echo "$MountData" | cut -d, -f2)
+		PrimaryGroup=$(echo "$MountData" | cut -d, -f3)
+		if [ "$PrimaryGroup" = all ] || [ "$PrimaryGroup" = "$UserPrimaryGroup" ]
+		then
+			if [ "$NetworkShare" = home ]
+			then
+				NetworkShareLink=home
+				NetworkShare="$USER"
+			else
+				NetworkShareLink="$NetworkShare"
+			fi
+			gio mount "smb://$Server/$NetworkShare"
+			if [ "$?" = 0 ]
+			then
+				ln -s "/run/user/$UID/gvfs/smb-share:server=$Server,share=$NetworkShare" "$HOME/network/$NetworkShareLink"
+				create_entries "$NetworkShareLink" "smb://$Server/$NetworkShare" folder-publicshare
+			fi	
+		fi
+	done
+fi
+
+#Check if we have a home area
+if [ ! -L "$HOME"/network/home ]
+then
+	echo "No home area"
+	exit
+fi
+
+#Clear gtk bookmarks
+#[ ! -d ~/.config/gtk-3.0 ] && mkdir -p ~/.config/gtk-3.0
+#echo > ~/.config/gtk-3.0/bookmarks
+
 #####################
 #All users
 #####################
@@ -122,16 +162,6 @@ if $is_domain && [[ $(mount | grep "on $HOME/offline-home") ]]; then
 	echo "Detected offline home area"
 	offline_home_exists=true
 fi
-
-#Create required folders
-[[ ! -d ~/Desktop ]] && mkdir ~/Desktop
-[[ ! -d ~/.local/share/applications ]] && mkdir -p ~/.local/share/applications
-[[ ! -d ~/.config/autostart ]] && mkdir -p ~/.config/autostart
-[[ -d ~/network/home/.zotero ]] || mkdir -p ~/network/home/.zotero
-[[ -d ~/.config/karoshi ]] || mkdir -p ~/.config/karoshi
-
-#Clear Karoshi icons from desktop, menu and autostart
-find ~/Desktop ~/.local/share/applications ~/.config/autostart -name 'karoshi-*.desktop' -delete
 
 ######################
 #Domain/local users
@@ -179,30 +209,6 @@ if $is_domain; then
 				echo "file://$offline_home_escape "$"Offline Home" >> ~/.gtk-bookmarks
 			fi
 		fi
-
-		#Create home icon first so that it appears first on the desktop
-		if [[ $(mount | grep "^[^ ]* on $HOME/network/home type cifs") ]]; then
-			echo "Domain home area found"
-			create_entries "home" "$HOME/network/home" folder-home
-			server=$(mount | sed -n "s@^//\([^.]*\).$DNSSUFFIX/$USER on $HOME/network/home type cifs.*@\1@p")
-			if [[ -f /opt/karoshi/user_web_servers ]] && grep -q "^$server\$" /opt/karoshi/user_web_servers &&
-			  [[ -d ~/network/home/public_html ]] && getfacl ~/network/home/public_html | grep -q '^user:www-data:r-x$'; then
-				create_link $"Web Hosting" "http://$server.$DNSSUFFIX/~$USER/" emblem-web
-			fi
-
-			alternate_home="network/home"
-		else
-			echo "No domain home area found"
-			create_entries $"Home" ~ folder-home
-		fi
-
-		#Create icons to other mounted network shares
-		for mountpath in `ls -1 ~/network | sort | sed 's/home//g' | sed '/^$/d'`; do
-			mountname=`basename $mountpath`
-			if [[ $mountname != home ]]; then
-				create_entries "$mountname" "$HOME/network/$mountpath" folder-publicshare
-			fi
-		done
 	fi
 
 	#Add file manager entry to / if administrator
@@ -314,9 +320,13 @@ if $is_domain; then
 
 			#Add Zotero settings
 			if [[ $alternate_home ]]; then
+				[[ -d ~/network/home/.zotero ]] || mkdir -p ~/network/home/.zotero
 				echo "user_pref('extensions.zotero.dataDir', '~/$alternate_home/.zotero');
 user_pref('extensions.zotero.useDataDir', true);" >> ~/.mozilla/firefox/"$firefox_profile"/user.js
 			fi
+
+			#Use the same profile for Firefox ESR
+			ln -s ~/mozilla/firefox ~/mozilla/firefox-esr
 		fi
 	fi
 
