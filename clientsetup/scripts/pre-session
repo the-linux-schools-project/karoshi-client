@@ -121,7 +121,7 @@ then
 fi
 
 #Check if we have a home area
-if [ ! -L "$HOME"/network/home ]
+if [ ! -L "$HOME"/network/home ] && [ "$USER" != karoshi ]
 then
 	echo "No home area"
 	exit
